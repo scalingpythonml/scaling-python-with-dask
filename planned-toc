@@ -1,0 +1,40 @@
+Whats is Dask & where can it be used & how it compares in the ecosystem
+-Spark, Airflow, Ray, multiprocessing, kubeflow
+Installing Dask & a hello world
+Understanding the basics of Dask
+-The different paradigms of programming
+-Execution model
+-Fault tolerance overview & implications
+Dask & Notebooks
+Batch Data Parallel processing
+-Loading data
+-Data parallel operations
+-Data sources in detail
+Actors (going beyond stateless)
+-Basics & implication on fault tolerance
+Key Distributed System Concepts for Dask users
+-Fault tolerance
+-Partitioning
+-Task overhead
+-Task graph
+Higher level APIs & building blocks
+-Pools, etc.
+-DataFrames
+-SQL
+-etc.
+Integrated libraries - Using, limitations, etc.
+-Scikit learn
+-Pandas
+-Pytorch
+Porting Existing Code
+-Understanding implications with state
+-Figuring out what to make distributed
+-Making it distributed
+Dask with GPUs
+rapids 
+Streamz - streaming Dask
+Appendix A: Notebooks, yay
+Appendix B: Deploying Dask
+-Running Dask on Kubernetes
+-Dask on Clouds
+Appendix C: Debugging
