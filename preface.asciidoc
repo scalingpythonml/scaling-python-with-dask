@@ -1,0 +1,4 @@
+[preface]
+== Preface
+
+We wrote this book for data engineers and scientists looking to scale or speed-up their Python powered data powered applications. This includes everything from the traditional exchange-transform-load (ETL) to the new fancy machine-learning (aka three statisicians in a trench-coat) tools. This book focuses on Dask because of it's comparatively deep integration into the Python ecosystem. Alternatives such as Ray and Spark exist, and we'll talk a bit more about those in the next chapter.
