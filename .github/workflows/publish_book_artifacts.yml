@@ -1,0 +1,24 @@
+name: CI
+
+env:
+  PIPELINE_ORG_NAME: bootiful-asciidoctor
+  PIPELINE_REPO_NAME: sample-pipeline
+  GH_PAT: ${{ secrets.GH_PAT }}
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: ${GITHUB_WORKSPACE}/.github/workflows/trigger_book_build.sh 
+
+
+
+
