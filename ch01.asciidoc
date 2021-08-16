@@ -1,3 +1,4 @@
+// DOC OF RECORD IS IN GDOCS https://docs.google.com/document/d/1C6d9bL7_F7DeT2Y1TZ89hFhVgvUSj4snorMUm38PjQU/edit?usp=sharing
 [[what_is_dask]]
 == What is Dask, why do we need it, and where does it fit?
 
