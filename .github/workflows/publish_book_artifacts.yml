@@ -2,7 +2,7 @@ name: CI
 
 env:
   PIPELINE_ORG_NAME: scalingpythonml
-  PIPELINE_REPO_NAME: sample-pipeline
+  PIPELINE_REPO_NAME: learning-dask-pipeline
   GH_PAT: ${{ secrets.GH_PAT }}
 
 on:
