@@ -5,6 +5,7 @@ Understanding the basics of Dask
 -The different paradigms of programming
 -Execution model
 -Fault tolerance overview & implications
+-Help I'm in a Pickle with Serialization
 Dask & Notebooks
 Batch Data Parallel processing
 -Loading data
@@ -31,7 +32,7 @@ Porting Existing Code
 -Figuring out what to make distributed
 -Making it distributed
 Dask with GPUs
-rapids 
+rapids
 Streamz - streaming Dask
 Appendix A: Notebooks, yay
 Appendix B: Deploying Dask
