@@ -1,0 +1,37 @@
+{
+  "branch": "main",
+  "files": [],
+  "formats": {
+    "pdf": {
+      "version": false,
+      "color_count": false,
+      "index": false,
+      "toc": false,
+      "syntaxhighlighting": false,
+      "show_comments": false,
+      "trim_size": false
+    },
+    "epub": {
+      "index": false,
+      "toc": false,
+      "epubcheck": false,
+      "syntaxhighlighting": false,
+      "show_comments": false,
+      "downsample_images": false
+    },
+    "mobi": {},
+    "html": {
+      "index": false,
+      "toc": false,
+      "syntaxhighlighting": false,
+      "show_comments": false,
+      "consolidated": false
+    }
+  },
+  "theme": "",
+  "title": "scaling python with dask",
+  "print_isbn13": "",
+  "lang": "en",
+  "accent_color": "",
+  "templating": false
+}
