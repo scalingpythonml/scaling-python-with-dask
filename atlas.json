@@ -4,8 +4,6 @@
     "titlepage.html",
     "copyright.html",
     "toc.html",
-    "preface.asciidoc",
-    "ch01.asciidoc",
     "author_bio.html"
   ],
   "formats": {
