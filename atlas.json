@@ -1,36 +1,50 @@
 {
   "branch": "main",
-  "files": [],
+  "files": [
+    "titlepage.html",
+    "copyright.html",
+    "toc.html",
+    "preface.asciidoc",
+    "ch01.asciidoc",
+    "author_bio.html"
+  ],
   "formats": {
     "pdf": {
-      "version": false,
-      "color_count": false,
+      "version": "web",
+      "color_count": "1",
       "index": false,
-      "toc": false,
-      "syntaxhighlighting": false,
+      "toc": true,
+      "syntaxhighlighting": true,
       "show_comments": false,
-      "trim_size": false
+      "trim_size": "7inx9.1875in",
+      "antennahouse_version": "AHFormatterV71_64-MR2"
     },
     "epub": {
       "index": false,
-      "toc": false,
-      "epubcheck": false,
-      "syntaxhighlighting": false,
+      "toc": true,
+      "epubcheck": true,
+      "syntaxhighlighting": true,
       "show_comments": false,
-      "downsample_images": false
+      "downsample_images": false,
+      "mathmlreplacement": false
     },
-    "mobi": {},
+    "mobi": {
+      "index": false,
+      "toc": true,
+      "syntaxhighlighting": true,
+      "show_comments": false
+    },
     "html": {
       "index": false,
-      "toc": false,
-      "syntaxhighlighting": false,
+      "toc": true,
+      "syntaxhighlighting": true,
       "show_comments": false,
       "consolidated": false
     }
   },
-  "theme": "",
-  "title": "scaling python with dask",
-  "print_isbn13": "",
+  "theme": "oreillymedia/animal_theme_sass",
+  "title": "Scaling Python with Dask",
+  "print_isbn13": "9781098119874",
   "lang": "en",
   "accent_color": "",
   "templating": false
