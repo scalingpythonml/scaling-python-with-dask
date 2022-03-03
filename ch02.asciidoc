@@ -42,7 +42,7 @@ Now that you have Dask installed locally, it's time to try the versions of "Hell
 
 [[make_dask_client]]
 ====
-[source, bash]
+[source, python]
 ----
 include::./examples/dask/Dask-Ch2-Hello-Worlds.py[tags=make_dask_client]
 ----
