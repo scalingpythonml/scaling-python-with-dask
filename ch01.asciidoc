@@ -68,7 +68,7 @@ Parallel Python encompasses a wide variety of tools ranging from multiprocessing
 Many big data tools have similar low-level task APIs, but they are internal and not exposed for our use or protected against failures.
 ====
 
-==== Dask Community libraries
+==== Dask Community Libraries
 
 Dask's true power comes from the ecosystem built around it. Different libraries are built on top of Dask, giving you the ability to use multiple tools in the same framework. These community libraries are so powerful, in part, because of the combination of low-level and high-level APIs that are available for more than just first-party development.
 

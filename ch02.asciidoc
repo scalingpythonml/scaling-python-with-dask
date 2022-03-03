@@ -33,7 +33,7 @@ You don't have to install Dask locally, although you probably will want to. Ther
 
 .Using Dask Docker Images
 ****
-Another way to get Dask running locally is to use example docker images maintained by the Dask project. link:$$https://docs.dask.org/en/stable/how-to/deploy-dask/docker.html[Dask Docker] The benefit of this approach is that the same image can then be used in a distributed cluster, each node running the same docker image locally thus ensuring the compatibility of all the packages. Advanced users can use the Dask example Docker images as a base and add packages of their choice before link:$$https://www.sentinelone.com/blog/create-docker-image/[committing changes and saving it as a new image].
+Another way to get Dask running locally is to use link:$$https://docs.dask.org/en/stable/how-to/deploy-dask/docker.html$$[example docker images] maintained by the Dask project. The benefit of this approach is that the same image can then be used in a distributed cluster, each node running the same docker image locally thus ensuring the compatibility of all the packages. Advanced users can use the Dask example Docker images as a base and add packages of their choice before link:$$https://www.sentinelone.com/blog/create-docker-image/$$[committing changes and saving it as a new image].
 ****
 
 === Hello Worlds
@@ -44,7 +44,7 @@ Now that you have Dask installed locally, it's time to try the versions of "Hell
 ====
 [source, bash]
 ----
-include::./examples/dask/setup-dask-user.sh[tags=make_dask_client]
+include::./examples/dask/Dask-Ch2-Hello-Worlds.py[tags=make_dask_client]
 ----
 ====
 
