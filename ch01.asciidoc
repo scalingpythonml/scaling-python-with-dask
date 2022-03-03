@@ -1,86 +1,118 @@
-// DOC OF RECORD IS IN GDOCS https://docs.google.com/document/d/1C6d9bL7_F7DeT2Y1TZ89hFhVgvUSj4snorMUm38PjQU/edit?usp=sharing
-[[what_is_dask]]
-== What is Dask, why do we need it, and where does it fit?
+[[ch1_what_is_dask]]
+[role="pagenumrestart"]
+== What Is Dask?
 
+.A Note for Early Release Readers
+****
+With Early Release ebooks, you get books in their earliest form&mdash;the author's raw and unedited content as they write—so you can take advantage of these technologies long before the official release of these titles.
 
-Dask is a framework for parallelized computing with Python supporting scaling from multiple-cores all the way to multiple data centers. In addition to managing the work, Dask has APIs at different levels of abstraction ranging from scheduling invidual tasks to operations on Dataframes.
-Dask's lineage traces back to Continum Analytics, now known as Anaconda Inc, and grew out of the DARPA funded link:$$https://blaze.readthedocs.io/en/latest/index.html$$[BLAZE project], which aimed to provide a numpy/pandas like interface to big-ish data.
-Continum has participated in the development of many key libraries, and even conferences, in the Python data analytics space.
+This will be the first chapter of the final book. Please note that the GitHub repo will be made active later on.
 
-=== Why do we need dask?
+If you have comments about how we might improve the content and/or examples in this book, or if you notice missing material within this chapter, please reach out to the editor at vwilson@oreilly.com.
+****
 
-Dask simplifies our problems of growing our Python code to handle larger and more complex data and problems.
-While the term "big data" is perhaps less in vogue now than it was a few years ago, the data sizes of the problems were handling and the complexity of the computation & models we are building have not gotten smaller or simpler.
-Dask allows us to largely use the existing interfaces that we are used to (such as pandas or Python's concurrency libraries) while providing the ability to go beyond what is possible with a single machine.
+Dask is a framework for parallelized computing with Python that scales from multiple cores on one machine to data centers with thousands of machines. It has both low-level task APIs and higher-level data-focused APIs. The low-level task APIs power Dask's integration with a wide variety of Python libraries. Having public APIs has allowed an ecosystem of tools to grow around Dask for various use cases.
 
+Continuum Analytics, now known as Anaconda Inc, started the open-source DARPA funded link:$$https://blaze.readthedocs.io/en/latest/index.html$$[BLAZE project], which has evolved into Dask.
+Continuum has participated in developing many essential libraries and even conferences in the Python data analytics space. Dask remains an open-source project, with much of its development now being supported by link:$$https://coiled.io/$$[Coiled].
 
-=== Where does Dask fit in the ecosystem
+Dask is unique in the distributed computing ecosystem, by integrating popular data science, parallel, and scientific computing libraries. Dask's integration of different libraries allows developers to re-use much of their existing knowledge at scale. You can also frequently re-use some of your code with minimal changes.
 
-Dask sits at the intersection of multiple, traditionally distinct, ecosystems. The first is the "big data ecosystem" of things like Hadoop and friends. Dask is also a part of the Python data science ecosystem, including things like Pandas. The 3rd ecosystem which Dask is a part of is that of accelerated Python, including things like RAPIDS, numba, and multi-processing.
-Few tools sit at the same intersection, with the closest similar tool being Ray.
+=== Why Do You Need Dask?
+
+Dask simplifies scaling analytics and ML code written in Python, allowing you to handle larger and more complex data and problems.
+While the term "big data" is perhaps less in vogue now than a few years ago, the data size of the problems has not gotten smaller, and the complexity of the computation and models have not gotten simpler.
+Dask allows you to primarily use the existing interfaces that you are used to (such as pandas and multiprocessing) while going beyond the scale of a single core or even a single machine.
+
 
 [NOTE]
 ====
-Dask and Ray are both written in Python, with underlying extensions when needed. There is a link:$$https://github.com/ray-project/ray/issues/642$$[GitHub issue] where the creators of both system compare their similarities and differences.
-From a systems point of view, the biggest differences between Ray and Dask come down to handling state + recovery as well as centralized v.s. de-centralized scheduling.
+On the other hand, if all your data fits in memory on a laptop, and you can finish your analysis before you've had a chance to brew a cup of your favorite warm beverage, you probably don't need Dask yet.
 ====
+
+
+=== Where Does Dask Fit in the Ecosystem?
+
+Dask provides scalability to multiple, traditionally distinct tools. It is most often used to scale Python data libraries like pandas and NumPy. Dask extends existing tools for scaling, such as multiprocessing, allowing them to exceed their current limits of single machines to multi-machine.
+
+
+Much of Dask's power comes from the tools and libraries built on top of it, which fit into their parts of the data processing ecosystem (such as BlazingSQL). Your background and interest will naturally shape how you first view Dask, so in the following subsections, I'll briefly discuss how you can use Dask for different types of problems, as well as how it compares to some existing tools.
 
 
 ==== Big Data
 
-Dask occupies a slightly different position than then the traditional big data Python tools such as PySpark (from Apache Spark), Streaming Python MR (from Apache Hadoop), PyBeam (from Apahce Beam), and PyFlink (from Apache Flink).
-From an implementation point of view, the biggest difference between Dask and many of these systems is that of Java.
+Dask has better Python library integrations and lower overhead for tasks than many alternatives. Existing big data tools, like PySpark, have more data sources and optimizers (like predicate push-down) but higher overhead per task. Dask's lower overhead is mainly because the rest of the Python big data ecosystem is built primarily on top of the Java Virtual Machine (JVM). These tools have advanced features like query optimizers, but with the cost of copying data between the JVM and Python.
 
+Unlike many other traditional big data tools, Spark, Hadoop, etc., Dask considers local mode a first-class citizen. The traditional big data ecosystem focuses on using the local mode for testing, but Dask focuses on good performance when running on a single node.
 
-Many of the Python system in the big data space fundamentally delegate much of the work to Java.
-This can add substantail overhead both in terms of per-record (with copying data) and per-task (with slower startup times).
-On the other hand, delegating to existing Java solutions allows these tools to integrate with the output of other big data tools and take advantage of the optimizations at the Java level (such as cost based query optimization).
-
-
-An important question for people working in a Hadoop ecosystem is that of formats. The ability to easily load the output of different toals and interact with shared libraries can be very useful.
-While Dask can read some of the formats, often the data in these environments is structured with the assumption that filters or columnar reads will be automatically pushed down.
-While it is of course possible to write out the data in a way that is suited for Dask to query from such systems, the overhead and dealy of additional ETL jobs and copies of data may not be worth it.
-
-[NOTE]
-====
-Many of the "big data" ecosystem projects package everything together (e.g. Spark SQL, Spark Kubernetes, etc. all got released together), Dask takes a more modular approach with it's components following their own development and release cadence.
-====
+Another significant cultural difference comes from packaging, with many projects in "big data" putting everything together (e.g., Spark SQL, Spark Kubernetes, etc., are released together). Dask takes a more modular approach, with its components following their own development and release cadence. Dask's approach can iterate faster, at the cost of occasional incompatibilities between libraries.
 
 ==== Data Science
 
-In the data science ecosystem many Python user's first library is that of `pandas`.
-While Spark has started to integrate the link:$$https://koalas.readthedocs.io/en/latest/$$[Koalas project], Dask's support of data science library APIs is one of the best.
-In addition to the higher-level pandas' APIs, Dask implements support for scaling `numpy`, `sci-kit-learn`, and other data science tools.
+One of the most popular Python libraries in the data science ecosystem is `pandas`.
+Apache Spark is one of the most popular tools for distributed data science. It has support for both Python and JVM languages. Spark's first attempt at DataFrames more closely resembled SQL than what you may think of as DataFrames. While Spark has started to integrate pandas support with the link:$$https://koalas.readthedocs.io/en/latest/$$[Koalas project], in my opinion, Dask's support of data science library APIs is one of the best.footnote:[Of course opinions vary, e.g., https://tomaspeluritis.medium.com/war-of-data-frames-i-r-a-p-read-aggregate-and-print-cd37b8f8849c versus https://databricks.com/blog/2021/04/07/benchmark-koalas-pyspark-and-dask.html versus https://coiled.io/blog/dask-as-a-spark-replacement/.] 
+In addition to the pandas' APIs, Dask supports scaling NumPy, scikit-learn, and other data science tools.
+
+[NOTE]
+====
+Dask can be extended to support data types besides NumPy and pandas, and this is how GPU support is implemented with cuDF.
+====
 
 
-==== Accelerated Python
+==== Parallel to Distributed Python
 
-The accelerated Python ecosystem takes a few different looks, ranging from special code generation (like `numba`) or hardware specific accelerators and libraries like NVidia's `CUDA` (and wrappers like `cuDF`) and Intel's `MKL` libraries.
-While Dask can take advantage of these libraries, and there are some integrations like `dask-cuDF`, Dask is not primarily focused on optimizing your code.
-The other side of accelerated Python is that of `threading` or `multiprocessing` where the focus is on allowing parallel compution. Dask implements these APIs and supports extending them beyond the concept of just a single computer.
+Parallel Python encompasses a wide variety of tools ranging from multiprocessing to Celery.footnote:[Celery is an asynchronous task queue which also splits up and distributes work but is at a lower level than Dask and does not have the same high-level conveniences as Dask.] Dask gives you the ability to specify an arbitrary graph of dependencies and execute them in parallel. Under the hood, this execution can be backed either by a single machine (with threads or processes) or distributed across multiple workers.
 
-==== Dask, with a little help from friends
+[NOTE]
+====
+Many big data tools have similar low-level task APIs, but they are internal and not exposed for our use or protected against failures.
+====
 
-While Dask core is relatively light weight and leaves out many "traditional" components found in other systems, these tend to be built on top as libraries.
+==== Dask Community libraries
 
-===== SQL Engine
+Dask's true power comes from the ecosystem built around it. Different libraries are built on top of Dask, giving you the ability to use multiple tools in the same framework. These community libraries are so powerful, in part, because of the combination of low-level and high-level APIs that are available for more than just first-party development.
 
-Dask it's self does not have a SQL engine, however link:$$https://github.com/BlazingDB/blazingsql$$[BlazingSQL] uses dask to provide a GPU accelerated SQL engine.
+===== Accelerated Python
 
-===== Workflow Scheduling
+You can accelerate Python in a few different ways, ranging from code generation (such as `Numba`) to libraries for special hardware such as NVidia's `CUDA` (and wrappers like `cuDF`), AMD's ROCm, and Intel's `MKL` libraries.
+
+Dask itself is not a library for accelerated Python, but you can use it in conjunction with accelerated Python tools. For ease of use, some community projects integrate acceleration tools with Dask, such as `cuDF` and `dask-cuda`.  When using accelerated Python tools with Dask, you'll need to be careful to structure your code to avoid serialization errors (see <<help_im_in_a_pickle>>).
+
+
+===== SQL engine
+
+Dask itself does not have a SQL engine; however, both link:$$https://dask-sql.readthedocs.io/en/latest/$$[dask-sql] and link:$$https://github.com/BlazingDB/blazingsql$$[BlazingSQL] use Dask to provide a distributed SQL engine. Dask-sql uses the popular Apache Calcite project, which powers many other SQL engines. BlazingSQL extends Dask DataFrames to DataFrames supporting GPU operations. cuDF DataFrames have a slightly different representation. Apache Arrow makes it straightforward to convert a Dask DataFrame to cuDF and vice versa.
+
+[TIP]
+====
+Dask-sql can read data from parts of the Hadoop ecosystem that Dask cannot read from (e.g., Hive).
+====
+
+===== Workflow scheduling
 
 // TODO: Holden - double check if this is too spicy.
 
-The household name of workflow scheduling in the big data ecosystem is Apache Airflow. While Apache Airflow has a wonderful collection of operators, making it easy to express complex task types conscisely, it is notoriously difficult to scale footnote:[With one thousand tasks per-hour taking substantail tuning and manual consideration https://medium.com/@keozchan/scaling-airflow-to-1000-tasks-hour-aac3207b26ec]. Dask can be used to run link:$$https://airflow.apache.org/docs/apache-airflow/1.10.1/howto/executor/use-dask.html$$[Airflow tasks], or as a backend for other task scheduling systems like the link:$$https://github.com/prefecthq/prefect$$[very humbly named perfect]
+As mentioned above, you can specify arbitrary graphs in Dask, and if you choose, you could write your workflows using Dask itself. You can call system commands and parse their results, but just because you can do something doesn't mean it will be fun or simple.
+
+The household namefootnote:[Assuming a fairly nerdy household.] for workflow scheduling in the big data ecosystem is Apache Airflow. While Airflow has a wonderful collection of operators, making it easy to express complex task types easily, it is notoriously difficult to scale footnote:[With one thousand tasks per hour taking substantial tuning and manual consideration; see https://medium.com/@keozchan/scaling-airflow-to-1000-tasks-hour-aac3207b26ec]. Dask can be used to run link:$$https://airflow.apache.org/docs/apache-airflow/1.10.1/howto/executor/use-dask.html$$[Airflow tasks]. Alternatively, it can be used as a backend for other task scheduling systems like link:$$https://github.com/prefecthq/prefect$$[Prefect]. Prefect aims to bring Airflow like functionality to Dask with a large pre-defined task library. Since prefect used Dask as an execution backend from the start, it has a tighter integration and lower overhead than Airflow on Dask.
 
 
+[NOTE]
+====
+Few tools cover all of the same areas, with the most similar tool being Ray.
+Dask and Ray both expose Python APIs, with underlying extensions when needed. There is a link:$$https://github.com/ray-project/ray/issues/642$$[GitHub issue] where the creators of both systems compare their similarities and differences.
+From a systems perspective, the biggest differences between Ray and Dask are handling state, fault tolerance, and centralized vs de-centralized scheduling. Ray implements more of its logic in C++, which can have performance benefits but is also more difficult to read. From a user point of view, Dask has more of a data science focus, and Ray emphasizes distributed state and actor support. Dask can use Ray as a backend for scheduling.footnote:[Or flipping the perspective, Ray is capable of using Dask to provide data science functionality.]
+====
 
-==== What Dask is not
+=== What Dask Is Not
 
-While Dask is many things it is not a magic wand you wave over your code and have it go faster.
-There are places where Dask has largely compatible drop-in APIs, but if used incorrectly may result in slower execution.
-Dask is, for the most part, not a code re-writing or JIT tool, although those tools can be used in conjuction with Dask footnote:[Even for languages other than Python, like with BlazingSQL].
+While Dask is many things, it is not a magic wand you wave over your code to make it faster.
+There are places where Dask has largely compatible drop-in APIs, but misusing them can result in slower execution.
+Dask is not a code re-writing or JIT tool, instead, Dask allows you to scale these tools to run on clusters. Dask focuses on Python and may not be the right tool for scaling languages not tightly integrated with Python (such as Go). Dask does not have built-in catalog support (e.g., Hive or Iceberg), so reading and writing data from tables stored with them can pose a challenge.
 
 
 
 === Conclusion
+
+Dask is one of the possible options for scaling your analytical Python code. It covers various deployment options (from multiple cores on a single computer to data centers). Dask takes a modular approach, compared to many other tools in similar spaces, which means that taking the time to understand the ecosystem and libraries around it is essential. The right choice to scale your software depends on your code, the ecosystem, data consumers, and sources for your project. I hope I've convinced you that it's worth the time to play with Dask a bit, which you do in the next chapter.
+
