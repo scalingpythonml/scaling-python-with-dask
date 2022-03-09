@@ -1,6 +1,7 @@
 {
   "branch": "main",
   "files": [
+    "cover.html",
     "titlepage.html",
     "copyright.html",
     "toc.html",
