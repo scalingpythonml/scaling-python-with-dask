@@ -137,8 +137,8 @@ include::./examples/dask/Dask-Ch2-Hello-Worlds.py[tags=wc_freq]
 
 [[wc_func]]
 .Using functional transformations to write a custom `frequency` method
-[source, python]
 ====
+[source, python]
 ----
 include::./examples/dask/Dask-Ch2-Hello-Worlds.py[tags=wc_func]
 ----
@@ -158,7 +158,7 @@ Pandas is one of the most popular Python data libraries and Dask has a DataFrame
 Your intuition around what's slow and fast with pandas does not carry over. We will explore this more in the <<dask_df>>.
 ====
 
-To illustrate how you can use Dask DataFrame, we'll re-work the wordcount example from the previous section to use Dask's DataFrame. As with Dask's other collections, you can create Dask Dataframes from local collections, futures, or distributed files. Since you already made a crawler function, you can turn its output into a Dask bag using the `from_delayed` function from <<make_bag_of_crawler>>], as we did before. Instead of using `map`, and `foldby`, you can use pandas APIs like `explode` and `value_counts` as 
+To illustrate how you can use Dask DataFrame, we'll re-work the wordcount example from the previous section to use Dask's DataFrame. As with Dask's other collections, you can create Dask Dataframes from local collections, futures, or distributed files. Since you already made a crawler function, you can turn its output into a Dask bag using the `from_delayed` function from <<make_bag_of_crawler>>, as we did before. Instead of using `map`, and `foldby`, you can use pandas APIs like `explode` and `value_counts` as 
 shown in <<wc_dataframe>>.
 
 [[wc_dataframe]]
