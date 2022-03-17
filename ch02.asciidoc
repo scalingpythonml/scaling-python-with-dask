@@ -16,7 +16,7 @@ I'm so happy that you've decided to explore whether Dask is the system for you b
 
 Installing Dask locally is reasonably straightforward. If you want to start running on multiple machines, it's often easier when you start with a conda environment (or virtualenv). This lets you figure out what packages you depend on by running `pip freeze` to make sure they're on all of the workers when it's time to scale.
 
-While you can just `pip install -U dask`, I prefer using a conda environment since it's easier to match the version of Python to that on my cluster, which allows me to connect my local machine to the cluster directly.footnote:[There are downsides to deploying your Dask application in this way, as discussed in <<appa_deploy>>, but it can be an excellent debugging technique.] If you don't have conda on your machine, link:$$https://github.com/conda-forge/miniforge/releases$$[Miniforge] is a good quick way to get conda installed across multiple platforms. Installing Dask into a new conda environment is shown in pass:[<a data-type="xref" href="#install_conda_env_with_dask" data-xrefstyle="select:labelnumber">#install_conda_env_with_dask</a>].
+While you can just `pip install -U dask`, I prefer using a conda environment since it's easier to match the version of Python to that on my cluster, which allows me to connect my local machine to the cluster directly.footnote:[There are downsides to deploying your Dask application in this way, as discussed in <<appa_deploy>>, but it can be an excellent debugging technique.] If you don't have conda on your machine, link:$$https://github.com/conda-forge/miniforge/releases$$[Miniforge] is a good quick way to get conda installed across multiple platforms. Installing Dask into a new conda environment is shown in <<install_conda_env_with_dask>>.
 
 [[install_conda_env_with_dask]]
 .Installing Dask into a new conda environment
@@ -39,7 +39,7 @@ Another way to get Dask running locally is to use link:$$https://docs.dask.org/e
 
 === Hello Worlds
 
-Now that you have Dask installed locally, it's time to try the versions of "Hello World" available through its various APIs. There are many different options for starting Dask. For now, you should use LocalCluster as shown in pass:[<a data-type="xref" href="#make_dask_client" data-xrefstyle="select:labelnumber">#make_dask_client</a>].
+Now that you have Dask installed locally, it's time to try the versions of "Hello World" available through its various APIs. There are many different options for starting Dask. For now, you should use LocalCluster as shown in <<make_dask_client>>.
 
 [[make_dask_client]]
 .Using LocalCluster to start Dask
@@ -84,7 +84,7 @@ In addition to the low-level task APIs, Dask also has distributed collections. T
 
 ===== Dask Arrays
 
-Dask Arrays allow you to go beyond what can fit in memory, or even on disk, of a single computer. Many of the standard numpy operations are supported out of the box, including aggregates like average and standard deviation. The `from_array` function in Dask Array converts a local array-like collection into a distributed collection. pass:[<a data-type="xref" href="#ex_dask_array" data-xrefstyle="select:labelnumber">#ex_dask_array</a>] shows how to create a distributed array from a local one and then compute the average.
+Dask Arrays allow you to go beyond what can fit in memory, or even on disk, of a single computer. Many of the standard numpy operations are supported out of the box, including aggregates like average and standard deviation. The `from_array` function in Dask Array converts a local array-like collection into a distributed collection. <<ex_dask_array>> shows how to create a distributed array from a local one and then compute the average.
 
 [[ex_dask_array]]
 .Creating a distributed array and computing the average
@@ -104,7 +104,7 @@ Creating a distributed collection from a local collection has the limit that the
 
 ===== Dask Bag and a word count
 
-Dask Bag implements more of the functional programming interfaces than Dask Array. The "hello world" of big data is wordcount, which is easier to implement with functional programming interfaces. Since you've already made a crawler function, you can turn its output into a Dask bag using the `from_delayed` function in pass:[<a data-type="xref" href="#make_bag_of_crawler" data-xrefstyle="select:labelnumber">#make_bag_of_crawler</a>].
+Dask Bag implements more of the functional programming interfaces than Dask Array. The "hello world" of big data is wordcount, which is easier to implement with functional programming interfaces. Since you've already made a crawler function, you can turn its output into a Dask bag using the `from_delayed` function in <<make_bag_of_crawler>>.
 
 [[make_bag_of_crawler]]
 .Turning the crawler function's output into a Dask bag
@@ -115,7 +115,7 @@ include::./examples/dask/Dask-Ch2-Hello-Worlds.py[tags=make_bag_of_crawler]
 ----
 ====
 
-Now that you have a Dask bag collection, you can build everyone's favorite "word count" example on top of it. The first step is turning your bag of text into a bag of words, which you do by using `map` (pass:[<a data-type="xref" href="#make_a_bag_of_words" data-xrefstyle="select:labelnumber">#make_a_bag_of_words</a>]). Once you have the bag of words, you can either use Dask's built-in `frequency` method (pass:[<a data-type="xref" href="#wc_freq" data-xrefstyle="select:labelnumber">#wc_freq</a>]) or write your own `frequency` method using functional transformations (pass:[<a data-type="xref" href="#wc_func" data-xrefstyle="select:labelnumber">#wc_func</a>]).
+Now that you have a Dask bag collection, you can build everyone's favorite "word count" example on top of it. The first step is turning your bag of text into a bag of words, which you do by using `map` (<<make_a_bag_of_words>>). Once you have the bag of words, you can either use Dask's built-in `frequency` method (<<wc_freq>>) or write your own `frequency` method using functional transformations (<<wc_func>>).
 
 [[make_a_bag_of_words]]
 .Turning a bag of text into a bag of words
@@ -158,8 +158,8 @@ Pandas is one of the most popular Python data libraries and Dask has a DataFrame
 Your intuition around what's slow and fast with pandas does not carry over. We will explore this more in the <<dask_df>>.
 ====
 
-To illustrate how you can use Dask DataFrame, we'll re-work the wordcount example from the previous section to use Dask's DataFrame. As with Dask's other collections, you can create Dask Dataframes from local collections, futures, or distributed files. Since you already made a crawler function, you can turn its output into a Dask bag using the `from_delayed` function from pass:[<a data-type="xref" href="#make_bag_of_crawler" data-xrefstyle="select:labelnumber">#make_bag_of_crawler</a>], as we did before. Instead of using `map`, and `foldby`, you can use pandas APIs like `explode` and `value_counts` as 
-shown in pass:[<a data-type="xref" href="#wc_dataframe" data-xrefstyle="select:labelnumber">#wc_dataframe</a>].
+To illustrate how you can use Dask DataFrame, we'll re-work the wordcount example from the previous section to use Dask's DataFrame. As with Dask's other collections, you can create Dask Dataframes from local collections, futures, or distributed files. Since you already made a crawler function, you can turn its output into a Dask bag using the `from_delayed` function from <<make_bag_of_crawler>>], as we did before. Instead of using `map`, and `foldby`, you can use pandas APIs like `explode` and `value_counts` as 
+shown in <<wc_dataframe>>.
 
 [[wc_dataframe]]
 .DataFrame wordcount
