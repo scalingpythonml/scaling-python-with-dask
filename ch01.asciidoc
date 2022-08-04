@@ -4,7 +4,7 @@
 
 .A Note for Early Release Readers
 ****
-With Early Release ebooks, you get books in their earliest form&mdash;the author's raw and unedited content as they write—so you can take advantage of these technologies long before the official release of these titles.
+With Early Release ebooks, you get books in their earliest form&mdash;the authors' raw and unedited content as they write—so you can take advantage of these technologies long before the official release of these titles.
 
 This will be the first chapter of the final book. Please note that the GitHub repo will be made active later on.
 
