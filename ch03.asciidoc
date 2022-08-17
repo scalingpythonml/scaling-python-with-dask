@@ -51,7 +51,7 @@ If you are running on a Unix system you can use the "forkserver" which will redu
 ====
 [source, python]
 ----
-include::./examples/dask/Dask-Ch3-Concepts.py[tags=forkserver]
+include::./examples/dask/Dask-Ch3-Concepts.py[tags=dask_use_forkserver]
 ----
 ====
 
@@ -219,7 +219,7 @@ You should try this out now by visualizing everyone's favourite wordcount exampl
 
 [[vis_ex]]
 .Visualized wordcount task graph
-image::./figures/ch3-how-dask-works/wc.pdf[]
+image::./figures/ch3-how-dask-works/wordcount-visualized.png[]
 
 [TIP]
 ====
