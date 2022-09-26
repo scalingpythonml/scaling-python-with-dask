@@ -52,7 +52,9 @@ include::./examples/dask/Dask-Ch2-Hello-Worlds.py[tags=make_dask_client]
 
 ==== Task Hello World
 
-One of the core building blocks of Dask is `dask.delayed`, which allows you to run functions in parallel and optionally distributed. When you wrap a function with `dask.delayed` and call it with dask.submit, you get back a "delayed" object representing the desired computation. Dask is lazy, so it does not begin computing the delayed function until needed.  You can turn the Delayed into a future, which represents the task and it's value with `dask.submit`. You can use `dask.compute` to get the value of this (or multiple) delayed objects or futures.
+One of the core building blocks of Dask is `dask.delayed`, which allows you to run functions in parallel and optionally distributed. When you wrap a function with `dask.delayed` and call it with dask.submit, you get back a "delayed" object representing the desired computation. Dask is lazy, so it does not begin computing the delayed function until needed.
+When you wrap a function with `dask.delayed` and call it with `dask.submit` (instead of directly calling `dask.compute` on the delayed value) the resulting task is called a "future".
+You can use `dask.compute` to get the value of this (or multiple) delayed objects or futures.
 
 ===== Sleepy task
 
@@ -81,6 +83,9 @@ include::./examples/dask/Dask-Ch2-Hello-Worlds.py[tags=mini_crawl_task]
 ==== Distributed Collections
 
 In addition to the low-level task APIs, Dask also has distributed collections. These collections enable you to work with data that would be too large to fit on a single machine and naturally distribute work on it. Dask has both an unordered collection called "bag", and an ordered collection called "array." Dask array aims to implement some of the ndarray interface, whereas bag focuses more on functional programming (e.g., things like `map` and `filter`). You can load Dask collections from files, take local collections and distribute them, or take the results of dask.delayed tasks and turn them into a collection.
+
+
+In distributed collections Dask splits the data up using partitions. Partitions are used to decrease the scheduling cost compared to operating on individual rows, which is covered in more detail in <<basic_partitioning>>.
 
 ===== Dask Arrays
 
@@ -172,4 +177,8 @@ include::./examples/dask/Dask-Ch2-Hello-Worlds.py[tags=wc_dataframe]
 
 === Conclusion
 
-Now that you've got Dask working on your local machine, if you want, you can jump on over to <<appa_deploy>> and look at the different deployment mechanisms. For the most part, you can run the examples in local mode, albeit sometimes a little slower or smaller scale. However, the next chapter will look at the core concepts of Dask, and one of them will be easier to experiment with on a cluster.
+
+In this chapter you got Dask working on your local machine, as well as had a tour of the different "hello world" (or getting started) examples with most of Dask's different built-in libraries. Subsequent chapters will dive into these different tools in more detail.
+
+
+Now that you've got Dask working on your local machine, if you want, you can jump on over to <<appa_deploy>> and look at the different deployment mechanisms. For the most part, you can run the examples in local mode, albeit sometimes a little slower or smaller scale. However, the next chapter will look at the core concepts of Dask, and one of the (optional) upcoming examples both emphasizes the benefits of Dask running on multiple machines and is generally easier to explore on a cluster. If you don't have a cluster available, you can may wish to set-up a simulated one using something like link::https://microk8s.io/$$[MicroK8s].

@@ -21,6 +21,7 @@ Dask is unique in the distributed computing ecosystem, by integrating popular da
 === Why Do You Need Dask?
 
 Dask simplifies scaling analytics and ML code written in Python, allowing you to handle larger and more complex data and problems.
+Dask aims to fill the space where your existing tools, like pandas DataFrames, or your sci-kit machine learning pipelines start to become too slow (or do not succeed).
 While the term "big data" is perhaps less in vogue now than a few years ago, the data size of the problems has not gotten smaller, and the complexity of the computation and models have not gotten simpler.
 Dask allows you to primarily use the existing interfaces that you are used to (such as pandas and multiprocessing) while going beyond the scale of a single core or even a single machine.
 
@@ -33,15 +34,39 @@ On the other hand, if all your data fits in memory on a laptop, and you can fini
 
 === Where Does Dask Fit in the Ecosystem?
 
-Dask provides scalability to multiple, traditionally distinct tools. It is most often used to scale Python data libraries like pandas and NumPy. Dask extends existing tools for scaling, such as multiprocessing, allowing them to exceed their current limits of single machines to multi-machine.
+Dask provides scalability to multiple, traditionally distinct tools. It is most often used to scale Python data libraries like pandas and NumPy. Dask extends existing tools for scaling, such as multiprocessing, allowing them to exceed their current limits of single machines to multi-core and multi-machine.
+
+.A quick Look at the ecosystem evolution
+image::images/ecosystemfig.png[]
+
+From an abstraction point of view, Dask sits above the machines and cluster management tools, allowing you to focus on Python code instead of the intricacies of machine-to-machine communication.
+
+.An alternate look at the ecosystem
+image::images/layout.png[]
+
+
+We say a problem is "compute" bound if the limiting factor is not the amount of data, but rather the work we are doing on the data. Memory bound problems are problems where the computation is not the limiting factor, rather the ability to store all of the data in memory is the limiting factor. Some problems can exhibit both "compute" and "memory" bound problems as is often the case for large deep learning problems.
+
+
+Multi-Core (think multi-threading) processing can help with "compute" problems (up to the limit of the number of cores in a machine). Generally multi-core processing is unable to help with memory bound problems as all CPUs have similar access to the memory footnote:[With the exception of non-uniform memory access (NUMA) systems
+
+
+Accelerated processing, like specialized instruction sets or specialized hardware like tensor processing units or graphics processing units, is generally only useful for compute bound problems. Sometimes using accelerated processing can introduce memory bounding problems, as the amount of memory available to the accelerated computation can be smaller than the "main" system memory.
+
+
+Multi-Machine processing is important both of these classes of problems, namely "compute" bound and "memory" bound problems. Since the number of cores you can get in a machine (affordable) are limited, even if a problem is "only" compute bound at certain scales you will need to consider multi-machine processing. More commonly, memory bound problems are a good fit for multi-machine scaling as Dask can often split up the data between the different machines.
+
+
+Dask has both multi-core and multi-machine scaling, allowing you to scale your Python code as you best see fit.
 
 
 Much of Dask's power comes from the tools and libraries built on top of it, which fit into their parts of the data processing ecosystem (such as BlazingSQL). Your background and interest will naturally shape how you first view Dask, so in the following subsections, I'll briefly discuss how you can use Dask for different types of problems, as well as how it compares to some existing tools.
 
-
 ==== Big Data
 
-Dask has better Python library integrations and lower overhead for tasks than many alternatives. Existing big data tools, like PySpark, have more data sources and optimizers (like predicate push-down) but higher overhead per task. Dask's lower overhead is mainly because the rest of the Python big data ecosystem is built primarily on top of the Java Virtual Machine (JVM). These tools have advanced features like query optimizers, but with the cost of copying data between the JVM and Python.
+Dask has better Python library integrations and lower overhead for tasks than many alternatives.
+Apache Spark (and it's Python companion PySpark) is one of the most popular tools for big data.
+Existing big data tools, like PySpark, have more data sources and optimizers (like predicate push-down) but higher overhead per task. Dask's lower overhead is mainly because the rest of the Python big data ecosystem is built primarily on top of the Java Virtual Machine (JVM). These tools have advanced features like query optimizers, but with the cost of copying data between the JVM and Python.
 
 Unlike many other traditional big data tools, Spark, Hadoop, etc., Dask considers local mode a first-class citizen. The traditional big data ecosystem focuses on using the local mode for testing, but Dask focuses on good performance when running on a single node.
 
@@ -50,18 +75,18 @@ Another significant cultural difference comes from packaging, with many projects
 ==== Data Science
 
 One of the most popular Python libraries in the data science ecosystem is `pandas`.
-Apache Spark is one of the most popular tools for distributed data science. It has support for both Python and JVM languages. Spark's first attempt at DataFrames more closely resembled SQL than what you may think of as DataFrames. While Spark has started to integrate pandas support with the link:$$https://koalas.readthedocs.io/en/latest/$$[Koalas project], in my opinion, Dask's support of data science library APIs is one of the best.footnote:[Of course opinions vary, e.g., https://tomaspeluritis.medium.com/war-of-data-frames-i-r-a-p-read-aggregate-and-print-cd37b8f8849c versus https://databricks.com/blog/2021/04/07/benchmark-koalas-pyspark-and-dask.html versus https://coiled.io/blog/dask-as-a-spark-replacement/.] 
+Apache Spark (and it's Python companion PySpark) is also one of the most popular tools for distributed data science. It has support for both Python and JVM languages. Spark's first attempt at DataFrames more closely resembled SQL than what you may think of as DataFrames. While Spark has started to integrate pandas support with the link:$$https://koalas.readthedocs.io/en/latest/$$[Koalas project], in my opinion, Dask's support of data science library APIs is one of the best.footnote:[Of course opinions vary, e.g., https://tomaspeluritis.medium.com/war-of-data-frames-i-r-a-p-read-aggregate-and-print-cd37b8f8849c versus https://databricks.com/blog/2021/04/07/benchmark-koalas-pyspark-and-dask.html versus https://coiled.io/blog/dask-as-a-spark-replacement/.] 
 In addition to the pandas' APIs, Dask supports scaling NumPy, scikit-learn, and other data science tools.
 
 [NOTE]
 ====
-Dask can be extended to support data types besides NumPy and pandas, and this is how GPU support is implemented with cuDF.
+Dask can be extended to support data types besides NumPy and pandas, and this is how GPU support is implemented with link::$https://github.com/rapidsai/cudf$$[cuDF].
 ====
 
 
 ==== Parallel to Distributed Python
 
-Parallel Python encompasses a wide variety of tools ranging from multiprocessing to Celery.footnote:[Celery is an asynchronous task queue which also splits up and distributes work but is at a lower level than Dask and does not have the same high-level conveniences as Dask.] Dask gives you the ability to specify an arbitrary graph of dependencies and execute them in parallel. Under the hood, this execution can be backed either by a single machine (with threads or processes) or distributed across multiple workers.
+Parallel Python encompasses a wide variety of tools ranging from multiprocessing to Celery.footnote:[Celery often used for background job management is an asynchronous task queue which can also splits up and distributes work but is at a lower level than Dask and does not have the same high-level conveniences as Dask.] Dask gives you the ability to specify an arbitrary graph of dependencies and execute them in parallel. Under the hood, this execution can be backed either by a single machine (with threads or processes) or distributed across multiple workers.
 
 [NOTE]
 ====
@@ -79,9 +104,9 @@ You can accelerate Python in a few different ways, ranging from code generation 
 Dask itself is not a library for accelerated Python, but you can use it in conjunction with accelerated Python tools. For ease of use, some community projects integrate acceleration tools with Dask, such as `cuDF` and `dask-cuda`.  When using accelerated Python tools with Dask, you'll need to be careful to structure your code to avoid serialization errors (see <<help_im_in_a_pickle>>).
 
 
-===== SQL engine
+===== SQL engines
 
-Dask itself does not have a SQL engine; however, both link:$$https://dask-sql.readthedocs.io/en/latest/$$[dask-sql] and link:$$https://github.com/BlazingDB/blazingsql$$[BlazingSQL] use Dask to provide a distributed SQL engine. Dask-sql uses the popular Apache Calcite project, which powers many other SQL engines. BlazingSQL extends Dask DataFrames to DataFrames supporting GPU operations. cuDF DataFrames have a slightly different representation. Apache Arrow makes it straightforward to convert a Dask DataFrame to cuDF and vice versa.
+Dask itself does not have a SQL engine; however, link:$$https://fugue-tutorials.readthedocs.io/tutorials/fugue_sql/index.html$$[FugueSQL], link:$$https://dask-sql.readthedocs.io/en/latest/$$[dask-sql], and link:$$https://github.com/BlazingDB/blazingsql$$[BlazingSQL] use Dask to provide a distributed SQL engine. Dask-sql uses the popular Apache Calcite project, which powers many other SQL engines. BlazingSQL extends Dask DataFrames to DataFrames supporting GPU operations. cuDF DataFrames have a slightly different representation. Apache Arrow makes it straightforward to convert a Dask DataFrame to cuDF and vice versa.
 
 [TIP]
 ====

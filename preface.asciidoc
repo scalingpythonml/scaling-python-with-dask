@@ -14,7 +14,7 @@ This book is not for people who love setting up machines, fine-tuning memory all
 
 
 
-This book assumes you know enough Python, and the libraries you are using, to complete your work on a smaller scale, but not necessarily how to handle larger data sizes or bigger expirements. If you don't
+This book assumes you know enough Python, and the libraries you are using (be it pandas, numpy, sci-kit learn or similar), to complete your work on a smaller scale, but not necessarily how to handle larger data sizes or bigger expirements. If you don't
 
 === Supporting Books
 
