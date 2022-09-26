@@ -57,13 +57,25 @@ include::./examples/dask/Dask-Ch3-Concepts.py[tags=dask_use_forkserver]
 
 Dask's local backends are designed for performance rather than testing that your code will work on a distributed scheduler. To test that your code will run remotely, you should use Dask's Distributed scheduler with a "LocalCluster" instead.
 
-==== Distributed (Dask Client)
+==== Distributed (Dask Client and Scheduler)
 
-Dask has one distributed scheduler backend, that talks to many different types of clusters, including a "LocalCluster". Each type of cluster is supported in its own library, and the DaskClient takes and will schedule a scheduler and workers.
+Dask has one distributed scheduler backend, that talks to many different types of clusters, including a "LocalCluster". Each type of cluster is supported in its own library, which schedules the scheduler footnote:[Say that five times fast] that the Dask client then connects to.
 
-The Dask Client is your entry point into the Dask distributed scheduler. In <<ex_dask_k8s>> will be using Dask with a Kubernetes cluster, and if you have another type of cluster or want details please see <<appa_clusterrs>>.
 
-===== Libraries & Dependencies
+The Dask Client is your entry point into the Dask distributed scheduler. In <<ex_dask_k8s>>
+will be using Dask with a Kubernetes cluster,
+and if you have another type of cluster or want details please see <<appa_clusterrs>>.
+
+===== Auto-Scaling (also known as "Adaptive Deployments.")
+
+Some of Dask's cluster backends, including Kubernetes, support auto-scaling, which Dask calls "adaptive deployments." Auto-scaling is useful mostly in situations of shared cluster resources, or when running on cloud providers where the underlying resources are payed for by the hour.
+
+===== Important Limitations with the Dask Client
+
+Dask's client is not "fault-tolerant", so while Dask can handle the failures of it's workers, if the connection between the client and the scheduler is broken your application will fail. A common work around for this is scheduling the client in the same environment as the scheduler, although this does somewhat reduce the usefuleness of having the client and scheduler as separate components.
+
+
+===== Libraries & Dependencies in Distributed Clusters
 
 Part of why Dask is so powerful is the Python ecosystem that it is in. While Dask will pickle footnote:[Sometimes also called "serialization", covered in detail in <<ser_pick_dtl>>] and send our code to the workers, this doesn't include the libraries we use.footnote:[Automatically picking up and shipping the libraries would be very hard and also slow, although it can be done under certain circumstances.] To be able to take advantage of that ecosystem you need to be able to use additional libraries. During the exploration phase it is common to install packages at run-time as you discover that you need them.
 
@@ -167,7 +179,7 @@ include::./examples/dask/Dask-Ch3-Concepts.py[tags=make_chunked_array]
 
 Partitions/chunking doesn't have to be static, and the `rechunk` function allows you to change the chunk size of a Dask array.
 
-Dask Bag's partitions are called partitions. Unlike with Dask Arrays, since Dask Bag's do not support indexing, Dask does not track the number of elements in each partition. When you use scatter, Dask will try to distribute the data as well as possible, but subsequent iterations can change the number of elements inside of each partition. Similar to Dask Arrays, when creating from a local collection you can specify the number of partitions of a bag, except the parameter is called `npartitions` instead of `chunks`.
+Dask Bag's partitions are called partitions. Unlike with Dask Arrays, since Dask Bag's do not support indexing, Dask does not track the number of elements in each partition. When you use scatter, Dask will try to partition the data as well as possible, but subsequent iterations can change the number of elements inside of each partition. Similar to Dask Arrays, when creating from a local collection you can specify the number of partitions of a bag, except the parameter is called `npartitions` instead of `chunks`.
 
 You can change the number of partitions in a Bag by calling `repartition` with either `npartitions` (for a fixed number of partitions) or `partition_size` for a target size of each partition. Specifying `partition_size` is more expensive since Dask needs to do some extra computation to determine what the matching number of partitions would be.
 
