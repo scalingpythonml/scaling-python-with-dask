@@ -1,0 +1,500 @@
+[[ch04]]
+== Dask DataFrame
+
+.A Note for Early Release Readers
+****
+With Early Release ebooks, you get books in their earliest form&mdash;the authors' raw and unedited content as they write—so you can take advantage of these technologies long before the official release of these titles.
+
+This will be the fourth chapter of the final book. Please note that the GitHub repo will be made active later on.
+
+If you have comments about how we might improve the content and/or examples in this book, or if you notice missing material within this chapter, please reach out to the editor at vwilson@oreilly.com.
+****
+
+Pandas DataFrames, while popular, quickly run into memory constraints as data sizes grow since they store the entire data in memory. Pandas DataFrames have a robust API for all kinds of data manipulation and are frequently the starting point for many analytics and machine learning projects. While pandas itself does not have machine learning built in, data scientists often use it as part of data and feature preparation during the exploratory phase of new projects. As such, scaling Pandas DataFrames to be able to handle large data sets is of vital importance to many data scientists. Most data scientists are already familiar with the pandas libraries, and Dask's DataFrame implements much of the pandas API while adding the ability to scale.
+
+Dask is one of the first to implement a usable subset of the pandas APIs, other projects like Spark have added their approaches. This chapter assumes you have a good understanding of the pandas DataFrame APIs; if not, you should check out _Python for Data Analysis: Data Wrangling with Pandas, NumPy, and IPython_ by Wes McKinney.
+
+You can often use Dask DataFrames as a replacement for Pandas DataFrames with minor changes thanks to duck-typing. However, this can have performance drawbacks, and some functions are not present. These drawbacks come from the distributed parallel nature of Dask, which adds communication costs for certain types of operations. In this chapter, you will learn how to minimize these performance drawbacks and work around any missing functionality.
+
+Dask DataFrames requires that your data and your computation are well suited to Pandas DataFrames. Dask has bag's for unstructured data, arrays for array structured data, delayed for arbitrary functions, and actors for stateful operations. If even at a small scale, you wouldn't consider using pandas for your problem, Dask DataFrames are probably not the right solution.
+
+=== How Dask DataFrames Are Built
+
+Dask DataFrames build on top of Pandas DataFrames. Each partitionfootnote:[See <<basic_partitioning>> for a review of partitioning.] is stored as a pandas DataFrame. Using pandas DataFrames for the partitions simplifies the implementation of much of the APIs. This is especially true for row-based operations, where Dask passes the function call down to each pandas DataFrame.
+
+Most of the distributed components of Dask's DataFrames use the three core building blocks `map_partitions`, `reduction`, and `rolling`. You mostly won't need to call these functions directly, instead, you will use higher-level APIs, but understanding them and how they work is important to understanding how Dask works. `shuffle` is a critical building block of distributed DataFrames for re-organizing your data. Unlike the other building blocks, you may use it directly more frequently as Dask is unable to abstract away partitioning.
+
+=== Loading and Writing
+
+Data analytics are only as valuable as the data they have access to, and our insights are only helpful if they result in action. Since not all of our data is in Dask, it's essential to read and write data from the rest of the world. So far, the examples in this book have mainly used local collections, but you have many more options.
+
+Dask supports reading and writing many standard file formats and file systems. These formats include CSV, HDF, fixed-width, Parquet, and ORC. Dask supports many of the standard distributed file systems, from HDFS to S3, and reading from "regular" file systems.
+
+[TIP]
+====
+Reading from "regular" "local" files can be complicated in Dask as the files need to exist on all workers. If a file only exists on the head node, consider copying to a distributed filesystem like S3 or NFS, or load it locally and use Dask's "client.scatter" function to distribute the data if it's small enough. Sufficiently small files _may_ be a sign that you don't yet need Dask, unless the processing on them is complex/slow.
+====
+
+==== Formats
+
+Dask's DataFrame loading and writing functions start with `to_` or `read_` as the prefixes. Each format has its own configuration, but in general, the first positional argument is the location of the data to be read. The location can be a wildcard path of files (e.g., "s3://test-bucket/magic/*"), a list of files, or a regular file location.
+
+[NOTE]
+====
+Wildcard paths only work with filesystems that support directory listing. For example, they do not work on HTTP.
+====
+
+When loading data, breaking the data into the right number of partitions will speed up all of your operations. As discussed, more partitions allow for more parallelism but have a non-zero overhead. The different formats have slightly different ways to control this. HDF takes `chunksize`, indicating the number of rows per-partition. Parquet also takes `split_row_groups`, which takes an integer of logical partitioning desired out of the parquet file, and Dask will split the whole set into those chunks, or less. If not given, the default behavior is each partition to correspond to a parquet file. The text-based formats (CSV, fixed-width, etc.) take a `blocksize` parameter with the same meaning as Parquet's `chunksize` but a maximum value of 64MB. You can verify this by loading a dataset and seeing the number of tasks and partitions increase with smaller target sizes as in <<ex_load_1kb>>.
+
+[[ex_load_1kb]]
+.Dask DataFrame load CSV with 1KB junks
+====
+[source, python]
+----
+include::./examples/dask/Dask-Ch4-DataFrames.py[tags=ex_load_1kb]
+----
+====
+
+Loading CSV and JSON files is more complicated as, unlike self-describing data types, they don't have any schema information encoded. Dask DataFrames need to know the types of the different columns to serialize the data correctly. By default, Dask will automatically look at the first "few" records and guess the data types for each column. This process is known as schema inference, and can be quite slow.
+
+[[ex_load_uk_gender_pay_gap_infered]]
+.Dask DataFrame load CSV depending entirely on inference
+====
+[source, python]
+----
+include::./examples/dask/Dask-Ch4-DataFrames.py[tags=ex_load_uk_gender_pay_gap_infered]
+----
+====
+
+Unfortunately, schema inference does not always work. For example, if you try and load the UK's gender pay gap disparity data, from https://gender-pay-gap.service.gov.uk/viewing/download-data/2021, when you try and access the data, as in <<ex_load_uk_gender_pay_gap_infered>>, you will get an error of "Mismatched dtypes found in pass:[<code>pd.read_csv</code>/<code>pd.read_table</code>"]. When Dask's column type inference is incorrect you can override it (per-column) by specifying the `dtype` parameter as shown in <<ex_load_uk_gender_pay_gap>>.
+
+[[ex_load_uk_gender_pay_gap]]
+.Dask DataFrame load CSV and specify data type
+====
+[source, python]
+----
+include::./examples/dask/Dask-Ch4-DataFrames.py[tags=ex_load_uk_gender_pay_gap]
+----
+====
+
+[NOTE]
+====
+In theory, you can have Dask sample more records by specifying more bytes with the `sample` parameter, but this does not currently fix the problemfootnote:[The current sampling code does not strictly respect the number of bytes requested.].
+====
+
+Even when schema inference does not return an error, depending on it has a number of drawbacks. Schema inference involves sampling data and its results are therefore both probabilistic and slow. When you can, you should use self-describing formats or otherwise avoid schema inference your data loading will be faster and more reliable. Some common self-describing formats you may encounter include Parquet, Avro, and ORC.
+
+Adding file formats is a lot of work, especially if there are no existing Python libraries. If there are existing libraries, you might find it easier to read the raw data into a bag and parse it with a map function, which I'll explore more of in the next chapter.
+
+[TIP]
+====
+Dask does not detect sorted data on-load. Instead, if you have pre-sorted data, add the "sorted=true" parameter when setting an index to take advantage, which you will learn about in the next section. If you specify this when the data is not sorted, you may get silent data corruption.
+====
+
+You can also connect Dask to databases or microservices. Dask has built-in support for loading SQL databases using SQLAlchemy. For Dask to split up the query on multiple machines, you need to give Dask an "index" key. Often SQL databases will have a primary key or numerical index key that you can use for this purpose. e.g. `read_sql_table("customers", index_col="customer_id")`.
+
+More advanced connections to databases or microservices are best made using the bag interface and writing your custom load code, which you will learn more about in the next chapter.
+
+.Partitioned Reads and Writes with Parquet
+****
+The least expensive data to process is the data you never have to read. If you only need a subset of the files (or columns), limiting your reads can greatly speed up your processing. Similarly, when writing your data out, if downstream users are likely only going to need subsets of the data, it can be helpful to write data so consumers can read only the files or columns they need.
+
+[TIP]
+====
+Dask only implements filtered reads and writes for Parquet. If you are reading data in another partitioned format, you can ignore the filtering or manuallyfootnote:[You can also use a metastore, we'll discuss later.] compute the required files. There is no easy way to implement partitioned writes for other formats.
+====
+
+Parquet is a self-describing format, which means it holds the schema/type information. The data is stored in a "columnar format" that allows for reading of just the columns you care about. If you need only some of the columns, pass the `columns=` flag when calling `read_parquet`.
+
+If you are loading data from Parquet with partitioning on the key that you care about you should add the filter to the `read_parquet`. This filter is not an arbitrary expression; rather, it is a tuple of key, operation, value. The key is a string representing the column, the operation is a string and one of `==`, `<`, `<=`, `>`, `>=`, `!=`, `in, or `not in`. The value is either a single value or list of values (for in) which you are interested in loading.
+
+While Dask has limited support for query push-down with partition reads, many other tools can automatically reduce the data read if it follows a known partitioning function. When you write data out, you can have Dask write the data to different directories based on partitioning keys by adding `partition_on`.
+
+On the flip side, if most of your downstream users consume all of the table or have unique columns they are filtering on, a partitioned write can decrease performance. Since listing files on a network filesystem is not free, discovering the files becomes more expensive when you have partitioned writes that you are not taking advantage of.
+
+Other systems commonly use metastores for partitioned reads and writes when dealing with large data sizes. Dask does not presently have the built-in ability to talk to a metastore, like Iceberg, Hive, or DeltaLake. Metastores can be useful for loading subsets tables and time-traveling (looking at old versions) when needed. The https://github.com/rajagurunath/dask_deltatable[dask deltatable] library integrates the reading DeltaLake table. Iceberg has a link:$https://github.com/linkedin/iceberg/blob/master/site/docs/python-api-intro.md$[built-in Python API] that you can use to get a list of files associated with a particular query, and then use Dask's existing file APIs on top of it. I expect the integrations with metastores will continue to improve rapidly.
+****
+
+==== File Systems
+
+Loading data can be a substantial amount of work and a bottleneck, so Dask distributes this like most other tasks. If you are using Dask distributed, each worker must have access to the files to parallelize the loading. Rather than copying the file to each worker, network file systems allow everyone to access the files. Dask’s file access layer uses the FSSPEC libraryfootnote:[from the intake project] to access the different file systems. Since FSSPEC supports such a range of file systems, it does not install the requirements for every supported file system. You can see what file systems are supported and which ones need additional packages by running:
+
+[[ex_supported_fs]]
+.Dask DataFrame list supported filesystems
+====
+[source, python]
+----
+include::./examples/dask/Dask-Ch4-DataFrames.py[tags=ex_load_uk_gender_pay_gap]
+----
+====
+
+Many filesystems require some kind of configuration, be it endpoint or credentials. Often new filesystems, like MINIO, offer S3 compatible APIs but overload the endpoint and require some extra configuration to function. With Dask you specify the configuration parameters to the read/write function with `storage_options`. Everyone's configuration here will likely be a bit differentfootnote:[https://filesystem-spec.readthedocs.io/en/latest/api.html#built-in-implementations[FSSPEC documentation] includes the specifics for configuring each of the backends.]. Dask will use your storage_options dict as the keyword arguments to the underlying FSSPEC implementation. For example, my storage_options for minio are shown in <<minio_storage_options>>.
+
+[[minio_storage_options]]
+.Dask Configure MINIO
+====
+[source, python]
+----
+include::./examples/dask/Dask-Explore-S3MinIO.py[tags=minio_storage_options]
+----
+====
+
+.Compression
+****
+Compression reduces storage costs making it popular, and the same library used to abstract file system access in Dask also abstracts compression. Some compression algorithms support random reads, but many do not. For people coming from the Hadoop ecosystem this can be thought of as the impact on "splittable."
+
+Dask's reading and writing functions take the parameter "compression" to specify the compression algorithm used. One of the most popular options is `gzip`.
+
+Just because the underlying compression algorithm may support random reads does not mean that the FSSPEC wrapper will. Unfortunately, there is no current, easy way to check what a compression format supports besides testing it out or reading the source code.
+
+Dask does not support "streaming" non-random access input formats. This means that the data inside each file must fit entirely in memory.
+****
+
+=== Indexing
+
+Indexing into a DataFrame is one of the powerful features of pandas, but comes with some restrictions when moving into a distributed system like Dask. Since Dask does not track the size of each partition, positional indexing by row is not supported. You can use positional indexing into columns, as well as label indexing for columns or rows. Indexing is frequently used to filter the data to only have the components you need. I did this for the San Francisco Covid data by looking at just the case rates for people of all vaccine statuses, as shown in <<index_covid_data>>.
+
+[[index_covid_data]]
+.Dask DataFrame Indexing
+====
+[source, python]
+----
+include::./examples/dask/Dask-Ch4-DataFrames.py[tags=index_covid_data]
+----
+====
+
+If you truly need positional indexing by row, you can implement your own by computing the size of each partition and using this to select the desired partition subsets. This is very inefficient, so Dask avoid implementing directly so you make an intentional choice before doing this.
+
+=== Shuffles
+
+As mentioned in the previous chapter, shuffles are expensive. The primary causes of the expensive nature of shuffles are the comparative slowness of network speed to reading data from memory and serialization overhead. These costs scale as the amount of data being shuffled increases, so Dask has some techniques to reduce the amount of data being shuffled. These techniques depend on certain data properties or the operation being performed.
+
+==== Rolling Windows and map_overlap
+
+One situation which can trigger the need for a shuffle is a rolling window, where at the edges of a partition your function needs some records from its neighbors. Dask Dataframe has a special `map_overlap` function where you can specify a "look-after"footnote:[Sometimes also called a look-ahead] and "look-before"footnote:[Sometimes also called a look-back] window of rows to transfer (either an integer or a time delta). The simplest example taking advantage of this is a rolling average shown in <<rolling_date_ex>>.
+
+[[rolling_date_ex]]
+.Dask DataFrame rolling average
+====
+[source, python]
+----
+include::./examples/dask/Dask-Ch4-DataFrames.py[tags=rolling_date_ex]
+----
+====
+
+This allows Dask to transfer only the data needed. For this implementation to work correctly, your minimum partition size will need to be larger than your largest window.
+
+[WARNING]
+====
+Dask's Rolling Windows will not cross multiple partitions. If your DataFrame is partitioned so that the look-after or look-back is greater than the length of the neighbor's partition, the results will either fail or be incorrect. Dask validates this for timedelta look-after, but no such checks are performed for look-backs or integer look-after.
+====
+
+An effective, but expensive, technique to work around the single-partition look-ahead / look-behind of Dask is to `repartition` your Dask DataFrames.
+
+==== Aggregations
+
+Aggregations are another special case that can reduce the amount of data that needs to be transferred over the network. Aggregations are anything where you combine records. If you are coming from a map/reduce or Spark background, reduceByKey, is the classic aggregation. Aggregations can either be "by key" or global across an entire DataFrame.
+
+To aggregate by key, you first need to call `groupby` with the column[s] representing the key, or keying function to aggregate on. For example, calling `df.groupby("PostCode")` groups your DataFrame on postal code or calling `df.groupby(["PostCode", "SicCodes"])` uses a combination of columns for grouping. Function-wise, many of the same pandas aggregates are available, but the performance of aggregates in Dask are very different than with local pandas DataFrames.
+
+[TIP]
+====
+If you're aggregating by partition key, Dask can compute the aggregation without needing a shuffle.
+====
+
+The first way to speed up your aggregations is to reduce the columns that you are aggregating on, since the fastest data to process is no data. Finally, when possible, doing multiple aggregations at the same time reduces the number of times the same data needs to be shuffled, meaning if you need to compute the average and the max you should compute both at the same time.
+
+[[max_mean]]
+.Dask DataFrame Max Mean Together
+====
+[source, python]
+----
+include::./examples/dask/Dask-Ch4-DataFrames.py[tags=max_mean]
+----
+====
+
+For distributed systems like Dask, if an aggregation can be partially evaluated and then merged you can potentially combine some records pre-shuffle. Not all partial aggregations are created equal. What matters with partial aggregations is how much data is reduced when merging values with the same key.
+
+The most efficient aggregations take a sub-linear amount of space regardless of the number of records. Some of these can take constant space such as sum, count, first, minimum, maximum, mean, and standard deviation. For more complicated tasks, like quantiles and distinct counts, there are also sub-linear approximation options. These approximation options can be great, as exact answers can require linear growth in storage.
+
+Some aggregation functions are not sublinear in growth, but "tend to" or "might" not grow too quickly. Counting the distinct values is in this group, but if all your values are unique then there is no space-saving.
+
+To take advantage of efficient aggregations, you need to use a built-in aggregation from Dask, or write your own using Dask's aggregation class. Whenever you can, use a built-in. Built-ins not only require less effort, but also are often faster. Not all of the pandas aggregates are directly supported in Dask, so sometimes your only choice is to write your own aggregate.
+
+If you chose to write your own aggregate, you have three functions to define: `chunk` for handling each group-partition/chunk, `agg` to combine the results of `chunk` between partitions, and (optionally) `finalize` to take the result of `agg` and produce a final value.
+
+The fastest way to understand how to use partial aggregation is by looking at an example that uses all three functions. Using weighted average as an example, with <<weight_avg>>, can help you think of what is needed for each function. The first function needs to compute the weighted values and the weights. The agg function combines these by summing each side part of the tuple. Finally, the finalize function divides the total by the weights.
+
+[[weight_avg]]
+.Dask Custom Aggregate
+====
+[source, python]
+----
+include::./examples/dask/Dask-Ch4-DataFrames.py[tags=custom_agg]
+----
+====
+
+In some cases, like a pure summation, you don't need to do any post processing on agg's output; so you can skip the finalize function.
+
+Not all aggregations must be "byKey"; you can also compute aggregations across all rows. Dask's custom aggregation interface, however, is only exposed with "byKey" operations.
+
+Dask's built-in full DataFrame aggregations use a lower level interface called `apply_contact_apply`, for partial aggregations. Rather than learn two different APIs for partial aggregations, I prefer to do a static `groupby` by providing a constant grouping function. This way we only have to know one interface for aggregations. You can use this to see what the aggregate COVID-19 numbers are across the DataFrame as shown in <<agg_entire>>.
+
+[[agg_entire]]
+.Dask DataFrame Aggregate Entire DataFrame
+====
+[source, python]
+----
+include::./examples/dask/Dask-Ch4-DataFrames.py[tags=agg_entire]
+----
+====
+
+If a built-in aggregation exists it will likely be better than one you or I would write. Sometimes a partial aggregation is partially implemented, like in the case of Dask's HyperLogLog: it is implemented only for full DataFrame. You can often translate simple aggregations using `apply_contact_apply or `aca` by copying the chunk function, using the `combine` parameter for `agg`, and using the `aggregate` parameter for `finalize`. This is shown with porting Dask's HyperLogLog implementation in <<custom_agg_hyperloglog>>.
+
+[[custom_agg_hyperloglog]]
+.Dask DataFrame Port apply_concat_apply aggregate
+====
+[source, python]
+----
+include::./examples/dask/Dask-Ch4-DataFrames.py[tags=custom_agg_hyperloglog]
+----
+====
+
+Slow/inefficient aggregationsfootnote:[Or very likely to cause an out of memory exception.] use storage proportional to the records being aggregated. Examples from this slow group include making a list, and naively computing exact quantilesfootnote:[There are alternate algorithms for exact quantiles that depend on more shuffles to reduce the space overhead.]. With these slow aggregates, there is no benefit to using Dask's aggregation class over the `apply` API which you may wish to use for simplicity. For example, if you just wanted a list of employer IDs by postal code, rather than having to write three different functions you could use a one-liner like `df.groupby("PostCode")["EmployerId"].apply(lambda g: list(g))`. Apply is implemented as a "full-shuffle" which is covered in the next section.
+
+[WARNING]
+====
+Dask is unable to apply partial aggregations when you use the `apply` function.
+====
+
+==== Full Shuffles and Partitioning
+
+If an operation seems to be slower inside of Dask than you would expect from local working in local Data Frames it might be because it requires a full shuffle. An example of this is sorting which is inherently expensive in distributed systems because it, most often, requires a shuffle. Full shuffles are sometimes an unavoidable part of working in Dask. Counter intuitively, while full shuffles are themselves slow, you can use them to speed up future operations that are all happening on the same grouping key(s). As mentioned in the aggregation section, one of the ways a full shuffle is triggered is by using the `apply` method when partitioning is not aligned.
+
+===== Partitioning
+
+You will most commonly use full-shuffles to repartition your data. It's important to have the right partitioning when dealing with aggregations, rolling windows, or look-ups/indexing. As discussed in the rolling window section, Dask cannot do more than one partition worth of look-ahead or look-behind, so having the right partitioning is required to get the correct results. For most other operations, having incorrect partitioning will slow down your job.
+
+Dask has three primary methods for controlling the partitioning of a DataFrame: `set_index` `repartition`, and `shuffle`. You use `set_index` for situations where the partitioning is being changed to a new key/index. `repartition` keeps the same key/index but changes the splits. `repartition` and `set_index` take similar parameters, with `repartition` not taking an index key name. In general, if you are not changing the column used for the index, you should use `repartition`. `shuffle` is a bit different since it does not produce a "known" partitioning scheme that operations like `groupby` can take advantage of.
+
+[options="header"]
+|===
+|Method |Changes Index Key |Sets Number of Partitions |Results in a "known" partitioning scheme |Ideal Use Case
+|set_index |Yes |Yes |Yes |Changing the index key
+|repartition |No |Yes |Yes |Increasing / decreasing number of partitions
+|shuffle |No |Yes |No |Skewed distribution of keyfootnote:[Hashes the key for distribution which can help randomly distribute skewed data *if* the keys are unique (but clustered).]
+|===
+
+The first step of getting the right partitioning for your DataFrame is to decide if you want an index. Indexes are useful when filtering data by an indexed value, indexing, grouping, and almost any other "by key" type operation. One such by key operation would be a groupby, then the column being grouped on could be a good candidate for the key. If you use a rolling window over a column, then that column must be the key, which makes choosing the key relatively easy. Once you've decided on an index you can call `set_index` with the column name of the index (e.g. `set_index("PostCode")`). This will, under most circumstances, result in a shuffle, so it's a good time to size your partitions.
+
+[TIP]
+====
+If you're unsure what the current key used for partitioning is, you can check the `index` property to see the partitioning key.
+====
+
+Once you've chosen your key, the next question is how to "size" your partitions. The advice in <<basic_partitioning>> generally applies here: shoot for enough partitions to keep each machine busy but keep in mind the general sweet spot of 100mb to 1gb. Dask generally computes pretty even splits if you give it a target number of partitionsfootnote:[Key-skew can make this impossible for a known partitioner.]. Thankfully `set_index` will also take `npartitions`. To repartition the data by postal code, with 10 partitions, you would add `set_index("PostCode", npartitions=10)`, otherwise Dask will default to the number of input partitions.
+
+If you plan to use rolling windows, you will likely need to ensure you have the right size (in terms of key range) covered in each partition. To do this as part of `set_index` you would need to compute your own divisions to ensure each partition has the right range of records present. Divisions are specified as a list starting from the minimal value of the first partition up to the maximum value of the last partition. Each value in between is a "cut" point for between the pandas DataFrames that make up the Dask DataFrame. To make a DataFrame with "[0, 100) [100, 200), (300, 500]" you would write `df.set_index("NumEmployees", divisions=[0, 100, 200, 300, 500])`. Similarly for the date range, to support a rolling window of up to 7 days, from the start of the pandemic to this writing is shown in <<set_index_with_rolling_window>>.
+
+[[set_index_with_rolling_window]]
+.Dask DataFrame Rolling Window with set_index
+====
+[source, python]
+----
+include::./examples/dask/Dask-Ch4-DataFrames.py[tags=set_index_with_rolling_window]
+----
+====
+
+[WARNING]
+====
+Dask, including rolling time windows, assumes that your partition index is monotonicallyfootnote:[Strictly increasing with no repeated values (e.g. 1,4,7 is monotonically increasing but 1,4,4,7 is not).] increasing.
+====
+
+So far you've had to specify the number of partitions, or the specific divisions, but you might be wondering if Dask can just figure this out itself. Thankfully, Dask's repartition function has the ability to pick divisions for a given target size. However, doing this is a non-trivial cost as Dask must evaluate the DataFrame as well as the repartition itself.
+
+[[repartition_ex]]
+.Dask DataFrame Automatic Partitioning
+====
+[source, python]
+----
+include::./examples/dask/Dask-Ch4-DataFrames.py[tags=repartition]
+----
+====
+
+[WARNING]
+====
+Dask's set_index has a similar `partition_size` parameter, but as of the writing, only works to reduce the number of partitions (see https://github.com/dask/dask/issues/7110).
+====
+
+As you've seen at the start of this chapter, when writing DataFrame, each partition is given its own file, but sometimes this can result in files that are too big or too small. Some tools can only accept one file as input, so you need to repartition everything into a single partition. Other times, the data storage system is optimized for a certain file size, like HDFS' default block size of 128mb. The good news is the methods techniques, such as `repartition` or `set_index` solves these problems for you.
+
+=== Embarrassingly Parallel Operations
+
+`map_partitions` applies a function to each of the partitions underlying pandas DataFrames and the result is also a pandas DataFrame. Functions implemented with `map_partitions` are embarrassingly parallelfootnote:[Embarrassingly parallel problems are ones where the overhead of distributed computing and communication is low. See https://en.wikipedia.org/wiki/Embarrassingly_parallel] since they don't require any inter-worker transfer of data. `map_partitions` implements `map`, and many row-wise operations. If there is a row-wise operation that you want to use that you find missing you can implement it yourself, as shown with <<filna_ex>>.
+
+[[filna_ex]]
+.Dask DataFrame fillna
+====
+[source, python]
+----
+include::./examples/dask/Dask-Ch4-DataFrames.py[tags=filna_ex]
+----
+====
+
+You aren't limited to calling pandas's built-ins as in the above example. Provided that your function takes and returns a DataFrame, you can do pretty much anything you want inside of `map_partitions`.
+
+The full pandas API is too long to cover in the scope of this chapter, but if a function can operate on a row-by-row basis without any knowledge of the rows before or after, it may already be implemented in Dask Dataframes using map_partitions. If not you can also implement it yourself using the pattern from the <<filna_ex>> example.
+
+When using `map_partitions` on a DataFrame you can change anything about each row, including the key that it is partitioned on. If you *are* changing the values in the partition key, you *must* either clear the partitioning information on the resulting DataFrame with `clear_divisions()` *or* specify the correct indexing with `set_index` which you'll learn more about in the next section.
+
+[WARNING]
+====
+Incorrect partitioning information can result in incorrect results, not just exceptions, as Dask may miss relevant data.
+====
+
+=== Working with Multiple DataFrames
+
+Pandas and Dask have four common functions for combining DataFrames. At the root is the concat function, which allows joining DataFrames on any axis. Concatenating DataFrames is generally slower in Dask since it involves interworker communication. The other three functions are join, merge, and append, which all implement special cases for common situations on top of concat, and have slightly different performance considerations. Having good divisions/partitioning, in terms of key selection and number of partitions, makes a huge difference when working on multiple DataFrames.
+
+Dask's join and merge functions take most of the standard pandas arguments along with an extra, optional, `npartitions`. `npartitions` specifies a target number of output partitions, but is only used for hash based joins (which you'll learn about in the join type section). They both automatically repartition your input DataFrames if needed. This is great as you might not know the partitioning, but since repartitioning can be slow, explicitly using the lower level `concat` function when you don't expect any partitioning changes to be needed can help catch performance problems early. Dask's join only takes more than two DataFrames at a time when doing a "left" or "outer" join type.
+
+[TIP]
+====
+Dask has special logic to speed up multi-DataFrame joins, so in most cases rather than do `a.join(b).join(c).join(d).join(e)`, you will benefit from doing `a.join([b, c, d, e])`. However, if you have a small dataset you are performing a left join with, then the first syntax may be more efficient.
+====
+
+When you combine / `concat` DataFrames by rowfootnote:[similar to a SQL UNION] the performance depends on if divisions of the DataFrames being combined are "well ordered." We call the divisions of a series of DataFrames well ordered if all the divisions are known, and the highest division of the previous DataFrame is below that of the lowest division of the next. If any input has an unknown division Dask will produce an output without known partitioning. With all known partitions Dask treats row-based concatenations as a metadata only change, and will not perform any shuffle. This requires that there is no overlap between the divisions. There is also an extra `interleave_partitions` parameter, which will change the join type for row based combinations to one without the input partitioning restriction and resulting in a known partitioner. Dask DataFrame's with known partitioners can support faster lookups and operations by key.
+
+Dask's column based `concat`footnote:[Similar to a SQL JOIN] also has restrictions around the divisions/partitions of the DataFrames it is combining. Dask's version of concat only supports "inner" or full "outer" join, not "left" or "right." Column based joins require that all inputs have known partitioners and also result in a DataFrame with known partitioning. Having a known partitioner can be useful for subsequent joins.
+
+[WARNING]
+====
+Dask's concat, when operating by row, should not be called unknown divisions as it will likely return incorrect results.footnote:[Dask assumes the indices are aligned when there are no indices present.]
+====
+
+==== Multi-DataFrame Internals
+
+Dask uses four different techniques/types, hash, broadcast, partitioned, and `stack_partitions`, to combine DataFrames with very different performance. These four functions do not map 1:1 with the join functions you choose from. Rather, Dask chooses the technique based on the indexes, divisions, and requested join type (e.g. outer/left/inner). The three column-based join techniques are hash joins, broadcast, and partitioned joins. When doing row based combinations (e.g. `append`), Dask has a special technique called `stack_partitions` which is extra fast. It's important that you understand the performance of each of these techniques and the conditions that will cause Dask to pick which approach.
+
+*Hash* joins are the default which Dask uses when no other join technique is suitable. Hash joins involve shuffling the data for all the input DataFrames to partition on the target key. Hash joins use the hash values of keys which results in a DataFrame that is not in any particular order. As such the result of hash joins do not have any known divisions.
+
+*Broadcast* joins are ideal for joining large dataframes with small dataframes. In a broadcast join Dask takes the smaller DataFrame and distributes it to all of the workers. This means that the smaller DataFrame must be able to fit in memory. To tell Dask that a DataFrame is a good candidate for broadcasting you make sure it is all stored in one partition, e.g. call `repartition(npartitions=1)`.
+
+*Partitioned joins* happen when combining DataFrames along an index where the partitions/divisions are known for all the DataFrames. Since the input partitions are known, Dask is able to align the partitions between the DataFrames involving less data transfer as each output partition has a smaller than full set of inputs.
+
+Since partition and broadcast joins are faster, it can be worth it to do some work to help Dask. For example, concatenating several DataFrames with known and aligned partitions/divisions, and one DataFrame which is unaligned, will result in an expensive hash join. Instead try and either set the index & partition on the remaining DataFrame, or join the less expensive DataFrames first then perform the expensive join after.
+
+The fourth, *`stack_partitions`,* is different from all of the others since it doesn't involve any movement of data. Instead, the resulting DataFrame partitions list is a union of the upstream partitions from the input DataFrames. Dask uses stack_partitions for most row-based combinations except when all of the input DataFrame divisions are known and they are not well ordered and you ask Dask to `interleave_partitions`. `stack_partitions` is only able to provide known partitioning in its output when the input divisions are known and well-ordered. If all of the divisions are known but not well ordered and you set `interleave_partitions` Dask will use a partitioned join instead. While this approach is comparatively inexpensive, it is not free, and can result in an excessively large number of partitions where you end up needing to re-partition anyway.
+
+==== Missing Functionality
+
+Not all multi-DataFrame operations are implemented, like `compare`, which leads into the next section about the limitations of Dask DataFrames.
+
+=== What does not work
+
+Dask's DataFrame implements most, but not all, of the pandas DataFrame API. Some of the pandas API is not implemented in Dask due to the development time involved, and other parts to avoid exposing an API that would be unexpectedly slow.
+
+Sometimes the API is just missing small parts as both pandas and Dask are under active development. An example of this is the `split` function from <<wc_dataframe>>. In local pandas, instead of doing `split().explode()`, you could have called `split(expand=true)`. Some of these can be excellent places where you can get involved and https://github.com/dask/dask/contribute[+++contribute to the Dask project if you are interested.+++]
+
+Some libraries do not parallelize as well as others. In these cases, a common approach is to try and filter or aggregate the data down enough that it can be represented locally and then apply the local libraries to the data. For example, with graphing it's common to pre-aggregate the counts or take a random sample and graph the result.
+
+While much of the Pandas DataFrame API will work out-of-the-box, before you swap in Dask DataFrame it's important to make sure you have good test coverage to catch the situations where it does not.
+
+=== What's Slower
+
+Usually, using Dask DataFrames will improve performance, but not always. Generally, smaller datasets will perform better in local pandas. As discussed, anything involving shuffles is generally slower in a distributed system than in a local one. Iterative algorithms can also produce large graphs of operations, which are slow to evaluate in Dask compared to traditional greedy evaluation.
+
+Some problems are generally unsuitable for data-parallel computing. For example, writing out to a data store with a single lock that has more parallel writers will increase the lock contention and may make it slower than if a single thread was doing the writing. In these situations, you can sometimes repartition your data or write individual partitions to avoid lock contention.
+
+=== Handling Recursive Algorithms
+
+Dask's lazy evaluation, powered by its lineage graph, is normally beneficial allowing it to combine steps automatically. However, when the graph gets too large Dask can struggle to manage it which often shows up as a slow driver process or notebook, and sometimes an out of memory exception. Thankfully, you can work around this by writing your DataFrame out and reading it back in. Generally, Parquet is the best format for doing this as it is space-efficient and self-describing so no schema inference is required.
+
+=== What other functions are different
+
+For performance reasons, various parts of Dask DataFrames behave a little differently than local Dataframes.
+
+* reset_index - the index will start back over at zero on each partition
+* kurtosis - uses does not filter out NaNs, uses scipy defaults
+* concat - instead of coercing category types, each category type is expanded to the union of all of the categories it is concatenated with.
+* sort_values - Dask only supports single column sorts
+* When joining more than two DataFrames at the same time the join type must be one of outer or left.
+
+In our opinion it's important to be especially careful anytime you use any of these functions when porting your code to use Dask DataFrames, and these could result in difficult to track down correctness issues.
+
+When porting existing pandas code to Dask, consider using the local single-machine version to produce test data sets to compare the results with to ensure that all changes are intentional.
+
+=== Data Science with Dask dataframe: putting it together
+
+Dask Dataframe has already proven to be a popular framework for big data uses, so we wanted to highlight a common use case and considerations. Here, we use a canonical data science challenge dataset, the NYC Yellow taxicab, and walk through what a data engineer working with this dataset might consider. In the subsequent chapters covering ML workloads, we will be using many of the dataframe tools to build on.
+
+==== Deciding to use Dask
+
+As discussed earlier, Dask excels in data-parallel tasks. A particularly good fit is a dataset that may already be available in columnar format, like Parquet. We also assess where the data lives, like S3 or other remote storage options. Many data scientists and engineers would probably have a dataset that cannot be contained on a single machine, or cannot be stored locally due to compliance constraints. Dask’s design lends itself well to these use cases.
+
+Our NYC taxi data fits all these: They are stored in S3 by nyc.gov as parquet, and easily scalable up and down as they are partitioned by dates. Additionally, we evaluate that data is structured already, so we can use Dask dataframe. Since Dask dataframe and pandas dataframes are close together, we can also use a lot of existing workflows for pandas. We can sample a few of these, do our Exploratory Data Analysis in a smaller dev environment, and then scale it up to the full dataset, all with the same code. Note that for this example, we use row groups to specify chunking behavior.
+
+[[ex_load_nyc_taxi]]
+.Dask DataFrame load multiple parquet files
+====
+[source, python]
+----
+include::./examples/dask/Dask-Ch11_ML.py[tags=ex_load_nyc_taxi]
+----
+====
+
+==== Exploratory Data Analysis with Dask
+
+Exploratory Data Analysis, often abbreviated EDA, is often the first step of data science, understanding the dataset and plotting the shape. Here, we use Dask DataFrames to walk through the process and common troubleshooting issues that arise from nuanced differences between Pandas DataFrame and Dask DataFrame.
+
+==== Loading Data
+
+The first time you load the data into your dev environment, you might encounter blocksize issues, or schema issues. While Dask tries to infer both, at times it cannot. For blocksize issues, it will often show up when you call .compute() on a trivial code, and see one worker hitting the memory ceiling. In that case, some manual work would be involved in determining the right chunksize. For schema issues, it would show up as an error or warning as you read the data, or in subtle ways later on, such as mismatching float32 and float64. If you know the schema already, it’s a good idea to enforce that by specifying dtypes at reading.
+
+As you further explore a dataset, you might encounter data printed by default in a format that you don’t like, for example, scientific notation. The control for that is through pandas, not Dask itself. Dask implicitly calls pandas, so you want to explicitly set your preferred format using pandas.
+
+Summary statistics on the data works just like .describe() from pandas, along with specified percentiles or .quantile(). Remember to chain multiple computes together if you are running several of these, which will save compute time back and forth.
+
+[[ex_describe_percentiles]]
+.Dask DataFrame describe percentiles with pretty formatting
+====
+[source, python]
+----
+include::./examples/dask/Dask-Ch11_ML.py[tags=ex_describe_percentiles]
+----
+====
+
+==== Plotting data
+
+Plotting data is often an important step in getting to know your dataset. Plotting big data is a tricky subject. We as data engineers often get around that issue by first working with a smaller sampled data. For that, Dask would work alongside a python plotting library like matplotlib and seaborn, just like Pandas. The advantage of Dask dataframe is that we are now able to plot the entire dataset, if desired. We can use plotting frameworks along with Dask to plot the entire dataset. Here, Dask does the filter, aggregation on the distributed workers, and only collect and give to a client with libraries like matplotlib to render.
+
+[TIP]
+====
+Note that if you’re used to the Numpy logic, you will have to think of the Dask dataframe layer when plotting. E.g. Numpy users would be familiar with df[col].values syntax for defining plotting variables. The .values mean a different action in Dask; what we pass is df[col] instead.
+====
+
+[[ex_plot_distances]]
+.Dask DataFrame plotting trip distance
+====
+[source, python]
+----
+include::./examples/dask/Dask-Ch11_ML.py[tags=ex_plot_distances]
+----
+====
+
+==== Inspecting data
+
+Pandas DataFrame users would be familiar with .loc() and .iloc() for inspecting data at a particular row or column. This logic translates to Dask DataFrame, with important difference in .iloc() behaviors.
+
+Since Dask Dataframe spans potentially multiple Pandas DataFrame, .iloc(), which is a way to access the positions by its index, doesn’t work exactly the same for Dask, since each smaller DataFrame would have its own iloc() value, and Dask does not track the size of each smaller DataFrames. Meaning, a global index value is hard for Dask to figure out, since Dask will have to iteratively count through each DataFrame to get to an index. Users should sanity check out .iloc() on their DataFrame, and ensure that indices return the right values desired.
+
+[TIP]
+====
+Be aware that calling methods like .reset_index() can reset indices in each of the smaller DataFrames, potentially returning multiple values when users call .iloc().
+====
+
+=== Conclusion
+
+In this chapter, you've learned how to understand what kinds of operations are slower than you might expect with Dask. You've also gained a number of techniques to deal with the performance differences between pandas DataFrames and Dask DataFrames. By understanding the situations where Dask DataFrames performance may not meet your needs, you've also gained an understanding of what problems are not well suited to Dask. So that you can put this all together, you've also learned about Dask DataFrame IO options. From here you will go on to learn more about Dask's other collections and then how to move beyond collections.
+
+In this chapter you have learned what may cause your Dask DataFrames behave differently or slower than you might expect. This same understanding of how Dask DataFrames are implemented can help you decide if distributed DataFrames are well suited to your problem. You've also seen how to get datasets larger than a single machine can handle into and out of Dask's DataFrames.
