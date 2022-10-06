@@ -436,7 +436,7 @@ def load_model(path):
     with fs.open(path, 'rb') as f:
         img = Image.open(f)
         return img
-#end::dask_delayed_load_model
+#end::dask_delayed_load_model[]
 
 
 # In[63]:
@@ -463,7 +463,7 @@ def partition_operation(df):
 ddf = dd.read_csv(“metadata_of_files”)
 results = ddf.map_partitions(partition_operation)
 results.compute()
-#end::Dask_DataFrame_map_partition_inference
+#end::Dask_DataFrame_map_partition_inference[]
 
 
 # In[ ]:
@@ -504,7 +504,7 @@ def handle_partition(df):
 ddf = dd.read_csv("metadata.csv”)
 results = ddf.map_partitions(handle_partition)
 results.compute()
-#end::batched_operations
+#end::batched_operations[]
 
 
 # In[ ]:
