@@ -85,7 +85,7 @@ df_x = dd.read_parquet(
     filename,
     split_row_groups = 2
 )
-#end::ex_load_nyc_taxi
+#end::ex_load_nyc_taxi[]
 
 
 # In[13]:
@@ -120,7 +120,7 @@ df.head()
 import pandas as pd
 pd.set_option('display.float_format', lambda x: '%.5f' % x)
 df.describe(percentiles = [.25, .5, .75]).compute()
-#end::ex_describe_percentiles
+#end::ex_describe_percentiles[]
 
 
 # In[18]:
@@ -139,7 +139,7 @@ sns.distplot(np.log(df['trip_distance'].values+1), axlabel = 'Log(trip_distance)
 plt.setp(axes, yticks=[])
 plt.tight_layout()
 plt.show()
-#end::ex_plot_distances
+#end::ex_plot_distances[]
 
 
 # In[ ]:
@@ -248,7 +248,7 @@ sns.distplot(df["log_trip_duration"], bins =100)
 
 #tag::ex_dask_random_split[]
 train, test, validation = df.random_split([0.8, 0.1, 0.1], random_state=123)
-#end::ex_dask_random_split
+#end::ex_dask_random_split[]
 
 
 # 
@@ -418,7 +418,7 @@ xgb.plot_importance(model, max_num_features=28, height=0.7)
 
 pred = model.predict(dtest)
 pred = np.exp(pred) - 1
-#end::ex_xgb_train_plot_importance
+#end::ex_xgb_train_plot_importance[]
 
 
 # In[61]:
