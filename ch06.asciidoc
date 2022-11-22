@@ -1,0 +1,197 @@
+== Advanced Task Scheduling: Futures and Friends
+
+.A Note for Early Release Readers
+****
+With Early Release ebooks, you get books in their earliest form&mdash;the authors' raw and unedited content as they write—so you can take advantage of these technologies long before the official release of these titles.
+
+This will be the sixth chapter of the final book. Please note that the GitHub repo will be made active later on.
+
+If you have comments about how we might improve the content and/or examples in this book, or if you notice missing material within this chapter, please reach out to the editor at vwilson@oreilly.com.
+****
+
+So far in Dask, you have mostly seen lazy operations, where Dask doesn't do the work until something "forces" the computation. This pattern has a number of benefits, including allowing Dask's optimizer to combine steps when it makes sense. However, not all tasks are well suited to lazy evaluation. One common pattern not well suited to lazy evaluation is "fire-and-forget", where we call a function for its side effectfootnote:[Like writing a file to disk or updating a database record] and necessarily care about the output. Trying to express this with lazy evaluation (e.g. dask.delayed) results in unnecessary blocking to force computation. When lazy evaluation is not what you need, you can explore Dask's futures. Futures can be used for much more than just "fire-and-forget" and you can return results from them. This chapter will explore a number of common use cases for futures.
+
+[NOTE]
+====
+You may already be familiar with futures from Python. Dask's futures are an extension of Python's `concurrent.futures` library allowing you to use them in it's place. Similar to using Dask DataFrames in place of Pandas DataFrames, the behaviour can be a bit different (although the differences here are smaller).
+====
+
+Dask futures are a part of Dask's distributed client library, so you will get started by importing it with `from dask.distributed import Client`.
+
+[TIP]
+====
+Despite the name, you can use Dask's distributed client locally.
+====
+
+=== Lazy and Eager Evaluation Revisited
+
+Eager evaluation is the most common form of evaluation in programming, including in Python. While most eager evaluation is blocking, that is the program will not move to the next statement until the result is completed, you can still have asynchronous/non-blocking eager evaluation. Futures are one way of representing non-blocking eager computation.
+
+Non-blocking eager evaluation still has some potential downsides compared to lazy evaluation. Some of these challenges include:
+
+* Inability to combine adjacent stages (sometimes known as pipelining)
+* Unnecessary computation
+** Repeated sub-graphs can not be detected by Dask's optimizer
+** Even if nothing depends on the result of the future, it may be computedfootnote:[Although if the only reference to it gets garbage collected it may not.]
+* Potential excessive blocking when futures launch and block on other futures
+* More careful memory management required
+
+Not all other Python code is eagerly evaluated. In Python 3 some built-in functions use lazy evaluation, with operators like `map` returning iterators and only evaluating elements on request.
+
+=== Use cases for futures
+
+Many common use cases can be made faster with careful application of futures:
+
+* Integrate with other async servers (like Tornado) – although we generally believe that most of the time, Dask is not the right solution for the "hot path", there are exceptions like dynamically computed analytic dashboards.
+* Request/Response pattern: make a call to a remote service and (later) block on its result. This can include querying services like databases, remote procedure calls, or even websites.
+* IO: Input/output can often be slow but you know you want them to start happening as soon as possible.
+* Timeouts: Sometimes you only care about a result if you can get it within a certain period of time. For example, think of a boosted ML model where you need to make a decision within a certain timeframe, collecting all scores from available models quickly and then skipping any that take too long.
+* Fire and forget: Sometimes you might not care about the result of a function call, but you do want to ensure it is called. Futures allow you to ensure a computation occurs without having to block on the result.
+* Actors: We'll covered these in the previous chapter, and the results from calling actors are futures.
+
+=== Launching Futures
+
+The syntax for launching dask futures is a little different than that for dask delayed. Dask futures are launched from the Dask distributed client with either `submit` for single futures or `map` for multiple futures.
+
+.Launching futures
+====
+[source, python]
+----
+include::./examples/dask/Dask-Futures.py[tags=launching_futures]
+----
+====
+
+Unlike with Dask delayed, as soon as the future is launched Dask begins to compute the value.
+
+[NOTE]
+====
+While this `map` is somewhat similar to the `map` on Dask bags, each item results in a separate task, whereas bags are able to group together tasks into partitions to reduce the overhead (although they are lazily evaluated).
+====
+
+=== Future Lifecycle
+
+Futures have a different lifecycle from `dask.delayed` beyond eager computation. With `dask.delayed` intermediate computations are automatically cleaned up, however Dask futures results are stored until the future is either explicitly canceled or the reference to it is garbage collected in Python. If you no longer need the value of a future, you can cancel it and free any storage space or cores used by calling `.cancel`. The future lifecycle is illustrated below:
+
+.Future Lifecycle
+====
+[source, python]
+----
+include::./examples/dask/Dask-Futures.py[tags=understanding_futures_lifecycle]
+----
+====
+
+Canceling a future behaves differently than deleting or depending on garbage collection. If there is another reference to the future then deleting or setting the individual reference to None will not cancel the future. This means the result will remain stored in Dask. On the other hand, canceling futures has the downside that if you are incorrect and the futures value is needed this will cause an error.
+
+[WARNING]
+====
+When using Dask in a Jupyter notebook the notebook may "hold on to" the result of any previous cell, so even if the future is un-named it will remain present in Dask, https://dask.discourse.group/t/why-is-distributed-leaking-memory-from-unused-futures/959?u=mvashishtha[+++there is a discussion here with more context for those interested.+++]
+====
+
+=== Fire and Forget
+
+Sometimes you no longer need a future, but you also don't want it to be canceled. This pattern is called "fire and forget." This is most useful for things like writing data out, updating a database, or other "side effect." If all reference to a future is lost, garbage collection can result in it being canceled. To work around this Dask has the aptly named `fire_and_forget` method, which allows you to take advantage of this pattern, as shown below, without needing to keep references around.
+
+.Fire and Forget
+====
+[source, python]
+----
+include::./examples/dask/Dask-Futures.py[tags=fire_and_forget2]
+----
+====
+
+=== Retrieving Results
+
+More commonly, eventually, you'll want to know what the future has computed (or even just if it encountered an error). For futures that are not just side effects, you'll eventually want to get the return value (or error) from the futures. Futures have the blocking method, `result` which gives you back the value computed in the future or raises the exception from the future.
+
+.Get Result
+====
+[source, python]
+----
+include::./examples/dask/Dask-Futures.py[tags=get_result]
+----
+====
+
+You can extend this to multiple futures, as below, but there are ways to do it faster.
+
+.Get A List of Results
+====
+[source, python]
+----
+include::./examples/dask/Dask-Futures.py[tags=get_seq]
+----
+====
+
+If you've got multiple futures together, say you created them with `map`, you can get the results back as they become available. If you can process the results out of order, this can greatly improve your processing time.
+
+.Get A List of Results As They Become Available
+====
+[source, python]
+----
+include::./examples/dask/Dask-Futures.py[tags=as_completed]
+----
+====
+
+In this example, by processing futures as they complete you can have the main thread do its "business logic" (similar to combine step for an aggregate) for each element as it becomes available. If the futures finish at different times this can be a large speed up.
+
+If you have a deadline, like say scoring a model for ad servingfootnote:[We believe that this is one of the areas where Dask has more room for growth, and if you do want to implement a microservice for deadline critical events you may want to explore using Dask in conjunction with other systems like Ray.] or doing something funky with the stock market, you might not want to wait for all of your futures. Instead, the `wait` function allows you to fetch results with a timeout, as shown below:
+
+.Get the first future (within a time limit)
+====
+[source, python]
+----
+include::./examples/dask/Dask-Futures.py[tags=time_limit_first]
+----
+====
+
+This time limit can either apply to the entire set or one at a time. If you want all features finished by a given time then you need a bit more work, as shown below:
+
+.Get any futures that finish within a time limit
+====
+[source, python]
+----
+include::./examples/dask/Dask-Futures.py[tags=time_limit_some]
+----
+====
+
+Now that you can get the results from futures, you can compare the execution time of Dask delayed v.s. Dask futures.
+
+.A quick example of how futures can be faster
+====
+[source, python]
+----
+include::./examples/dask/Dask-Futures.py[tags=delayed_vs_future_future_faster]
+----
+====
+
+In this, albeit contrived, example you can see how by starting the work as soon as possible the future is completed by the time you get the result, whereas the `dask.delayed` only starts when you get there.
+
+=== Nested Futures
+
+As with `dask.delayed`, you can also launch futures from inside futures. The syntax is a bit different as you need to get an instance of the `client` object, which is not serializable, so `dask.distributed` has the special function `get_client` to get the client inside of a distributed function. Once you have the client, you can then launch the future like normal as shown in <<nested>>.
+
+[[ex_nested]]
+.Launchinged a nested future
+====
+[source, python]
+----
+include::./examples/dask/Dask-Futures.py[tags=nested]
+----
+====
+
+Note though since Dask uses a centralized scheduler, the client is communicating with that centralized scheduler to determine where to place the future.
+
+[[dds_scheduling]]
+=== Distributed Data Structures for Scheduling
+
+Dask also has a collection of data structures to simplify task coordination. These data structures include queues, locks/semaphores, events, and publish / subscriber topics. These distributed data structures aim to behave similarly to their local counterparts, but it's important to remember that the distributed nature of Dask adds overhead for coordination and remote procedure calls.
+
+For example, Dask's distributed variable is called `Variable` which implements `get`, `set`, and `delete`. The `get` function takes a `timeout`, which should remind you that these operations are distributed in nature and therefore slower than updating a local variable. As with multi-threaded global variables, race conditions can occur when different workers update the same local variable.
+
+[TIP]
+====
+You can name Dask's distributed data structures when constructing them, and two resources with the same name will be resolved to the same object even if they are constructed separately.
+====
+
+=== Conclusion
+
+While Dask's primary building block is `dask.delayed`, it's not the only option. You can control more of your execution flow by using Dask's futures. Futures are ideal for I/O, model inference, and deadline-sensitive applications. In exchange for this additional control, you are responsible for managing the lifecycle of your futures and the data they produce in a way that you are not with `dask.delayed`. Dask also has a number of distributed data structures including queues, variables, and locks. While these distributed data structures are more expensive than their local counterparts, they also give you another layer of flexibility around controlling your task scheduling.
