@@ -14,7 +14,7 @@ Now that you've run your first few tasks with Dask, it's time to learn a little 
 
 === Execution Backends
 
-Dask has many different execution backends, however, I find it easiest to think about them in two groups, local and distributed. With local backends, you are limited in scale to what a single computer can handle. Local backends also have advantages like avoiding network overhead, simpler library management, and dollar costfootnote:[Unless you work for a cloud provider and computers are close enough to free. If you do work for a cloud provider please send me cloud credits.].
+Dask has many different execution backends, however, I find it easiest to think about them in two groups, local and distributed. With local backends, you are limited in scale to what a single computer can handle. Local backends also have advantages like avoiding network overhead, simpler library management, and dollar costfootnote:[Unless you work for a cloud provider and computers are close enough to free. If you do work for a cloud provider please send us cloud credits.]. Dask's Distributed backend has many options for deployment, including cluster managers (Kubernetes, etc.) to job queue like systems.
 
 ==== Local Backends
 
@@ -59,7 +59,7 @@ Dask's local backends are designed for performance rather than testing that your
 
 ==== Distributed (Dask Client and Scheduler)
 
-Dask has one distributed scheduler backend, that talks to many different types of clusters, including a "LocalCluster". Each type of cluster is supported in its own library, which schedules the scheduler footnote:[Say that five times fast] that the Dask client then connects to.
+Dask has one distributed scheduler backend, that talks to many different types of clusters, including a "LocalCluster". Each type of cluster is supported in its own library, which schedules the scheduler footnote:[Say that five times fast] that the Dask client then connects to. Dask distributed deployment's are more similar than the different local backends.
 
 
 The Dask Client is your entry point into the Dask distributed scheduler. In <<ex_dask_k8s>>
