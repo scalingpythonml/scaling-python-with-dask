@@ -508,9 +508,9 @@ include::./examples/dask/Dask-Ch11_ML.py[tags=ex_plot_distances]
 
 ==== Inspecting data
 
-Pandas DataFrame users would be familiar with .loc() and .iloc() for inspecting data at a particular row or column. This logic translates to Dask DataFrame, with important difference in .iloc() behaviors.
+Pandas DataFrame users would be familiar with .loc() and .iloc() for inspecting data at a particular row or column. This logic translates to Dask DataFrame, with important differences in .iloc() behaviors.
 
-Since Dask Dataframe spans potentially multiple Pandas DataFrame, .iloc(), which is a way to access the positions by its index, doesn’t work exactly the same for Dask, since each smaller DataFrame would have its own iloc() value, and Dask does not track the size of each smaller DataFrames. Meaning, a global index value is hard for Dask to figure out, since Dask will have to iteratively count through each DataFrame to get to an index. Users should sanity check out .iloc() on their DataFrame, and ensure that indices return the right values desired.
+Since Dask Dataframe spans potentially multiple Pandas DataFrame, .iloc() -- which is a way to access the positions by its index -- doesn’t work exactly the same for Dask, since each smaller DataFrame would have its own iloc() value, and Dask does not track the size of each smaller DataFrames. Meaning, a global index value is hard for Dask to figure out, since Dask will have to iteratively count through each DataFrame to get to an index. Users should sanity check out .iloc() on their DataFrame, and ensure that indices return the correct values.
 
 [TIP]
 ====
