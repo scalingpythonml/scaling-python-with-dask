@@ -68,7 +68,7 @@ StreamZs API documentation covers which https://streamz.readthedocs.io/en/latest
 ====
 [source, python]
 ----
-include::./examples/dask/StreamZ.py[tags=make_local_stream]
+include::./examples/dask/Streamz.py[tags=make_local_stream]
 ----
 ====
 
@@ -77,7 +77,7 @@ include::./examples/dask/StreamZ.py[tags=make_local_stream]
 ====
 [source, python]
 ----
-include::./examples/dask/StreamZ.py[tags=make_kafka_stream]
+include::./examples/dask/Streamz.py[tags=make_kafka_stream]
 ----
 ====
 
@@ -99,7 +99,7 @@ No streaming section would be complete without wordcount, but it's important to 
 ====
 [source, python]
 ----
-include::./examples/dask/StreamZ.py[tags=wc]
+include::./examples/dask/Streamz.py[tags=wc]
 ----
 ====
 
