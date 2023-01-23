@@ -1,6 +1,6 @@
 
 [[appD]]
-[data-type="appendix"]
+[appendix]
 == Streaming with StreamZ and Dask
 
 This book has been focused on using Dask to build batch applications, where data is collected, or provided from the user, and then used for calculations. Another important group of use cases are the situations requiring you to process data as it becomes availablefootnote:[Albiet generally with some (hopefully small) delay]. Processing data as it becomes available is called streaming.
