@@ -52,7 +52,7 @@ Depending on the cluster, your workers might be more transient than other types,
 ====
 [source, python]
 ----
-include:./examples/dask/Dask-Ch10_porting.py[tags=ex_yarn_deployment]
+include::./examples/dask/Dask-Ch10_porting.py[tags=ex_yarn_deployment]
 ----
 ====
 
@@ -63,7 +63,7 @@ For HPC deployments using job queuing systems such as PBS, Slurm, MOAB, SGE, LSF
 ====
 [source, python]
 ----
-include:./examples/dask/Dask-Ch10_porting.py[tags=ex_slurm_deployment]
+include::./examples/dask/Dask-Ch10_porting.py[tags=ex_slurm_deployment]
 ----
 ====
 
@@ -78,7 +78,7 @@ We found that one of the surprisingly useful use cases are connecting directly t
 ====
 [source, python]
 ----
-include:./examples/dask/Dask-Ch10_porting.py[tags=ex_s3_minio_rw]
+include::./examples/dask/Dask-Ch10_porting.py[tags=ex_s3_minio_rw]
 ----
 ====
 
@@ -110,7 +110,7 @@ As previously mentioned, Spark users might have existing logic that is written i
 ====
 [source, python]
 ----
-include:./examples/dask/Dask-Ch10_porting.py[tags=ex_postgres_dataframe]
+include::./examples/dask/Dask-Ch10_porting.py[tags=ex_postgres_dataframe]
 ----
 ====
 
@@ -134,7 +134,7 @@ Dask client exposes get_worker_logs() and get_scheduler_logs() method that can b
 ====
 [source, python]
 ----
-include:./examples/dask/Dask-Ch10_porting.py[tags=ex_basic_logging]
+include::./examples/dask/Dask-Ch10_porting.py[tags=ex_basic_logging]
 ----
 ====
 ////
@@ -146,7 +146,7 @@ The following example is meant to illustrate how distributed workers can log mor
 ====
 [source, python]
 ----
-include:./examples/dask/Dask-Ch10_porting.py[tags=ex_basic_logging]
+include::./examples/dask/Dask-Ch10_porting.py[tags=ex_basic_logging]
 ----
 ====
 
@@ -157,7 +157,7 @@ The following example is meant to illustrate using distributed cluster setup and
 ====
 [source, python]
 ----
-include:./examples/dask/Dask-Ch10_porting.py[tags=ex_distributed_logging]
+include::./examples/dask/Dask-Ch10_porting.py[tags=ex_distributed_logging]
 ----
 ====
 

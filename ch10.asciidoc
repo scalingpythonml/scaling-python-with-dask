@@ -54,7 +54,7 @@ For NVIDIA users the `dask-cuda` package can launch one worker per GPU, pining t
 ====
 [source, python]
 ----
-include:./examples/dask/DaskKubeGPUs.py[tags=worker_template_with_gpu]
+include::./examples/dask/DaskKubeGPUs.py[tags=worker_template_with_gpu]
 ----
 ====
 
@@ -67,7 +67,7 @@ If your using Dask to schedule work on multiple GPUs on a single computer, e.g. 
 ====
 [source, python]
 ----
-include:./examples/dask/DaskGPUs.py[tags=dask_local_gpu]
+include::./examples/dask/DaskGPUs.py[tags=dask_local_gpu]
 ----
 ====
 
@@ -94,7 +94,7 @@ For Kubernetes (or other Docker container users) you can do this by making a cus
 ====
 [source, python]
 ----
-include:./examples/dask/preinstall_numba/Dockerfile[]
+include::./examples/dask/preinstall_numba/Dockerfile[]
 ----
 ====
 
@@ -104,7 +104,7 @@ Then to build this we run the following script:
 ====
 [source, bash]
 ----
-include:./examples/dask/preinstall_numba/build.sh[]
+include::./examples/dask/preinstall_numba/build.sh[]
 ----
 ====
 
@@ -117,7 +117,7 @@ It is important that you make sure your tasks that need accelerators run on work
 ====
 [source, python]
 ----
-include:./examples/dask/DaskGPUs.py[tags=ex_submit_gpu]
+include::./examples/dask/DaskGPUs.py[tags=ex_submit_gpu]
 ----
 ====
 
@@ -126,7 +126,7 @@ include:./examples/dask/DaskGPUs.py[tags=ex_submit_gpu]
 ====
 [source, python]
 ----
-include:./examples/dask/DaskGPUs.py[tags=ex_annotate_gpu]
+include::./examples/dask/DaskGPUs.py[tags=ex_annotate_gpu]
 ----
 ====
 
@@ -141,7 +141,7 @@ Numba is a popular high-performance JIT (just in time) compilation library for P
 ====
 [source, python]
 ----
-include:./examples/dask/DaskGPUs.py[tags=ex_dask_submit_numba_incorrect]
+include::./examples/dask/DaskGPUs.py[tags=ex_dask_submit_numba_incorrect]
 ----
 ====
 
@@ -150,7 +150,7 @@ include:./examples/dask/DaskGPUs.py[tags=ex_dask_submit_numba_incorrect]
 ====
 [source, python]
 ----
-include:./examples/dask/DaskGPUs.py[tags=ex_dask_submit_numba]
+include::./examples/dask/DaskGPUs.py[tags=ex_dask_submit_numba]
 ----
 ====
 
