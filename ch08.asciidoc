@@ -1,0 +1,150 @@
+== How to evaluate Dask's components and libraries
+
+It's hard, although possible, to build reliable systems out of unreliable componentsfootnote:[Although in many ways that is what distributed systems are all about, from Hadoop Map/Reduce to Dask, fault tolerance because computers are unreliable are a big part of what we do.]. Dask is a largely community-driven open-source project, and its components evolve at different rates. Not all parts of Dask are equally mature; even the components we cover in this book have different levels of support and development. While Dask's core parts are well-maintained and tested, some parts lack the same level of maintenance.
+
+It's essential to understand the state of the components that you are considering using. If you need to use a less maintained or developed part of Dask, pass:[<a href="https://en.wikipedia.org/wiki/Defensive_programming#:~:text=Defensive%20programming%20is%20a%20form,of%20software%20under%20unforeseen%20circumstances.">defensive programming</a>], including thorough code testing, will become even more critical. Working on less established parts of the Dask ecosystem can also be an exciting opportunity to become more involved and contribute fixes or documentation.
+
+[NOTE]
+====
+This is not to say that closed-source software does not suffer from the same challenges (e.g., untested components), but we are in a better place to evaluate and make informed choices with open-source software.
+====
+
+Of course, not all of our projects need to be maintainable, but as the saying goes, "nothing is more permanent than a temporary fix." If something is truly a one-time use project, you can likely skip most of the analysis here and try out the libraries to see if they work for you.
+
+Dask is under rapid development, and any static table of which components are production ready would be out of date by the time it was read. So instead of sharing our views on what components of Dask are currently well-developed, this chapter aims to give you the tools to evaluate the libraries you may be considering. In this chapter, we separate metrics that you can measure concretely from the fuzzier qualitative metrics. Perhaps counter-intuitively, we believe that the "fuzzier" qualitative metrics are a better framework for evaluating components and projects.
+
+Along the way, we'll look at some projects and how they are measured, but please keep in mind these specific observations may be out of date by the time you read it, and you should do your own evaluation with the tools provided here.
+
+[TIP]
+====
+While we focus on the Dask ecosystem in this chapter, you can apply most of these techniques throughout software tool selection.
+====
+
+=== Qualitative Considerations for Project Evaluation
+
+We start by focusing on qualitative tools since we believe these tools are the best for determining the suitability of a project for your project.
+
+==== Project Priorities
+
+Some projects prioritize benchmarks or performance numbers; other projects can prioritize correctness and clarity, while others may prioritize completeness. A project's README or home page is often a good sign of what it prioritizes. Early in its creation, Apache Spark's home page focused on performance with bechmarks, whereas now it shows an ecosystem of tools leading more towards completeness. The Dask Kubernetes Github README shows a collection of badges indicating the state of the code and not much else, showing a strong developer focus.
+
+While there are many arguments for and against focusing on benchmarks, correctnessfootnote:[Sacrificing correctness means producing incorrect results. An example "correctness" issue is `set_index` in Dask-On-Ray causing rows to disappear, which took about a month to fix https://github.com/ray-project/ray/issues/20108[+++(which in our opinion is quite reasonable given the challenges reproducing it).+++] Sometimes correctness fixes, like security fixes, can result in slower processing, for example MongoDB's defaults are very fast but can lose data.] should almost never be sacrificed. This does not mean that libraries will never have bugs; rather, projects should take reports of correctness issues seriously and treat them with higher priority than others. An excellent way to see if a project values correctness is to look for issue reports of correctness and observe how the core developers respond.
+
+Many Dask ecosystem projects use GitHubs built-in issue tracker, but if you don't see any activity, check the README and Developer guides to see if the project uses a different issue tracker. For example, many ASF projects use JIRA. Looking into how folks respond to issues gives you a good idea of what issues they consider important. You don't need to look at all of them, but a small sample of 10 will often give you a good idea (look at open and not fixed as well as closed and fixed).
+
+==== Community (and for better or worse, Companies and Universities)
+
+As one of the unofficial ASF sayings goes "community over code."footnote:[We are uncertain of who exactly this quote originates from, it's on Shane's director position statement as well as in the ASF way documentation.] The ASF wayfootnote:[Of course for anything called "the X way", different folks have different interpretations of what the ASF way "really" is.], https://theapacheway.com/community-over-code/[+++from the community over code page+++], describes this as "the most successful long-lived projects value a broad and collaborative community over the details of the code itself." This saying matches our experience, where technical improvements are easier to copy from other projects, but the community is much harder to move. Measuring community is challenging, and it can be tempting to look at the number of developers or users, but we think it's essential to go beyond that.
+
+Finding the community associated with a particular project can be tricky. Take your time to look around at issue trackers, source code, forums (like discourse) and mailing lists. For example, Dask's https://dask.discourse.group/[+++discourse is highly active+++]. Some projects use IRC, Slack, or Discord or their "interactive" communication – and in our opinion, some of the best ones put in the effort to make the conversations from these appear in search indexes. Sometimes parts of the community may exist on external social media sites, and these pose a unique set of challenges to community standards.
+
+There are multiple types of communities for open-source software projects. The user community is the people who are using the software to build things. The developer community is the group working on improving the library. Some projects have large intersections between these communities, but often the user community is much larger than the developer community. We are biased toward evaluating the developer community, but it's important to ensure both are healthy. Software projects without enough developers will move slowly and projects without users are frequently challenging to use by anyone except the developers.
+
+In many situations, a large community with enough assholesfootnote:[Or a lead asshole] can be a much less enjoyable environment than a small community of nice folks. You are less likely to be productive if you are not enjoying your work. Sadly figuring out if someone is an asshole or if a community has assholes in it is a complex problem. If people are generally rude on the mailing list or in the issue tracker, this can be a sign that the community is not as welcoming to new members.footnote:[The Linux Kernel is one of the classic examples of a somewhat https://www.zdnet.com/article/linux-developer-who-took-on-linus-torvalds-over-abuse-quits-toxic-kernel-community/[+++more challenging community.+++]]
+
+[NOTE]
+====
+Some projects, including one of Holden's projects, have attempted to quantify some of these metrics using https://www.youtube.com/watch?v=TXYXsa7NpG8[+++sentiment analysis combined with random sampling+++], but this is a time-consuming process you can probably skip in most cases.
+====
+
+Even with the nicest people, it can matter which institutions the contributors are associated with. If, for example, the top contributors are all grad students in the same research lab or work at the same company, the risk that the software is abandoned increases. This is not to say that single-company or even single-personfootnote:[One example of a small developer community but very popular and successful project is homebrew] open-source projects are bad, but you should adjust your expectations to match.
+
+[NOTE]
+====
+If you are concerned a project does not meet your current level of maturity and you have a budget, this can be an excellent opportunity to support critical open-source projects. Reach out to maintainers and see what they need, sometimes, it's as simple as a check for new hardware or hiring them to provide training for your company.
+====
+
+Beyond if people are nice in a community, if folks are using the project similarly to how you are considering using it, that can be a positive sign. If, for example, you are the first person to apply Dask DataFrames to a new domain, while Dask DataFrame's themselves are very mature, you are more likely to find missing components than if other folks in the same area of application are already using Dask.
+
+==== Dask-Specific Best Practices
+
+When it comes to Dask libraries, there are a number of Dask-specific best practices to look for. In general, libraries should not have too much work on the client node, and as much work as possible should be delegated to the workers. Sometimes the documentation will gloss over which parts happen where, and the fastest way to tell in our experience is to simply run the example code and look to see what tasks are getting scheduled on the workers. Relatedly, libraries should bring back only the smallest bits of data when possible. These best practices are slightly different than that of when you are writing your own Dask code since you can know what your data size is beforehand and determine when local compute is the best path forward.
+
+==== Up-to-Date Dependencies
+
+If a project pins a dependency at a specific version, it is important that the version pinned does not have conflicts with the other packages you want to use, and, even more importantly, does not have pinned insecure dependencies. What constitutes "up to date" is a matter of opinion, if you are the kind of developer who likes using the latest version of everything, you'll probably be happiest with libraries that (mostly) provide minimum but not maximum versions. However, this can be misleading as, especially in the Python ecosystem, many libraries do not use https://semver.org/[+++semantic versioning+++] (including https://docs.dask.org/en/stable/changelog.html[+++Dask, which uses CalVer+++]), and just because a project does not exclude a new version does not mean will actually work with it.
+
+[NOTE]
+====
+Some folks would call this quantitative, but in a CalVer-focused ecosystem, we believe this is more qualitative.
+====
+
+A good check, when considering adding a new library to an existing environment, is to try and run the new libraries test suite in the same virtual environment (or equivalent configured one) as you plan to use it in.
+
+==== Documentation
+
+While not every tool needs a book, although we do hope you find books useful, very few libraries are truly "self-explanatory." On the low end, for simple libraries, a few examples or well-written tests can serve as a stand-in for proper documentation. Complete documentation is a good sign of overall project maturity. Not all documentation is created equally, and as the saying goes, documentation is normally out of date as soon as finished (if not before). A good exercise to do, before you dive all the way into a new library, is to open up the documentation and try and run the examples. If the getting-started examples don't work (and you can't figure out how to fix them), you will likely be in for a rough ride.
+
+==== Open to contributions (code and otherwise)
+
+If you find the library is promising, but not all the way there, it's important to be able to contribute your improvements back to the library. This is good for the community, and selfishly if you can't "upstream" your improvements, upgrading to new versions will be more challenging.footnote:[Changes from upstream open source you are unable to contribute back mean that you need to re-apply those changes every time you to go upgrade. While modern tools like git simplify the mechanics of this a little bit, it can be a time consuming process.] Many projects now days have "Contribution Guides" which can give you an idea of how they like to work, but nothing beats a real test contribution. A great place to start with a project is fixing its documentation with the eyes of a newcomer, especially those getting started examples from the previous section. Documentation often becomes out of sync in fast-moving projects, and if you find it difficult to get your documentation changes accepted, that is a strong indicator of how challenging it will be to contribute more complicated improvements later.
+
+Something to pay attention to is what the issue-reporting experience is like. Since almost no software is completely free of bugs, you may encounter an issue. Whether you have the energy or skills to fix the bug, sharing your experience is vital so it can be fixed. Sharing the bug can help the next person encountering the same challenge feel not alone, even if the issue is unresolved.
+
+[NOTE]
+====
+Pay attention to your experience trying to report an issue. Most large projects with active communities will have some guidance to help you submit your issue and ensure it’s not duplicating a previous issue. If that’s lacking, this could be more challenging (or a smaller community)
+====
+
+If you don't have time to make your own test contribution, you can always take a look at a project's pull requests (or equivalent) and see if the responses seem positive or antagonistic.
+
+==== Extendable
+
+Not all changes to libraries necessarily need to be able to go upstream. If a library is appropriately structured, you can add additional functionality without changing the underlying code. For example, part of what makes Dask so powerful is its extensibility. For example, adding user-defined functions and aggregations allows Dask to be useable by many.
+
+=== Quantitative Metrics for Open Source Project Evaluation
+
+As software developers and data scientists, we often try to use quantitative metrics to make our decisions. Quantitative metrics for software, both in open source and closed source, is an area of active research, so we won't be able to cover all of the quantitative metrics. A large challenge with all of the quantitative metrics for open-source projects is that, especially once money gets involved, the metrics can be influenced. We instead recommend focusing on qualitative factors which, while more difficult to measure, are also more difficult to game.
+
+Here we cover a few common metrics that folks commonly attempt to use, and there are many other frameworks for evaluating open-source projects for use, including https://www.timreview.ca/article/145[+++the OSSM+++], https://metrics.openssf.org/[+++OpenSSF Security metrics+++], https://scholar.google.com/scholar?hl=en&as_sdt=0%2C23&q=evaluating+open+source&btnG=[+++and many more+++]. Some of these frameworks ostensibly produce automated scores (like the OpenSSF), but in our experience, not only are the metrics collected gameable they are often collected incorrectlyfootnote:[For example, the OpenSSF reports that Apache Spark has unsigned releases, but all of the releases are signed. Projects which are highly critical (like log4j) are incorrectly low criticality scores illustrating some of the limits with these metrics.].
+
+==== Release History
+
+Frequent releases can be a good sign of a healthy library. If a project has not been released for a long time you are more likely to run into conflicts with other libraries. For libraries built on top of tools like Dask, one way to look is how many months (or days) it takes to release a new version of their library on top of the latest version of Dask. Some libraries do not do traditional releases but rather suggest installing directly from the source repo. This is often a sign of a project earlier in the development phase and can be more challenging to take on as a dependency.footnote:[In these cases it's good to pick a tag or a commit to install from so you don't end up with mis-matched versions.]
+
+Release history is one of the easiest metrics to game, as all it requires is the developers making a release. Some development styles will automatically create releases after every successful checkin, which (in our opinion) is an anti-patternfootnote:[Snapshot artifacts are a-ok] as you often want some additional level of human testing or checking before a full release.
+
+==== Commit Frequency (and volume)
+
+Another popular metric people consider is commit frequency or volume. This metric is ill-suited as the frequency and volume can vary widely depending on coding styles which lack correlation with software quality. For example, developers who tend to squash commits can have lower commit volume, whereas developers who use rebases primarily will have a higher volume of commits.
+
+On the flip side, the complete lack of recent commits can be a sign that a project has become "abandoned" and if you decide to use it you will end up having to maintain a fork.
+
+==== Library Usage
+
+One of the simplest metrics to check is if people are using a package by looking at the installs. You can check PyPi package installs stats are available from https://pypistats.org/[+++pypistats+++] or on https://cloud.google.com/blog/topics/developers-practitioners/analyzing-python-package-downloads-bigquery[+++Google's BigQuery+++], and conda installs using the https://www.anaconda.com/blog/get-python-package-download-statistics-with-condastats[+++condastats library+++].
+
+[[dask-kubernetes-install-stats]]
+.Dask Kubernetes Install Stats from PyPi Stats
+image:images/ch08/image1.png[]
+
+Unfortunately, installation counts are a noisy metric, as PyPi downloads can come from CI pipelines to even someone spinning up a new cluster with the library installed but never used. Not only is this metric un-intentionally noisy, but the same techniques can also be used to increase the numbers artificially.
+
+Instead of depending heavily on the number of package installs, we like to look and see if we can find examples of people using the libraries (e.g. search for imports on github or https://sourcegraph.com/search?_ga=2.173011680.253080747.1666049881-235947563.1666049881[+++sourcegraph+++]). For example, we can try and get an approximate number of people using streamz or cuDF with Dask by searching pass:[<a href="https://sourcegraph.com/search?q=context:global+%28file:requirements.txt+OR+file:setup.py%29+cudf+AND+dask&patternType=standard"><code>(file:requirements.txt OR file:setup.py) cudf AND dask</code></a>] and pass:[<a href="https://sourcegraph.com/search?q=context:global+%28file:requirements.txt+OR+file:setup.py%29+streamz+AND+dask&patternType=standard"><code>(file:requirements.txt OR file:setup.py) streamz AND dask</code></a>] with SourceGraph, which yields 72 and 33 respectively. This only captures a few, but when we compare this to the same query for dask (which yields 500+) it suggests that streamz has lower usage than cudf in the dask ecosystem.
+
+Looking for examples of people using a library has its limitations, especially with data processing. Since data and machine learning pipelines are not as frequently open-sourced, finding examples can be harder for libraries used for those purposes.
+
+Another proxy for usage you can look at is the frequency of issues or mailing list posts. If a project is hosted on something like GitHub, stars can also be an interesting way of measuring usage – but as people can now buy GitHub stars just like Instagram likes (as shown in <<fig_ghstarsforsale>>) – don't weigh this metric too heavilyfootnote:[There some tools to try and help you dig deeper into the star data, including https://github.com/schosterbarak/ghrr[+++https://github.com/schosterbarak/ghrr+++] but we still think it's better to not spend too much time or weight on stars.].
+
+[[fig_ghstarsforsale]]
+.Sample of someone selling Github stars
+image:images/ch08/image2.png[]
+
+Even setting aside people purchasing stars, what constitutes a project worth "starring" varies from person to person. Some projects will, while not purchasing stars, ask individuals to "star" their projects in talks which can quickly inflate this metric.footnote:[For example, we might ask you to star our example repo https://github.com/scalingpythonml/scalingpythonml[+++https://github.com/scalingpythonml/scalingpythonml+++], and by doing this, we (hopefully) increase the number of *s without actually needing to increase our quality.]
+
+==== Code and Best Practices
+
+Software testing is second nature to many software engineers, but sometimes projects are created hastily without tests. If a project does not have tests, and tests that are mostly passing, then it’s much harder to have confidence in how the project will behave. Even in the most professional of projects, corners sometimes get cut when it comes to testing, and adding more tests to a project can be a great way to ensure that it continues to function in the ways you need it to. A good question is if the tests cover the parts that are important to you. If a project does have relevant tests, the next natural question is if they are being used. If it’s too difficult to run tests, human nature often takes over, and the tests may not be run. So a good step is to see if you can run the tests in the project.
+
+[NOTE]
+====
+Test coverage numbers can be especially informative, but unfortunately, for projects built on top of systems like Daskfootnote:[This is because most of the Python tools that check code coverage assume that there is only one Python VM they need to attach to and see what parts of code are executed. However, in a distributed system, this is no longer the case and many of these automated tools do not work.], getting accurate test coverage information is a challenge. Instead, a more qualitative approach is often needed here. In non-distributed systems, test coverage can be an excellent automatically computed quantitative metric.
+====
+
+We believe that most good libraries will have some form of continuous integration (CI) or automated testing, including proposed changes (or when a pull request is created). You can check if a GitHub project has continuous integration by looking at the pull-requests tab CI can be very helpful for reducing bugs overall, especially regressionsfootnote:[Where something that used to work stops working in a newer release]. Historically, use of CI was somewhat a matter of project preference, but with the creation of free tools, including GitHub actions, many multi-person software projects now have some form of CI. This is a common software engineering practice, and we consider it essential for libraries that we depend on.
+
+Static typing is frequently considered a programming best practice, with some detractors. While the arguments for and against static types inside data pipelines are complex, we believe _some_ typing at the library level is something one should expect.
+
+=== Conclusion
+
+When building data (or other) applications on Dask, you will likely need many different tools from the ecosystem. The ecosystem evolves at different rates, with some parts requiring more investment by you to effectively use. Choosing the right tools, and transitively the right people, are key to having your project succeed, and in our experience, how enjoyable your work will be. It's important to remember that these decisions are not set-in-stone, but changing a library tends to get harder the longer you've been using it in your project. In this chapter, you've learned how to evaluate the different components of the ecosystem for project maturity. You can use this to decide when to use a library v.s. writing the functionality, you need yourself.
