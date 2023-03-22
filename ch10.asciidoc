@@ -145,12 +145,12 @@ include::./examples/dask/DaskGPUs.py[tags=ex_dask_submit_numba_incorrect]
 ----
 ====
 
-[[ex_dask_submit_numba]]
+[[ex_dask_submit_numba_correct]]
 .Decorator Hack
 ====
 [source, python]
 ----
-include::./examples/dask/DaskGPUs.py[tags=ex_dask_submit_numba]
+include::./examples/dask/DaskGPUs.py[tags=ex_dask_submit_numba_correct]
 ----
 ====
 
