@@ -117,7 +117,7 @@ include::./examples/dask/Dask-Ch10_porting.py[tags=ex_postgres_dataframe]
 Recently, fugue-sql project came on-line, which provides SQL compatibility to Pydata stack, including Dask. The project is in its infancy, but seems promising. Fugue can run its SQL queries using DaskExecutionEngine, or you can run fugue queries over Dask DataFrame you already are using. Alternatively, you can run a quick SQL query on dask dataframe on your notebook as well. Here’s an example of using fugue in notebook.
 
 .Running SQL over dask dataframe with Fugue SQL
-image:images/ch09/image1.png[]
+image::images/ch09/image1.png[]
 
 An alternate method is to use Dask-SQL library. This package uses Apache Calcite to provide the SQL parsing frontend, and is used to query Dask Dataframes. With that library, you can pass most of the SQL based operations to dask_sql context, and it will be handled. The engine handles standard SQL inputs like SELECT, CREATE TABLE, but also ML model creation, with CREATE MODEL syntax.
 
