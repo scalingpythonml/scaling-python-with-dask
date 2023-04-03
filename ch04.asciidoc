@@ -44,10 +44,13 @@ Dask's DataFrame loading and writing functions start with `to_` or `read_` as th
 Wildcard paths only work with filesystems that support directory listing. For example, they do not work on HTTP.
 ====
 
-When loading data, breaking the data into the right number of partitions will speed up all of your operations. As discussed, more partitions allow for more parallelism but have a non-zero overhead. The different formats have slightly different ways to control this. HDF takes `chunksize`, indicating the number of rows per-partition. Parquet also takes `split_row_groups`, which takes an integer of logical partitioning desired out of the parquet file, and Dask will split the whole set into those chunks, or less. If not given, the default behavior is each partition to correspond to a parquet file. The text-based formats (CSV, fixed-width, etc.) take a `blocksize` parameter with the same meaning as Parquet's `chunksize` but a maximum value of 64MB. You can verify this by loading a dataset and seeing the number of tasks and partitions increase with smaller target sizes as in <<ex_load_1kb>>.
+
+When loading data, having the right number of partitions will speed up all of your operations.
+Sometimes it's not possible to load the data with the right number of partitions, and in those cases you can re-partition your data after the load.
+As discussed, more partitions allow for more parallelism but have a non-zero overhead. The different formats have slightly different ways to control this. HDF takes `chunksize`, indicating the number of rows per-partition. Parquet also takes `split_row_groups`, which takes an integer of logical partitioning desired out of the parquet file, and Dask will split the whole set into those chunks, or less. If not given, the default behavior is each partition to correspond to a parquet file. The text-based formats (CSV, fixed-width, etc.) take a `blocksize` parameter with the same meaning as Parquet's `chunksize` but a maximum value of 64MB. You can verify this by loading a dataset and seeing the number of tasks and partitions increase with smaller target sizes as in <<ex_load_1kb>>.
 
 [[ex_load_1kb]]
-.Dask DataFrame load CSV with 1KB junks
+.Dask DataFrame load CSV with 1KB chunks
 ====
 [source, python]
 ----
@@ -55,7 +58,7 @@ include::./examples/dask/Dask-Ch4-DataFrames.py[tags=ex_load_1kb]
 ----
 ====
 
-Loading CSV and JSON files is more complicated as, unlike self-describing data types, they don't have any schema information encoded. Dask DataFrames need to know the types of the different columns to serialize the data correctly. By default, Dask will automatically look at the first "few" records and guess the data types for each column. This process is known as schema inference, and can be quite slow.
+Loading CSV and JSON files can be more complicated than Parquet, and other self-describing data types, they don't have any schema information encoded. Dask DataFrames need to know the types of the different columns to serialize the data correctly. By default, Dask will automatically look at the first "few" records and guess the data types for each column. This process is known as schema inference, and can be quite slow.
 
 [[ex_load_uk_gender_pay_gap_infered]]
 .Dask DataFrame load CSV depending entirely on inference
@@ -84,7 +87,8 @@ In theory, you can have Dask sample more records by specifying more bytes with t
 
 Even when schema inference does not return an error, depending on it has a number of drawbacks. Schema inference involves sampling data and its results are therefore both probabilistic and slow. When you can, you should use self-describing formats or otherwise avoid schema inference your data loading will be faster and more reliable. Some common self-describing formats you may encounter include Parquet, Avro, and ORC.
 
-Adding file formats is a lot of work, especially if there are no existing Python libraries. If there are existing libraries, you might find it easier to read the raw data into a bag and parse it with a map function, which I'll explore more of in the next chapter.
+
+Reading and writing from/to new file formats is a lot of work, especially if there are no existing Python libraries. If there are existing libraries, you might find it easier to read the raw data into a bag and parse it with a map function, which we will explore more of in the next chapter.
 
 [TIP]
 ====
@@ -120,11 +124,11 @@ Other systems commonly use metastores for partitioned reads and writes when deal
 Loading data can be a substantial amount of work and a bottleneck, so Dask distributes this like most other tasks. If you are using Dask distributed, each worker must have access to the files to parallelize the loading. Rather than copying the file to each worker, network file systems allow everyone to access the files. Dask’s file access layer uses the FSSPEC libraryfootnote:[from the intake project] to access the different file systems. Since FSSPEC supports such a range of file systems, it does not install the requirements for every supported file system. You can see what file systems are supported and which ones need additional packages by running:
 
 [[ex_supported_fs]]
-.Dask DataFrame list supported filesystems
+.FSSPEC list supported filesystems
 ====
 [source, python]
 ----
-include::./examples/dask/Dask-Ch4-DataFrames.py[tags=ex_load_uk_gender_pay_gap]
+include::./examples/dask/Dask-Ch4-DataFrames.py[tags=fsspec]
 ----
 ====
 
@@ -303,7 +307,7 @@ If you're unsure what the current key used for partitioning is, you can check th
 
 Once you've chosen your key, the next question is how to size your partitions. The advice in <<basic_partitioning>> generally applies here: shoot for enough partitions to keep each machine busy, but keep in mind the general sweet spot of 100mb to 1gb. Dask generally computes pretty even splits if you give it a target number of partitions.footnote:[Key-skew can make this impossible for a known partitioner.] Thankfully, `set_index` will also take `npartitions`. To repartition the data by postal code, with 10 partitions, you would add `set_index("PostCode", npartitions=10)`, otherwise Dask will default to the number of input partitions.
 
-If you plan to use rolling windows, you will likely need to ensure that you have the right size (in terms of key range) covered in each partition. To do this as part of `set_index`, you would need to compute your own divisions to ensure each partition has the right range of records present. Divisions are specified as a list starting from the minimal value of the first partition up to the maximum value of the last partition. Each value in between is a "cut" point for between the pandas DataFrames that make up the Dask DataFrame. To make a DataFrame with `[0, 100) [100, 200), (300, 500]` you would write `df.set_index("NumEmployees", divisions=[0, 100, 200, 300, 500])`. Similarly for the date range, to support a rolling window of up to 7 days, from the start of the pandemic to this writing is shown in <<set_index_with_rolling_window>>.
+If you plan to use rolling windows, you will likely need to ensure that you have the right size (in terms of key range) covered in each partition. To do this as part of `set_index`, you would need to compute your own divisions to ensure each partition has the right range of records present. Divisions are specified as a list starting from the minimal value of the first partition up to the maximum value of the last partition. Each value in between is a "cut" point for between the pandas DataFrames that make up the Dask DataFrame. To make a DataFrame with partitions `[0, 100) [100, 200), [200, 300), [300, 500)` you would write `df.set_index("NumEmployees", divisions=[0, 100, 200, 300, 500])`. Similarly for the date range, to support a rolling window of up to 7 days, from the start of the pandemic to this writing is shown in <<set_index_with_rolling_window>>.
 
 [[set_index_with_rolling_window]]
 .Dask DataFrame rolling window with set_index

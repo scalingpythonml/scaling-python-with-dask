@@ -10,7 +10,7 @@ This will be the second chapter of the final book. The GitHub repo is available 
 If you have comments about how we might improve the content and/or examples in this book, or if you notice missing material within this chapter, please reach out to the editor at vwilson@oreilly.com.
 ****
 
-I'm so happy that you've decided to explore whether Dask is the system for you by trying it out. In this chapter, we will focus on getting started with Dask in its local mode. Using this, we'll explore a few more straightforward parallel computing tasks (including everyone's favorite, wordcount :p).
+We are so happy that you've decided to explore whether Dask is the system for you by trying it out. In this chapter, we will focus on getting started with Dask in its local mode. Using this, we'll explore a few more straightforward parallel computing tasks (including everyone's favorite, wordcount :p).
 
 === Installing Dask Locally
 
@@ -27,6 +27,8 @@ include::./examples/dask/setup-dask-user.sh[tags=install]
 ----
 ====
 
+Here we install a specific version of Dask rather than "just" the latest. If your planning to connect to a cluster later on it will be useful to pick the same version of Dask as is installed on the cluster.
+
 [NOTE]
 ====
 You don't have to install Dask locally, although you probably will want to. There is a link:$$https://mybinder.org/v2/gh/dask/dask-examples/main?urlpath=lab$$[binderhub example with dask] as well as distributed options including link:$$https://cloud.coiled.io/$$[from the creators of Dask] that you can use to run Dask, as well as other providers like link:$$https://saturncloud.io/$$[Saturncloud]. That being said I recommend having Dask installed locally even if you end up using these services.
@@ -37,6 +39,7 @@ You don't have to install Dask locally, although you probably will want to. Ther
 Another way to get Dask running locally is to use link:$$https://docs.dask.org/en/stable/how-to/deploy-dask/docker.html$$[example docker images] maintained by the Dask project. The benefit of this approach is that the same image can then be used in a distributed cluster, each node running the same docker image locally thus ensuring the compatibility of all the packages. Advanced users can use the Dask example Docker images as a base and add packages of their choice before link:$$https://www.sentinelone.com/blog/create-docker-image/$$[committing changes and saving it as a new image].
 ****
 
+[[hello_worlds]]
 === Hello Worlds
 
 Now that you have Dask installed locally, it's time to try the versions of "Hello World" available through its various APIs. There are many different options for starting Dask. For now, you should use LocalCluster as shown in <<make_dask_client>>.
@@ -80,9 +83,11 @@ One of the neat things about `dask.delayed` is that you can launch tasks inside 
 include::./examples/dask/Dask-Ch2-Hello-Worlds.py[tags=mini_crawl_task]
 ----
 
+In practice, behind the scenes there is still some central co-ordination involved (including the scheduler), but the freedom to write your code in this nested way is quite powerful.
+
 ==== Distributed Collections
 
-In addition to the low-level task APIs, Dask also has distributed collections. These collections enable you to work with data that would be too large to fit on a single machine and naturally distribute work on it. Dask has both an unordered collection called "bag", and an ordered collection called "array." Dask array aims to implement some of the ndarray interface, whereas bag focuses more on functional programming (e.g., things like `map` and `filter`). You can load Dask collections from files, take local collections and distribute them, or take the results of dask.delayed tasks and turn them into a collection.
+In addition to the low-level task APIs, Dask also has distributed collections. These collections enable you to work with data that would be too large to fit on a single machine and naturally distribute work on it, which is called "data parallelism". Dask has both an unordered collection called "bag", and an ordered collection called "array." Dask array aims to implement some of the ndarray interface, whereas bag focuses more on functional programming (e.g., things like `map` and `filter`). You can load Dask collections from files, take local collections and distribute them, or take the results of dask.delayed tasks and turn them into a collection.
 
 
 In distributed collections Dask splits the data up using partitions. Partitions are used to decrease the scheduling cost compared to operating on individual rows, which is covered in more detail in <<basic_partitioning>>.
@@ -181,4 +186,4 @@ include::./examples/dask/Dask-Ch2-Hello-Worlds.py[tags=wc_dataframe]
 In this chapter you got Dask working on your local machine, as well as had a tour of the different "hello world" (or getting started) examples with most of Dask's different built-in libraries. Subsequent chapters will dive into these different tools in more detail.
 
 
-Now that you've got Dask working on your local machine, if you want, you can jump on over to <<appa_deploy>> and look at the different deployment mechanisms. For the most part, you can run the examples in local mode, albeit sometimes a little slower or smaller scale. However, the next chapter will look at the core concepts of Dask, and one of the (optional) upcoming examples both emphasizes the benefits of Dask running on multiple machines and is generally easier to explore on a cluster. If you don't have a cluster available, you can may wish to set-up a simulated one using something like link::https://microk8s.io/$$[MicroK8s].
+Now that you've got Dask working on your local machine, if you want, you can jump on over to <<appa_deploy>> and look at the different deployment mechanisms. For the most part, you can run the examples in local mode, albeit sometimes a little slower or smaller scale. However, the next chapter will look at the core concepts of Dask, and one of the (optional) upcoming examples both emphasizes the benefits of Dask running on multiple machines and is generally easier to explore on a cluster. If you don't have a cluster available, you can may wish to set-up a simulated one using something like link::$$https://microk8s.io/$$[MicroK8s].

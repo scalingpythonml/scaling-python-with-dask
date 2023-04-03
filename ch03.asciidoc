@@ -107,7 +107,7 @@ The Dask UI during the running of the examples of this chapter is shown in <<fig
 .The Dask UI
 image::./figures/ch3-how-dask-works/DaskUI.png[]
 
-The UI allows you to see what Dask is doing, what's being stored on the workers, and explore the execution graph. I'll revisit the execution graph more in the <<graph_visualize>>.
+The UI allows you to see what Dask is doing, what's being stored on the workers, and explore the execution graph. We will revisit the execution graph more in the <<graph_visualize>>.
 
 [[ser_pick_dtl]]
 === Serialization and Pickling
@@ -153,20 +153,22 @@ Dask automatically attempts to compress serialized data which generally improves
 [[basic_partitioning]]
 === Partitioning / Chunking Collections
 
-Partitioning gives you the ability to control the number of tasks used to process your data. If you have billions of rows, using one task for each row would spend more time scheduling the tasks than the work itself.
+Partitioning gives you the ability to control the number of tasks used to process your data. If you have billions of rows, using one task for each row would spend more time scheduling the tasks than the work itself. Understanding partitioning is key to being able to make the most efficient use of Dask. 
 
-Dask uses slightly different terminology for partitioning in each of its collections. Understanding partitioning is key to being able to make the most efficient use of Dask. In Dask Partitioning impacts how data is located on your cluster, and the right partitioning for your problem can make order of magnitude level improvements. Partitioning has a few different aspects, like size of each partition, number of partitions, as well as optional properties like partition key, and sorted v.s. unsorted.
+Dask uses slightly different terminology for partitioning in each of its collections. In Dask, partitioning impacts how data is located on your cluster, and the right partitioning for your problem can make order of magnitude level improvements. Partitioning has a few different aspects, like size of each partition, number of partitions, as well as optional properties like partition key, and sorted v.s. unsorted.
 
 The number and size of partitions are closely related and impact the maximum parallelism. Partitions that are too small, or too many partitions, means that Dask will spend more time scheduling the tasks than running them. A general "sweet spot" for partition size is around 100mb~1Gb, but if your computation per element is very expensive smaller partition sizes can perform better.
 
-Ideally your partitions should be similar in size to avoid stragglers. When you've got partitions of different sizes it is called "skewed." There are many different sources of skew, ranging from input file sizes to key skewfootnote:[When keyed]. In addition to equal size you also want to make sure that you have enough partitions to take advantage of all the CPU cores in your cluster. On the flipside, having too many partitions causes an excessive number of tasks or excessive network traffic. When your data gets too skewed, you will need to re-partition the data.
+Ideally your partitions should be similar in size to avoid stragglers. When you've got partitions of different sizes it is called "skewed." There are many different sources of skew, ranging from input file sizes to key skewfootnote:[When keyed]. When your data gets too skewed, you will need to re-partition the data.
 
 [TIP]
 ====
 The Dask UI is a great place to see if you might have stragglers.
 ====
 
-Dask Array's partitions are called "chunks" representing the number of elements. Dask does not always know the size of each chunk, although it always knows the number of chunks, but when you apply a filter or load data Dask is unaware of the size of each chunk. Indexing or slicing a Dask array requires that Dask knows the size of each chunk so Dask can find the chunk(s) with the desired elements. Depending on how your Dask array was created, Dask may or may not know the size of each chunk. I'll talk about this more in the Dask collection chapter. If you want to index into an array where Dask does not know the chunk sizes you will need to first call `compute_chunk_sizes()` on the array.When creating a Dask array from a local collection, you can specify the target chunk size as shown in <<custom_array_chunk_size>>.
+==== Dask Arrays
+
+Dask Array's partitions are called "chunks" representing the number of elements. Dask does not always know the size of each chunk, although it always knows the number of chunks, but when you apply a filter or load data Dask is unaware of the size of each chunk. Indexing or slicing a Dask array requires that Dask knows the size of each chunk so Dask can find the chunk(s) with the desired elements. Depending on how your Dask array was created, Dask may or may not know the size of each chunk. We talk about this more in the Dask collection chapter. If you want to index into an array where Dask does not know the chunk sizes you will need to first call `compute_chunk_sizes()` on the array.When creating a Dask array from a local collection, you can specify the target chunk size as shown in <<custom_array_chunk_size>>.
 
 [[custom_array_chunk_size]]
 .Custom Array Chunk Size
@@ -179,11 +181,15 @@ include::./examples/dask/Dask-Ch3-Concepts.py[tags=make_chunked_array]
 
 Partitions/chunking doesn't have to be static, and the `rechunk` function allows you to change the chunk size of a Dask array.
 
+==== Dask Bags
+
 Dask Bag's partitions are called partitions. Unlike with Dask Arrays, since Dask Bag's do not support indexing, Dask does not track the number of elements in each partition. When you use scatter, Dask will try to partition the data as well as possible, but subsequent iterations can change the number of elements inside of each partition. Similar to Dask Arrays, when creating from a local collection you can specify the number of partitions of a bag, except the parameter is called `npartitions` instead of `chunks`.
 
 You can change the number of partitions in a Bag by calling `repartition` with either `npartitions` (for a fixed number of partitions) or `partition_size` for a target size of each partition. Specifying `partition_size` is more expensive since Dask needs to do some extra computation to determine what the matching number of partitions would be.
 
-You can think of data as keyed when there is an index, or the data can be looked up by a value – like in a hashtable. While Bag implements "keyed" operations like groupBy where values with the same key are combined, it's partitioning does not have any idea of key and instead keyed operations always operate on all partitions.
+You can think of data as keyed when there is an index, or the data can be looked up by a value – like in a hashtable. While Bag implements "keyed" operations like groupBy where values with the same key are combined, it's partitioning does not have any idea of key and instead keyed operations always operate on all partitions. footnote:[Coming from databases you can think of this as a "full-scan" or "full-shuffle" for Spark folks with groupBy.]
+
+==== Dask DataFrames
 
 Dataframes have the most options for partitioning. Dataframes can have partitions of different sizes, as well as known or unknown partitioning. With unknown partitioning, the data is distributed but Dask is unable to determine which partition holds a particular key. Unknown partitioning happens often as any operation which could change the value of a key results in unknown partitioning. The `known_divisions` property on a Dataframe allows you to see if Dask knows the partitioning, and the `index` property shows the splits used and the column.
 
@@ -200,7 +206,7 @@ Shuffling refers to transferring data between different workers to repartition t
 
 The most straightforward case to understand shuffles are those when you explicitly ask Dask to repartition your data. In those cases you generally see many-to-many worker communication with the majority of the data needing to be moved over the network. This is naturally more expensive than situations where data is able to be processed locally as the network is much slower than RAM.
 
-Another important way that shuffles happen is implicitly through a reduction/aggregation. In these cases, if parts of the reduction or aggregation can be applied prior to moving the data around, Dask is able to transfer less data over the network, making for a faster shuffle.
+Another important way that you can trigger shuffles is implicitly through a reduction/aggregation. In these cases, if parts of the reduction or aggregation can be applied prior to moving the data around, Dask is able to transfer less data over the network, making for a faster shuffle.
 
 [TIP]
 ====
@@ -219,7 +225,7 @@ Tasks are the building blocks that dask uses to implement dask.delayed, futures,
 
 ==== Lazy Evaluation
 
-Most of Dask is lazily evaluated, with the exception of Dask futures. Lazy evaluation shifts the responsibility for combining computations together from you to the scheduler. This means that Dask will, when it makes sense, combine multiple function calls. Not only that, but sometimes if just parts of a structure are needed, Dask is able to optimize by evaluating only the relevant parts (like `head` or `tail` calls). Implementing lazy evaluation requires Dask to construct a task graph. This task graph is also re-used for fault-tolerance.
+Most of Dask is lazily evaluated, with the exception of Dask futures. Lazy evaluation shifts the responsibility for combining computations together from you to the scheduler. This means that Dask will, when it makes sense, combine multiple function calls. Not only that, but sometimes if just parts of a structure are needed, Dask is sometimes able to optimize by evaluating only the relevant parts (like `head` or `tail` calls). footnote:[When Dask can optimize evaluation here is complicated, but remember that a task is the fundamental unit of computation and Dask can not break down compute any further inside of the task. So a DataFrame created from many indivdual tasks that you call head on is a great candidate for Dask to optimize, but a single task making a large DataFrame Dask is unable to break "inside."] Implementing lazy evaluation requires Dask to construct a task graph. This task graph is also re-used for fault-tolerance.
 
 Unlike the rest of Dask, futures are eagerly evaluated, which limits the optimizations available when chaining them together as the scheduler has a less complete view of the world when it starts executing the first future. Futures still create task graphs, and you can verify this by visualizing them in the next section.
 
@@ -232,7 +238,7 @@ You should try this out now by visualizing everyone's favourite wordcount exampl
 
 [[vis_ex]]
 .Visualized wordcount task graph
-image::./figures/ch3-how-dask-works/wordcount-visualized.png[]
+image::./figures/ch3-how-dask-works/wordcount-visualized.png[scale=50]
 
 [TIP]
 ====

@@ -20,7 +20,7 @@ Dask is unique in the distributed computing ecosystem, by integrating popular da
 
 === Why Do You Need Dask?
 
-Dask simplifies scaling analytics and ML code written in Python, allowing you to handle larger and more complex data and problems.
+Dask simplifies scaling analytics, ML, and other footnote:[Not all Python code, for example Dask would be a bad choice for scaling a webserver (very stateful from the web socket needs).] code written in Python, allowing you to handle larger and more complex data and problems.
 Dask aims to fill the space where your existing tools, like pandas DataFrames, or your sci-kit machine learning pipelines start to become too slow (or do not succeed).
 While the term "big data" is perhaps less in vogue now than a few years ago, the data size of the problems has not gotten smaller, and the complexity of the computation and models have not gotten simpler.
 Dask allows you to primarily use the existing interfaces that you are used to (such as pandas and multiprocessing) while going beyond the scale of a single core or even a single machine.
@@ -101,12 +101,12 @@ Dask's true power comes from the ecosystem built around it. Different libraries 
 
 You can accelerate Python in a few different ways, ranging from code generation (such as `Numba`) to libraries for special hardware such as NVidia's `CUDA` (and wrappers like `cuDF`), AMD's ROCm, and Intel's `MKL` libraries.
 
-Dask itself is not a library for accelerated Python, but you can use it in conjunction with accelerated Python tools. For ease of use, some community projects integrate acceleration tools with Dask, such as `cuDF` and `dask-cuda`.  When using accelerated Python tools with Dask, you'll need to be careful to structure your code to avoid serialization errors (see <<help_im_in_a_pickle>>).
+Dask itself is not a library for accelerated Python, but you can use it in conjunction with accelerated Python tools. For ease of use, some community projects integrate acceleration tools with Dask, such as `cuDF` and `dask-cuda`.  When using accelerated Python tools with Dask, you'll need to be careful to structure your code to avoid serialization errors (see <<ser_pick_dtl>>).
 
 
 ===== SQL engines
 
-Dask itself does not have a SQL engine; however, link:$$https://fugue-tutorials.readthedocs.io/tutorials/fugue_sql/index.html$$[FugueSQL], link:$$https://dask-sql.readthedocs.io/en/latest/$$[dask-sql], and link:$$https://github.com/BlazingDB/blazingsql$$[BlazingSQL] use Dask to provide a distributed SQL engine. Dask-sql uses the popular Apache Calcite project, which powers many other SQL engines. BlazingSQL extends Dask DataFrames to DataFrames supporting GPU operations. cuDF DataFrames have a slightly different representation. Apache Arrow makes it straightforward to convert a Dask DataFrame to cuDF and vice versa.
+Dask itself does not have a SQL engine; however, link:$$https://fugue-tutorials.readthedocs.io/tutorials/fugue_sql/index.html$$[FugueSQL], link:$$https://dask-sql.readthedocs.io/en/latest/$$[dask-sql], and link:$$https://github.com/BlazingDB/blazingsql$$[BlazingSQL] footnote:[Blazing SQL is no longer maintained although its concepts are interesting and may find life in another project] use Dask to provide a distributed SQL engine. Dask-sql uses the popular Apache Calcite project, which powers many other SQL engines. BlazingSQL extends Dask DataFrames to DataFrames supporting GPU operations. cuDF DataFrames have a slightly different representation. Apache Arrow makes it straightforward to convert a Dask DataFrame to cuDF and vice versa.
 
 [TIP]
 ====
