@@ -11,7 +11,8 @@ This will be the first chapter of the final book. The GitHub repo is available a
 If you have comments about how we might improve the content and/or examples in this book, or if you notice missing material within this chapter, please reach out to the editor at vwilson@oreilly.com.
 ****
 
-Dask is a framework for parallelized computing with Python that scales from multiple cores on one machine to data centers with thousands of machines. It has both low-level task APIs and higher-level data-focused APIs. The low-level task APIs power Dask's integration with a wide variety of Python libraries. Having public APIs has allowed an ecosystem of tools to grow around Dask for various use cases.
+Dask is a framework for parallelized computing with Python that scales from multiple cores on one machine to data centers with thousands of machines. It has both low-level task APIs and higher-level data-focused APIs. The low-level task APIs power Dask's integration with a wide variety of Python libraries, so while you might not use it directly it is still important. Dask's integration with libraries, along with it's higher-level data focused APIs, can allow you to get many of the benefits of scale with smaller changes to your code.
+
 
 Continuum Analytics, now known as Anaconda Inc, started the open-source DARPA funded link:$$https://blaze.readthedocs.io/en/latest/index.html$$[BLAZE project], which has evolved into Dask.
 Continuum has participated in developing many essential libraries and even conferences in the Python data analytics space. Dask remains an open-source project, with much of its development now being supported by link:$$https://coiled.io/$$[Coiled].
@@ -48,27 +49,33 @@ image::images/layout.png[]
 We say a problem is "compute" bound if the limiting factor is not the amount of data, but rather the work we are doing on the data. Memory bound problems are problems where the computation is not the limiting factor, rather the ability to store all of the data in memory is the limiting factor. Some problems can exhibit both "compute" and "memory" bound problems as is often the case for large deep learning problems.
 
 
-Multi-Core (think multi-threading) processing can help with "compute" problems (up to the limit of the number of cores in a machine). Generally multi-core processing is unable to help with memory bound problems as all CPUs have similar access to the memory footnote:[With the exception of non-uniform memory access (NUMA) systems
+Multi-Core (think multi-threading) processing can help with "compute" problems (up to the limit of the number of cores in a machine). Generally multi-core processing is unable to help with memory bound problems as all CPUs have similar access to the memory footnote:[With the exception of non-uniform memory access (NUMA) systems].
 
 
 Accelerated processing, like specialized instruction sets or specialized hardware like tensor processing units or graphics processing units, is generally only useful for compute bound problems. Sometimes using accelerated processing can introduce memory bounding problems, as the amount of memory available to the accelerated computation can be smaller than the "main" system memory.
 
 
-Multi-Machine processing is important both of these classes of problems, namely "compute" bound and "memory" bound problems. Since the number of cores you can get in a machine (affordable) are limited, even if a problem is "only" compute bound at certain scales you will need to consider multi-machine processing. More commonly, memory bound problems are a good fit for multi-machine scaling as Dask can often split up the data between the different machines.
+Multi-Machine processing is important both of "compute" bound and "memory" bound problems. Since the number of cores you can get in a machine (affordable) are limited, even if a problem is "only" compute bound at certain scales you will need to consider multi-machine processing. More commonly, memory bound problems are a good fit for multi-machine scaling as Dask can often split up the data between the different machines.
 
 
 Dask has both multi-core and multi-machine scaling, allowing you to scale your Python code as you best see fit.
 
 
-Much of Dask's power comes from the tools and libraries built on top of it, which fit into their parts of the data processing ecosystem (such as BlazingSQL). Your background and interest will naturally shape how you first view Dask, so in the following subsections, I'll briefly discuss how you can use Dask for different types of problems, as well as how it compares to some existing tools.
+Much of Dask's power comes from the tools and libraries built on top of it, which fit into their parts of the data processing ecosystem (such as BlazingSQL). Your background and interest will naturally shape how you first view Dask, so in the following subsections, we will briefly discuss how you can use Dask for different types of problems, as well as how it compares to some existing tools.
 
 ==== Big Data
 
-Dask has better Python library integrations and lower overhead for tasks than many alternatives.
+Depending on who you talk to, you can get very different definition of "big data." We find it helpful to think of "big data" as problems where storing the dataset on a single computer would be a challenge. Other folks will say that a problem is "big data" when it can no longer be handled by your existing "small data" tools (like pandas). Some other folks prefer to talk about specific dataset sizes (e.g. X TBs of data as big data), but as computing power changes these definitions can become obsolute.
+
+
+
+Dask has better Python library integrations and lower overhead for tasks than many alternative big data tools.
 Apache Spark (and it's Python companion PySpark) is one of the most popular tools for big data.
 Existing big data tools, like PySpark, have more data sources and optimizers (like predicate push-down) but higher overhead per task. Dask's lower overhead is mainly because the rest of the Python big data ecosystem is built primarily on top of the Java Virtual Machine (JVM). These tools have advanced features like query optimizers, but with the cost of copying data between the JVM and Python.
 
+
 Unlike many other traditional big data tools, Spark, Hadoop, etc., Dask considers local mode a first-class citizen. The traditional big data ecosystem focuses on using the local mode for testing, but Dask focuses on good performance when running on a single node.
+
 
 Another significant cultural difference comes from packaging, with many projects in "big data" putting everything together (e.g., Spark SQL, Spark Kubernetes, etc., are released together). Dask takes a more modular approach, with its components following their own development and release cadence. Dask's approach can iterate faster, at the cost of occasional incompatibilities between libraries.
 
@@ -108,6 +115,8 @@ Dask itself is not a library for accelerated Python, but you can use it in conju
 
 Dask itself does not have a SQL engine; however, link:$$https://fugue-tutorials.readthedocs.io/tutorials/fugue_sql/index.html$$[FugueSQL], link:$$https://dask-sql.readthedocs.io/en/latest/$$[dask-sql], and link:$$https://github.com/BlazingDB/blazingsql$$[BlazingSQL] footnote:[Blazing SQL is no longer maintained although its concepts are interesting and may find life in another project] use Dask to provide a distributed SQL engine. Dask-sql uses the popular Apache Calcite project, which powers many other SQL engines. BlazingSQL extends Dask DataFrames to DataFrames supporting GPU operations. cuDF DataFrames have a slightly different representation. Apache Arrow makes it straightforward to convert a Dask DataFrame to cuDF and vice versa.
 
+Dask allows these different SQL engines to scale both memory and compute wise, handling larger data sizes than fit in memory on a single computer and processing rows on multiple computers. Dask also powers the important "aggregation" step of combinding the results from the different machines into a coehisieve view of the data.
+
 [TIP]
 ====
 Dask-sql can read data from parts of the Hadoop ecosystem that Dask cannot read from (e.g., Hive).
@@ -115,11 +124,13 @@ Dask-sql can read data from parts of the Hadoop ecosystem that Dask cannot read 
 
 ===== Workflow scheduling
 
+Most organizations have the need for some kind of scheduled work, from programs that run at specific times (like end of day or end of month financials) or in response to events. These events can be things like data becoming available (like after the daily financials are run), or when a new e-mail comes in, to user triggered. In the simplest case the scheduled work can be a single program, but can often be more complex than that.
+
 // TODO: Holden - double check if this is too spicy.
 
 As mentioned above, you can specify arbitrary graphs in Dask, and if you choose, you could write your workflows using Dask itself. You can call system commands and parse their results, but just because you can do something doesn't mean it will be fun or simple.
 
-The household namefootnote:[Assuming a fairly nerdy household.] for workflow scheduling in the big data ecosystem is Apache Airflow. While Airflow has a wonderful collection of operators, making it easy to express complex task types easily, it is notoriously difficult to scale footnote:[With one thousand tasks per hour taking substantial tuning and manual consideration; see https://medium.com/@keozchan/scaling-airflow-to-1000-tasks-hour-aac3207b26ec]. Dask can be used to run link:$$https://airflow.apache.org/docs/apache-airflow/1.10.1/howto/executor/use-dask.html$$[Airflow tasks]. Alternatively, it can be used as a backend for other task scheduling systems like link:$$https://github.com/prefecthq/prefect$$[Prefect]. Prefect aims to bring Airflow like functionality to Dask with a large pre-defined task library. Since prefect used Dask as an execution backend from the start, it has a tighter integration and lower overhead than Airflow on Dask.
+The, current, household namefootnote:[Assuming a fairly nerdy household.] for workflow scheduling in the big data ecosystem is Apache Airflow. While Airflow has a wonderful collection of operators, making it easy to express complex task types easily, it is notoriously difficult to scale footnote:[With one thousand tasks per hour taking substantial tuning and manual consideration; see https://medium.com/@keozchan/scaling-airflow-to-1000-tasks-hour-aac3207b26ec]. Dask can be used to run link:$$https://airflow.apache.org/docs/apache-airflow/1.10.1/howto/executor/use-dask.html$$[Airflow tasks]. Alternatively, it can be used as a backend for other task scheduling systems like link:$$https://github.com/prefecthq/prefect$$[Prefect]. Prefect aims to bring Airflow like functionality to Dask with a large pre-defined task library. Since prefect used Dask as an execution backend from the start, it has a tighter integration and lower overhead than Airflow on Dask.
 
 
 [NOTE]
