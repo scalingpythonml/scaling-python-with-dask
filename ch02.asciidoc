@@ -10,7 +10,7 @@ This will be the second chapter of the final book. The GitHub repo is available 
 If you have comments about how we might improve the content and/or examples in this book, or if you notice missing material within this chapter, please reach out to the editor at vwilson@oreilly.com.
 ****
 
-We are so happy that you've decided to explore whether Dask is the system for you by trying it out. In this chapter, we will focus on getting started with Dask in its local mode. Using this, we'll explore a few more straightforward parallel computing tasks (including everyone's favorite, wordcount :p).
+We are so happy that you've decided to explore whether Dask is the system for you by trying it out. In this chapter, we will focus on getting started with Dask in its local mode. While local mode may not be sufficient to solve your production use case, it's a great place to become familiar with Dask in general. Using this, we'll explore a few more straightforward parallel computing tasks (including everyone's favorite, wordcount :p).
 
 === Installing Dask Locally
 
@@ -55,9 +55,10 @@ include::./examples/dask/Dask-Ch2-Hello-Worlds.py[tags=make_dask_client]
 
 ==== Task Hello World
 
-One of the core building blocks of Dask is `dask.delayed`, which allows you to run functions in parallel and optionally distributed. When you wrap a function with `dask.delayed` and call it you get back a "delayed" object representing the desired computation.
+One of the core building blocks of Dask is `dask.delayed`, which allows you to run functions in parallel. If you are running Dask on multiple machines, these functions can also be distributed (or spread out) on the different machines.
+When you wrap a function with `dask.delayed` and call it you get back a "delayed" object representing the desired computation.
 When you created a delayed object, Dask is just making a note of what you might want it to do. Like a lazy teenager you need to be explicit. You can force Dask to start computing the value with `dask.submit` which produces a "future".
-You can use `dask.compute` to both start computing the delayed objects and futures and return their values.footnote:[Provided they fit in memory].
+You can use `dask.compute` to both start computing the delayed objects as well as get the values of delayed objects and futures and return their values.footnote:[Provided they fit in memory].
 
 
 
