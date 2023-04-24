@@ -57,7 +57,8 @@ include::./examples/dask/Dask-Ch2-Hello-Worlds.py[tags=make_dask_client]
 
 One of the core building blocks of Dask is `dask.delayed`, which allows you to run functions in parallel. If you are running Dask on multiple machines, these functions can also be distributed (or spread out) on the different machines.
 When you wrap a function with `dask.delayed` and call it you get back a "delayed" object representing the desired computation.
-When you created a delayed object, Dask is just making a note of what you might want it to do. Like a lazy teenager you need to be explicit. You can force Dask to start computing the value with `dask.submit` which produces a "future".
+When you created a delayed object, Dask is just making a note of what you might want it to do. Like a lazy teenager you need to be explicit.
+You can force Dask to start computing a delayed object by calling `dask.submit` which produces a "future".
 You can use `dask.compute` to both start computing the delayed objects as well as get the values of delayed objects and futures and return their values.footnote:[Provided they fit in memory].
 
 
