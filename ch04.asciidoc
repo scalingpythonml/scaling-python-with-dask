@@ -10,9 +10,13 @@ This will be the fourth chapter of the final book. The GitHub repo is available 
 If you have comments about how we might improve the content and/or examples in this book, or if you notice missing material within this chapter, please reach out to the editor at vwilson@oreilly.com.
 ****
 
-Pandas DataFrames, while popular, quickly run into memory constraints as data sizes grow since they store the entire data in memory. Pandas DataFrames have a robust API for all kinds of data manipulation and are frequently the starting point for many analytics and machine learning projects. While pandas itself does not have machine learning built in, data scientists often use it as part of data and feature preparation during the exploratory phase of new projects. As such, scaling Pandas DataFrames to be able to handle large data sets is of vital importance to many data scientists. Most data scientists are already familiar with the pandas libraries, and Dask's DataFrame implements much of the pandas API while adding the ability to scale.
+Pandas DataFrames, while popular, quickly run into memory constraints as data sizes grow since they store the entire data in memory. Pandas DataFrames have a robust API for all kinds of data manipulation and are frequently the starting point for many analytics and machine learning projects. While pandas itself does not have machine learning built in, data scientists often use it as part of data and feature preparation during the exploratory phase of new projects. As such, scaling Pandas DataFrames to be able to handle large data sets and expensive computation on them is of vital importance to many data scientists. Most data scientists are already familiar with the pandas libraries, and Dask's DataFrame implements much of the pandas API while adding the ability to scale.
+When using a distributed backend, Dask DataFrames help scale both memory and compute bound DataFrame problems.
 
-Dask is one of the first to implement a usable subset of the pandas APIs, other projects like Spark have added their approaches. This chapter assumes you have a good understanding of the pandas DataFrame APIs; if not, you should check out _Python for Data Analysis: Data Wrangling with Pandas, NumPy, and IPython_ by Wes McKinney.
+
+Dask is one of the first  scalable systems to implement a large and usable subset of the pandas APIs.
+Since then, other projects like Spark have added their own approaches.
+This chapter assumes you have a good understanding of the pandas DataFrame APIs; if not, you should check out _Python for Data Analysis: Data Wrangling with Pandas, NumPy, and IPython_ by Wes McKinney.
 
 You can often use Dask DataFrames as a replacement for Pandas DataFrames with minor changes thanks to duck-typing. However, this can have performance drawbacks, and some functions are not present. These drawbacks come from the distributed parallel nature of Dask, which adds communication costs for certain types of operations. In this chapter, you will learn how to minimize these performance drawbacks and work around any missing functionality.
 
@@ -20,7 +24,8 @@ Dask DataFrames requires that your data and your computation are well suited to 
 
 === How Dask DataFrames Are Built
 
-Dask DataFrames build on top of Pandas DataFrames. Each partitionfootnote:[See <<basic_partitioning>> for a review of partitioning.] is stored as a pandas DataFrame. Using pandas DataFrames for the partitions simplifies the implementation of much of the APIs. This is especially true for row-based operations, where Dask passes the function call down to each pandas DataFrame.
+Dask DataFrames build on top of Pandas DataFrames. Each partitionfootnote:[See <<basic_partitioning>> for a review of partitioning.] is stored as a pandas DataFrame. Using pandas DataFrames for the partitions simplifies the implementation of much of the APIs. This is especially true for row-based operations, of which there are many, where Dask passes the function call down to each pandas DataFrame.
+Some sample row based operations include applying a function (like adding one) to every value in DataFrame, or filtering our all NaNs.
 
 Most of the distributed components of Dask's DataFrames use the three core building blocks `map_partitions`, `reduction`, and `rolling`. You mostly won't need to call these functions directly, instead, you will use higher-level APIs, but understanding them and how they work is important to understanding how Dask works. `shuffle` is a critical building block of distributed DataFrames for re-organizing your data. Unlike the other building blocks, you may use it directly more frequently as Dask is unable to abstract away partitioning.
 
@@ -29,6 +34,12 @@ Most of the distributed components of Dask's DataFrames use the three core build
 Data analytics are only as valuable as the data they have access to, and our insights are only helpful if they result in action. Since not all of our data is in Dask, it's essential to read and write data from the rest of the world. So far, the examples in this book have mainly used local collections, but you have many more options.
 
 Dask supports reading and writing many standard file formats and file systems. These formats include CSV, HDF, fixed-width, Parquet, and ORC. Dask supports many of the standard distributed file systems, from HDFS to S3, and reading from "regular" file systems.
+
+
+Most importantly, for Dask, distributed file systems allow for multiple computers to read and write to the same set of files.
+Distributed file systems often store data on multiple computers -- which allows for storing more data than a single computer can hold.
+Often, but not always, distributed file systems are also "fault tolerant" (which they achieve though replication).
+Distributed file systems can have important performance differences than what you are used to working with, so it's important to skim the user documentation for the filesystems you are using. Some things to look for are "block sizes" (you often don't want to write files smaller than these as the rest is wasted space), latency, and consistency gaurantees.
 
 [TIP]
 ====

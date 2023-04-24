@@ -10,7 +10,8 @@ This will be the fifth chapter of the final book. The GitHub repo is available a
 If you have comments about how we might improve the content and/or examples in this book, or if you notice missing material within this chapter, please reach out to the editor at vwilson@oreilly.com.
 ****
 
-So far you've seen the basics of how Dask is built as well as how Dask uses these building blocks to support data science with DataFrames. Often overlooked, relative to DataFrames, this chapter explores where Dask's bag and array interfaces are more appropriate. As mentioned in the <<hello_worlds>> section, Dask bags implement common functional APIs and Dask Arrays implement a subset of numpy arrays.
+This chapter focuses on two of Dask's often overlooked collections, arrays and bags.
+While much of what you've learned in the previous chapter on DataFrames does carry forward to arrays and bags, there are some important differences that make each collection type better suited to specific classes of problems. As mentioned in the <<hello_worlds>> section, Dask bags implement common functional APIs and Dask Arrays implement a subset of numpy arrays.
 
 [TIP]
 ====

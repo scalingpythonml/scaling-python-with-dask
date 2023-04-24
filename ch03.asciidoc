@@ -62,8 +62,12 @@ include::./examples/dask/Dask-Ch3-Concepts.py[tags=dask_use_forkserver]
 ----
 ====
 
-Dask's local backends are designed for performance rather than testing that your code will work on a distributed scheduler. To test that your code will run remotely, you should use Dask's Distributed scheduler with a "LocalCluster" instead.
+This optimization is, generally, not available on Windows.
 
+[TIP]
+====
+Dask's local backends are designed for performance rather than testing that your code will work on a distributed scheduler. As such you can write code which will run locally, but fail when you switch to a distributed cluster. To test that your code will run remotely, you should use Dask's Distributed scheduler with a "LocalCluster" instead.
+====
 ==== Distributed (Dask Client and Scheduler)
 
 Dask has one distributed scheduler backend, that talks to many different types of clusters, including a "LocalCluster". Each type of cluster is supported in its own library, which schedules the scheduler footnote:[Say that five times fast] that the Dask client then connects to. Dask distributed deployment's are more similar than the different local backends.
@@ -74,6 +78,10 @@ will be using Dask with a Kubernetes cluster,
 and if you have another type of cluster or want details please see <<appa_clusterrs>>.
 
 ===== Auto-Scaling (also known as "Adaptive Deployments.")
+
+
+In auto-scaling, Dask can increase and decrease the computers / resources being used based on the tasks you have asked it to run. footnote:[Like in many real world situations, -- it's easier to grow and harder to shrink the number of Dask nodes]. For example, if you have a program which computes some complex aggregations using many computers, but then mostly operates on the aggregated data -- the number of computers you need could decrease by a large amount post aggregation. Many workloads, including machine learning, do not need the same amount of resources/computers for the entire time.
+
 
 Some of Dask's cluster backends, including Kubernetes, support auto-scaling, which Dask calls "adaptive deployments." Auto-scaling is useful mostly in situations of shared cluster resources, or when running on cloud providers where the underlying resources are payed for by the hour.
 
@@ -121,6 +129,11 @@ The UI allows you to see what Dask is doing, what's being stored on the workers,
 
 Distributed and parallel systems depend on serialization, sometimes called pickling in Python, to share data and functions/code between processes. Dask uses a mixture of serialization techniques to match the use case, and provides hooks to extend by class when the defaults don't meet your needs.
 
+[WARN]
+====
+We most often think of serialization when it fails (with an error), but equally important can be situations where we end up serializing more data than we need -- or when the amount of data that needs to be transferred is so large distributing the work is no longer beneficial.
+====
+
 Cloudpickle serializes the functions and the generic Python types in Dask. Most Python code doesn't depend on serializing functions, but cluster computing often does. Cloudpickle is a project designed for cluster computing and is able to serialize & de-serialize more functions than Python's built-in pickle.
 
 [WARNING]
@@ -160,7 +173,7 @@ Dask automatically attempts to compress serialized data which generally improves
 [[basic_partitioning]]
 === Partitioning / Chunking Collections
 
-Partitioning gives you the ability to control the number of tasks used to process your data. If you have billions of rows, using one task for each row would spend more time scheduling the tasks than the work itself.
+Partitioning gives you the ability to control the number of tasks used to process your data. If you have billions of rows, using one task for each row would likely spend more time scheduling the tasks than the work itself.
 Often, but not always, an operation on a Dask collection will result in a Dask delayed operation for each partion.
 Understanding partitioning is key to being able to make the most efficient use of Dask. 
 
@@ -258,6 +271,8 @@ include::./examples/dask/Dask-Ch3-Concepts.py[tags=dask_task_dependencies]
 You don't need to pass around "real" values, for example if one function updates a database and you want to run another function after that, you can use it as a parameter even if you don't actually need it's Python return value.
 ====
 
+By passing delayed objects into other delayed function calls, you allow Dask to re-use shared nodes in the task graph and potentially reduce network overhead.
+
 
 [[graph_visualize]]
 ==== Visualize
@@ -285,7 +300,7 @@ Dask uses a centralized scheduler, which is a common technique for many systems.
 
 ==== Too large Task Graphs
 
-Sometimes the task graph itself can become too much for Dask to handle. This can show up as an out-of-memory exception on the client or scheduler or more commonly jobs that slow down with iterations. Most frequently this occurs with recursive algorithms. One common example of a situation where the graph can become too expensive to keep is distributed alternating least squares.
+Sometimes the task graph itself can become too much for Dask to handle. This can show up as an out-of-memory exception on the client or scheduler or more commonly programs that slow down with iterations. Most frequently this occurs with recursive algorithms. One common example of a situation where the graph can become too expensive to keep is distributed alternating least squares.
 
 The first step when encountering a situation with a too-large task graph is to see if you can reduce the parallelism by using larger chunks of work or switching the algorithm. For example, if we think of fibonacci numbers computed with recursion, a better option would be using a dynamic programming or memoized solution instead of trying to distribute the computation task with Dask.
 
@@ -329,7 +344,10 @@ Dask does not raise an error when you attempt to use Dask caching in a distribut
 
 === Fault Tolerance
 
-Dask's task graph is used to provide it's fault tolerance, as in Spark. Fault Tolerance becomes increasingly important the more computers you use. When you are using Dask on a single computer the concept of fault tolerance is less important since if your one computer fails there is nothing to recover. However, when you have 100s of machines, the odds of any one of those machines failing goes up. There are many different kinds of failures in a distributed system, but thankfully many of them can be handled in the same way.
+In distributed systems, like Dask, fault tolerance generally means how a system handles computer, network, or program failures.
+Fault Tolerance becomes increasingly important the more computers you use. When you are using Dask on a single computer the concept of fault tolerance is less important since if your one computer fails there is nothing to recover. However, when you have 100s of machines, the odds of any one of those machines failing goes up.
+Dask's task graph is used to provide it's fault tolerance. footnote:[The same technique used in Spark.]
+There are many different kinds of failures in a distributed system, but thankfully many of them can be handled in the same way.
 
 Dask automatically retries tasks where the scheduler loses connection to the worker. This retry is accomplished by using the same graph of computation Dask uses for lazy evaluation.
 
@@ -350,4 +368,7 @@ If your program encounters any other exceptions, Dask will return the exception 
 
 === Conclusion
 
-After this chapter you should have a good grasp of how Dask is able to scale your Python code. You should now understand the basics of partitioning, why this matters, task sizing, and Dask approach to fault tolerance. This will hopefully set you up well for deciding when to apply Dask and the next few chapters where we do a deeper dive on Dask's collection libraries. In the next chapter we'll focus on Dask's DataFrames as they are the most full-featured of Dask's distributed collections.
+After this chapter you should have a good grasp of how Dask is able to scale your Python code.
+In this chapter we covered the core building blocks of Dask, from it's execution backends, tasks, delayed objects, and futures. 
+You should now understand the basics of how Dask uses these for partitioning, why this matters, task sizing, and Dask approach to fault tolerance.
+This will hopefully set you up well for deciding when to apply Dask and the next few chapters where we do a deeper dive on Dask's collection libraries. In the next chapter we'll focus on Dask's DataFrames as they are the most full-featured of Dask's distributed collections.
