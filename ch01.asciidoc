@@ -40,7 +40,7 @@ Dask provides scalability to multiple, traditionally distinct tools. It is most 
 .A quick Look at the ecosystem evolution
 image::images/ecosystemfig.png[]
 
-From an abstraction point of view, Dask sits above the machines and cluster management tools, allowing you to focus on Python code instead of the intricacies of machine-to-machine communication.
+From an abstraction point of view, Dask sits above the machines and clusters (collections of machines) footnote:[Cluster management tools -- like Kubernetes, YARN, SLURM, etc. -- make it easier for tools like Dask to request resources on different computers.], allowing you to focus on Python code instead of the intricacies of machine-to-machine communication.
 
 .An alternate look at the ecosystem
 image::images/layout.png[]
@@ -87,13 +87,14 @@ In addition to the pandas' APIs, Dask supports scaling NumPy, scikit-learn, and 
 
 [NOTE]
 ====
-Dask can be extended to support data types besides NumPy and pandas, and this is how GPU support is implemented with link::$https://github.com/rapidsai/cudf$$[cuDF].
+Dask can be extended to support data types besides NumPy and pandas, and this is how GPU support is implemented with link::$$https://github.com/rapidsai/cudf$$[cuDF].
 ====
 
 
 ==== Parallel to Distributed Python
 
-Parallel Python encompasses a wide variety of tools ranging from multiprocessing to Celery.footnote:[Celery often used for background job management is an asynchronous task queue which can also splits up and distributes work but is at a lower level than Dask and does not have the same high-level conveniences as Dask.] Dask gives you the ability to specify an arbitrary graph of dependencies and execute them in parallel. Under the hood, this execution can be backed either by a single machine (with threads or processes) or distributed across multiple workers.
+Parallel computing refers to running multiple operations at the same time, and distributed computing carries this on to multiple operations on multiple machines.
+Parallel Python encompasses a wide variety of tools ranging from multiprocessing to Celery.footnote:[Celery is often used for background job management. Celery is an asynchronous task queue which can split up and distribute work. It is at a lower level abstraction than Dask, and using it often requires large code changes.] Dask gives you the ability to specify an arbitrary graph of dependencies and execute them in parallel. Under the hood, this execution can be backed either by a single machine (with threads or processes) or distributed across multiple workers.
 
 [NOTE]
 ====

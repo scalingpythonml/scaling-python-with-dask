@@ -19,7 +19,7 @@ Depending on if you are using Dask locally or in a distributed fashion the behav
 
 === Execution Backends
 
-Dask has many different execution backends, however, I find it easiest to think about them in two groups, local and distributed. With local backends, you are limited in scale to what a single computer can handle. Local backends also have advantages like avoiding network overhead, simpler library management, and dollar costfootnote:[Unless you work for a cloud provider and computers are close enough to free. If you do work for a cloud provider please send us cloud credits.]. Dask's Distributed backend has many options for deployment, including cluster managers (Kubernetes, etc.), found in both cloud enviornments and on-premise in many companies, to job queue like systems -- most commonly found in high performance computing (HPC) in research enviornments.
+Dask has many different execution backends, however, we find it easiest to think about them in two groups, local and distributed. With local backends, you are limited in scale to what a single computer can handle. Local backends also have advantages like avoiding network overhead, simpler library management, and dollar costfootnote:[Unless you work for a cloud provider and computers are close enough to free. If you do work for a cloud provider please send us cloud credits.]. Dask's Distributed backend has many options for deployment, including cluster managers (Kubernetes, etc.), found in both cloud enviornments and on-premise in many companies, to job queue like systems -- most commonly found in high performance computing (HPC) in research enviornments. link:$$https://www.coiled.io/$$[Coiled] also offers an easy way to get a distributed backend up and running on different cloud providers.
 
 ==== Local Backends
 
@@ -42,7 +42,7 @@ include::./examples/dask/Dask-Ch3-Concepts.py[tags=threads]
 ----
 ====
 
-The local multi-process backend has some additional overhead over multi-threaded, although it can be decreased on Unix & Unix-like systemsfootnote:[Including OSX & Linux]. The multi-process backend is able to avoid Python's global interpreter lock by launching separate processes. Launching a new process is more expensive than a new thread, and Dask needs to serialize data that moves between processes.footnote:[This also involves having to store a second copy of any object that is in the driver thread and then used in a worker. Since Dask shards it's collections this doesn't generally blow up as quickly as with "normal" multiprocessing.]
+The local multi-process backend has some additional overhead over multi-threaded, although it can be decreased on Unix & Unix-like systemsfootnote:[Including OSX & Linux.]. The multi-process backend is able to avoid Python's global interpreter lock by launching separate processes. Launching a new process is more expensive than a new thread, and Dask needs to serialize data that moves between processes.footnote:[This also involves having to store a second copy of any object that is in the driver thread and then used in a worker. Since Dask shards it's collections this doesn't generally blow up as quickly as with "normal" multiprocessing.]
 
 .Dask Use Multiprocess
 ====
@@ -68,9 +68,15 @@ This optimization is, generally, not available on Windows.
 ====
 Dask's local backends are designed for performance rather than testing that your code will work on a distributed scheduler. As such you can write code which will run locally, but fail when you switch to a distributed cluster. To test that your code will run remotely, you should use Dask's Distributed scheduler with a "LocalCluster" instead.
 ====
+
 ==== Distributed (Dask Client and Scheduler)
 
-Dask has one distributed scheduler backend, that talks to many different types of clusters, including a "LocalCluster". Each type of cluster is supported in its own library, which schedules the scheduler footnote:[Say that five times fast] that the Dask client then connects to. Dask distributed deployment's are more similar than the different local backends.
+While Dask can work well locally, it's true power comes with the distributed scheduler where you can scale your problem to multiple machines. Since there are both physical, and financial, limits to how much computing power, storage, and memory can be put into one machine using multiple machines often the most cost efficient and sometimes the only solution.
+Distributed computing is not without it's draw backs, as the famous quote by Leslie Lamport goes "A distributed system is one in which the failure of a computer you didn't even know existed can render your own computer unusable." While Dask does much to limit these failures (see the fault-tolerance section), there is an increase in complexity you are accepting when moving to a distributed system.
+
+
+Dask has one distributed scheduler backend, that talks to many different types of clusters, including a "LocalCluster". Each type of cluster is supported in its own library, which schedules the scheduler footnote:[Say that five times fast] that the Dask client then connects to. Dask distributed deployments are more similar than the different local backends.
+
 
 
 The Dask Client is your entry point into the Dask distributed scheduler. In <<ex_dask_k8s>>
@@ -87,7 +93,7 @@ Some of Dask's cluster backends, including Kubernetes, support auto-scaling, whi
 
 ===== Important Limitations with the Dask Client
 
-Dask's client is not "fault-tolerant", so while Dask can handle the failures of it's workers, if the connection between the client and the scheduler is broken your application will fail. A common work around for this is scheduling the client in the same environment as the scheduler, although this does somewhat reduce the usefuleness of having the client and scheduler as separate components.
+Dask's client is not "fault-tolerant", so while Dask can handle the failures of it's workers, if the connection between the client and the scheduler is broken your application will fail. A common workaround for this is scheduling the client in the same environment as the scheduler, although this does somewhat reduce the usefuleness of having the client and scheduler as separate components.
 
 
 ===== Libraries & Dependencies in Distributed Clusters
@@ -181,7 +187,7 @@ Dask uses slightly different terminology for partitioning in each of its collect
 
 The number and size of partitions are closely related and impact the maximum parallelism. Partitions that are too small, or too many partitions, means that Dask will spend more time scheduling the tasks than running them. A general "sweet spot" for partition size is around 100mb~1Gb, but if your computation per element is very expensive smaller partition sizes can perform better.
 
-Ideally your partitions should be similar in size to avoid stragglers. When you've got partitions of different sizes it is called "skewed." There are many different sources of skew, ranging from input file sizes to key skewfootnote:[When keyed]. When your data gets too skewed, you will need to re-partition the data.
+Ideally your partitions should be similar in size to avoid stragglers. When you've got partitions of different sizes it is called "skewed." There are many different sources of skew, ranging from input file sizes to key skewfootnote:[When keyed (e.g. a tuple with data organized by the key of the key-value pair).]. When your data gets too skewed, you will need to re-partition the data.
 
 [TIP]
 ====
@@ -209,7 +215,7 @@ Dask Bag's partitions are called partitions. Unlike with Dask Arrays, since Dask
 
 You can change the number of partitions in a Bag by calling `repartition` with either `npartitions` (for a fixed number of partitions) or `partition_size` for a target size of each partition. Specifying `partition_size` is more expensive since Dask needs to do some extra computation to determine what the matching number of partitions would be.
 
-You can think of data as keyed when there is an index, or the data can be looked up by a value – like in a hashtable. While Bag implements "keyed" operations like groupBy where values with the same key are combined, it's partitioning does not have any idea of key and instead keyed operations always operate on all partitions. footnote:[Coming from databases you can think of this as a "full-scan" or "full-shuffle" for Spark folks with groupBy.]
+You can think of data as keyed when there is an index, or the data can be looked up by a value – like in a hashtable. While Bag implements "keyed" operations like groupBy where values with the same key are combined, its partitioning does not have any idea of key and instead keyed operations always operate on all partitions. footnote:[Coming from databases you can think of this as a "full-scan" or "full-shuffle" for Spark folks with groupBy.]
 
 ==== Dask DataFrames
 
@@ -239,7 +245,7 @@ We'll explore more about how to minimize the impact of shuffles in the next two 
 
 ==== Partitions During Load
 
-So far you've seen how to control partitions when creating from a local collection as well as how-to change the partitioning of an existing distributed collection. Partitioning during the creation of a collection from delayed tasks is generally speaking 1:1, with each delayed task being its own partition. When loading data from files partitioning becomes a bit more complicated, like file layout and compression. Generally speaking, it is good practice to look at the partitioning of data you have loaded by calling `npartitions` for bags, `chunks` for arrays, or `index` for dataframes.
+So far you've seen how to control partitions when creating from a local collection as well as how-to change the partitioning of an existing distributed collection. Partitioning during the creation of a collection from delayed tasks is generally speaking 1:1, with each delayed task being its own partition. When loading data from files partitioning becomes a bit more complicated, like file layout and compression. It is good practice to look at the partitioning of data you have loaded by calling `npartitions` for bags, `chunks` for arrays, or `index` for dataframes.
 
 === Tasks, Graphs, and Lazy Evaluation
 
