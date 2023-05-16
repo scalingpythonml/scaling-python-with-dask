@@ -17,6 +17,16 @@ Having a solid grasp of how Dask is working will help you better decide both how
 
 Depending on if you are using Dask locally or in a distributed fashion the behavior can be a little different. While Dask does a good job of abstracting away many of the details of running on multiple threads on one computer or multiple servers.
 
+
+To be familiar with Dask, just as in any programming language or framework, you need to understand:
+
+* The deployment framework footnote:[You might not be used to thinking of deployment frameworks if your coming from a single machine background, but you can think of that as what software or hardware needs to be setup for your program to function, like a virtualenv or enough memory or a GPU.] that Dask is able to run on, and thei  strengths and weaknesses.
+* The types of data Dask is able to read, how you can interact with the data types in Dask.
+* The computational pattern of Dask, how to turn your ideas into Dask code.
+* How to monitor and troubleshoot Dask.
+
+You will learn how these concepts apply to Dask generally in this chapter while refining your understanding in the rest of the book.
+
 === Execution Backends
 
 Dask has many different execution backends, however, we find it easiest to think about them in two groups, local and distributed. With local backends, you are limited in scale to what a single computer can handle. Local backends also have advantages like avoiding network overhead, simpler library management, and dollar costfootnote:[Unless you work for a cloud provider and computers are close enough to free. If you do work for a cloud provider please send us cloud credits.]. Dask's Distributed backend has many options for deployment, including cluster managers (Kubernetes, etc.), found in both cloud enviornments and on-premise in many companies, to job queue like systems -- most commonly found in high performance computing (HPC) in research enviornments. link:$$https://www.coiled.io/$$[Coiled] also offers an easy way to get a distributed backend up and running on different cloud providers.
@@ -264,6 +274,7 @@ Unlike most of Dask, futures are eagerly evaluated, which limits the optimizatio
 
 In addition to nested tasks as in <<nested_tasks>>, you can also use a Dask Delayed object as input to another delayed computation, and Dask's `submit`/`compute` function will construct a task graph for you.
 
+
 .Task Dependencies Example
 ====
 [source, python]
@@ -271,6 +282,10 @@ In addition to nested tasks as in <<nested_tasks>>, you can also use a Dask Dela
 include::./examples/dask/Dask-Ch3-Concepts.py[tags=dask_task_dependencies]
 ----
 ====
+
+
+Now when you go to compute the final combined value, Dask will compute all of the other values that are needed for the final function using it's implicit task graph.
+
 
 [NOTE]
 ====
