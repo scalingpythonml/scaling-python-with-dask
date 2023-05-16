@@ -97,7 +97,7 @@ While having one actor per bank account does a good job of avoiding bottlenecks 
 
 ==== Scaling Dask actors
 
-The actor model described earlier in this chapter typically assumes that actors are lightweight, meaning they contain a single piece of state, and they do not require scaling/parallelization. In Dask and similar systemsfootnote:[Including Akka], actors are often used for coarser grainedfootnote:[A coarse grained actor means a single actor may contain multiple pieces of state rather than fine-grained where each piece of state would be represented as a separate actor. This is similar to the concept of https://www.martinfowler.com/eaaCatalog/coarseGrainedLock.html[+++coarse-grained locking+++].] implementations and can require scaling.
+The actor model described earlier in this chapter typically assumes that actors are lightweight, meaning they contain a single piece of state, and they do not require scaling/parallelization. In Dask and similar systemsfootnote:[Including Akka.], actors are often used for coarser grainedfootnote:[A coarse grained actor means a single actor may contain multiple pieces of state rather than fine-grained where each piece of state would be represented as a separate actor. This is similar to the concept of https://www.martinfowler.com/eaaCatalog/coarseGrainedLock.html[+++coarse-grained locking+++].] implementations and can require scaling.
 
 As with dask delayed, you can scale actors both horizontally (across processes/machines) by creating multiple actors or vertically (with more resources). Scaling actors horizontally is not as simple as just adding more machines or workers, Dask can not break up a single actor across multiple processes.
 

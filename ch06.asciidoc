@@ -49,6 +49,8 @@ Many common use cases can be made faster with careful application of futures:
 * Fire and forget: Sometimes you might not care about the result of a function call, but you do want to ensure it is called. Futures allow you to ensure a computation occurs without having to block on the result.
 * Actors: We'll covered these in the previous chapter, and the results from calling actors are futures.
 
+Launching futures in Dask is non-blocking, whereas computing tasks in Dask is blocking. This means that when you submit a future to Dask, while it begins work right away, it does not stop (or "block") your program from continuing.
+
 === Launching Futures
 
 The syntax for launching dask futures is a little different than that for dask delayed. Dask futures are launched from the Dask distributed client with either `submit` for single futures or `map` for multiple futures.
@@ -68,6 +70,8 @@ Unlike with Dask delayed, as soon as the future is launched Dask begins to compu
 While this `map` is somewhat similar to the `map` on Dask bags, each item results in a separate task, whereas bags are able to group together tasks into partitions to reduce the overhead (although they are lazily evaluated).
 ====
 
+Some actions in Dask, like `persist()` on Dask collections, use futures under the hood. You can get the futures of the persisted collection by calling `futures_of`. These futures follow the same lifecycle as the futures that you launch yourself.
+
 === Future Lifecycle
 
 Futures have a different lifecycle from `dask.delayed` beyond eager computation. With `dask.delayed` intermediate computations are automatically cleaned up, however Dask futures results are stored until the future is either explicitly canceled or the reference to it is garbage collected in Python. If you no longer need the value of a future, you can cancel it and free any storage space or cores used by calling `.cancel`. The future lifecycle is illustrated below:
@@ -86,6 +90,9 @@ Canceling a future behaves differently than deleting or depending on garbage col
 ====
 When using Dask in a Jupyter notebook the notebook may "hold on to" the result of any previous cell, so even if the future is un-named it will remain present in Dask, https://dask.discourse.group/t/why-is-distributed-leaking-memory-from-unused-futures/959?u=mvashishtha[+++there is a discussion here with more context for those interested.+++]
 ====
+
+The string representation of a future will show you where it is in it's lifecycle (e.g. `Future: slow status: cancelled,`). 
+
 
 === Fire and Forget
 

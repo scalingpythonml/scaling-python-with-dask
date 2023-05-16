@@ -80,8 +80,13 @@ It's important to note that Dask does not manage custom resources (including GPU
 
 [WARNING]
 ====
-Dask depends on well-behaved Python code, which does not use resources it has not asked for and releases the resources when finished. This most commonly happens with memory leaks (both accelerated and not) commonly with specialized libraries like CUDA which allocate memory outside of Python. These libraries often have special steps you need to call when you are done with the task you've asked to make the resources available for others.
+Dask depends on well-behaved Python code, which does not use resources it has not asked for and releases the resources when finished.
+Holding onto or using resources you have not asked to happens most commonly with specialized "accelerator" type libraries like CUDA which allocate memory outside of Python.
+If you use accelerator libraries, you will often need to call special cleanup steps to make the resources available for others at the end of your delayed function.
 ====
+
+To help your Python code be well behaved always try to release any resources back that you are no longer using. Make sure to use finally so that you free resources even on exceptions.
+Sometimes native code will have memory leaks which you can not work, in those cases the Dask Nanny -- covered in <<productionizing>> -- can help.
 
 === Installing the libraries
 
