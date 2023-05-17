@@ -35,7 +35,10 @@ Dask is in its infancy, and the use of Python Data stack to perform large-scale 
 
 While no engineering work is linear in process, it’s always a good idea to have a roadmap in mind. We’ve laid out an example of migration steps as a non-exhaustive list of items a team might want to think through when planning their move.
 
-
+* Deployment framework: What kind of machines and containerization famework will we want to deploy Dask on, and what are their pros and cons?
+* What type of data is Dask able to ingest, and at what scale, and how does that differ from other platforms?
+* What is the compuation framework of Dask, and how do we think in Dask and Pythonic way to achieve the task?
+* How would we monitor and troubleshoot?
 
 
 ==== Type of Clusters
@@ -100,7 +103,7 @@ Dask DataFrame is not value-mutable in the way that Pandas Dataframe users might
 
 ==== Porting SQL to Dask
 
-As previously mentioned, Spark users might have existing logic that is written in SQL. Dask does not natively offer SQL engine, and developers should re-implement the logic in pandas / Dask API. If a robust relational logic is required, you should consider using a separate database layer that is relational, such as Postgres, either before moving the data into Dask runtime, or after.
+Dask does not natively offer SQL engine, although it does natively offer options to read from SQL database. There are a number of different libraries you can use to interact with an existing SQL database, and treat Dask Dataframe as a SQL table and run SQL query directly. Some allow you to even build and server ML models directly using SQL ML syntax similar to that of Google's bigquery ML. In Chapter 13, we will show the use of Dask's native `read_sql()` function, and running SQL ML using dask-sql.
 
 [[ex_postgres_dataframe]]
 .Reading from a Postgres database
@@ -111,12 +114,12 @@ include::./examples/dask/Dask-Ch10_porting.py[tags=ex_postgres_dataframe]
 ----
 ====
 
-Recently, fugue-sql project came on-line, which provides SQL compatibility to Pydata stack, including Dask. The project is in its infancy, but seems promising. Fugue can run its SQL queries using DaskExecutionEngine, or you can run fugue queries over Dask DataFrame you already are using. Alternatively, you can run a quick SQL query on dask dataframe on your notebook as well. Here’s an example of using fugue in notebook.
+Fugue-sql provides SQL compatibility to Pydata stack, including Dask. The project is in its infancy, but seems promising. The main advantage of fugue-sql is that the code is portable between Pandas, Dask, and Spark, giving a lot more interoperability. Fugue can run its SQL queries using DaskExecutionEngine, or you can run fugue queries over Dask DataFrame you already are using. Alternatively, you can run a quick SQL query on dask dataframe on your notebook as well. Here’s an example of using fugue in notebook. The downside of Fugue is that it requires ANTLR library, which requires a java runtime.
 
 .Running SQL over dask dataframe with Fugue SQL
 image::images/ch09/spwd0901.png[]
 
-An alternate method is to use Dask-SQL library. This package uses Apache Calcite to provide the SQL parsing frontend, and is used to query Dask Dataframes. With that library, you can pass most of the SQL based operations to dask_sql context, and it will be handled. The engine handles standard SQL inputs like SELECT, CREATE TABLE, but also ML model creation, with CREATE MODEL syntax.
+An alternate method is to use Dask-SQL library. This package uses Apache Calcite to provide the SQL parsing frontend, and is used to query Dask Dataframes. With that library, you can pass most of the SQL based operations to dask_sql context, and it will be handled. The engine handles standard SQL inputs like `SELECT`, `CREATE TABLE`, but also ML model creation, with `CREATE MODEL` syntax.
 
 ==== Deployment Monitoring
 
