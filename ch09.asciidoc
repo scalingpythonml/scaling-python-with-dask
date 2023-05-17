@@ -36,11 +36,13 @@ Dask is in its infancy, and the use of Python Data stack to perform large-scale 
 While no engineering work is linear in process, it’s always a good idea to have a roadmap in mind. We’ve laid out an example of migration steps as a non-exhaustive list of items a team might want to think through when planning their move.
 
 
+
+
 ==== Type of Clusters
 
 If you are considering moving your analytic engineering job, you probably have a system that’s provisioned to you by your organization. Dask is supported in many commonly used deployment and development environment, with some allowing more flexibility in scaling, dependency management, and support of heterogenous worker types. We have used Dask on academic environments, commodity cloud, and directly over VMs / containers, and we detailed pros and cons some well-used and supported environment are detailed in the table in Appedix A of this book.
 
-Depending on the cluster, your workers might be more transient than other types, and their IP address might not be static when they get spun up again. You should ensure Worker - Scheduler service discovery methods are put in place for your own cluster setup. It could be as simple as a shared file that they read from, or a more resilient broker. If no additional arguments are given, Dask workers would use DASK_SCHEDULER_ADDRESS environment variable to connect.
+Depending on the cluster, your workers might be more transient than other types, and their IP address might not be static when they get spun up again. You should ensure Worker - Scheduler service discovery methods are put in place for your own cluster setup. It could be as simple as a shared file that they read from, or a more resilient broker. If no additional arguments are given, Dask workers would use `DASK_SCHEDULER_ADDRESS` environment variable to connect.
 
 [[ex_yarn_deployment]]
 .Deploying Dask on Yarn with Dask-Yarn and skein
