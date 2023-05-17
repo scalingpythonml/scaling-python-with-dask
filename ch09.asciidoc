@@ -13,12 +13,10 @@ Many users will already have analytic work that is currently deployed that they 
 
 === Why Dask
 
-Here are some of the reasons to migrate into Dask.
+Here are some of the reasons to consider if you should migrate into Dask, from an existing job that is implemented in Pandas, or distributed libraries like Pyspark.
 
 * Python and PyData stack: the developers preferred using Python-native stack, and code style can remain consistently Pythonic.
-* Infrastructure administration overhead: users who adopted Dask report less operations overhead.
-* Reduced data copying: Pyspark users often need to turn Pandas dataframe to PySpark dataframe, to convert back to Pandas. Dask eliminates the intermediate step.
-* Better ML integrations with Dask APIs: futures, delayed, and ML integrations require less glue code from the developer to maintain, as well as performance improvement from more flexible task graph management Dask offers.
+* Richer ML integrations with Dask APIs: futures, delayed, and ML integrations require less glue code from the developer to maintain, as well as performance improvement from more flexible task graph management Dask offers.
 * Fine-grained task management: Dask’s task graph is generated and maintained real-time during runtime, and users can access the task dictionary synchronously.
 * Debugging overhead: Some developer teams prefer debugging experience in Python, as opposed to mixed python and java/scala stacktrace.
 * Development overhead: The development step in Dask can be done locally with ease with the developer’s laptop, as opposed to needing to connect to a powerful cloud machine in order to experiment.
@@ -30,16 +28,13 @@ Dask is in its infancy, and the use of Python Data stack to perform large-scale 
 
 * Parquet scale limits: If parquet data exceeds 10TB scale, there are issues at the fastparquet and pyarrow level that slows Dask down, and metadata management overhead overwhelms.
 * ETL workloads with Parquet files at 10TB scale and beyond that includes a mutation, such as append and update, runs into consistency issues.
-* Weak datalake integrations: PyData stack has not engaged as much in the big data world traditionally, and the integrations on data lake management, such as Apache Iceberg, is missing
+* Weak datalake integrations: PyData stack has not engaged as much in the big data world traditionally, and the integrations on data lake management, such as Apache Iceberg, is missing.
 * High-level query optimization: Users of Spark would be familiar with the Catalyst optimizer that pushes down predicates for optimizing the physical work on the executors. This optimization layer is missing in Dask at the moment. Spark in its early years also did not have the Catalyst engine written yet, and there are work in progress to build this out for Dask.
 
 === Migration Roadmap
 
 While no engineering work is linear in process, it’s always a good idea to have a roadmap in mind. We’ve laid out an example of migration steps as a non-exhaustive list of items a team might want to think through when planning their move.
 
-==== Infrastructure and Data
-
-As with any distributed system, the two main consideration is code and data: we need the workers to have the same required Python packages to work on a given, and we need the data to be accessible and sharable by the workers at the right time.
 
 ==== Type of Clusters
 
