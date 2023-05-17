@@ -95,7 +95,9 @@ Reading and writing from/to new file formats is a lot of work, especially if the
 Dask does not detect sorted data on-load. Instead, if you have pre-sorted data, add the "sorted=true" parameter when setting an index to take advantage, which you will learn about in the next section. If you specify this when the data is not sorted, you may get silent data corruption.
 ====
 
-You can also connect Dask to databases or microservices. Dask has built-in support for loading SQL databases using SQLAlchemy. For Dask to split up the query on multiple machines, you need to give Dask an "index" key. Often SQL databases will have a primary key or numerical index key that you can use for this purpose. e.g. `read_sql_table("customers", index_col="customer_id")`.
+You can also connect Dask to databases or microservices. Relational databases are a fantastic tool and are often quite performant at both simple reads and writes. Often relational databases support distributed deployment whereby the data is split up on multiple nodes, and this is mostly used with large datasets. They tend to be great at handling transactions at scale, but running analytic capabilities on the same node can encounter issues. Dask can be used to efficiently read and compute over this SQL database.
+
+You can use Dask's built-in support for loading SQL databases using SQLAlchemy. For Dask to split up the query on multiple machines, you need to give Dask an "index" key. Often SQL databases will have a primary key or numerical index key that you can use for this purpose. e.g. `read_sql_table("customers", index_col="customer_id")`. 
 
 More advanced connections to databases or microservices are best made using the bag interface and writing your custom load code, which you will learn more about in the next chapter.
 
