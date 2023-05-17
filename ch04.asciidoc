@@ -101,6 +101,15 @@ You can use Dask's built-in support for loading SQL databases using SQLAlchemy. 
 
 More advanced connections to databases or microservices are best made using the bag interface and writing your custom load code, which you will learn more about in the next chapter.
 
+[[ex_read_SQL_Dataframe]]
+.Reading from and writing to SQL with Dask Dataframe
+====
+[source, python]
+----
+include::./examples/dask/Dask-Ch4-DataFrames.py[tags=ex_read_SQL_Dataframe]
+----
+====
+
 .Partitioned Reads and Writes with Parquet
 ****
 The least expensive data to process is the data you never have to read. If you only need a subset of the files (or columns), limiting your reads can greatly speed up your processing. Similarly, when writing your data out, if downstream users are likely only going to need subsets of the data, it can be helpful to write data so consumers can read only the files or columns they need.
