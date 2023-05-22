@@ -22,6 +22,8 @@ Here are some of the reasons to consider if you should migrate into Dask, from a
 * Development overhead: The development step in Dask can be done locally with ease with the developer’s laptop, as opposed to needing to connect to a powerful cloud machine in order to experiment.
 * Management UX: Dask visualization tools tend to be more visually pleasing and intuitive to reason, with native graphviz rendering for task graphs.
 
+It's important to remember that these benefits of Dask come with some important trade-offs we will discuss next.
+
 === Limitations of Dask
 
 Dask is in its infancy, and the use of Python Data stack to perform large-scale Extract, Transform, Load operations is fairly new. There are limitations to Dask, which mainly arise from the fact that PyData stack has traditionally not been used to perform large-scale data workloads. At the time of writing, there are some limits to the system. However, they are being addressed by developers, and a lot of this deficieicnes would be filled in. Some of the fine-grained considerations you should have are as follows:
@@ -31,15 +33,19 @@ Dask is in its infancy, and the use of Python Data stack to perform large-scale 
 * Weak datalake integrations: PyData stack has not engaged as much in the big data world traditionally, and the integrations on data lake management, such as Apache Iceberg, is missing.
 * High-level query optimization: Users of Spark would be familiar with the Catalyst optimizer that pushes down predicates for optimizing the physical work on the executors. This optimization layer is missing in Dask at the moment. Spark in its early years also did not have the Catalyst engine written yet, and there are work in progress to build this out for Dask.
 
+Any list of limitations for a rapidly developing project like Dask may be out of date by the time you read it, so if any of these are blockers for your migration make sure to check Dask's status tracker.
+
 === Migration Roadmap
 
 While no engineering work is linear in process, it’s always a good idea to have a roadmap in mind. We’ve laid out an example of migration steps as a non-exhaustive list of items a team might want to think through when planning their move.
 
 * Deployment framework: What kind of machines and containerization famework will we want to deploy Dask on, and what are their pros and cons?
+* Tests: Do we have tests to ensure our migration correctness and achieves our desired goals??
 * What type of data is Dask able to ingest, and at what scale, and how does that differ from other platforms?
 * What is the compuation framework of Dask, and how do we think in Dask and Pythonic way to achieve the task?
 * How would we monitor and troubleshoot?
 
+We'll start by looking at the types of clusters, which goes with the deployment framework, as it is often one of the issues requiring collaboration with other teams or organiztions.
 
 ==== Type of Clusters
 
