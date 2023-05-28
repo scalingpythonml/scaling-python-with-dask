@@ -18,7 +18,9 @@ Dask is one of the first  scalable systems to implement a large and usable subse
 Since then, other projects like Spark have added their own approaches.
 This chapter assumes you have a good understanding of the pandas DataFrame APIs; if not, you should check out _Python for Data Analysis: Data Wrangling with Pandas, NumPy, and IPython_ by Wes McKinney.
 
-You can often use Dask DataFrames as a replacement for Pandas DataFrames with minor changes thanks to duck-typing. However, this can have performance drawbacks, and some functions are not present. These drawbacks come from the distributed parallel nature of Dask, which adds communication costs for certain types of operations. In this chapter, you will learn how to minimize these performance drawbacks and work around any missing functionality.
+You can often use Dask DataFrames as a replacement for Pandas DataFrames with minor changes thanks to duck-typing.
+While the minor changes are often functional, the performance of operations and APi coverage differ between local pandas DataFrames and Dask DataFrames.
+These drawbacks come from the distributed parallel nature of Dask, which adds communication costs for certain types of operations. In this chapter, you will learn how to minimize these performance drawbacks and work around any missing functionality.
 
 Dask DataFrames requires that your data and your computation are well suited to Pandas DataFrames. Dask has bag's for unstructured data, arrays for array structured data, delayed for arbitrary functions, and actors for stateful operations. If even at a small scale, you wouldn't consider using pandas for your problem, Dask DataFrames are probably not the right solution.
 
@@ -401,13 +403,19 @@ Don't use Dask's concat when operating by row on DataFrame with unknown division
 
 ==== Multi-DataFrame Internals
 
+When working with multiple DataFrames at the same time Dask needs to ensure that matching keys are available on the same computer.
+At a high level, the main thing you need to know here is that multi-DataFrame tasks involve more co-ordination and data copying between the workers.
+Dask has some techniques to try and reduce this overhead, and while we explain a bit about how they work the main point is to understand how *expensive* your join will be,
+
+
+
 Dask uses four techniques --  hash, broadcast, partitioned, and `stack_partitions` -- to combine DataFrames, and each have very different performance. These four functions do not map 1:1 with the join functions you choose from. Rather, Dask chooses the technique based on the indexes, divisions, and requested join type (e.g. outer/left/inner). The three column-based join techniques are hash joins, broadcast, and partitioned joins. When doing row based combinations (e.g. `append`), Dask has a special technique called `stack_partitions` that is extra fast. It's important that you understand the performance of each of these techniques and the conditions that will cause Dask to pick which approach.
 
-*Hash* joins are the default which Dask uses when no other join technique is suitable. Hash joins shuffle the data for all the input DataFrames to partition on the target key. Hash joins use the hash values of keys, which results in a DataFrame that is not in any particular order. As such the result of hash joins do not have any known divisions.
+*Hash* joins are the default which Dask uses when no other join technique is suitable. Hash joins shuffle the data for all the input DataFrames to partition on the target key. Hash joins use the hash values of keys, which results in a DataFrame that is not in any particular order. As such the result of hash joins do not have any known divisions. Hashed joins are the most expensive join.
 
-*Broadcast* joins are ideal for joining large dataframes with small dataframes. In a broadcast join, Dask takes the smaller DataFrame and distributes it to all of the workers. This means that the smaller DataFrame must be able to fit in memory. To tell Dask that a DataFrame is a good candidate for broadcasting, you make sure it is all stored in one partition, e.g. call `repartition(npartitions=1)`.
+*Broadcast* joins are ideal for joining large dataframes with small dataframes. In a broadcast join, Dask takes the smaller DataFrame and distributes it to all of the workers. This means that the smaller DataFrame must be able to fit in memory. To tell Dask that a DataFrame is a good candidate for broadcasting, you make sure it is all stored in one partition, e.g. call `repartition(npartitions=1)`. Broadcast joins, when used appropriately, can be executed almost as inexpensively as a single dataframe operation.
 
-*Partitioned joins* happen when combining DataFrames along an index where the partitions/divisions are known for all the DataFrames. Since the input partitions are known, Dask is able to align the partitions between the DataFrames, involving less data transfer as each output partition has a smaller than full set of inputs.
+*Partitioned joins* happen when combining DataFrames along an index where the partitions/divisions are known for all the DataFrames. Since the input partitions are known, Dask is able to align the partitions between the DataFrames, involving less data transfer as each output partition has a smaller than full set of inputs. Partitioned joins sit between hash and broadcast joins in terms of cost.
 
 Since partition and broadcast joins are faster, doing some work to help Dask can be worth it. For example, concatenating several DataFrames with known and aligned partitions/divisions, and one DataFrame which is unaligned, will result in an expensive hash join. Instead, try to either set the index and partition on the remaining DataFrame, or join the less expensive DataFrames first then perform the expensive join after.
 

@@ -31,6 +31,7 @@ You will learn how these concepts apply to Dask generally in this chapter while 
 
 Dask has many different execution backends, however, we find it easiest to think about them in two groups, local and distributed. With local backends, you are limited in scale to what a single computer can handle. Local backends also have advantages like avoiding network overhead, simpler library management, and dollar costfootnote:[Unless you work for a cloud provider and computers are close enough to free. If you do work for a cloud provider please send us cloud credits.]. Dask's Distributed backend has many options for deployment, including cluster managers (Kubernetes, etc.), found in both cloud enviornments and on-premise in many companies, to job queue like systems -- most commonly found in high performance computing (HPC) in research enviornments. link:$$https://www.coiled.io/$$[Coiled] also offers an easy way to get a distributed backend up and running on different cloud providers.
 
+
 ==== Local Backends
 
 Dask's three local backends are single-process, multithreaded, and multi-process. The single-process backend has no parallelism and is mostly useful for validating if a problem is caused by concurrency. footnote:[These kinds of problems are uncommon in Dask, but can be in the form of logic conditions where two separate processes try and change the same value, and by running only one thread at a time you can often rule this kind of bug out. It is also easier to attach debuggers and other tools to single threaded applications.]

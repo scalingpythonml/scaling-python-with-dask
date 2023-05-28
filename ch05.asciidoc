@@ -69,6 +69,9 @@ Since, as with distributed DataFrames, the partitioned nature of Dask Arrays mak
 * topk: returns the topk elements of the array in place of fully sorting it (which is expensive). https://docs.dask.org/en/stable/generated/dask.array.topk.html[+++topk can be evaluated much less expensively+++]footnote:[topk extracts the topk elements of each partition and then only needs to shuffle the k elements out of each partition.].
 * compute_chunk_sizes: Dask needs to know the chunk sizes to support indexing, and if an array has unknown chunk sizes you can call this function.
 
+
+These special functions are not present on the underlying "regular" collections as they do not offer the same performance savings in a non-parallel / non-distributed enviornments.
+
 === Dask Bags
 
 To continue to draw parallels to Python's internal data structures you can think of bags as slightly-different lists or sets. You can think of bags like lists except without the concept of order (so no indexing operations). Alternatively, if you think of bags like sets, the difference is that bags allow duplicates. Dask's bags have the least number of restrictions on what they contain and similarly have the smallest API. In fact the wordcount example in <<hello_worlds>> covered most of the core of the APIs in bag.
