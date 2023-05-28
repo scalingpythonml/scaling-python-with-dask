@@ -82,7 +82,10 @@ Another significant cultural difference comes from packaging, with many projects
 ==== Data Science
 
 One of the most popular Python libraries in the data science ecosystem is `pandas`.
-Apache Spark (and it's Python companion PySpark) is also one of the most popular tools for distributed data science. It has support for both Python and JVM languages. Spark's first attempt at DataFrames more closely resembled SQL than what you may think of as DataFrames. While Spark has started to integrate pandas support with the link:$$https://koalas.readthedocs.io/en/latest/$$[Koalas project], in my opinion, Dask's support of data science library APIs is one of the best.footnote:[Of course opinions vary, e.g., https://tomaspeluritis.medium.com/war-of-data-frames-i-r-a-p-read-aggregate-and-print-cd37b8f8849c versus https://databricks.com/blog/2021/04/07/benchmark-koalas-pyspark-and-dask.html versus https://coiled.io/blog/dask-as-a-spark-replacement/.] 
+Apache Spark (and it's Python companion PySpark) is also one of the most popular tools for distributed data science.
+Spark was initial created within and works with the traditional "big data" and hadoop ecosystems, and can also run as a standalone tool.
+It has support for JVM languages (Scala, Java, Groovy, etc.) as well as non-JVM languages -- with Python being it's most popular non-JVM language.
+Spark's first attempt at DataFrames more closely resembled SQL than what you may think of as DataFrames. While Spark has started to integrate pandas support with the link:$$https://koalas.readthedocs.io/en/latest/$$[Koalas project], in our opinion, Dask's support of data science library APIs is one of the best.footnote:[Of course opinions vary, e.g., https://tomaspeluritis.medium.com/war-of-data-frames-i-r-a-p-read-aggregate-and-print-cd37b8f8849c versus https://databricks.com/blog/2021/04/07/benchmark-koalas-pyspark-and-dask.html versus https://coiled.io/blog/dask-as-a-spark-replacement/.] 
 In addition to the pandas' APIs, Dask supports scaling NumPy, scikit-learn, and other data science tools.
 
 [NOTE]
@@ -110,6 +113,11 @@ Dask's true power comes from the ecosystem built around it. Different libraries 
 You can accelerate Python in a few different ways, ranging from code generation (such as `Numba`) to libraries for special hardware such as NVidia's `CUDA` (and wrappers like `cuDF`), AMD's ROCm, and Intel's `MKL` libraries.
 
 Dask itself is not a library for accelerated Python, but you can use it in conjunction with accelerated Python tools. For ease of use, some community projects integrate acceleration tools with Dask, such as `cuDF` and `dask-cuda`.  When using accelerated Python tools with Dask, you'll need to be careful to structure your code to avoid serialization errors (see <<ser_pick_dtl>>).
+
+[NOTE]
+====
+Accelerated Python libraries tend to use more "native" memory structures which are not as easily handled by pickle.
+====
 
 
 ===== SQL engines
