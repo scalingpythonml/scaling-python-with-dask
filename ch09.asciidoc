@@ -156,7 +156,7 @@ include::./examples/dask/Dask-Ch10_porting.py[tags=ex_basic_logging]
 ----
 ====
 
-The following example is meant to illustrate using distributed cluster setup and logging a potentially more complex, custom structured events. We have a Dask DataFrame on cluster, passing some compute-heavy task, in this case a softmax function, and log the events, retrieving them from the view of the client.
+The following example builds on the previous one, but swaps in the execution context to a distributed cluster setup, for potentially more complex, custom structured events. The Dask Client listens and accumulates these events and we can inspect them.
 
 [[structured-logging-on-workers]]
 .Structured logging on workers
@@ -169,4 +169,4 @@ include::./examples/dask/Dask-Ch10_porting.py[tags=ex_distributed_logging]
 
 === Conclusion
 
-In this chapter you have reviewed the large questions and considerations you might put in when migrating existing analytic engineering work. You’ve also learned some of the similarities and dissimilarities of Dask, and what to look out for. Since Data Engineering on large scale tends to have similarities across many libraries, it’s often easy to overlook minute differences that leads to larger performance or correctness issues. Keeping them in mind will help you as you take your first journeys in Dask.
+In this chapter you have reviewed the large questions and considerations you might put in when migrating existing analytic engineering work. You’ve also learned some of the feature differences of Dask compared to Spark, R, and Pandas. Some features that are not yet implemented by Dask, some more robustly implemented by Dask, and others that are inherent translational differences when moving a computation from a single machine to a distributed cluster. Since large scale Data Engineering on large scale tends to use similar terms and names across many libraries, it’s often easy to overlook minute differences that lead to larger performance or correctness issues. Keeping them in mind will help you as you take your first journeys in Dask.
