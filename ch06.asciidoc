@@ -43,7 +43,7 @@ Not all other Python code is eagerly evaluated. In Python 3 some built-in functi
 Many common use cases can be made faster with careful application of futures:
 
 * Integrate with other async servers (like Tornado) – although we generally believe that most of the time, Dask is not the right solution for the "hot path", there are exceptions like dynamically computed analytic dashboards.
-* Request/Response pattern: make a call to a remote service and (later) block on its result. This can include querying services like databases, remote procedure calls, or even websites.
+* Request/Response pattern: make a call to a remote service, do some other work (like calling other services), and (later) wait for/block on its result. This can include querying services like databases, remote procedure calls, or even websites.
 * IO: Input/output can often be slow but you know you want them to start happening as soon as possible.
 * Timeouts: Sometimes you only care about a result if you can get it within a certain period of time. For example, think of a boosted ML model where you need to make a decision within a certain timeframe, collecting all scores from available models quickly and then skipping any that take too long.
 * Fire and forget: Sometimes you might not care about the result of a function call, but you do want to ensure it is called. Futures allow you to ensure a computation occurs without having to block on the result.
@@ -187,6 +187,7 @@ include::./examples/dask/Dask-Futures.py[tags=nested]
 
 Note though since Dask uses a centralized scheduler, the client is communicating with that centralized scheduler to determine where to place the future.
 
+// PRODUCTION NOTE: Make Distributed Data Structures for Scheduling a call-out box.
 [[dds_scheduling]]
 === Distributed Data Structures for Scheduling
 
