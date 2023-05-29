@@ -100,11 +100,11 @@ When reading a large file from cloud storage into DataFrame, it may be useful to
 
 Setting smart indices early in the transformation of your DataFrame, prior to complex query, can speed things up. Be aware that multi-indexing is not supported by Dask yet. A common workaround for a multi-indexed DataFrame from other platforms is mapping as a single concatenated column. For example, a simple workaround when coming from a non-Dask columnar dataset, like Pandas `pd.MultiIndex` that has two columns as its index, say `col1` and `col2`, would be to introduce a new column in Dask DataFrame  `col1_col2` as Dask.
 
-During transform stage, since Dask API gives users fine-grained control of how to distribute computation, it’s good to be mindful of when to introduce reduce operations on large data down to a single pandas dataframe. Methods such as repartition() and persist() are great way to introduce computations and reductions early on, before a shuffle operation such as a join().
+During the transform stage, calling `.compute()` coalesces a large distributed Dask Dataframe to a single partition that should fit in RAM. If it does not, you may encounter problems. On the other hand, if you have filtered an input data of size 100Gb down to 10Gb (say your RAM is 15Gb), it is probably a good idea to reduce parallelism after the filter operation, by invoking `.compute()`. You can check your DataFrame's memory usage by invoking `df.memory_usage(deep=True).sum()` to determine if this is the right call. Doing this can be particularly useful if after the filter operation you have a complex and expensive shuffle operation, such as `.join()` with a new larger dataset.
 
 [TIP]
 ====
-Dask DataFrame is not value-mutable in the way that Pandas Dataframe users might be familiar with. Since in-memory modification of a particular value is not possible, only way to change would be a map operation over the an whole column of the entire dataframe. If an in-memory value change is something you have to do often, that is better achieved through an external database.
+Dask DataFrame is not value-mutable in the way that Pandas Dataframe users might be familiar with. Since in-memory modification of a particular value is not possible, the only way to change a value would be a map operation over the whole column of the entire dataframe. If an in-memory value change is something you have to do often, that is better to use an external database.
 ====
 
 ==== Porting SQL to Dask
@@ -145,7 +145,7 @@ include::./examples/dask/Dask-Ch10_porting.py[tags=ex_basic_logging]
 ====
 ////
 
-The following example is meant to illustrate how distributed workers can log more complex and structured events. We have a Dask DataFrame already on a cluster, we pass some compute-heavy task, in this case a softmax function, and log custom structured events.
+The following example is meant to illustrate how distributed workers can log more complex and structured events. We start with a Dask DataFrame already loaded on a cluster, then run some compute-heavy task. This example uses a softmax function, which is a common computation in many ML uses. A common ML dilemma is whether to use a more complex activation or loss function for accuracy, sacrificing performance (thereby running less training epoch but gain a more stable gradient), or vice versa. To figure that out, we attach log custom structured events to time the compute overhead of that specific function.
 
 [[ex_basic_logging]]
 .Basic logging by topic example
