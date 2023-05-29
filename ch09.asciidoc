@@ -156,7 +156,7 @@ include::./examples/dask/Dask-Ch10_porting.py[tags=ex_basic_logging]
 ----
 ====
 
-The following example builds on the previous one, but swaps in the execution context to a distributed cluster setup, for potentially more complex, custom structured events. The Dask Client listens and accumulates these events and we can inspect them. We start with a Dask DataFrame already loaded on a cluster, then run some compute-heavy task. This example uses a softmax function, which is a common computation in many ML uses. A common ML dilemma is whether to use a more complex activation or loss function for accuracy, sacrificing performance (thereby running less training epoch but gain a more stable gradient), or vice versa. To figure that out, we attach log custom structured events to time the compute overhead of that specific function.
+The following example builds on the previous one, but swaps in the execution context to a distributed cluster setup, for potentially more complex, custom structured events. The Dask Client listens and accumulates these events and we can inspect them. We start with a Dask DataFrame, then run some compute-heavy task. This example uses a softmax function, which is a common computation in many ML uses. A common ML dilemma is whether to use a more complex activation or loss function for accuracy, sacrificing performance (thereby running less training epoch but gain a more stable gradient), or vice versa. To figure that out, we attach a code to log custom structured events to time the compute overhead of that specific function.
 
 
 [[structured-logging-on-workers]]
