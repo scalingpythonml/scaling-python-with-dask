@@ -28,7 +28,7 @@ cluster = SLURMCluster(
 )
 cluster.scale(10)
 client = client(cluster)
-#end::ex_deploy_SLURM_by_hand
+#end::ex_deploy_SLURM_by_hand[]
 
 
 # In[ ]:
