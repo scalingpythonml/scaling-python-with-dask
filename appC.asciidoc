@@ -39,7 +39,7 @@ https://docs.dask.org/en/stable/how-to/debug.html#remove-failed-futures-manually
 ====
 [source, python]
 ----
-include:./examples/dask/Dask-Debugging.py[tags=handle]
+include::./examples/dask/Dask-Debugging.py[tags=handle]
 ----
 ====
 

@@ -64,7 +64,7 @@ Since GPU resources are costly, it is typical to want only to allocate as many o
 ====
 [source, bash]
 ----
-include:./examples/dask/kubernetes/install-dask-helm.sh[tags=install_operator]
+include::./examples/dask/kubernetes/install-dask-helm.sh[tags=install_operator]
 ----
 ====
 
@@ -75,7 +75,7 @@ Now you can use the dask operator either by creating yaml files (likely not your
 ====
 [source, python]
 ----
-include:./examples/dask/kubernetes/connect.py[]
+include::./examples/dask/kubernetes/connect.py[]
 ----
 ====
 
@@ -92,7 +92,7 @@ If you have a Ray deployment available to you, enabling Dask can be incredibly s
 ====
 [source, python]
 ----
-include:./examples/dask/Dask-ChN-spark_to_ray_to_dask.py[tags=dask_on_ray]
+include::./examples/dask/Dask-ChN-spark_to_ray_to_dask.py[tags=dask_on_ray]
 ----
 ====
 
@@ -109,7 +109,7 @@ Depending on the cluster, your workers might be more transient than other types,
 ====
 [source, python]
 ----
-include:./examples/dask/Dask-Ch10_porting.py[tags=ex_yarn_deployment]
+include::./examples/dask/Dask-Ch10_porting.py[tags=ex_yarn_deployment]
 ----
 ====
 
@@ -124,7 +124,7 @@ You can turn your HPC account into a high-performance Dask environment that you 
 ====
 [source, python]
 ----
-include:./examples/dask/Dask-Ch10_porting.py[tags=ex_slurm_deployment]
+include::./examples/dask/Dask-Ch10_porting.py[tags=ex_slurm_deployment]
 ----
 ====
 
@@ -155,7 +155,7 @@ Before running Dask in a new environment you should check the job script that is
 ====
 [source, python]
 ----
-include:./examples/dask/Dask-Ch14-Tuning.py[tags=ex_deploy_SLURM_by_hand]
+include::./examples/dask/Dask-Ch14-Tuning.py[tags=ex_deploy_SLURM_by_hand]
 ----
 ====
 
@@ -172,7 +172,7 @@ For HPC users, most processes you launch have a ‘walltime,’ a limited amount
 ====
 [source, python]
 ----
-include:./examples/dask/Dask-Ch14-Tuning.py[tags=ex_hpc_infinite_workers]
+include::./examples/dask/Dask-Ch14-Tuning.py[tags=ex_hpc_infinite_workers]
 ----
 ====
 
@@ -333,7 +333,7 @@ For much more heavy duty usage, you can use Dask with Promethus, the popular Pyt
 ====
 [source, python]
 ----
-include:./examples/dask/Dask-Ch14-Tuning.py[tags=ex_generate_performance_report]
+include::./examples/dask/Dask-Ch14-Tuning.py[tags=ex_generate_performance_report]
 ----
 ====
 
@@ -344,7 +344,7 @@ Dask's Distributed scheduler provides the metrics info as a task stream object w
 ====
 [source, python]
 ----
-include:./examples/dask/Dask-Ch14-Tuning.py[tags=ex_get_task_stream]
+include::./examples/dask/Dask-Ch14-Tuning.py[tags=ex_get_task_stream]
 ----
 ====
 
@@ -357,7 +357,7 @@ You can insert custom metrics using dask.distributed.diagnostics class. One of t
 ====
 [source, python]
 ----
-include:./examples/dask/Dask-Ch14-Tuning.py[tags=ex_memory_sampler]
+include::./examples/dask/Dask-Ch14-Tuning.py[tags=ex_memory_sampler]
 ----
 ====
 
@@ -440,7 +440,7 @@ One generic way you can get the worker and scheduler logs through `get_worker_lo
 ====
 [source, python]
 ----
-include:./examples/dask/Dask-Ch10_porting.py[tags=ex_basic_logging]
+include::./examples/dask/Dask-Ch10_porting.py[tags=ex_basic_logging]
 ----
 ====
 
@@ -451,7 +451,7 @@ You are not limited to logging strings, and you can instead log structured event
 ====
 [source, python]
 ----
-include:./examples/dask/Dask-Ch10_porting.py[tags=ex_distributed_logging]
+include::./examples/dask/Dask-Ch10_porting.py[tags=ex_distributed_logging]
 ----
 ====
 

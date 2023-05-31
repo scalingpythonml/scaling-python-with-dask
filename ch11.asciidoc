@@ -44,7 +44,7 @@ In the following example, we scale trip distances, which is in miles, and total 
 ====
 [source, python]
 ----
-include:./examples/dask/Dask-Ch13_ML.py[tags=ex_scaling_variables]
+include::./examples/dask/Dask-Ch13_ML.py[tags=ex_scaling_variables]
 ----
 ====
 
@@ -57,7 +57,7 @@ The following example shows how you would categorize a particular column while p
 ====
 [source, python]
 ----
-include:./examples/dask/Dask-Ch13_ML.py[tags=ex_categorical_variables]
+include::./examples/dask/Dask-Ch13_ML.py[tags=ex_categorical_variables]
 ----
 ====
 
@@ -70,7 +70,7 @@ The next example categorizes multiple columns at once. Nothing is materialized u
 ====
 [source, python]
 ----
-include:./examples/dask/Dask-Ch13_ML.py[tags=ex_categorical_variables_alt]
+include::./examples/dask/Dask-Ch13_ML.py[tags=ex_categorical_variables_alt]
 ----
 ====
 
@@ -83,7 +83,7 @@ Again, there is a Dask Dataframe function that gives you a similar result. The f
 ====
 [source, python]
 ----
-include:./examples/dask/Dask-Ch13_ML.py[tags=ex_dummy_variables]
+include::./examples/dask/Dask-Ch13_ML.py[tags=ex_dummy_variables]
 ----
 ====
 
@@ -92,7 +92,7 @@ include:./examples/dask/Dask-Ch13_ML.py[tags=ex_dummy_variables]
 ====
 [source, python]
 ----
-include:./examples/dask/Dask-Ch13_ML.py[tags=ex_datetime_dummy_alt]
+include::./examples/dask/Dask-Ch13_ML.py[tags=ex_datetime_dummy_alt]
 ----
 ====
 
@@ -103,7 +103,7 @@ Dask-ml's train-test-split method has more flexibility than Dask Dataframes vers
 ====
 [source, python]
 ----
-include:./examples/dask/Dask-Ch13-ML.py[tags=ex_dask_random_split]
+include::./examples/dask/Dask-Ch13-ML.py[tags=ex_dask_random_split]
 ----
 ====
 
@@ -122,7 +122,7 @@ The following example runs through a straightforward multivariate linear regress
 ====
 [source, python]
 ----
-include:./examples/dask/Dask-Ch13_ML.py[tags=linear_regression]
+include::./examples/dask/Dask-Ch13_ML.py[tags=linear_regression]
 ----
 ====
 
@@ -143,7 +143,7 @@ The following example uses Scikit’s learning functions `SGDRegressor` and `Lin
 ====
 [source, python]
 ----
-include:./examples/dask/Dask-Ch13_ML.py[tags=ex_daskml_port]
+include::./examples/dask/Dask-Ch13_ML.py[tags=ex_daskml_port]
 ----
 ====
 
@@ -156,7 +156,7 @@ Alternatively, you can use scikit-learn along with joblib, a package that can ta
 ====
 [source, python]
 ----
-include:./examples/dask/Dask-Ch13_ML.py[tags=ex_joblib]
+include::./examples/dask/Dask-Ch13_ML.py[tags=ex_joblib]
 ----
 ====
 
@@ -173,7 +173,7 @@ XGBoost uses a DMatrix (data matrix) as its standard data format it works with. 
 ====
 [source, python]
 ----
-include:./examples/dask/Dask-Ch13_ML.py[tags=ex_xgb_basic_usage]
+include::./examples/dask/Dask-Ch13_ML.py[tags=ex_xgb_basic_usage]
 ----
 ====
 
@@ -184,7 +184,7 @@ In the following example, we run a simple training run and plot feature importan
 ====
 [source, python]
 ----
-include:./examples/dask/Dask-Ch13_ML.py[tags=ex_xgb_train_plot_importance]
+include::./examples/dask/Dask-Ch13_ML.py[tags=ex_xgb_train_plot_importance]
 ----
 ====
 
@@ -195,7 +195,7 @@ Putting the previous examples together, you can now compose a function that can 
 ====
 [source, python]
 ----
-include:./examples/dask/Dask-Ch13_ML.py[tags=ex_xgb_early_stopping_and_inference]
+include::./examples/dask/Dask-Ch13_ML.py[tags=ex_xgb_early_stopping_and_inference]
 ----
 ====
 
@@ -208,7 +208,7 @@ A much newer addition is another library, Dask-SQL, provides a convenient wrappe
 ====
 [source, python]
 ----
-include:./examples/dask/Dask-Ch13_ML.py[tags=Dask_sql_define_tables]
+include::./examples/dask/Dask-Ch13_ML.py[tags=Dask_sql_define_tables]
 ----
 ====
 
@@ -221,7 +221,7 @@ You can define the model with most of the ML models we discussed, which runs the
 ====
 [source, python]
 ----
-include:./examples/dask/Dask-Ch13_ML.py[tags=Dask_sql_linear_regression]
+include::./examples/dask/Dask-Ch13_ML.py[tags=Dask_sql_linear_regression]
 ----
 ====
 
@@ -232,7 +232,7 @@ Similarly, you can run classification models, similar to the XGBoost model we ha
 ====
 [source, python]
 ----
-include:./examples/dask/Dask-Ch13_ML.py[tags=Dask_sql_XGBClassifier]
+include::./examples/dask/Dask-Ch13_ML.py[tags=Dask_sql_XGBClassifier]
 ----
 ====
 
@@ -256,7 +256,7 @@ Remember to use delayed notation if you are reading in a large dataset, to delay
 ====
 [source, python]
 ----
-include:./examples/dask/Dask-Ch13_ML.py[tags=dask_delayed_load_model]
+include::./examples/dask/Dask-Ch13_ML.py[tags=dask_delayed_load_model]
 ----
 ====
 
@@ -271,7 +271,7 @@ The most generic way to deploy inference is using dask dataframe’s map_partiti
 ====
 [source, python]
 ----
-include:./examples/dask/Dask-Ch13_ML.py[tags=Dask_DataFrame_map_partition_inference]
+include::./examples/dask/Dask-Ch13_ML.py[tags=Dask_DataFrame_map_partition_inference]
 ----
 ====
 
@@ -282,7 +282,7 @@ One of the interesting ways that Dask offers more than other scalable libraries 
 ====
 [source, python]
 ----
-include:./examples/dask/Dask-Ch13_ML.py[tags=batched_operations]
+include::./examples/dask/Dask-Ch13_ML.py[tags=batched_operations]
 ----
 ====
 
