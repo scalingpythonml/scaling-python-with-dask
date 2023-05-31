@@ -3,6 +3,13 @@
 /*--------Put Your Custom CSS Rules Below--------*/
 /*--- This oneoff overrides the code in https://github.com/oreillymedia/<name_of_theme>/blob/master/pdf/pdf.css---*/
 
+/* style for line of code following table in example with notebook-style output */
+pre.example-cont {
+  margin-left: 0;
+  margin-bottom: 10pt;
+}
+
+
 /*----Uncomment to temporarily turn on code-eyballer highlighting (make sure to recomment after you build)
 
 pre {

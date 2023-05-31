@@ -121,7 +121,7 @@ Fugue-sql provides SQL compatibility to Pydata stack, including Dask. The projec
 from fugue_notebook import setup
 setup (is_lab=True)
 ur = 'https://d37ci6vzurychx.cloudfront.net/trip-data/yellow_tripdata_2018-01.parquet'
-df = dd. read_parquet(url)
+df = dd.read_parquet(url)
 
 %%fsql dask
 tempdf = SELECT VendorID, AVG (total_amount) AS average_fare FROM df GROUP BY VendorID
@@ -146,6 +146,7 @@ PRINT
 |15.775723
 |===
 
+[role="example-cont"]
 ----
 schema: VendorID:long, average_fare:double
 ----

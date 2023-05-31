@@ -1,0 +1,5 @@
+
+/* style for line of code following table in example with notebook-style output */
+pre.example-cont {
+  margin-left: 0;
+}
