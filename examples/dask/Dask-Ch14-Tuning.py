@@ -100,7 +100,7 @@ with performance_report(filename="computation_report.html"):
     x = da.random.random((10000, 10000, 10), chunks=(1000, 1000, 5))
     y = (da.arccos(x)*gnarl).sum(axis=(1,2))
     y.compute()
-#end::ex_generate_performance_report
+#end::ex_generate_performance_report[]
 
 
 # In[ ]:
@@ -121,7 +121,7 @@ history_frame = pd.DataFrame(history, columns = ['worker','status','nbytes', 'th
 
 #plot task stream
 ts.figure
-#end::ex_get_task_stream
+#end::ex_get_task_stream[]
 
 
 # In[ ]:
@@ -160,7 +160,7 @@ with ms.sample("memory with adaptive clusters"):
 #plot the differences
 ms.plot(align=True, grid=True)
 
-#end::ex_memory_sampler
+#end::ex_memory_sampler[]
 
 
 # In[ ]:
