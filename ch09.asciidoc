@@ -113,26 +113,24 @@ include::./examples/dask/Dask-Ch10_porting.py[tags=ex_postgres_dataframe]
 
 Fugue-sql provides SQL compatibility to Pydata stack, including Dask. The project is in its infancy, but seems promising. The main advantage of fugue-sql is that the code is portable between Pandas, Dask, and Spark, giving a lot more interoperability. Fugue can run its SQL queries using DaskExecutionEngine, or you can run fugue queries over Dask DataFrame you already are using. Alternatively, you can run a quick SQL query on dask dataframe on your notebook as well. Here’s an example of using fugue in notebook. The downside of Fugue is that it requires ANTLR library, which requires a java runtime.
 
-[[running_sql_over_dask_dataframe_ch09_1685553886459]]
-.Running SQL over dask dataframe with Fugue SQL
-====
-[source, python]
-----
-from fugue_notebook import setup
-setup (is_lab=True)
-ur = 'https://d37ci6vzurychx.cloudfront.net/trip-data/yellow_tripdata_2018-01.parquet'
-df = dd. read_parquet(url)
+++++
+<div id="running_sql_over_dask_dataframe_ch09_1685553886459" data-type="example">
+<h5>Running SQL over dask dataframe with Fugue SQL</h5>
 
-%%fsql dask
-tempdf = SELECT VendorID, AVG (total_amount) AS average_fare FROM df GROUP BY VendorID
+<pre data-type="programlisting"><code class="kn">from</code> <code class="nn">fugue_notebook</code> <code class="kn">import</code> <code class="n">setup</code>
+<code class="n">setup</code> <code class="p">(</code><code class="n">is_lab</code><code class="o">=</code><code class="kc">True</code><code class="p">)</code>
+<code class="n">ur</code> <code class="o">=</code> <code class="s1">'https://d37ci6vzurychx.cloudfront.net/trip-data/yellow_tripdata_2018-01.parquet'</code>
+<code class="n">df</code> <code class="o">=</code> <code class="n">dd</code><code class="o">.</code> <code class="n">read_parquet</code><code class="p">(</code><code class="n">url</code><code class="p">)</code>
 
-SELECT *
-FROM tempdf
-ORDER BY average fare DESC
-LIMIT 5
-PRINT
-----
-====
+<code class="o">%%</code><code class="n">fsql</code> <code class="n">dask</code>
+<code class="n">tempdf</code> <code class="o">=</code> <code class="n">SELECT</code> <code class="n">VendorID</code><code class="p">,</code> <code class="n">AVG</code> <code class="p">(</code><code class="n">total_amount</code><code class="p">)</code> <code class="n">AS</code> <code class="n">average_fare</code> <code class="n">FROM</code> <code class="n">df</code> <code class="n">GROUP</code> <code class="n">BY</code> <code class="n">VendorID</code>
+
+<code class="n">SELECT</code> <code class="o">*</code>
+<code class="n">FROM</code> <code class="n">tempdf</code>
+<code class="n">ORDER</code> <code class="n">BY</code> <code class="n">average</code> <code class="n">fare</code> <code class="n">DESC</code>
+<code class="n">LIMIT</code> <code class="mi">5</code>
+<code class="n">PRINT</code></pre></div>
+++++
 
 [cols="1,1,1"]
 |===
