@@ -104,7 +104,7 @@ YARN is a popular cluster manager from the big data world, and is available in o
 
 Depending on the cluster, your workers might be more transient than other types, and their IP address might not be static when they get spun up again. You should ensure Worker - Scheduler service discovery methods are put in place for your own cluster setup. It could be as simple as a shared file that they read from, or a more resilient broker. If no additional arguments are given, Dask workers would use DASK_SCHEDULER_ADDRESS environment variable to connect.
 
-[[ex_yarn_deployment]]
+[[ex_yarn_deployment_ch12_1685536104476]]
 .Deploying Dask on Yarn with Dask-Yarn and skein
 ====
 [source, python]
@@ -117,9 +117,9 @@ include:./examples/dask/Dask-Ch10_porting.py[tags=ex_yarn_deployment]
 
 Dask has gained a big academic and scientific user base, part of this comes from how you can use existing HPC clusters with Dask to make a readily available scalable scientific computing without rewriting all of your code.footnote:[In some ways HPC and cluster managers are different names for the same thing, with cluster managers coming out of industry and HPC out of research. HPC clusters tend to have and use a shared network storage that is not as common in industry.]
 
-You can turn your HPC account into a high-performance Dask environment that you can connect to from Jupyter on your local machine. Dask uses it's Dask Jobqueue library to support many HPC cluster types including: HTCondor, LSF, Moab, OAR, PBS, SGE, TORQUE, DRMAA, and SLURM. A separate library, Dask-MPI supports MPI clusters. <<ex_slurm_deployment>> shows a sample of how to us Dask on SLURM.
+You can turn your HPC account into a high-performance Dask environment that you can connect to from Jupyter on your local machine. Dask uses it's Dask Jobqueue library to support many HPC cluster types including: HTCondor, LSF, Moab, OAR, PBS, SGE, TORQUE, DRMAA, and SLURM. A separate library, Dask-MPI supports MPI clusters. <<ex_slurm_deployment_ch12_1685536157505>> shows a sample of how to us Dask on SLURM.
 
-[[ex_slurm_deployment]]
+[[ex_slurm_deployment_ch12_1685536157505]]
 .Deploying Dask on using job-queue over Slurm
 ====
 [source, python]
@@ -433,9 +433,9 @@ In the next section, appendix A, you will learn details about testing and valida
 
 Like many other distributed libraries, Dask provides logs, and you can configure Dask logs to be sent to a storage system. The method will vary by the deployment environment, and if you are using Jupyter.
 
-One generic way you can get the worker and scheduler logs through `get_worker_logs()` and `get_scheduler_logs()` on the Dask client. You can specify specific topics and log to/read from just the relevant topics. <<ex_basic_logging>> shows how to log and read from custom topics.
+One generic way you can get the worker and scheduler logs through `get_worker_logs()` and `get_scheduler_logs()` on the Dask client. You can specify specific topics and log to/read from just the relevant topics. <<ex_basic_logging_ch12_1685536257105>> shows how to log and read from custom topics.
 
-[[ex_basic_logging]]
+[[ex_basic_logging_ch12_1685536257105]]
 .Basic logging by topic example
 ====
 [source, python]
@@ -444,9 +444,9 @@ include:./examples/dask/Dask-Ch10_porting.py[tags=ex_basic_logging]
 ----
 ====
 
-You are not limited to logging strings, and you can instead log structured events. This can be especially useful for performance analysis or anything where the log messages might be visualized rather than looked at individually by a human. In <<structured-logging-on-workers>>, we do this with a distributed softmax function, and log the events, and retrieve them on the client.
+You are not limited to logging strings, and you can instead log structured events. This can be especially useful for performance analysis or anything where the log messages might be visualized rather than looked at individually by a human. In <<structured-logging-on-workers_ch12_1685536295970>>, we do this with a distributed softmax function, and log the events, and retrieve them on the client.
 
-[[structured-logging-on-workers]]
+[[structured-logging-on-workers_ch12_1685536295970]]
 .Structured logging on workers
 ====
 [source, python]

@@ -44,7 +44,7 @@ If you are considering moving your analytic engineering job, you probably have a
 
 Depending on the cluster, your workers might be more transient than other types, and their IP address might not be static when they get spun up again. You should ensure Worker - Scheduler service discovery methods are put in place for your own cluster setup. It could be as simple as a shared file that they read from, or a more resilient broker. If no additional arguments are given, Dask workers would use `DASK_SCHEDULER_ADDRESS` environment variable to connect.
 
-[[ex_yarn_deployment]]
+[[ex_yarn_deployment_ch09_1685536092648]]
 .Deploying Dask on Yarn with Dask-Yarn and skein
 ====
 [source, python]
@@ -55,7 +55,7 @@ include::./examples/dask/Dask-Ch10_porting.py[tags=ex_yarn_deployment]
 
 For HPC deployments using job queuing systems such as PBS, Slurm, MOAB, SGE, LSF, and HTCondor, you should use dask-jobqueue.
 
-[[ex_slurm_deployment]]
+[[ex_slurm_deployment_ch09_1685536141262]]
 .Deploying Dask on using job-queue over Slurm
 ====
 [source, python]
@@ -124,21 +124,9 @@ Like many other distributed libraries, Dask provides logs, and you can configure
 
 Dask client exposes get_worker_logs() and get_scheduler_logs() method that can be accessed at runtime if desired. Additionally, similar to other distributed system logging, you can log events by topic, making them easily accessible by event types.
 
-// AU: the following, commented-out example is repeated below
-//// 
-[[ex_basic_logging]]
-.Basic logging by topic example
-====
-[source, python]
-----
-include::./examples/dask/Dask-Ch10_porting.py[tags=ex_basic_logging]
-----
-====
-////
-
 The following is a toy example on adding a custom log event to the client. 
 
-[[ex_basic_logging]]
+[[ex_basic_logging_ch09_1685536244456]]
 .Basic logging by topic example
 ====
 [source, python]
@@ -150,7 +138,7 @@ include::./examples/dask/Dask-Ch10_porting.py[tags=ex_basic_logging]
 The following example builds on the previous one, but swaps in the execution context to a distributed cluster setup, for potentially more complex, custom structured events. The Dask Client listens and accumulates these events and we can inspect them. We start with a Dask DataFrame, then run some compute-heavy task. This example uses a softmax function, which is a common computation in many ML uses. A common ML dilemma is whether to use a more complex activation or loss function for accuracy, sacrificing performance (thereby running less training epoch but gain a more stable gradient), or vice versa. To figure that out, we insert a code to log custom structured events to time the compute overhead of that specific function.
 
 
-[[structured-logging-on-workers]]
+[[structured-logging-on-workers_ch09_1685536283090]]
 .Structured logging on workers
 ====
 [source, python]
