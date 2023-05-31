@@ -1,37 +1,41 @@
+[[preface]]
 [preface]
 == Preface
 
-This book focuses on Dask because of it's comparatively deep integration into the Python ecosystem. Alternatives such as Ray, Spark, and buying really expensive computers exist, and we'll talk a bit more about those in the next chapter.
+We wrote this book for data scientists and data engineers familiar with Python and pandas looking to handle larger-scale problems than their current tooling allows. Current PySpark users will find some of this material to overlap with their existing knowledge of PySpark, but we hope they still find it helpful and not just for getting away from the JVM.
 
+If you are not familiar with Python, some excellent O'Reilly titles include _Learning Python_ and _Python for Data Analysis_. If you and your team are more of a JVM language person (such as Java or Scala), while we are a bit biased, we'd encourage you to check out Apache Spark along with _Learning Spark_ and _High Performance Spark_.
 
-=== Audience
+This book is primarily focused on data science and related tasks because, in our opinion, that is where Dask excels the most. If you have a more general problem that Dask does not seem to be quite the right fit for, we'd (with a bit of bias again) encourage you to check out _Scaling Python with Ray_, which has less of a data science focus.
 
+=== Acknowledgments
 
-We wrote this book for Python data scientists and engineers looking to scale or speed-up their Python powered data powered applications. This includes everything from the traditional exchange-transform-load (ETL) to the new fancy machine-learning (aka three statisicians in a trench-coat) tools.
+This is a book written by two trans immigrants living in America at a time when the walls can feel like they’re closing in. We choose to dedicate this book to those fighting for a more just world in whichever way, however small, thank you. To all those we lost or didn’t get to meet, we miss you. To those we have yet to meet, we are excited to meet you.
 
+This book would not exist if not for the communities it is built on. From the Dask community to the PyData community, thank you. Thank you for your contributions and guidance to all the early readers and reviewers. These reviewers include Ruben Berenguel, Tom Drabas, Adam Breindel, Kevin Kho, John Iannone, Joseph Gnanaprakasam, Jess Males, and many more. A special thanks to Ann Spencer for reviewing the early proposals of what eventually became this and Scaling Python with Ray. Any remaining mistakes are entirely our fault, sometimes against reviewers' advice.footnote:[We are sometimes stubborn to a fault.]
 
-This book is not for people who love setting up machines, fine-tuning memory allocations, micro-optimizations, or people looking to build distributed systems from scratch. We'll the basics of these topics that a practioner need to understand, but not at the level of systems implementor.
+Holden would also like to thank her wife and partners for putting up with her long in-the-bath-tub writing sessions. A special thank you to Timbit for guarding the house and generally giving Holden a reason to get out of bed (albeit often a bit too early for her taste).
 
+image:images/spwd_pr01.png[]
 
+Mika would additionally like to thank Holden for her mentorship and help, and shoutout to her colleagues at Harvard Data Science department for providing her with unlimited free coffee.
 
-This book assumes you know enough Python, and the libraries you are using (be it pandas, numpy, sci-kit learn or similar), to complete your work on a smaller scale, but not necessarily how to handle larger data sizes or bigger expirements. If you don't that's ok -- there are tons of great books, from O'Reilly and others, that cover all sorts of different topics in Python.
+=== A Note on Responsibility
 
-=== Supporting Books
+As the saying goes, with great power comes great responsibility. Dask, and tools like it, enable you to process more data and build more complex models. It's essential not to get too excited and carried away with collecting data simply for the sake of it, and stop to ask yourself if including a new field in your model might have some unintended real-world implications. You don't have to search very hard to find stories of well-meaning engineers and data scientists accidentally building models or tools that caused devastating impacts, like increased auditing of minorities, hiring algorithms that discriminate based on gender, or subtler things like biases in word embeddings. Please use your newfound powers keeping this in mind, for one never wants to end up in a textbook for the wrong reasons.
 
+=== License
 
-If you're coming from a language other than Python, or otherwise new to Python Learning Python and Head First Python from O'Reilly are really solid introductions.
+Once published in print and excluding O’Reilly’s distinctive design elements (i.e. cover art, design format, “look and feel”) or O’Reilly’s trademarks, service marks, and trade names, this book is available under a Creative Commons Attribution-Noncommercial-No Derivatives 4.0 International Public License. We'd like to thank O'Reilly for allowing us to make this book available under a creative commons license and hope that you will choose to support this book (and us) by purchasing several copies of this book (it makes an excellent gift for whichever holiday season is coming up next).
 
+=== Code Examples
 
-If your Python solid, but your data analysis experience could use some reinforcement (see joke) Python for Data Analysis, 2nd Edition, by Wes McKinney (O’Reilly), Data Science from Scratch, 2nd Edition, by Joel Grus (O’Reilly), and Machine Learning with Python Cookbook by Chris Albon (O’Reilly) are all excellent resources to dig deeper.
+The https://github.com/scalingpythonml/scalingpythonml[+++Scaling Python ML Github+++] contains the majority of the examples in this book. They are mainly under the "dask" directory but with more esoteric parts (such as the cross-platform CUDA container) in separate top-level directories.
 
+This book is here to help you get your job done. In general, if an example code is offered with this book, you may use it in your programs and documentation. You do not need to contact O'Reilly for permission unless you’re reproducing a significant portion of the code. For example, writing a program that uses several chunks of code from this book does not require permission. Selling or distributing a CD-ROM of examples from O’Reilly books does require permission. Answering a question by citing this book and quoting example code does not require permission. The code is also available under an Apache 2 License. Incorporating a significant amount of example code from this book into your product’s documentation may require permission.
 
-Dask is not the only option for you. If as your going through the first chapter you find one of the alternative frameworks mentioned to be a better fit we have some suggestions for books on those topics. Suggestions which we might financially benefit from, but we assure you book royalties are pretty low. If you decide PySpark is better suited to what your working on "Learning Spark" (the latest edition) is a great jumping off point for the Spark ecosystem. If you decide that Ray is better suited to your needs, we'd recommend Scaling Python with Ray: Adventures in Cloud and Serverless Patterns, by Holden and Boris.
+//Should we update this to be our boo. I.e. a how to cite us thingy
 
+We appreciate but do not require attribution. An attribution usually includes the title, author, publisher, and ISBN. For example: “_Scaling Python with Dask_ by Holden and Mika (O’Reilly). Copyright 2022 Holden, ISBNGOHERE.”
 
-
-Also if you're interested in teaching your kid about the area that you're working on, Holden is working on a book targetted to children introducing distributed programming with Spark called "Distributed Computing 4 Kids."
-
-
-=== Layout
-
-This introductory book is meant to get up you up to speed with the basics of dask in the first three chapters. After you've completed "Understanding the basics of Dask" the rest of the book is a choose-your-own-adventure type novel where the if you go down the wrong path you get a stack-trace you don't undeerstand.
+If you feel your use of code examples falls outside fair use or the permission given above, feel free to contact us at pass:[<a class="email" href="mailto:permissions@oreilly.com"><em>permissions@oreilly.com</em></a>].

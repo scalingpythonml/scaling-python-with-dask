@@ -1,0 +1,462 @@
+[[ch12]]
+== Productionizing Dask: Notebooks, Deployment, Tuning, and Monitoring
+
+We have bundled most of the things we believe are going to be critical for you to move from your laptop into production in this chapter. Notebooks and deployments go together, as Dask's Notebook interface greatly simplifies many aspects of using its distributed deployments. While you don't need to use notebooks to access Dask, and in many cases, https://towardsdatascience.com/5-reasons-why-jupyter-notebooks-suck-4dc201e27086[+++notebooks have serious drawbacks+++] – but for interactive use cases, it's often hard to beat the tradeoffs. Interactive/exploratory work has a way of becoming permanent mission-critical workflows, and we cover the steps necessary to turn exploratory work into production deployments..
+
+You can deploy Dask in many fashions, from running on top of other distributed compute engines like Ray to deploying on YARN or a raw collection of machines. Once you've got your Dask job deployed, you'll likely need to tune it so you don't use your entire company’s AWS budget on one job. And then, finally, before you can walk away from a job you'll need to set up monitoring – so you know when it's broken.
+
+[NOTE]
+====
+If you're just here to learn how to use Dask with notebooks, feel free to skip ahead to that section. If you want to learn more about deploying Dask, congratulations and condolences on exceeding the scale you can handle on a single computer.
+====
+
+In this chapter, we will cover some (but not all) of the deployment options for Dask and their trade-offs. You will learn how to integrate notebooks into the most common deployment environments. You'll see how to use these notebooks to track the progress of your Dask tasks and access the Dask UI when running remotely. We will finish covering some options for deploying your scheduled tasks, so you can take a vacation without lining up someone to press run on your notebook every day.
+
+[NOTE]
+====
+This chapter covers Dask's distributed deployments, but if your Dask program is happy in local mode don't feel the need to deploy a cluster just for the sake of it.footnote:[We don't (currently) work for cloud providers so if it fits on your laptop, more power to you. Just remember to use source control. If possible though, putting it on a server can be a useful exercise for capturing the dependencies and ensuring your production enviornment can survive the loss of a laptop.]
+====
+
+=== Factors to Consider in a Deployment Option
+
+When you are choosing how to Deploy Dask, there are many different factors to consider, but often the biggest one is what tools your organization is already using. Most of the deployment options map to different types of cluster managers (CMs). CMs manage sets of computers and provide some isolation between users and jobs. Isolation can be incredibly important, for example, if one user eats all of the candy (or CPU) then another user won't have any candy. Most cluster managers provide CPU and memory isolation, and some also isolate other resources (like disks and GPUs). Most clouds (AWS, GCP, etc.) offer both Kubernetes and YARN cluster managers which can dynamically scale up and down the number of nodes. Dask does not need a CM to run, but without a cluster manager auto-scaling and other important features are not available.
+
+When choosing a deployment mechanism, with or without a CM, some important factors to consider are the ability to scale up and down, multi-tenancy, dependency management, or if it supports heterogeneous workers.
+
+The ability to scale up and down (or dynamic scale), is important in many situations as computers cost money. Heterogeneous or mixed worker types are important for workloads that take advantage of accelerators (like GPUs), so that non-accelerated work can be scheduled on less-expensive nodes. Support for heterogeneous workers goes well with dynamic scaling, as the workers can be replaced,
+
+Multi-tenancy can reduce wasted compute resources for systems that can not scale up and down.
+
+Dependency management allows you to control, at runtime or in advance, what software is on the workers. This is critical in Dask; as if the workers and the client do not have the same libraries, your code may not function. Additionally, some libraries can be slow to install at runtime, so the ability to pre-install or share an environment can be beneficial for some use cases, especially those in deep learning.
+
+<<table_deployment_options_ch12>> compares some of the deployment options in Dask.
+
+[[table_deployment_options_ch12]]
+.Deployment Option Comparisons
+[options="header"]
+|===
+|Deployment Method |Dynamic Scale |Recommended use case (by us)footnote:[This is largely based on our experiences and may be biased to large companies and academic environments. Please feel free to make your own call.] |Dependency Management |Notebook deployed insidefootnote:[There are some work arounds - https://blog.dask.org/2019/09/13/jupyter-on-dask[+++https://blog.dask.org/2019/09/13/jupyter-on-dask+++]] |Mixed Worker Types
+|localhost |No |Testing, solo dev, GPU only acceleration |Yes (runtime or pre-install) |Yes |No
+|ssh |No |Solo lab, testing, but generally no (k8s instead) |Runtime only |Yes |Yes (manual)
+|Slurm + GW |Yes |Existing HPC/slurm environments |Yes (runtime or pre-install) |Separate project |Varies
+|Dask "Cloud" |Yes |Not recommended, use Dask + K8s or YARN on cloud provider |Runtime only |Medium effortfootnote:[Some large commodity cloud providers were easier than others. Mika’s own experience ranks Google Cloud to be easiest, Amazon being the middle, and Azure being hardest to work with. Google cloud has a good working guide on using Dask on google cloud with RAPIDS Nvidia architecture, and well-documented workflow. Amazon Web Services similarly has good documentation on running Dask workers on multiple Amazon Elastic Container service (EC2) and guide on attaching S3 buckets. Azure needed some work to make worker provisioning work well, mostly due to their environment and user provisioning workflow being a bit different from AWS or GCP.] |No*
+|Dask + K8s |Yes |Cloud environments, existing K8s deployments, |Runtime or pre-install (but more effort) |Separate project, medium effort |Yes
+|Dask + YARN |Yes |Existing big data deployments |Runtime or pre-install (but more effort) |Separate project that has not been updated since 2019 |Yes*
+|Dask + Ray + [CM] |Depends on CM |Existing Ray deployments, mutli-tool (TF etc.), or actor systems. |Depends on CM (always at least runtime) |Depends on CM |Yes
+|coiled |yes |New cloud deployments |Yes, including magic "auto-sync" |No |Yes
+|===
+
+=== Building Dask on Kubernetes Deployment
+
+There are two main ways to deploy Dask on Kubernetes,footnote:[PEP20 remain optimistic] "KubeCluster" and "HelmCluster." Helm is a popular tool for managing deployments on Kubernetes, with the deployments being specified in helm charts. Since Helm is the "newer" recommended way of managing deployments on Kubernetes we will cover that one here.
+
+https://helm.sh/docs/intro/install/[+++The helm documentation offers an excellent starting point on the different ways to install Helm+++], but for those in a hurry `curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash` will install Helm for you.footnote:[Note this installs "Helm 3.X:. As with Python3 Helm 3 has a large number of breaking changes over Helm2, so when your reading documentation (or installing packages) make sure it's referencing the current major versions (https://helm.sh/docs/topics/v2_v3_migration/[+++https://helm.sh/docs/topics/v2_v3_migration/+++]).]
+
+[NOTE]
+====
+The Dask on Kubernetes Helm chart deploys what is called an "operator." Currently, installing operators requires the ability to install Custom Resource Definitions (CRDs), and may require administrator privileges. If you can't get the permissions (or someone with the permissions) you can still use the https://kubernetes.dask.org/en/latest/kubecluster.html[+++"vanilla" or "classic" deployment mode.+++]
+====
+
+Since GPU resources are costly, it is typical to want only to allocate as many of them as needed. Some cluster manager interfaces, including Dask's Kubernetes plugin, allow you to configure multiple types of workers so that it will only allocate GPU workers when needed. On our Kubernetes cluster, we deploy Dask the Dask operator as in <<deploy_dask_operator_helm>>.
+
+[[deploy_dask_operator_helm]]
+.Deploy Dask Operator with Helm
+====
+[source, bash]
+----
+include:./examples/dask/kubernetes/install-dask-helm.sh[tags=install_operator]
+----
+====
+
+Now you can use the dask operator either by creating yaml files (likely not your favorite) or with the `KubeCluster` API as shown in <<helm_ex>> where we create a cluster then add additional worker types, allowing Dask to create two different kinds of workers.footnote:[Mixed worker types (see https://distributed.dask.org/en/stable/resources.html and https://www.dask.org/blog/how-to-run-different-worker-types-with-the-dask-helm-chart )]
+
+[[helm_ex]]
+.Use Dask Operator
+====
+[source, python]
+----
+include:./examples/dask/kubernetes/connect.py[]
+----
+====
+
+In 2020 Dask added a https://blog.dask.org/2020/08/31/helm_daskhub[+++"DaskHub" helm chart+++], which combines the deployment of JupyterHub with the Dask Gateway.
+
+=== Dask on Ray
+
+Deploying Dask on Ray is a little bit different than all of the other options, in that it changes not only how Dask workers and tasks are scheduled, but also changes how https://docs.ray.io/en/latest/ray-core/scheduling/memory-management.html#memory[+++Dask objects are stored+++]. This can reduce the number of copies of the same object that need to be stored, allowing you to use your cluster memory more efficiently.
+
+If you have a Ray deployment available to you, enabling Dask can be incredibly straightforward as in <<dask_on_ray>>.
+
+[[dask_on_ray]]
+.Dask on Ray
+====
+[source, python]
+----
+include:./examples/dask/Dask-ChN-spark_to_ray_to_dask.py[tags=dask_on_ray]
+----
+====
+
+However, if you don't have an existing Ray cluster, you will still need to deploy Ray somewhere with the same considerations as Dask. Deploying Ray is beyond the scope of this book. https://docs.ray.io/en/latest/serve/production-guide/index.html[+++Ray's production guide+++] has details for deploying on Ray (as does _Scaling Python with Ray_, which Holden coauthored with Boris Lublinsky).
+
+=== Dask on YARN
+
+YARN is a popular cluster manager from the big data world, and is available in open source as well as commercial on-prem (Cloudera, etc.) and in clouds (e.g., Elastic Map Reduce).
+
+Depending on the cluster, your workers might be more transient than other types, and their IP address might not be static when they get spun up again. You should ensure Worker - Scheduler service discovery methods are put in place for your own cluster setup. It could be as simple as a shared file that they read from, or a more resilient broker. If no additional arguments are given, Dask workers would use DASK_SCHEDULER_ADDRESS environment variable to connect.
+
+[[ex_yarn_deployment]]
+.Deploying Dask on Yarn with Dask-Yarn and skein
+====
+[source, python]
+----
+include:./examples/dask/Dask-Ch10_porting.py[tags=ex_yarn_deployment]
+----
+====
+
+=== Dask on High Performance Computing (HPC)
+
+Dask has gained a big academic and scientific user base, part of this comes from how you can use existing HPC clusters with Dask to make a readily available scalable scientific computing without rewriting all of your code.footnote:[In some ways HPC and cluster managers are different names for the same thing, with cluster managers coming out of industry and HPC out of research. HPC clusters tend to have and use a shared network storage that is not as common in industry.]
+
+You can turn your HPC account into a high-performance Dask environment that you can connect to from Jupyter on your local machine. Dask uses it's Dask Jobqueue library to support many HPC cluster types including: HTCondor, LSF, Moab, OAR, PBS, SGE, TORQUE, DRMAA, and SLURM. A separate library, Dask-MPI supports MPI clusters. <<ex_slurm_deployment>> shows a sample of how to us Dask on SLURM.
+
+[[ex_slurm_deployment]]
+.Deploying Dask on using job-queue over Slurm
+====
+[source, python]
+----
+include:./examples/dask/Dask-Ch10_porting.py[tags=ex_slurm_deployment]
+----
+====
+
+==== Setting Up Dask in a Remote Cluster
+
+The first step to using Dask on your cluster is to set up your own Python and iPython environments in the cluster. The exact way to do that will vary by your cluster’s admin’s preferences. Generally, users often use https://docs.python.org/3/library/venv.html[+++virtualenv+++] or https://docs.conda.io/en/latest/miniconda.html[+++miniconda+++] to install related libraries on a user-level. https://docs.conda.io/en/latest/miniconda.html[+++Miniconda+++] makes it easier to use not just your own libraries, but your own version of Python. Once that is done, ensure your python command points to python binary in your user space by running `which python` or installing and importing a library not available in system python.
+
+The Dask-Jobqueue library converts your Dask settings and configurations into a jobscript that is submitted to the HPC cluster. The following example starts a cluster with SLURM workers, and the semantics is similar for other HPC API. Dask-MPI uses a slightly different pattern, so be sure to refer to its documentation for details. Job_directives_skip is an optional parameter, used to ignore errors in cases where auto-generated jobscript inserts some commands that your particular cluster does not recognize. Job_script_prologue is also an optional parameter that specifies shell commands to be run at each worker spawn. This is a good place to ensure proper python environments are set up, or a cluster-specific set-up script.
+
+[TIP]
+====
+Make sure HPCCluster specs for worker memory and cores are correctly matched in resource_spec arguments, which are given to your HPC system itself, to request the workers. The former is used for the Dask scheduler to set its internals, the latter is for you to request the resource within the HPC.
+====
+
+HPC systems often leverage high-performance network interface on top of a standard Ethernet network, and this has become a crucial way to speed up data movement. You can pass an optional interface parameter as shown to instruct Dask to use the higher bandwidth network. If you are not sure which interfaces are available, type in ifconfig on your terminal, and it will show infiniband, often `ib0`, as one of the available network interfaces.
+
+Finally, the cores and memory description are per-worker resources, and n_workers specify how many jobs you want to queue initially. You can scale and add more workers after the fact, as we do in the example, with the `cluster.scale()` command.
+
+[TIP]
+====
+Some HPC systems use GB when it means 1024-based units. Dask-jobqueue sticks with the proper notation of GiB. 1 GB is 1000^3 bytes, and 1 GiB is 1024^3 bytes. Academic settings often use binary measurements, while commercial settings usually opt for SI units, hence the discrepancy.
+====
+
+Before running Dask in a new environment you should check the job script that is auto-generated by dask-jobqueue for unsupported commands. While Dask's JobQueue library tries to work with many HPC systems it may not have all of the quirks of your institutions setup. If you are familiar with the cluster capabilities you may find unsupported commands, by calling print(cluster.job_script()). You can also try and run a small version of your job first with a limited number of workers and see where they fail. If you find any issues with the script, you should use job_directives_skip parameter to skip the unsupported components, as outlined in <<ex_deploy_SLURM_by_hand>>.
+
+[[ex_deploy_SLURM_by_hand]]
+.Deploying on HPC cluster by hand
+====
+[source, python]
+----
+include:./examples/dask/Dask-Ch14-Tuning.py[tags=ex_deploy_SLURM_by_hand]
+----
+====
+
+On the more advanced end, you can control your cluster configuration by updating Dask JobQueues YAML file, which is generated on first run and stored at `/.config/dask/jobqueue.yaml`. The jobqueue configuration file contains, commented out, default configurations for many different types of cluster. To get started editing it, uncomment the cluster type you are using (e.g. SLURM), and then you can change the values to meet your specific needs. The jobqueue configuration file allows you to configure additional parameters not available through the Python constructor.
+
+If Dask starts to run out of memory, by default, it will write start to write data out to disk (called spill-to-disk). This is normally great, since we tend to have more disk than memory and while it is slower it's not that much slower. However, on HPC enviornments, the default location that Dask may write to could be a network storage drive, which will be as slow as transfering the data on the network. You should make sure Dask writes to local storage, you can ask your cluster administrator for the local scratch directory or use `df -h` to see where different storage devices are mapped. If you don't have local storage available, or it's too small, you can also turn of spill-to-disk. Both disabling or change the location of spilling to Disk on clusters can be configured in the `~/.config/dask/distributed.yaml` file (also created on first run).
+
+Dask also uses files for locking, which can cause issues when using a shared network drive as is common in HPC clusters. If there are multiple workers working simultaneously, it uses a locking mechanism, which excludes another process from accessing this file, to orchestrate itself. Some issues on HPC can come down to incomplete locking transaction, or an inability to write a file on disk due to administrative restrictions. Worker configs can be toggled to disable this behavior.
+
+For HPC users, most processes you launch have a ‘walltime,’ a limited amount of time that the job is allowed to stay on, and then gets ended. You can stagger creation of workers in a way that you will have at least one worker running at all times, creating an ‘infinite’ worker loop. Alternatively, you can also stagger the creation and end of the workers, so that you avoid all of the workers ending simultaneously. <<ex_hpc_infinite_workers>> shows you how.
+
+[[ex_hpc_infinite_workers]]
+.Dask worker management through adaptive scaling
+====
+[source, python]
+----
+include:./examples/dask/Dask-Ch14-Tuning.py[tags=ex_hpc_infinite_workers]
+----
+====
+
+[TIP]
+====
+Different workers can have different startup times, as well as contain different amounts of data which impact the cost of fault recovery.
+====
+
+While Dask has good tools to monitors it's own behaviour, sometimes the integration between Dask and your HPC cluster (or other cluster) can break. If you suspect jobqueue isn’t sending the right worker commands for your particular cluster, you can inspect the `/.config/dask/jobqueue.yaml` file directly or dynamically at runtime or in your jupyter notebook by running `config.get('jobqueue.yaml')`.
+
+==== Connecting Local Machine with HPC Cluster
+
+Part of running Dask remotely is being cable to connect to the server to run your tasks. If you want to connect your client to a remote cluster, run Jupyter remotely, or just access the UI on a cluster you'll need to be able to connect to some ports on the remote machine.
+
+[WARNING]
+====
+Another option is to have Dask bind to a public IP address, but without careful firewall rules this means that anyone can access your Dask cluster, which is likely not your intention.
+====
+
+In HPC environments you often already connect using SSH, so using SSH portforwarding is often the easiest way to connect. SSH port forwarding allows you to map an port on another computer to one on your local computer.footnote:[You can also run an SSH socks proxy which makes it easy to access other servers inside the HPC cluster, but requires changing your browser configuration (and does not work for the Dask client).] The default dask monitoring port is 8787, but if that port is busy,footnote:[Or you configure a different one] Dask may bind to a different port. The Dask server prints out which ports it is bound to at start time. To forward port 8787 on a remote machine to the same local port you could run `ssh -L localhost:8787:my-awesome-hpc-node.hpc.fake:8787`. You can use the same techniques (but with different port numbers) for a remote jupyter lab, or connecting a Dask client to a remote scheduler.
+
+[TIP]
+====
+If you want to leave a process running remotely (like jupyterlab), the screen command can be a great way of having a process last beyond a single session.
+====
+
+With the immense popularity of notebooks, some HPC clusters have special tools to make it even easier to launch Jupyter notebooks. We recommend looking for your clusters administrators documentation on how to launch jupyter notebooks, as it is possible to accidentally create security issues when not done correctly.
+
+=== Dask JupyterLab Extension and Magics
+
+You can run Dask in Jupyter like any other library, but Dask's JupyterLab extensions make it easier to understand the status of your Dask job while it's running.
+
+==== Installing JupyterLab Extensions
+
+Dasks lab extensions require `nodejs`, which can be installed with `conda install -c conda-forge nodejs`. If you are not using conda, it can also be installed with `brew install node` on Apple or `sudo apt install nodejs` on Ubuntu.
+
+Dask's lab extensions package is available as `dask-labextension`.
+
+Once you've installed the lab extension, it will show up with the Dask logo on the left side, as shown in <<dask_instance_on_jupyterlab_ch12_1685474991278>>.
+
+[[dask_instance_on_jupyterlab_ch12_1685474991278]]
+.Screenshot of a successfully deployed Dask instance on jupyterlab
+image:images/spwd_1201.png[]
+
+==== Launching Clusters
+
+From there you can launch your cluster. By default the extension launches a local cluster but you can configure it to use different deployment options, including Kubernetes, by editing ` ~/.config/dask`.
+
+==== UI
+
+If you are using Dask's jupyter lab extension (see <<jupyter-lab-extension_ch12_1685475054811>>), it provides a link to the cluster UI as well as the ability to drag in individual components to the Jupyter interface.
+
+[[jupyter-lab-extension_ch12_1685475054811]]
+.Dask web UI inside jupyterhub using jupyter-lab-extension
+image:images/spwd_1202.png[]
+
+The jupyter-lab-extension links to the Dask web UI, and you can also get a link through the clusters repr. If the cluster link does not work/is not accessible, you can try installing the `jupyter-server-proxy` extension so you can use the notebook host as a https://en.wikipedia.org/wiki/Jump_server[+++"jump" host+++].
+
+==== Watching Progress
+
+Dask jobs tend to take a long time to run, since otherwise, we would not be putting in the effort to parallelize them. You can use Dask's `progress` function from `dask.distributed` to track your futures' progress inside your notebook itself (see <<dask_progress_monitoring_ch12_1685475108548>>).
+
+[[dask_progress_monitoring_ch12_1685475108548]]
+.Real-time Dask progress monitoring in jupyterhub
+image:images/spwd_1203.png[]
+
+=== Understanding Dask Performance
+
+Tuning your Dask program involves understanding the intersection of many components. You will need to understand your code’s behavior, and how it interacts with the data given, and the machines. You can use Dask metrics to gain insight on much of this, but, especially if you did not create it, it's important to look at the program as well.
+
+==== Metrics in Distributed Computing
+
+Distributed computing requires constantly making decisions, and weighing the optimization of the cost and benefits of distributing workload against locally running the work. Most of that low-level decisonmaking is delegated to the internals of Dask. The user should still monitor the runtime characteristics and make modifications to code and configurations if needed.
+
+Dask automatically tracks relevant compute and runtime metrics. You can use this to help you decide how to store your data, as well as inform where to focus your time on optimizing your code.
+
+Of course, the costs of computation is more than just the compute time. Users should also consider the time spent transferring data over network, memory footprint within the workers, GPU/CPU utilization rate, and disk I/O costs. These in turn let you understand the higher level insights of data movement and computation flow, such as how much of the memory in a worker is used up in storing previous computation that hasn’t been passed on to the next computation, or what particular function is taking up the most amount of time. Monitoring these can help tune your cluster and code, but also can help identify emergent computation patterns or logical bottlenecks that you can change.
+
+Dask dashboard provides a lot of statistics and graphs to answer these questions. Here, we will cover a few of the ways you can get insights from the performance metrics, and tune Dask accordingly to achieve better results. This is a webpage tied to your Dask cluster at runtime. You can access it through your local machine or on the remote machine that it is running in, through methods we discussed earlier in this chapter.
+
+==== Dask Dashboard
+
+Dask's Dashboard contains many different pages, each of which can help with understanding different parts of your program.
+
+===== Task Stream
+
+The Task Stream dashboard gives a high-level view of each worker and its behavior. Exact methods invoked are color-coded, and you can inspect them by zooming in and out. Each row represents one worker. The custom-colored bars are user-induced tasks, while there are three preset primary colors to indicate common worker tasks: data transfer between workers, disk read and writes, serialization and deserialization times, and failed tasks. <<task_stream_ch12_1685475169009>> shows a compute workload that is distributed over ten workers, and is well balanced, no one worker finishing late, evenly distributed compute time with minimal network IO overhead.
+
+[[task_stream_ch12_1685475169009]]
+.An example of a task stream with well-balanced workers
+image:images/spwd_1204.png[]
+
+On the other hand, <<task_stream_with_too_many_ch12_1685475203241>> shows a situation where compute is uneven. You can see that there is a lot of whitespace between computation, meaning the workers are blocked and not actually computing during that time. Additionally, you see some workers start earlier, and some finish later, hinting that there are some issues with distributing the job. This could be due to inherent dependency of your code, or that there is suboptimal tuning. Changing the dataframe or array chunk sizes might make these less fragmented. You do see that when the job starts on each worker, they take roughly the same amount of work, meaning the work itself is still balanced fairly well, and distributing the workload is giving you good returns. This is a fairly contrived illustrative example, so this task only took a few seconds, but the same idea applies to longer and more bulky workloads as well.
+
+[[task_stream_with_too_many_ch12_1685475203241]]
+.An example of a task stream with too many small data chunks
+image:images/spwd_1205.png[]
+
+===== Memory
+
+You can monitor the memory usage, sometimes referred to as "memory pressure,"footnote:[You can think of the memory as a balloon that we fill up, and as we get higher pressure it's more likely to have issues. It's a bit of a stretch as a metaphor we admit.] of each worker on the Bytes Stored portion (see <<memory_usage_by_worker_ch12_1685475242277>>). These are by default color coded, to signify memory pressure within limits, approaching limit, spilled to disk. Even if memory usage is within the limits, as it approaches above 60~70%, you are likely to encounter performance slowdowns. The reason is because since memory usage is rising, internals of Python and Dask is going to run costlier garbage collection and memory optimization tasks in the background to keep it from rising.
+
+[[memory_usage_by_worker_ch12_1685475242277]]
+.Memory usage by worker in monitoring UI
+image:images/spwd_1206.png[]
+
+===== Task progress
+
+You can see the aggregated view of task completion in the progress bar in <<progress_monitoring_by_tasks_ch12_1685475294066>>. The order of execution is from top to bottom, although it does not always mean it’s completely sequential. The colors of the bars are particularly information rich for tuning. The solid grey on the far right the bars for sum() and random_sample() in Figure 12-7 means tasks that are ready to run, with dependent data ready, but not yet assigned to a worker. The bold non-grey colors mean tasks are finished, with resulting data that is waiting for the next sequence of tasks to take it. The fainter non-grey color blocks signify tasks that are done, result data handed off, and purged from memory. Your goal is to keep the solid color blocks within a manageable size, to make sure you utilize the most out of your allocated memory.
+
+[[progress_monitoring_by_tasks_ch12_1685475294066]]
+.Progress monitoring by tasks, summed over all workers
+image:images/spwd_1207.png[]
+
+===== Task Graph
+
+Similar information is available on Task Graph (see <<task_graph_ch12_1685475338667>>), from the view of individual tasks. Many would be familiar with these types of mapreduce-like DAG. Order of computation is shown from left to right, with your tasks originating from many parallel workloads, distributed among your workers, and ending up with an outcome that is distributed among ten workers, in this case. This graph is also an accurate low-level depiction of task dependencies. The color coding also highlights where in the computational lifecycle each work and data is currently sitting in. By looking at this, you can get a sense of which tasks are bottlenecks and potentially a good place to start optimizing your code.
+
+[[task_graph_ch12_1685475338667]]
+.An example of a task graph, showing color-coded status of each tasks, their preceding and succeeding tasks
+image:images/spwd_1208.png[]
+
+The Workers tab allows you to see real-time cpu, memory, disk IO, among other things (see <<worker_monitoring_tab_ch12_1685475400589>>). Monitoring this tab can be useful if you suspect that your worker is running out of memory or disk space. Some of the remedies for that can include allocating more memory to the workers, or choosing a different chunking size or method for the data.
+
+[[worker_monitoring_tab_ch12_1685475400589]]
+.Worker monitoring tab for a Dask cluster with 10 workers
+image:images/spwd_1209.png[]
+
+<<worker_event_monitoring_tab_ch12_1685475374935>> shows worker event monitoring. Dask’s distributed scheduler runs on a loop called event loop, which manages all tasks that are to be scheduled, and the workers, managing the execution, communication, and status of the computation. The `event_loop_interval` metric is a measure of average time between the iterations of this loop for each worker. A shorter time means it took less time for the scheduler to do its management tasks for this worker. If this goes higher, this could mean a number of things, including suboptimal network configuration, resource contention, high communication overhead. If this remains high, you might want to look into whether you have enough resource for the compute, and to either allocate larger resources per worker or rechunk the data into smaller portions.
+
+[[worker_event_monitoring_tab_ch12_1685475374935]]
+.Worker event monitoring tab for a Dask cluster
+image:images/spwd_1210.png[]
+
+The System tab allows you to track the CPU, memory, network bandwidth, and file descriptors. CPU and memory are easy to understand. HPC users would be keen to track network bandwidth if your job requires heavy amounts of data moved around. File descriptors here track the number of input and output resources the system has open at the same time. This includes actual files open for read / write, but also network sockets that communicate between machines. There is a limit to how many of these descriptors a system can have open at the same time, so a very complicated job or a leaky workload that opens a lot of connections, gets stuck, and does not close can create trouble. Similar to leaky memory, this can lead to performance issues as time goes on.
+
+The Profile tab allows you to see the amount of time spent on executing code, down to exact function call, on an aggregate level. This can be helpful in identifying tasks that create a bottleneck. <<task_duration_histogram_ch12_1685475458634>> shows a Task Duration Histogram, which shows a fine-grained view of each task and all the subroutines needed to call for that task, and their runtime. This can help quickly identify a task that is consistently longer than others.
+
+[[task_duration_histogram_ch12_1685475458634]]
+.Task Duration histogram for a Dask job
+image:images/spwd_1211.png[]
+
+[TIP]
+====
+You can change the logging intervals with distributed.client.scheduler-info-interval argument within dask client configurations.
+====
+
+==== Saving and Sharing Dask Metrics/Performance Logs
+
+You can monitor Dask real-time with the dashboard, but it will disappear once you close out your cluster. You can save the html page, as well as export the metrics as a dataframe itself, and write out custom code for metrics.
+
+You can generate a performance report manually for any block of computation, without having to save the entire runtime report with the following code block. Any computation that you pass within `performance_report(“filename”)` will be saved under that file. Note that under the hood, this requires Bokeh to be installed.
+
+For much more heavy duty usage, you can use Dask with Promethus, the popular Python metrics and alerting tool. This requires you to have prometheus deployed. Then through Promethus, you can hook up other tools like Grafana for visualization, or Pagerduty for alerts.
+
+[[ex_generate_performance_report]]
+.Generating and saving the Dask dashboard to file
+====
+[source, python]
+----
+include:./examples/dask/Dask-Ch14-Tuning.py[tags=ex_generate_performance_report]
+----
+====
+
+Dask's Distributed scheduler provides the metrics info as a task stream object without using the UI itself. You can access the information in Task Stream UI tab from dask directly, down to the level of lines of code that you want this to be profiled over. <<ex_get_task_stream>> demonstrates how to use a taskstream, and then extracting some statistics out of them into a small pandas DataFrame for further analysis and sharing.
+
+[[ex_get_task_stream]]
+.Generating and computing Dask’s runtime statistics with taskstream
+====
+[source, python]
+----
+include:./examples/dask/Dask-Ch14-Tuning.py[tags=ex_get_task_stream]
+----
+====
+
+==== Advanced Diagnostics
+
+You can insert custom metrics using dask.distributed.diagnostics class. One of the functions here is a MemorySampler context manager. When you run your Dask code within `ms.sample()`, it records a detailed memory usage on cluster. <<ex_memory_sampler>>, while contrived, shows how you would run the same compute over two different cluster configurations, then plot to compare the two different environment configurations.
+
+[[ex_memory_sampler]]
+.Inserting memory sampler for your code
+====
+[source, python]
+----
+include:./examples/dask/Dask-Ch14-Tuning.py[tags=ex_memory_sampler]
+----
+====
+
+=== Scaling and Debugging Best Practices
+
+Here, we discuss some of the commonly identified issues and overlooked considerations when running your code in distributed cluster settings.
+
+==== Manual Scaling
+
+If your cluster manager supports it, you can scale up and down the number of workers by calling `scale` with the desired number of workers. You can also specify the Dask scheduler to wait until the requested number of workers are allocated, then proceed with computation with the client.wait_for_workers(n_workers) command. This can be useful for training certain ML models.
+
+==== Adaptive/Auto Scaling
+
+We briefly touched on Adaptive scaling in previous chapters. You can enable auto/adaptive scaling on your cluster by calling `adapt()` on the Dask client. The scheduler analyzes the computation, and invokes the scale command to add or remove workers. Each of the Dask Cluster types, KubeCluster, PBSCluster, LocalClusters, etc are the cluster classes that handle actual request, scaling up, and down of the workers. If you see issues with adaptive scaling, one of the places to check is to ensure that your Dask is correctly asking for resources from the cluster manager. Of course, for auto-scaling in Dask to work, you have to be able to scale your own resource allocations within the cluster that you are running your job on, be it HPC, managed cloud, etc. We already introduced adaptive scaling in previous memory sampler example. Refer to that example for code snippets.
+
+==== Persist and Delete Costly Data
+
+Some intermediate results can be used further down in the code execution, but not immediately after. In these cases, Dask might delete the data, not realizing it will need it further down, and you will end up needing another round of costly computation. If you identify this pattern, you can use .persist() command. With this command, you should also use Python’s built-in *del* command to ensure that it’s removed when no longer needed.
+
+==== Dask Nanny
+
+Dask Nanny is a process that manages workers. Its job is to prevent workers from exceeding its resource limits, leading to unrecoverable machine state. It constantly monitors CPU and memory usage for the worker, and triggers memory cleanup, compaction. If the worker reaches a bad state, it will automatically restart the worker and try to recover the previous state.
+
+Complications may arise if a worker that contains a computationally expensive and a large chunk of data is lost for some reason, the nanny will restart the worker, and try to re-do the work that led to that point. During that, other workers will also hold on to other data that it was working on, leading to a spike in memory usage. The strategies to remedy this will vary, from disabling nanny, modifying chunking sizes, worker size, and so on. If this happens often, you should consider persisting, or writing that data to disk.footnote:[There is a knob you can use to control how fast precedent tasks complete. Sometimes running all the easy tasks too fast might end up with a lot of intermediate data that is piled up for the later step to go through, leading to undesirable high memory saturation. Look documentation related to `distributed.scheduler.worker-saturation’ for more information.]
+
+If you see error messages such as “Worker exceeded 95% memory budget. Restarting”, this is likely where it came from. It’s the class responsible for starting workers, monitoring, terminating, and restarting the workers. This memory fraction, as well as spillover location can be set in distributed.yaml configuration file. HPC users can turn Nanny’s memory monitoring off, if the system itself has its own memory management strategies. If the system also restarts killed jobs, you could turn off nanny with the “--no-nanny” option.
+
+==== Worker Memory Management
+
+By default behavior is when the worker’s memory is at around 60% full, it starts sending some data to disk. At over 80%, it stops allocating new data. At 95%, the worker is terminated preemptively, in order to avoid OOM. This means after your worker’s memory is more than 60% full, there will be performance degradations, and it’s usually best practice to keep memory pressure lower.
+
+Advanced users can use Active Memory Manager, a daemon that optimizes memory usage of workers on a holistic view of the cluster. You give this manager a particular goal to optimize for, such as reducing replication of the same data within the cluster, or retire_workers, a special advanced use case where you do memory transfer from one worker to another when the worker is being retired, or other custom policies. In some cases, it has shown up to 20% decrease in memory usage for the same task.footnote:[You can find out more about it at Dask’s documentation https://distributed.dask.org/en/latest/active_memory_manager.html.]
+
+==== Cluster Sizing
+
+Auto/adaptive scaling takes care of the question of "how many" but not "how big" each worker should be. That said, here are some general rules of thumb:
+
+* Use smaller worker size when debugging, unless you expect that the bug is due to the large number of workers given.
+* Size up worker memory allocation with the input data size and number of workers you are using.
+* The number of chunks in the data should roughly match the number of workers. Fewer workers than chunks will lead to some chunks not being worked upon, until the first round of computation is over, leading to a larger memory footprint of intermediate data. Conversely, more workers than the number of chunks will have idling workers.
+* Workers vs memory: If you have the option of having higher worker count and smaller individual worker memory (versus smaller worker count and larger individual worker memory), analyze your data’s chunk sizes. That chunk must fit in one worker with some room for computation, setting the minimum memory needed for your worker.
+
+Fine tuning your machine sizes can become a never ending exercise, so it's important to know what "good enough" is for your purposes.
+
+==== Chunking, Revisited
+
+We have briefly covered chunks and chunk sizes in earlier chapters. Now we expand on this to cluster scale. Chunk size and worker sizes are integral to how Dask functions, as it uses a block-level view of computation and data, within its task graph-based execution model. It’s the essential parameter that determines how the distributed computation will work. As we use Dask and other distributed systems, we find this is one of the essential ideas to keep in mind as we turn the knobs and dials of such large machines.
+
+For a given worker hardware configuration and computation you are doing, there will be a sweet spot for the chunk sizes, and the user’s job is to set this size. Finding the exact number might not be useful, but finding roughly what type of configuration is likely to give you the best result can make a huge difference.
+
+The key idea of chunking is load balancing computation and storage, at a cost of overhead of communications. On one end of the extreme, you have a single-machine data engineering, with your data in one Pandas dataframe, or if you have a single Dask dataframe with no partitioning. There is not much communication cost as all communication happens between your RAM and your GPU or CPU, with data moving through a single computer’s motherboard. As your data size grows, this monolithic block will not work, and you run into out-of-memory errors, losing all your previous in-memory computation. Hence, you would use a distributed system like Dask.
+
+On the other extreme, a very fragmented dataset with small chunk sizes over multiple machines connected over ethernet cables will be slower to work together as the communication overhead grows, and may even overrun the scheduler’s capacity to handle communications, gathering and coordinating. Maintaining a happy balance of the two extremes, knowing which problem requires which tools, is an essential job of a modern distributed data engineering.
+
+==== Avoid Rechunking
+
+When pipelining multiple data streams into a job, you might have two datasets, with two different chunk sizes, even if their data dimensions match. In runtime, Dask will have to rechunk one of the data to match the chunk sizes of the other. Doing so in runtime can get costly and memory-inefficient. If this is spotted, you can consider having a separate job that does the rechunking before ingesting into your job.
+
+=== Scheduled Jobs
+
+There are many different systems to make your jobs run on a schedule. This schedule can range from periodic and time based, to triggered by upstream events (like data becoming available). Popular tools to schedule jobs include Apache Airflow, Flyte, Argo, GithHub Actions, and Kubeflow.footnote:[Holden is an author of _Kubeflow for Machine Learning_, so she is biased here.] Airflow and Flyte both have built-in support for Dask, which can simplify running your scheduled task so we think that they are both excellent options for scheduled Dask jobs. The built-in operators make it easier to track failure, which is important as taking actions on stale data can be as bad as taking actions on wrong data.
+
+We also often see people use unix crontabs and schtasks, but we advise against them as they run on a single machine and require substantial additional work.
+
+[TIP]
+====
+For scheduled jobs on Kubernetes, you can also have your https://kubernetes.dask.org/en/latest/operator_resources.html#daskjob[+++scheduler create a Dask Job+++] resource, which will run your Dask program inside the cluster.
+====
+
+In the next section, appendix A, you will learn details about testing and validation, which is especially important for scheduled and automated jobs as there is no time for manual checking.
+
+=== Deployment Monitoring
+
+Like many other distributed libraries, Dask provides logs, and you can configure Dask logs to be sent to a storage system. The method will vary by the deployment environment, and if you are using Jupyter.
+
+One generic way you can get the worker and scheduler logs through `get_worker_logs()` and `get_scheduler_logs()` on the Dask client. You can specify specific topics and log to/read from just the relevant topics. <<ex_basic_logging>> shows how to log and read from custom topics.
+
+[[ex_basic_logging]]
+.Basic logging by topic example
+====
+[source, python]
+----
+include:./examples/dask/Dask-Ch10_porting.py[tags=ex_basic_logging]
+----
+====
+
+You are not limited to logging strings, and you can instead log structured events. This can be especially useful for performance analysis or anything where the log messages might be visualized rather than looked at individually by a human. In <<structured-logging-on-workers>>, we do this with a distributed softmax function, and log the events, and retrieve them on the client.
+
+[[structured-logging-on-workers]]
+.Structured logging on workers
+====
+[source, python]
+----
+include:./examples/dask/Dask-Ch10_porting.py[tags=ex_distributed_logging]
+----
+====
+
+=== Conclusion
+
+In this chapter, you've learned of the various deployment options for Dask Distributed, from commodity cloud to High Performance Computing infrastructures. You’ve also learned Jupyter magics to simplify getting access to information with remote deployments. In our experience, Dask on Kubernetes and Dask on Ray on Kubernetes offers the flexibility we need. Your own decision about how to deploy dask here may be different, especially if you are working in a larger institution with existing cluster deployments. Most of the deployment options are covered in detail in the https://docs.dask.org/en/stable/deploying.html[+++"Deploying Dask Guide"+++] , with the notable exception of https://docs.ray.io/en/latest/data/dask-on-ray.html[+++Dask on Ray which is covered in the Ray documentation+++].
+
+You’ve also learned of runtime considerations and metrics to track when running a distributed work, and the various tools in Dask’s dashboard to accomplish that, expanded with more advanced user-defined metrics generation. Using these metrics, you’ve learned the conceptual basis for tuning your Dask Distributed clusters, troubleshooting, and how it relates to the fundamental design principle of Dask and distributed computing.
