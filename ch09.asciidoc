@@ -113,7 +113,6 @@ include::./examples/dask/Dask-Ch10_porting.py[tags=ex_postgres_dataframe]
 
 Fugue-sql provides SQL compatibility to Pydata stack, including Dask. The project is in its infancy, but seems promising. The main advantage of fugue-sql is that the code is portable between Pandas, Dask, and Spark, giving a lot more interoperability. Fugue can run its SQL queries using DaskExecutionEngine, or you can run fugue queries over Dask DataFrame you already are using. Alternatively, you can run a quick SQL query on dask dataframe on your notebook as well. Here’s an example of using fugue in notebook. The downside of Fugue is that it requires ANTLR library, which requires a java runtime.
 
-////
 [[running_sql_over_dask_dataframe_ch09_1685553886459]]
 .Running SQL over dask dataframe with Fugue SQL
 ====
@@ -134,7 +133,6 @@ LIMIT 5
 PRINT
 ----
 ====
-//// 
 
 |===
 | |VendorID |average_fare
