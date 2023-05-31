@@ -106,7 +106,7 @@ Recursion refers to functions that call themselves (either directly or indirectl
 
 Recursive functions are sometimes avoided in languages that cannot optimize them since there is overhead to calling a function. Instead, users will try and express the recursive logic using loops.
 
-Excessive non-optimized recursion can result in a stackoverflow error. In C, Java, C&plus;&plus; and more stack memory is allocated separately from the main memory (also called heap memory). In Python the amount of recursion is controlled by `setrecursionlimit`. https://chrispenner.ca/posts/python-tail-recursion[+++Python provides a tail_recursive annotation, that you can use to help optimize these recursive calls+++].
+Excessive non-optimized recursion can result in a stackoverflow error. In C, Java, C&#x2b;&#x2b; and more stack memory is allocated separately from the main memory (also called heap memory). In Python the amount of recursion is controlled by `setrecursionlimit`. https://chrispenner.ca/posts/python-tail-recursion[+++Python provides a tail_recursive annotation, that you can use to help optimize these recursive calls+++].
 
 In Dask, while recursive calls don’t have the exact same stack problem, excessive recursion can be one of the causes of load on the "head" node. This is because scheduling the recursive call must pass through the head node, and the excessive number of recursive functions will cause Dask's scheduler to slow down long before any stack size issues are countered.
 
