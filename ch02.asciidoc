@@ -1,15 +1,6 @@
 [[ch2_getting_started_with_dask]]
 == Getting Started with Dask
 
-.A Note for Early Release Readers
-****
-With Early Release ebooks, you get books in their earliest form&mdash;the authors' raw and unedited content as they write—so you can take advantage of these technologies long before the official release of these titles.
-
-This will be the second chapter of the final book. The GitHub repo is available at https://github.com/scalingpythonml/scalingpythonml.
-
-If you have comments about how we might improve the content and/or examples in this book, or if you notice missing material within this chapter, please reach out to the editor at vwilson@oreilly.com.
-****
-
 We are so happy that you've decided to explore whether Dask is the system for you by trying it out. In this chapter, we will focus on getting started with Dask in its local mode. Using this, we'll explore a few more straightforward parallel computing tasks (including everyone's favorite, wordcount :p).
 
 === Installing Dask Locally

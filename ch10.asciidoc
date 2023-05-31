@@ -1,14 +1,5 @@
 == Dask with GPUs and Other Special Resources
 
-.A Note for Early Release Readers
-****
-With Early Release ebooks, you get books in their earliest form&mdash;the authors' raw and unedited content as they write—so you can take advantage of these technologies long before the official release of these titles.
-
-This will be the 10th chapter of the final book. The GitHub repo is available at https://github.com/scalingpythonml/scalingpythonml.
-
-If you have comments about how we might improve the content and/or examples in this book, or if you notice missing material within this chapter, please reach out to the editor at vwilson@oreilly.com.
-****
-
 Sometimes the answer to our scaling problem isn't throwing more computers at it; it's throwing different types of resources at it. For example, ten thousand monkies trying to reproduce the works of Shakespeare v.s. one Shakespearefootnote:[Provided Shakespear is still alive. Which he is not.]. While performance varies, some benchmarks have shown up to an 85% improvement in model training times when using GPUs over CPUsfootnote:[https://datamadness.github.io/TensorFlow2-CPU-vs-GPU#:~:text=While%20setting%20up%20the%20GPU,required%20training%20time%20by%2085%25[+++https://datamadness.github.io/TensorFlow2-CPU-vs-GPU#:~:text=While%20setting%20up%20the%20GPU,required%20training%20time%20by%2085%25+++].]. Continuing its modular tradition, the GPU logic of Dask is found in the libraries and ecosystem surrounding it. The libraries can either run on a collection of GPU workers or parallelize work over different GPUs on one host.
 
 Most work we do on the computer is done on the "Central Processing Unit" (CPU). Graphics Processing Units (GPUs) were created for displaying video, but involve doing large amounts of vectorized floating point (e.g. non-integer) operations. With vectorized operations, the same operation is applied in parallel on large sets of data, like a `map`. Tensor-Processing Units are similar to GPUs, except without also being used for graphics.

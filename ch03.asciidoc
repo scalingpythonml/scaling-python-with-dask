@@ -1,15 +1,6 @@
 [[ch_3]]
 == Understanding enough of how Dask works
 
-.A Note for Early Release Readers
-****
-With Early Release ebooks, you get books in their earliest form&mdash;the authors' raw and unedited content as they write—so you can take advantage of these technologies long before the official release of these titles.
-
-This will be the third chapter of the final book. The GitHub repo is available at https://github.com/scalingpythonml/scalingpythonml.
-
-If you have comments about how we might improve the content and/or examples in this book, or if you notice missing material within this chapter, please reach out to the editor at vwilson@oreilly.com.
-****
-
 Now that you've run your first few tasks with Dask, it's time to learn a little bit about what's happening behind the scenes. Depending on if you are using Dask locally or in a distributed fashion the behavior can be a little different. While Dask does a good job of abstracting away many of the details of running on multiple threads or servers, having a solid grasp of how Dask is working will help you better decide both how and when to use it.
 
 === Execution Backends
