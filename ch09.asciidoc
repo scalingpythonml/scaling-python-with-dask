@@ -113,8 +113,43 @@ include::./examples/dask/Dask-Ch10_porting.py[tags=ex_postgres_dataframe]
 
 Fugue-sql provides SQL compatibility to Pydata stack, including Dask. The project is in its infancy, but seems promising. The main advantage of fugue-sql is that the code is portable between Pandas, Dask, and Spark, giving a lot more interoperability. Fugue can run its SQL queries using DaskExecutionEngine, or you can run fugue queries over Dask DataFrame you already are using. Alternatively, you can run a quick SQL query on dask dataframe on your notebook as well. Here’s an example of using fugue in notebook. The downside of Fugue is that it requires ANTLR library, which requires a java runtime.
 
+[[running_sql_over_dask_dataframe_ch09_1685553886459]]
 .Running SQL over dask dataframe with Fugue SQL
-image::images/ch09/spwd0901.png[]
+====
+[source, python]
+----
+from fugue_notebook import setup
+setup (is_lab=True)
+ur = 'https://d37ci6vzurychx.cloudfront.net/trip-data/yellow_tripdata_2018-01.parquet'
+df = dd. read_parquet(url)
+
+%%fsql dask
+tempdf = SELECT VendorID, AVG (total_amount) AS average_fare FROM df GROUP BY VendorID
+
+SELECT *
+FROM tempdf
+ORDER BY average fare DESC
+LIMIT 5
+PRINT
+----
+====
+
+[cols="1,1,1"]
+|===
+| |VendorID |average_fare
+
+|*0*
+|1
+|15.127384
+
+|*1*
+|2
+|15.775723
+|===
+
+----
+schema: VendorID:long, average_fare:double
+----
 
 An alternate method is to use Dask-SQL library. This package uses Apache Calcite to provide the SQL parsing frontend, and is used to query Dask Dataframes. With that library, you can pass most of the SQL based operations to dask_sql context, and it will be handled. The engine handles standard SQL inputs like `SELECT`, `CREATE TABLE`, but also ML model creation, with `CREATE MODEL` syntax.
 
