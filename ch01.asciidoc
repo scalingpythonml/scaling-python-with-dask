@@ -126,7 +126,7 @@ The household namefootnote:[Assuming a fairly nerdy household.] for workflow sch
 ====
 Few tools cover all of the same areas, with the most similar tool being Ray.
 Dask and Ray both expose Python APIs, with underlying extensions when needed. There is a link:$$https://github.com/ray-project/ray/issues/642$$[GitHub issue] where the creators of both systems compare their similarities and differences.
-From a systems perspective, the biggest differences between Ray and Dask are handling state, fault tolerance, and centralized vs de-centralized scheduling. Ray implements more of its logic in C++, which can have performance benefits but is also more difficult to read. From a user point of view, Dask has more of a data science focus, and Ray emphasizes distributed state and actor support. Dask can use Ray as a backend for scheduling.footnote:[Or flipping the perspective, Ray is capable of using Dask to provide data science functionality.]
+From a systems perspective, the biggest differences between Ray and Dask are handling state, fault tolerance, and centralized vs de-centralized scheduling. Ray implements more of its logic in C&#x2b;&#x2b;, which can have performance benefits but is also more difficult to read. From a user point of view, Dask has more of a data science focus, and Ray emphasizes distributed state and actor support. Dask can use Ray as a backend for scheduling.footnote:[Or flipping the perspective, Ray is capable of using Dask to provide data science functionality.]
 ====
 
 === What Dask Is Not
