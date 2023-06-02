@@ -22,7 +22,8 @@
     "appB.asciidoc",
     "appC.asciidoc",
     "appD.asciidoc",
-    "author_bio.html"
+    "author_bio.html",
+    "colo.html"
   ],
   "formats": {
     "pdf": {
