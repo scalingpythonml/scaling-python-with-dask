@@ -37,7 +37,7 @@ As with any good Data Science workflow, we start with cleaning up, applying scal
 
 You can pass multiple columns to the transformers, and each will be normalized, resulting in a delayed Dask Dataframe that you should call compute on.
 
-In the following example, we scale trip distances, which is in miles, and total amount, which is in dollars, to their own scaled variables. This is a continuation from the exploratory data analysis we did on NYC Yellowcab data in chapter four.
+In the following example, we scale trip distances, which is in miles, and total amount, which is in dollars, to their own scaled variables. This is a continuation from the exploratory data analysis we did on NYC Yellowcab data in <<ch04>>.
 
 [[ex_scaling_variables]]
 .Dask DataFrame preprocessing with StandardScaler
@@ -242,7 +242,7 @@ Regardless of the libraries chosen to train and validate your model (which could
 
 ==== Distributing Data and Models Manually
 
-When loading data and pre-trained models to Dask workers, dask.delayed is the main tool. When distributing data, you should choose to use Dask’s collections: Array and DataFrame. As you recall from chapter 4, each Dask DataFrame is made up of Pandas DataFrame. This is useful since you can write a method that takes each smaller DataFrame, returns a computed output. Custom functions and tasks can also be given per partition using Dask DataFrame’s map_partitions function.
+When loading data and pre-trained models to Dask workers, dask.delayed is the main tool. When distributing data, you should choose to use Dask’s collections: Array and DataFrame. As you recall from <<ch04>>, each Dask DataFrame is made up of Pandas DataFrame. This is useful since you can write a method that takes each smaller DataFrame, returns a computed output. Custom functions and tasks can also be given per partition using Dask DataFrame’s map_partitions function.
 
 Remember to use delayed notation if you are reading in a large dataset, to delay materialization and avoid reading in unnecessarily early.
 
