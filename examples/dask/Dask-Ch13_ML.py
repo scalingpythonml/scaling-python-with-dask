@@ -410,7 +410,7 @@ sns.distplot(df["log_trip_duration"], bins =100)
 #tag::ex_dask_random_split[]
 from dask_ml.model_selection import train_test_split
 X_train, X_test, y_train, y_test = train_test_split(df['trip_distance'], df['total_amount'])
-#end::ex_dask_random_split
+#end::ex_dask_random_split[]
 
 
 # In[ ]:
