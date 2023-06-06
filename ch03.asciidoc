@@ -180,6 +180,7 @@ You can change the number of partitions in a Bag by calling `repartition` with e
 
 You can think of data as keyed when there is an index, or the data can be looked up by a value – like in a hashtable. While Bag implements "keyed" operations like groupBy where values with the same key are combined, it's partitioning does not have any idea of key and instead keyed operations always operate on all partitions. footnote:[Coming from databases you can think of this as a "full-scan" or "full-shuffle" for Spark folks with groupBy.]
 
+[[dask_df]]
 ==== Dask DataFrames
 
 Dataframes have the most options for partitioning. Dataframes can have partitions of different sizes, as well as known or unknown partitioning. With unknown partitioning, the data is distributed but Dask is unable to determine which partition holds a particular key. Unknown partitioning happens often as any operation which could change the value of a key results in unknown partitioning. The `known_divisions` property on a Dataframe allows you to see if Dask knows the partitioning, and the `index` property shows the splits used and the column.
