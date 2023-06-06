@@ -96,7 +96,7 @@ To scale actors horizontally, it is up to you to break up the state in such a wa
 
 [[figure0701_ch07_1686049800930]]
 .AU: add caption
-image::images/image7-1.png[]
+image::images/spwd_0701.png[]
 
 We extend the bank account example to a "bank" where an actor may be responsible for multiple accounts (but not all of the accounts in the bank). We can then use an actor pool with hashing to route the requests to the correct "branch" or actor as shown in <<sketchy_bank_ex>>.
 

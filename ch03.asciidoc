@@ -96,7 +96,7 @@ The Dask UI during the running of the examples of this chapter is shown in <<fig
 
 [[fig_dask_ui]]
 .The Dask UI
-image::./figures/ch3-how-dask-works/DaskUI.png[]
+image::images/spwd_0301.png[]
 
 The UI allows you to see what Dask is doing, what's being stored on the workers, and explore the execution graph. We will revisit the execution graph more in the <<graph_visualize>>.
 
@@ -251,7 +251,7 @@ You should try this out now by visualizing everyone's favourite wordcount exampl
 
 [[vis_ex]]
 .Visualized wordcount task graph
-image::./figures/ch3-how-dask-works/wordcount-visualized.png[scale=50]
+image::images/spwd_0302.png[scale=50]
 
 [TIP]
 ====

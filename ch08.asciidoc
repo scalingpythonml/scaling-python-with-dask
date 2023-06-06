@@ -116,7 +116,7 @@ One of the simplest metrics to check is if people are using a package by looking
 
 [[dask-kubernetes-install-stats]]
 .Dask Kubernetes Install Stats from PyPi Stats
-image::images/ch08/spwd0801.png[]
+image::images/spwd_0801.png[]
 
 Unfortunately, installation counts are a noisy metric, as PyPi downloads can come from CI pipelines to even someone spinning up a new cluster with the library installed but never used. Not only is this metric un-intentionally noisy, but the same techniques can also be used to increase the numbers artificially.
 
@@ -128,7 +128,7 @@ Another proxy for usage you can look at is the frequency of issues or mailing li
 
 [[fig_ghstarsforsale]]
 .Sample of someone selling Github stars
-image::images/ch08/spwd0802.png[]
+image::images/spwd_0802.png[]
 
 Even setting aside people purchasing stars, what constitutes a project worth "starring" varies from person to person. Some projects will, while not purchasing stars, ask individuals to "star" their projects in talks which can quickly inflate this metric.footnote:[For example, we might ask you to star our example repo https://github.com/scalingpythonml/scalingpythonml[+++https://github.com/scalingpythonml/scalingpythonml+++], and by doing this, we (hopefully) increase the number of *s without actually needing to increase our quality.]
 
