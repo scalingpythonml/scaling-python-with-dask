@@ -158,7 +158,7 @@ In this, albeit contrived, example you can see how by starting the work as soon 
 
 === Nested Futures
 
-As with `dask.delayed`, you can also launch futures from inside futures. The syntax is a bit different as you need to get an instance of the `client` object, which is not serializable, so `dask.distributed` has the special function `get_client` to get the client inside of a distributed function. Once you have the client, you can then launch the future like normal as shown in <<nested>>.
+As with `dask.delayed`, you can also launch futures from inside futures. The syntax is a bit different as you need to get an instance of the `client` object, which is not serializable, so `dask.distributed` has the special function `get_client` to get the client inside of a distributed function. Once you have the client, you can then launch the future like normal as shown in <<ex_nested>>.
 
 [[ex_nested]]
 .Launchinged a nested future
