@@ -64,5 +64,5 @@
   "lang": "en",
   "accent_color": "",
   "templating": false,
-  "preprocessing": null
+  "preprocessing": "none"
 }
