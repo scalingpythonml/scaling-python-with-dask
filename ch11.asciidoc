@@ -248,7 +248,7 @@ Remember to use delayed notation if you are reading in a large dataset, to delay
 
 [TIP]
 ====
-`.map_partitions` passes in a row-wise operation that are meant to be fit into a serializable code that is marshaled to workers. You can define a custom class that handles inference to be called, but it needs to be a static method that is called, not an instance-dependent method. We covered more on this in chapter 4.
+`.map_partitions` passes in a row-wise operation that are meant to be fit into a serializable code that is marshaled to workers. You can define a custom class that handles inference to be called, but it needs to be a static method that is called, not an instance-dependent method. We covered more on this in <<ch04>>.
 ====
 
 [[dask_delayed_load_model]]
