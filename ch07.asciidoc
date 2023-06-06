@@ -94,7 +94,9 @@ As with dask delayed, you can scale actors both horizontally (across processes/m
 
 To scale actors horizontally, it is up to you to break up the state in such a way that you can have multiple actors handling it, one technique sometimes used is "Actors Pools" and these pools can either have a static mapping of say, user -> actor or in the situation where the actors share a database round-robin or other non-deterministic balancing can be used.
 
-image:images/image7-1.png[]
+[[figure0701_ch07_1686049800930]]
+.AU: add caption
+image::images/image7-1.png[]
 
 We extend the bank account example to a "bank" where an actor may be responsible for multiple accounts (but not all of the accounts in the bank). We can then use an actor pool with hashing to route the requests to the correct "branch" or actor as shown in <<sketchy_bank_ex>>.
 

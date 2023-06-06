@@ -16,7 +16,7 @@ This book would not exist if not for the communities it is built on. From the Da
 
 Holden would also like to thank her wife and partners for putting up with her long in-the-bath-tub writing sessions. A special thank you to Timbit for guarding the house and generally giving Holden a reason to get out of bed (albeit often a bit too early for her taste).
 
-image:images/spwd_pr01.png[]
+image::images/spwd_pr01.png[]
 
 Mika would additionally like to thank Holden for her mentorship and help, and shoutout to her colleagues at Harvard Data Science department for providing her with unlimited free coffee.
 

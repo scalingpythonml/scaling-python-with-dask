@@ -215,7 +215,7 @@ Once you've installed the lab extension, it will show up with the Dask logo on t
 
 [[dask_instance_on_jupyterlab_ch12_1685474991278]]
 .Screenshot of a successfully deployed Dask instance on jupyterlab
-image:images/spwd_1201.png[]
+image::images/spwd_1201.png[]
 
 ==== Launching Clusters
 
@@ -227,7 +227,7 @@ If you are using Dask's jupyter lab extension (see <<jupyter-lab-extension_ch12_
 
 [[jupyter-lab-extension_ch12_1685475054811]]
 .Dask web UI inside jupyterhub using jupyter-lab-extension
-image:images/spwd_1202.png[]
+image::images/spwd_1202.png[]
 
 The jupyter-lab-extension links to the Dask web UI, and you can also get a link through the clusters repr. If the cluster link does not work/is not accessible, you can try installing the `jupyter-server-proxy` extension so you can use the notebook host as a https://en.wikipedia.org/wiki/Jump_server[+++"jump" host+++].
 
@@ -237,7 +237,7 @@ Dask jobs tend to take a long time to run, since otherwise, we would not be putt
 
 [[dask_progress_monitoring_ch12_1685475108548]]
 .Real-time Dask progress monitoring in jupyterhub
-image:images/spwd_1203.png[]
+image::images/spwd_1203.png[]
 
 === Understanding Dask Performance
 
@@ -263,13 +263,13 @@ The Task Stream dashboard gives a high-level view of each worker and its behavio
 
 [[task_stream_ch12_1685475169009]]
 .An example of a task stream with well-balanced workers
-image:images/spwd_1204.png[]
+image::images/spwd_1204.png[]
 
 On the other hand, <<task_stream_with_too_many_ch12_1685475203241>> shows a situation where compute is uneven. You can see that there is a lot of whitespace between computation, meaning the workers are blocked and not actually computing during that time. Additionally, you see some workers start earlier, and some finish later, hinting that there are some issues with distributing the job. This could be due to inherent dependency of your code, or that there is suboptimal tuning. Changing the dataframe or array chunk sizes might make these less fragmented. You do see that when the job starts on each worker, they take roughly the same amount of work, meaning the work itself is still balanced fairly well, and distributing the workload is giving you good returns. This is a fairly contrived illustrative example, so this task only took a few seconds, but the same idea applies to longer and more bulky workloads as well.
 
 [[task_stream_with_too_many_ch12_1685475203241]]
 .An example of a task stream with too many small data chunks
-image:images/spwd_1205.png[]
+image::images/spwd_1205.png[]
 
 ===== Memory
 
@@ -277,7 +277,7 @@ You can monitor the memory usage, sometimes referred to as "memory pressure,"foo
 
 [[memory_usage_by_worker_ch12_1685475242277]]
 .Memory usage by worker in monitoring UI
-image:images/spwd_1206.png[]
+image::images/spwd_1206.png[]
 
 ===== Task progress
 
@@ -285,7 +285,7 @@ You can see the aggregated view of task completion in the progress bar in <<prog
 
 [[progress_monitoring_by_tasks_ch12_1685475294066]]
 .Progress monitoring by tasks, summed over all workers
-image:images/spwd_1207.png[]
+image::images/spwd_1207.png[]
 
 ===== Task Graph
 
@@ -293,19 +293,19 @@ Similar information is available on Task Graph (see <<task_graph_ch12_1685475338
 
 [[task_graph_ch12_1685475338667]]
 .An example of a task graph, showing color-coded status of each tasks, their preceding and succeeding tasks
-image:images/spwd_1208.png[]
+image::images/spwd_1208.png[]
 
 The Workers tab allows you to see real-time cpu, memory, disk IO, among other things (see <<worker_monitoring_tab_ch12_1685475400589>>). Monitoring this tab can be useful if you suspect that your worker is running out of memory or disk space. Some of the remedies for that can include allocating more memory to the workers, or choosing a different chunking size or method for the data.
 
 [[worker_monitoring_tab_ch12_1685475400589]]
 .Worker monitoring tab for a Dask cluster with 10 workers
-image:images/spwd_1209.png[]
+image::images/spwd_1209.png[]
 
 <<worker_event_monitoring_tab_ch12_1685475374935>> shows worker event monitoring. Dask’s distributed scheduler runs on a loop called event loop, which manages all tasks that are to be scheduled, and the workers, managing the execution, communication, and status of the computation. The `event_loop_interval` metric is a measure of average time between the iterations of this loop for each worker. A shorter time means it took less time for the scheduler to do its management tasks for this worker. If this goes higher, this could mean a number of things, including suboptimal network configuration, resource contention, high communication overhead. If this remains high, you might want to look into whether you have enough resource for the compute, and to either allocate larger resources per worker or rechunk the data into smaller portions.
 
 [[worker_event_monitoring_tab_ch12_1685475374935]]
 .Worker event monitoring tab for a Dask cluster
-image:images/spwd_1210.png[]
+image::images/spwd_1210.png[]
 
 The System tab allows you to track the CPU, memory, network bandwidth, and file descriptors. CPU and memory are easy to understand. HPC users would be keen to track network bandwidth if your job requires heavy amounts of data moved around. File descriptors here track the number of input and output resources the system has open at the same time. This includes actual files open for read / write, but also network sockets that communicate between machines. There is a limit to how many of these descriptors a system can have open at the same time, so a very complicated job or a leaky workload that opens a lot of connections, gets stuck, and does not close can create trouble. Similar to leaky memory, this can lead to performance issues as time goes on.
 
@@ -313,7 +313,7 @@ The Profile tab allows you to see the amount of time spent on executing code, do
 
 [[task_duration_histogram_ch12_1685475458634]]
 .Task Duration histogram for a Dask job
-image:images/spwd_1211.png[]
+image::images/spwd_1211.png[]
 
 [TIP]
 ====
