@@ -117,10 +117,6 @@ print(move_mean(arr, 3))
 def wrapped_move_mean(*args):
     return move_mean(*args)
 
-
-# In[ ]:
-
-
 a = dask.delayed(wrapped_move_mean)(arr, 3)
 #end::ex_dask_submit_numba_correct[]
 

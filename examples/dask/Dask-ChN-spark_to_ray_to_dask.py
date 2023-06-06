@@ -161,41 +161,12 @@ import pandas as pd
 
 
 #tag::dask_on_ray[]
-
-
-# In[ ]:
-
-
 import dask
 
-
-# In[ ]:
-
-
 enable_dask_on_ray()
-
-
-# In[ ]:
-
-
 ddf_students = ray.data.dataset.Dataset.to_dask(ray_dataset) 
-
-
-# In[ ]:
-
-
 ddf_students.head()
-
-
-# In[ ]:
-
-
 disable_dask_on_ray()
-
-
-# In[ ]:
-
-
 #end::dask_on_ray[]
 
 

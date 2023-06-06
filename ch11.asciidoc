@@ -103,7 +103,7 @@ Dask-ml's train-test-split method has more flexibility than Dask Dataframes vers
 ====
 [source, python]
 ----
-include::./examples/dask/Dask-Ch13-ML.py[tags=ex_dask_random_split]
+include::./examples/dask/Dask-Ch13_ML.py[tags=ex_dask_random_split]
 ----
 ====
 

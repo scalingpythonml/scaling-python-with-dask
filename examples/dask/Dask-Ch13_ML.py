@@ -148,7 +148,7 @@ scaler.fit(trip_dist_df)
 trip_dist_df_scaled = scaler.transform(trip_dist_df)
 trip_dist_df_scaled.head()
 
-#tag::ex_scaling_variables[]
+#end::ex_scaling_variables[]
 
 
 # In[ ]:
@@ -163,7 +163,7 @@ cat = Categorizer(categories={"payment_type": CategoricalDtype([1,2,3,4])})
 categorized_df = cat.fit_transform(payment_type_amt_df)
 categorized_df.dtypes
 payment_type_amt_df.head()
-#tag::ex_categorical_variables[]
+#end::ex_categorical_variables[]
 
 
 # In[ ]:
@@ -176,7 +176,7 @@ dummy = DummyEncoder()
 dummified_df = dummy.fit_transform(categorized_df)
 dummified_df.dtypes
 dummified_df.head()
-#tag::ex_dummy_variables[]
+#end::ex_dummy_variables[]
 
 
 # In[ ]:
@@ -245,7 +245,6 @@ df[["PULocationID"]].head()
 
 
 #tag::ex_joblib[]
-
 from dask.distributed import Client
 from joblib import parallel_backend
 
@@ -266,7 +265,7 @@ with parallel_backend('dask'):
     gs.fit(X, y)
 print(gs.cv_results_)
 
-#end::ex_joblib
+#end::ex_joblib[]
 
 
 # In[ ]:
@@ -411,7 +410,6 @@ sns.distplot(df["log_trip_duration"], bins =100)
 #tag::ex_dask_random_split[]
 from dask_ml.model_selection import train_test_split
 X_train, X_test, y_train, y_test = train_test_split(df['trip_distance'], df['total_amount'])
-
 #end::ex_dask_random_split
 
 
@@ -458,7 +456,7 @@ train = train.categorize("store_and_fwd_flag")
 test = test.categorize("VendorID")
 test = test.categorize("passenger_count")
 test = test.categorize("store_and_fwd_flag")
-#tag::ex_categorical_variables_alt[]
+#end::ex_categorical_variables_alt[]
 
 
 # In[ ]:
@@ -483,7 +481,7 @@ hour_test = dd.get_dummies(test, columns=['dayofweek'], prefix='h', prefix_sep='
 dow_train = dd.get_dummies(train, columns = ['dayofweek'], prefix='dow', prefix_sep='_')
 dow_test = dd.get_dummies(test, columns=['dayofweek'], prefix='dow', prefix_sep='_')
 
-#tag::ex_datetime_dummy_alt[]
+#end::ex_datetime_dummy_alt[]
 
 
 # In[ ]:
@@ -511,8 +509,7 @@ y_pred = reg.predict(X_test)
 
 from sklearn.metrics import r2_score
 r2_score(y_test, y_pred)
-
-#tag::linear_regression[]
+#end::linear_regression[]
 
 
 # In[ ]:
@@ -535,7 +532,7 @@ from sklearn.linear_model import SGDRegressor as ScikitSGDRegressor
 estimators = [ScikitLinearRegression(), ScikitSGDRegressor()]
 run_tasks = [dask.delayed(estimator.fit)(X_train, y_train) for estimator in estimators]
 run_tasks
-#tag::ex_daskml_port[]
+#end::ex_daskml_port[]
 
 
 # In[ ]:
@@ -699,8 +696,7 @@ booster = xgb.dask.train(
     dtrain,
     num_boost_round=4,
     evals=[(dtrain, "train")])
-
-#end::ex_xgb_basic_usage
+#end::ex_xgb_basic_usage[]
 
 
 # In[ ]:
@@ -730,7 +726,7 @@ xgb.plot_importance(model, max_num_features=28, height=0.7)
 
 pred = model.predict(dtest)
 pred = np.exp(pred) - 1
-#end::ex_xgb_train_plot_importance
+#end::ex_xgb_train_plot_importance[]
 
 
 # In[ ]:
@@ -762,8 +758,7 @@ def predict(client, model, X):
     predictions = xgb.predict(client, model, X)
     assert isinstance(predictions, dd.Series)
     return predictions
-
-#end::ex_xgb_early_stopping_and_inference
+#end::ex_xgb_early_stopping_and_inference[]
 
 
 # In[ ]:
@@ -775,7 +770,7 @@ def load_model(path):
     with fs.open(path, 'rb') as f:
         img = Image.open(f)
         return img
-#end::dask_delayed_load_model
+#end::dask_delayed_load_model[]
 
 
 # In[ ]:
@@ -805,8 +800,7 @@ results.compute()
 
 #An alternate way, but note the .apply() here becomes a pandas apply, not Dask .apply(), and you must define axis = 1
 ddf.map_partitions(lambda partition : partition.apply(lambda row: rowwise_operation(row), axis=1), meta=('ddf', object))
-
-#end::Dask_DataFrame_map_partition_inference
+#end::Dask_DataFrame_map_partition_inference[]
 
 
 # In[ ]:
@@ -1020,7 +1014,7 @@ def handle_partition(df):
 ddf = dd.read_csv("metadata.csv”)
 results = ddf.map_partitions(handle_partition)
 results.compute()
-#end::batched_operations
+#end::batched_operations[]
 
 
 # In[ ]:
