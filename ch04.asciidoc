@@ -469,7 +469,7 @@ Our NYC taxi data fits all these: They are stored in S3 by nyc.gov as parquet, a
 ====
 [source, python]
 ----
-include::./examples/dask/Dask-Ch11_ML.py[tags=ex_load_nyc_taxi]
+include::./examples/dask/Dask-Ch13_ML.py[tags=ex_load_nyc_taxi]
 ----
 ====
 
@@ -490,7 +490,7 @@ Summary statistics on the data works just like .describe() from pandas, along wi
 ====
 [source, python]
 ----
-include::./examples/dask/Dask-Ch11_ML.py[tags=ex_describe_percentiles]
+include::./examples/dask/Dask-Ch13_ML.py[tags=ex_describe_percentiles]
 ----
 ====
 
@@ -508,7 +508,7 @@ Note that if you’re used to the Numpy logic, you will have to think of the Das
 ====
 [source, python]
 ----
-include::./examples/dask/Dask-Ch11_ML.py[tags=ex_plot_distances]
+include::./examples/dask/Dask-Ch13_ML.py[tags=ex_plot_distances]
 ----
 ====
 

@@ -93,7 +93,7 @@ df_x = dd.read_parquet(
     filename,
     split_row_groups = 2
 )
-#end::ex_load_nyc_taxi
+#end::ex_load_nyc_taxi[]
 
 
 # In[ ]:
@@ -281,7 +281,7 @@ print(gs.cv_results_)
 import pandas as pd
 pd.set_option('display.float_format', lambda x: '%.5f' % x)
 df.describe(percentiles = [.25, .5, .75]).compute()
-#end::ex_describe_percentiles
+#end::ex_describe_percentiles[]
 
 
 # In[ ]:
@@ -300,7 +300,7 @@ sns.distplot(np.log(df['trip_distance'].values+1), axlabel = 'Log(trip_distance)
 plt.setp(axes, yticks=[])
 plt.tight_layout()
 plt.show()
-#end::ex_plot_distances
+#end::ex_plot_distances[]
 
 
 # In[ ]:
