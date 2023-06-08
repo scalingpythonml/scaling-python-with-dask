@@ -60,7 +60,7 @@ include::./examples/dask/Dask-Ch4-DataFrames.py[tags=ex_load_uk_gender_pay_gap_i
 ----
 ====
 
-Unfortunately, schema inference does not always work. For example, if you try and load the UK's gender pay gap disparity data, from https://gender-pay-gap.service.gov.uk/viewing/download-data/2021, when you try and access the data, as in <<ex_load_uk_gender_pay_gap_infered>>, you will get an error of "Mismatched dtypes found in pass:[<code>pd.read_csv</code>/<code>pd.read_table</code>"]. When Dask's column type inference is incorrect you can override it (per-column) by specifying the `dtype` parameter as shown in <<ex_load_uk_gender_pay_gap>>.
+Unfortunately, schema inference does not always work. For example, if you try and load the UK's gender pay gap disparity data from `https://gender-pay-gap.service.gov.uk/viewing/download-data/2021`, when you try and access the data, as in <<ex_load_uk_gender_pay_gap_infered>>, you will get an error of "Mismatched dtypes found in pass:[<code>pd.read_csv</code>/<code>pd.read_table</code>"]. When Dask's column type inference is incorrect you can override it (per-column) by specifying the `dtype` parameter as shown in <<ex_load_uk_gender_pay_gap>>.
 
 [[ex_load_uk_gender_pay_gap]]
 .Dask DataFrame load CSV and specify data type
@@ -118,7 +118,7 @@ While Dask has limited support for query push-down with partition reads, many ot
 
 On the flip side, if most of your downstream users consume all of the table or have unique columns they are filtering on, a partitioned write can decrease performance. Since listing files on a network filesystem is not free, discovering the files becomes more expensive when you have partitioned writes that you are not taking advantage of.
 
-Other systems commonly use metastores for partitioned reads and writes when dealing with large data sizes. Dask does not presently have the built-in ability to talk to a metastore, like Iceberg, Hive, or DeltaLake. Metastores can be useful for loading subsets tables and time-traveling (looking at old versions) when needed. The https://github.com/rajagurunath/dask_deltatable[dask deltatable] library integrates the reading DeltaLake table. Iceberg has a https://github.com/linkedin/iceberg/blob/master/site/docs/python-api-intro.md[built-in Python API] that you can use to get a list of files associated with a particular query, and then use Dask's existing file APIs on top of it. I expect the integrations with metastores will continue to improve rapidly.
+Other systems commonly use metastores for partitioned reads and writes when dealing with large data sizes. Dask does not presently have the built-in ability to talk to a metastore, like Iceberg, Hive, or DeltaLake. Metastores can be useful for loading subsets tables and time-traveling (looking at old versions) when needed. The https://github.com/rajagurunath/dask_deltatable[dask deltatable library] integrates the reading DeltaLake table. Iceberg has a https://github.com/linkedin/iceberg/blob/master/site/docs/python-api-intro.md[built-in Python API] that you can use to get a list of files associated with a particular query, and then use Dask's existing file APIs on top of it. I expect the integrations with metastores will continue to improve rapidly.
 ****
 
 ==== Filesystems
@@ -338,7 +338,7 @@ include::./examples/dask/Dask-Ch4-DataFrames.py[tags=repartition]
 
 [WARNING]
 ====
-Dask's set_index has a similar `partition_size` parameter, but as of the writing, only works to reduce the number of partitions (see https://github.com/dask/dask/issues/7110).
+Dask's set_index has a similar `partition_size` parameter, but as of this writing, https://github.com/dask/dask/issues/7110[only works to reduce the number of partitions].
 ====
 
 As you've seen at the start of this chapter, when writing DataFrame, each partition is given its own file, but sometimes this can result in files that are too big or too small. Some tools can only accept one file as input, so you need to repartition everything into a single partition. Other times, the data storage system is optimized for a certain file size, like HDFS' default block size of 128mb. The good news is the methods techniques, such as `repartition` or `set_index` solves these problems for you.

@@ -22,7 +22,7 @@ Here we install a specific version of Dask rather than "just" the latest. If you
 
 [NOTE]
 ====
-You don't have to install Dask locally, although you probably will want to. There is a link:$$https://mybinder.org/v2/gh/dask/dask-examples/main?urlpath=lab$$[binderhub example with dask] as well as distributed options including link:$$https://cloud.coiled.io/$$[from the creators of Dask] that you can use to run Dask, as well as other providers like link:$$https://saturncloud.io/$$[Saturncloud]. That being said I recommend having Dask installed locally even if you end up using these services.
+You don't have to install Dask locally, although you probably will want to. There is a link:$$https://mybinder.org/v2/gh/dask/dask-examples/main?urlpath=lab$$[binderhub example with dask] as well as distributed options including link:$$https://cloud.coiled.io/$$[one from the creators of Dask] that you can use to run Dask, as well as other providers like link:$$https://saturncloud.io/$$[Saturncloud]. That being said I recommend having Dask installed locally even if you end up using these services.
 ====
 
 .Using Dask Docker images

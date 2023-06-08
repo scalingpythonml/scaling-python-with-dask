@@ -4,7 +4,7 @@
 
 Dask is a framework for parallelized computing with Python that scales from multiple cores on one machine to data centers with thousands of machines. It has both low-level task APIs and higher-level data-focused APIs. The low-level task APIs power Dask's integration with a wide variety of Python libraries. Having public APIs has allowed an ecosystem of tools to grow around Dask for various use cases.
 
-Continuum Analytics, now known as Anaconda Inc, started the open-source DARPA funded link:$$https://blaze.readthedocs.io/en/latest/index.html$$[BLAZE project], which has evolved into Dask.
+Continuum Analytics, now known as Anaconda Inc, started the open source, DARPA-funded link:$$https://blaze.readthedocs.io/en/latest/index.html$$[BLAZE project], which has evolved into Dask.
 Continuum has participated in developing many essential libraries and even conferences in the Python data analytics space. Dask remains an open-source project, with much of its development now being supported by link:$$https://coiled.io/$$[Coiled].
 
 Dask is unique in the distributed computing ecosystem, by integrating popular data science, parallel, and scientific computing libraries. Dask's integration of different libraries allows developers to re-use much of their existing knowledge at scale. You can also frequently re-use some of your code with minimal changes.

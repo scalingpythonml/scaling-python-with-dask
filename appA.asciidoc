@@ -16,7 +16,7 @@ We often perform some kind of manual testing while writing software or data tool
 
 Unit testing refers to testing individual "units" of code rather than the whole system together. This requires having your code be composed into different units, like modules or functions. While this is less common with notebooks, we believe that structuring your code for testability is a good practice to follow.
 
-Writing unit tests for notebooks can be challenging, doctests are slightly easier to in-line within a notebook. If you want to use https://github.com/JoaoFelipe/ipython-unittest[+++traditional unit test libraries the ipython-unittest+++] magics lets you inline your unit tests within your notebook.
+Writing unit tests for notebooks can be challenging, doctests are slightly easier to in-line within a notebook. If you want to use traditional unit test libraries, the https://github.com/JoaoFelipe/ipython-unittest[+++ipython-unittest magics+++] lets you inline your unit tests within your notebook.
 
 ==== Integration Testing
 
@@ -42,7 +42,7 @@ Testing notebooks is painful, which is unfortunate given their immense popularit
 
 The "traditional" option (besides ignoring it) is to refactor the parts of your code you want to test into separate "regular" python files and test those using "normal" testing libraries. While the, partial, refactoring can be painful, rewriting to more testable components can bring benefits to debugging as well.
 
-The https://testbook.readthedocs.io/en/latest/[+++testbook+++] project is an alternative to refactoring, and takes interesting approach, allowing you to write your tests outside of your notebook, and does not require you to give up on notebooks. Instead you use the libraries decorator to annotate tests, for example `@testbook('untitled_7.ipynb', execute=True)` which will import and execute the notebook before executing the test. You can also control which parts of the notebook are executed, but this partial execution can be brittle and prone to breakage on updates.
+The https://testbook.readthedocs.io/en/latest/[+++testbook project+++] is an alternative to refactoring, and takes interesting approach, allowing you to write your tests outside of your notebook, and does not require you to give up on notebooks. Instead you use the libraries decorator to annotate tests, for example `@testbook('untitled_7.ipynb', execute=True)` which will import and execute the notebook before executing the test. You can also control which parts of the notebook are executed, but this partial execution can be brittle and prone to breakage on updates.
 
 ==== In Notebook Testing: In-Line Assertions
 
@@ -98,7 +98,7 @@ Dask itself has already made the trade-off of not being partition tolerant; whic
 
 It's important to understand how this applies to the resources that you are accessing from Dask. For example, you may find yourself in a case where a network partition means that Dask is unable to write its output. Or, in our opinion even worse, it can result in situations where the data you store from Dask is discarded.footnote:[This is not the most common fault tolerance of databases, but some default configurations of common databases can result in this.]
 
-The https://jepsen.io/[+++Jepsen+++] project, by Kyle Kingsbury, is one of the best projects that we know of for testing distributed storage and query systems.
+The https://jepsen.io/[+++Jepsen project+++], by Kyle Kingsbury, is one of the best projects that we know of for testing distributed storage and query systems.
 
 === Recursion (Tail and Otherwise)
 
@@ -106,7 +106,7 @@ Recursion refers to functions that call themselves (either directly or indirectl
 
 Recursive functions are sometimes avoided in languages that cannot optimize them since there is overhead to calling a function. Instead, users will try and express the recursive logic using loops.
 
-Excessive non-optimized recursion can result in a stackoverflow error. In C, Java, C&#x2b;&#x2b; and more stack memory is allocated separately from the main memory (also called heap memory). In Python the amount of recursion is controlled by `setrecursionlimit`. https://chrispenner.ca/posts/python-tail-recursion[+++Python provides a tail_recursive annotation, that you can use to help optimize these recursive calls+++].
+Excessive non-optimized recursion can result in a stackoverflow error. In C, Java, C&#x2b;&#x2b; and more stack memory is allocated separately from the main memory (also called heap memory). In Python the amount of recursion is controlled by `setrecursionlimit`. Python provides a https://chrispenner.ca/posts/python-tail-recursion[+++tail_recursive annotation+++] that you can use to help optimize these recursive calls.
 
 In Dask, while recursive calls don’t have the exact same stack problem, excessive recursion can be one of the causes of load on the "head" node. This is because scheduling the recursive call must pass through the head node, and the excessive number of recursive functions will cause Dask's scheduler to slow down long before any stack size issues are countered.
 
@@ -114,15 +114,15 @@ In Dask, while recursive calls don’t have the exact same stack problem, excess
 
 Versioning is an important computer science concept, and it can be applied to both code and data. Ideally versioning makes it easy to undo errors and go back to earlier versions or explore multiple directions simultaneously. Many of the items we produce are a combination of both our code and our data, to truly meet the goal of being able to quickly roll-back and support experimentation you will want to have versioning for both your code and your data.
 
-Version control tools for source code have existed for a long time. For code, https://git-scm.com/[+++git+++] has become the most popular open-source version control system in usage, overtaking tools like Subversion (SVN), Concurrent Version Systems (CVS), and many more.
+Version control tools for source code have existed for a long time. For code, https://git-scm.com/[+++Git+++] has become the most popular open source version control system in usage, overtaking tools like Subversion, Concurrent Version Systems, and many more.
 
-While understanding git thoroughly can be very complicated,footnote:[One classic https://xkcd.com/1597/[+++xkcd comic+++] comes surprisingly close to capturing our early experiences with git.] for common usage, there are https://git-scm.com/docs/giteveryday[+++a few core commands+++] that often see you through most of your usage. Teaching git is beyond the scope of this appendix, but there are a great many resources including Head First Git by Raju Gandhi and "Oh Shit Git" by Julia Evans as well as free online resources.
+While understanding Git thoroughly can be very complicated,footnote:[One classic https://xkcd.com/1597/[+++xkcd comic+++] comes surprisingly close to capturing our early experiences with Git.] for common usage there are a few https://git-scm.com/docs/giteveryday[+++core commands+++] that often see you through most of your usage. Teaching Git is beyond the scope of this appendix, but there are a great many resources including pass:[<a href="https://learning.oreilly.com/library/view/head-first-git/9781492092506/" class="orm:hideurl"><em>Head First Git</em></a>] by Raju Gandhi (O'Reilly) and _Oh Shit Git_ by Julia Evans, as well as free online resources.
 
-Unfortunately, software version control tools don't, currently, have the best Notebook integration experience – often requiring additional tools like https://www.reviewnb.com/[+++ReviewNB+++] to make the changes understandable.
+Unfortunately, software version control tools don't currently have the best Notebook integration experience, often requiring additional tools like https://www.reviewnb.com/[+++ReviewNB+++] to make the changes understandable.
 
 Now a natural question is, can you use the same tools for versioning your data as your software? Sometimes you can, provided that your data is small enough and does not contain any personal information using source control on data can be ok. However software tends to be stored in text and is normally relatively smaller than your data, and many of the source control tools do not work well when files start to exceed even a few 10MBs.
 
-Instead, tools like https://lakefs.io/[+++LakeFS+++] add git-like versioning semantics over top of existing external data stores (e.g., S3, HDFS, Iceberg, Delta).footnote:[Conflict of interest disclosure: I like the LakeFS people, and I've received a t-shirt from them. Some alternatives include project nessie (focused on Iceberg tables).] Another option is to make copies of your tables manually, but we find this leads to the familiar problem of "-final2-really-final" problem with naming notebooks and word docs.
+Instead, tools like https://lakefs.io/[+++LakeFS+++] add Git-like versioning semantics over top of existing external data stores (e.g., S3, HDFS, Iceberg, Delta).footnote:[Conflict of interest disclosure: I like the LakeFS people, and I've received a t-shirt from them. Some alternatives include project nessie (focused on Iceberg tables).] Another option is to make copies of your tables manually, but we find this leads to the familiar problem of "-final2-really-final" problem with naming notebooks and word docs.
 
 === Isolation and Noisy Neighbors
 
@@ -161,7 +161,7 @@ Dask jobs are frequently data heavy, and the cost of transferring data to the CP
 
 Transferring data from RAM (or even worse disk/network) can result in the CPU "stalling" or not being able to do any useful work. This makes "chaining" operations especially important.
 
-The https://computers-are-fast.github.io/[+++computers are fast webpage+++] does an excellent job of illustrating these performance impacts with real code.
+The https://computers-are-fast.github.io/[+++Computers Are Fast website+++] does an excellent job of illustrating these performance impacts with real code.
 
 === Hashing
 

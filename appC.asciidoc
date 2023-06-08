@@ -11,7 +11,7 @@ Some of this advice is common across distributed systems, including Ray and Apac
 
 === Using Debuggers
 
-There are a few different options for using debuggers in Dask. PyCharm and PDB both support connecting to remote debugger processes but figuring out where your task is running and also setting up the remote debugger can be a challenge. For https://www.jetbrains.com/help/pycharm/remote-debugging-with-product.html[+++PyCharm remote debugging see this jetbrains article+++]. One option is to use epdb and by running `import epdb; epdb.serve()` inside of an actor. The easiest option, which is not perfect, is to have Dask re-run failed tasks locally by running `client.recreate_error_locally` on the future that failed.
+There are a few different options for using debuggers in Dask. PyCharm and PDB both support connecting to remote debugger processes but figuring out where your task is running and also setting up the remote debugger can be a challenge. For details on PyCharm remote debugging, see the JetBrains article https://www.jetbrains.com/help/pycharm/remote-debugging-with-product.html[+++"Remote Debugging with PyCharm"+++]. One option is to use epdb and by running `import epdb; epdb.serve()` inside of an actor. The easiest option, which is not perfect, is to have Dask re-run failed tasks locally by running `client.recreate_error_locally` on the future that failed.
 
 === General Debugging Tips with Dask
 
@@ -34,7 +34,7 @@ However, accessing the internals of a container can be easier said than done. In
 
 === Some Notes on Official Advice for Handling Bad Records
 
-https://docs.dask.org/en/stable/how-to/debug.html#remove-failed-futures-manually[+++Dask's official debugging guide recommends removing failed futures manually.+++] When loading data that can be processed in smaller chunks than entire partitions at a time, returning tuples with successful and failed data is better since removing entire partitions is not conducive to determining the root cause.
+Dask's https://docs.dask.org/en/stable/how-to/debug.html#remove-failed-futures-manually[+++official debugging guide+++] recommends removing failed futures manually. When loading data that can be processed in smaller chunks than entire partitions at a time, returning tuples with successful and failed data is better since removing entire partitions is not conducive to determining the root cause.
 
 [[dask-debugging-handle_appC_1686051006707]]
 .AU: add example title
@@ -52,7 +52,7 @@ Bad records here does not mean exclusively records that fail to load or parse; t
 
 === Dask Diagnostics
 
-Dask has built in https://docs.dask.org/en/stable/diagnostics-distributed.html[+++diagnostic tools for both distributed+++] and local schedulers. The https://docs.dask.org/en/stable/diagnostics-local.html[+++local diagnostics are more featureful+++] as with pretty much every part of debugging. These diagnostics can be especially great for debugging situations where you see a slow degradation of performance over time.
+Dask has built-in diagnostic tools for both https://docs.dask.org/en/stable/diagnostics-distributed.html[+++distributed+++] and https://docs.dask.org/en/stable/diagnostics-local.html[+++local+++] schedulers. The local diagnostics are more featureful as with pretty much every part of debugging. These diagnostics can be especially great for debugging situations where you see a slow degradation of performance over time.
 
 [NOTE]
 ====

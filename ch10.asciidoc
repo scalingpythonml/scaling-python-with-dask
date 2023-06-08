@@ -156,7 +156,7 @@ include::./examples/dask/DaskGPUs.py[tags=ex_dask_submit_numba_correct]
 
 Like most tasks in Python, there are many different libraries for working with GPUs. Many of these libraries support NVIDIA's Compute Unified Device Architecture (CUDA) with experimental support for AMD's new "open" HIP/ Radeon Open Compute module(ROCm) interfaces. NVIDIA and CUDA was the first on the scene and has a much larger adoption than AMD's Radeon Open Compute module. So much so that ROCm has a large focus on supporting ports of CUDA software to the ROCm platform.
 
-We won't dive deep into the world of Python GPU libraries, but you may want to check out https://numba.readthedocs.io/en/stable/user/5minguide.html#gpu-targets[+++numba for GPUs+++], https://www.tensorflow.org/guide/gpu[+++tensorflow GPUs support+++], https://pytorch.org/docs/stable/notes/cuda.html[+++and PyTorch's GPU support.+++]
+We won't dive deep into the world of Python GPU libraries, but you may want to check out https://numba.readthedocs.io/en/stable/user/5minguide.html#gpu-targets[+++numba for GPUs+++], https://www.tensorflow.org/guide/gpu[+++tensorflow GPUs support+++], and https://pytorch.org/docs/stable/notes/cuda.html[+++PyTorch's GPU support+++].
 
 Most of the libraries that have some form of GPU support require compiling large amounts of non-Python code. As such it's often best to install these libraries with conda which frequently has more complete binary packaging allowing you to skip the compile step.
 
@@ -193,7 +193,7 @@ Another GPU accelerated library for "streaming on GPUs" is "cuStreamz" which is 
 
 === Freeing Accelerator Resources
 
-Allocating memory on GPUs tend to be slow, so many libraries hold on to these resources. In most situations, if the Python VM exits the resources will be cleared up. An option of last resort is to bounce all of the workers using `client.restart`. When possible, you will be best served by manually managing resources – which is library dependent. For example, cuPY users – you can free the blocks once used by calling `free_all_blocks()`, https://docs.cupy.dev/en/stable/user_guide/memory.html[+++as per the memory management documentation.+++]
+Allocating memory on GPUs tend to be slow, so many libraries hold on to these resources. In most situations, if the Python VM exits the resources will be cleared up. An option of last resort is to bounce all of the workers using `client.restart`. When possible, you will be best served by manually managing resources – which is library dependent. For example, cuPY users – you can free the blocks once used by calling `free_all_blocks()`, as per the https://docs.cupy.dev/en/stable/user_guide/memory.html[+++memory management documentation.+++]
 
 === Design Patterns: CPU Fallback
 
