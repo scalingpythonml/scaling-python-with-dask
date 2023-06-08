@@ -71,7 +71,7 @@ When I run the above example, I get `In sequence 20.01662155520171, in parallel 
 [[nested_tasks]]
 ===== Nested tasks
 
-One of the neat things about `dask.delayed` is that you can launch tasks inside of other tasks.footnote:[If you are coming from Apache Spark, this is very different, as only the driver/head node can launch tasks.] A straightforward real-world example of this is with a web crawler, where, when you visit a webpage, you want to fetch all of the links from that page.
+One of the neat things about `dask.delayed` is that you can launch tasks inside of other tasks.footnote:[If you are coming from Apache Spark, this is very different, as only the driver/head node can launch tasks.] A straightforward real-world example of this is with a web crawler, where, when you visit a webpage, you want to fetch all of the links from that page:
 
 [source, python]
 ----
@@ -187,4 +187,4 @@ include::./examples/dask/Dask-Ch2-Hello-Worlds.py[tags=wc_dataframe]
 In this chapter you got Dask working on your local machine, as well as had a tour of the different "hello world" (or getting started) examples with most of Dask's different built-in libraries. Subsequent chapters will dive into these different tools in more detail.
 
 
-Now that you've got Dask working on your local machine, if you want, you can jump on over to <<appa_deploy>> and look at the different deployment mechanisms. For the most part, you can run the examples in local mode, albeit sometimes a little slower or smaller scale. However, the next chapter will look at the core concepts of Dask, and one of the (optional) upcoming examples both emphasizes the benefits of Dask running on multiple machines and is generally easier to explore on a cluster. If you don't have a cluster available, you can may wish to set-up a simulated one using something like link::$$https://microk8s.io/$$[MicroK8s].
+Now that you've got Dask working on your local machine, if you want, you can jump on over to <<appa_deploy>> and look at the different deployment mechanisms. For the most part, you can run the examples in local mode, albeit sometimes a little slower or smaller scale. However, the next chapter will look at the core concepts of Dask, and one of the (optional) upcoming examples both emphasizes the benefits of Dask running on multiple machines and is generally easier to explore on a cluster. If you don't have a cluster available, you can may wish to set-up a simulated one using something like link:$$https://microk8s.io/$$[MicroK8s].

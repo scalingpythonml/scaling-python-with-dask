@@ -57,7 +57,7 @@ The Dask Client is your entry point into the Dask distributed scheduler. In <<ex
 will be using Dask with a Kubernetes cluster,
 and if you have another type of cluster or want details please see <<appa_clusterrs>>.
 
-===== Auto-Scaling (also known as "Adaptive Deployments.")
+===== Auto-scaling
 
 Some of Dask's cluster backends, including Kubernetes, support auto-scaling, which Dask calls "adaptive deployments." Auto-scaling is useful mostly in situations of shared cluster resources, or when running on cloud providers where the underlying resources are payed for by the hour.
 
@@ -251,7 +251,7 @@ You should try this out now by visualizing everyone's favourite wordcount exampl
 
 [[vis_ex]]
 .Visualized wordcount task graph
-image::images/spwd_0302.png[scale=50]
+image::images/spwd_0302.png[]
 
 [TIP]
 ====

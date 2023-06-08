@@ -89,9 +89,10 @@ include::./examples/dask/preinstall_numba/Dockerfile[]
 ----
 ====
 
-Then to build this we run the following script:
+Then to build this we run the script shown in <<build_custom_ch10_1686240447279>>.
 
-.Build Custom
+[[build_custom_ch10_1686240447279]]
+.Build custom
 ====
 [source, bash]
 ----

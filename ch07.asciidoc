@@ -54,9 +54,10 @@ Creating an actor in Dask is relatively simple. To start with, you make a normal
 Note this is effectively an object-oriented bank account implementation, except we don't have any locks since we only ever have a single thread changing the values.
 ====
 
-Let's take a look at how you can implement a common example actor for a bank account. Here we define three methods: balance, deposit, and withdrawal, which will be how you can interact with the actor. Once the actor is defined, we ask Dask to schedule the actor so that we can call it.
+Let's take a look at how you can implement a common example actor for a bank account. In <<making_bank_acct_actor_ch07_1686239522527>>, we define three methods: balance, deposit, and withdrawal, which will be how you can interact with the actor. Once the actor is defined, we ask Dask to schedule the actor so that we can call it.
 
-.Making a Bank Account Actor
+[[making_bank_acct_actor_ch07_1686239522527]]
+.Making a bank account actor
 ====
 [source, python]
 ----
@@ -64,9 +65,10 @@ include::./examples/dask/Dask-Explore-Actors.py[tags=make_account]
 ----
 ====
 
-When you call methods on the resulting proxy object, Dask dispatches a remote procedure call and returns a special ActorFuture immediately. This allows you to use actors in a non-blocking fashion. Unlike the generic `@dask.delayed` calls, these are all routed to the same process, namely the one where Dask has scheduled the actor.
+When you call methods on the resulting proxy object (see <<using_bank_acct_actor_ch07_1686239559633>>), Dask dispatches a remote procedure call and returns a special ActorFuture immediately. This allows you to use actors in a non-blocking fashion. Unlike the generic `@dask.delayed` calls, these are all routed to the same process, namely the one where Dask has scheduled the actor.
 
-.Using the Bank Account Actor
+[[using_bank_acct_actor_ch07_1686239559633]]
+.Using the bank account actor
 ====
 [source, python]
 ----
@@ -74,9 +76,10 @@ include::./examples/dask/Dask-Explore-Actors.py[tags=use_account]
 ----
 ====
 
-The ActorFuture *is not serializable* so if you need to transfer the result of calling an actor, you need to block and get its value as shown below:
+The ActorFuture _is not serializable_ so if you need to transfer the result of calling an actor, you need to block and get its value as shown in <<actorfutures_not_serializable_ch07_1686239609453>>.
 
-.ActorFuture's are not serializable
+[[actorfutures_not_serializable_ch07_1686239609453]]
+.ActorFutures are not serializable
 ====
 [source, python]
 ----
@@ -86,13 +89,13 @@ include::./examples/dask/Dask-Explore-Actors.py[tags=result_future_not_ser]
 
 While having one actor per bank account does a good job of avoiding bottlenecks since each bank account likely won't have too many transactions queued, it is slightly inefficient as there is a non-zero actor overhead. One solution is to extend our bank account actor to support multiple accounts by using a key and hashmap, but if all accounts are inside one actor this can lead to scaling problems.
 
-==== Scaling Dask actors
+==== Scaling Dask Actors
 
 The actor model described earlier in this chapter typically assumes that actors are lightweight, meaning they contain a single piece of state, and they do not require scaling/parallelization. In Dask and similar systems (including Akka), actors are often used for coarser grained implementations and can require scaling.footnote:[A _coarse grained_ actor means a single actor may contain multiple pieces of state rather than fine-grained where each piece of state would be represented as a separate actor. This is similar to the concept of https://www.martinfowler.com/eaaCatalog/coarseGrainedLock.html[+++coarse-grained locking+++].]
 
 As with dask delayed, you can scale actors both horizontally (across processes/machines) by creating multiple actors or vertically (with more resources). Scaling actors horizontally is not as simple as just adding more machines or workers, Dask can not break up a single actor across multiple processes.
 
-To scale actors horizontally, it is up to you to break up the state in such a way that you can have multiple actors handling it, one technique sometimes used is "Actors Pools" and these pools can either have a static mapping of say, user -> actor or in the situation where the actors share a database round-robin or other non-deterministic balancing can be used.
+To scale actors horizontally, it is up to you to break up the state in such a way that you can have multiple actors handling it, one technique sometimes used is _actor pools_ (see <<figure0701_ch07_1686049800930>>), and these pools can either have a static mapping of say, user -> actor or in the situation where the actors share a database round-robin or other non-deterministic balancing can be used.
 
 [[figure0701_ch07_1686049800930]]
 .AU: add caption
@@ -101,7 +104,7 @@ image::images/spwd_0701.png[]
 We extend the bank account example to a "bank" where an actor may be responsible for multiple accounts (but not all of the accounts in the bank). We can then use an actor pool with hashing to route the requests to the correct "branch" or actor as shown in <<sketchy_bank_ex>>.
 
 [[sketchy_bank_ex]]
-.Hashing Actor Pool Example For a Bank
+.Hashing actor pool example for a bank
 ====
 [source, python]
 ----
@@ -122,15 +125,15 @@ Dask's Actor model is less full-featured than Ray's actor model, much like Ray's
 
 === When to use Dask Actors
 
-A common problem in the industry is not realizing when our cool new tool is not the right tool for the job. As the saying goes "when you have a hammer the whole world looks like a nail." *You likely do not need actors and should stick with tasks if you are not mutating state.* It is important for you to remember that there are other options for handling state, as shown in the table below:
+A common problem in the industry is not realizing when our cool new tool is not the right tool for the job. As the saying goes "when you have a hammer the whole world looks like a nail." _You likely do not need actors and should stick with tasks if you are not mutating state._ It is important for you to remember that there are other options for handling state, as shown in the table below:
 
-.Comparison of Techniques for Managing Mutable State
+.Comparison of techniques for managing mutable state
 |===
-| |Local (e.g. driver) state |Dask Actors |External Distributed State (e.g. Zookeeper or Ray, or AKKA)
+| |Local state (e.g., driver) |Dask actors |External distributed state (e.g., Zookeeper or Ray, or AKKA)
 
 |*Scaleable* |No, all state must fit on single machine |State within each actor must fit on a machine, but actors are spread out. |Yesfootnote:[Ray actors still require that the state within an actor must fit on a single machine. Ray has additional tools to "shard" or create "pools" of actors.]
 |*Resilient* |semi but no increase in resilience cost (e.g. loss of driver is already catastrophic) |No, loss of any worker with an actor becomes catastrophic. |Yes, loss of entire cluster can be recovered from
-|*Performance Overhead* |RPC to driver |Same as dask.delayed |RPC to external system + external systems overhead
+|*Performance overhead* |RPC to driver |Same as dask.delayed |RPC to external system + external systems overhead
 |*Code complexity* |Low |Medium |High (new library to learn and integrate), extra logic for avoiding duplicate execution
 |*Deployment complexity* |Low |Low |High (new system to maintain)
 |===

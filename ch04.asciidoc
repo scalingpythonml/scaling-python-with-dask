@@ -214,7 +214,7 @@ If you're aggregating by partition key, Dask can compute the aggregation without
 ====
 
 The first way to speed up your aggregations is to reduce the columns that you are aggregating on, since the fastest data to process is no data. Finally, when possible, doing multiple aggregations at the same time reduces the number of times the same data needs to be shuffled.
-Therefor if you need to compute the average and the max you should compute both at the same time.
+Therefore, if you need to compute the average and the max, you should compute both at the same time (<<max_mean>>).
 
 [[max_mean]]
 .Dask DataFrame Max Mean Together
@@ -394,15 +394,15 @@ Don't use Dask's concat when operating by row on DataFrame with unknown division
 
 Dask uses four techniques --  hash, broadcast, partitioned, and `stack_partitions` -- to combine DataFrames, and each have very different performance. These four functions do not map 1:1 with the join functions you choose from. Rather, Dask chooses the technique based on the indexes, divisions, and requested join type (e.g. outer/left/inner). The three column-based join techniques are hash joins, broadcast, and partitioned joins. When doing row based combinations (e.g. `append`), Dask has a special technique called `stack_partitions` that is extra fast. It's important that you understand the performance of each of these techniques and the conditions that will cause Dask to pick which approach.
 
-*Hash* joins are the default which Dask uses when no other join technique is suitable. Hash joins shuffle the data for all the input DataFrames to partition on the target key. Hash joins use the hash values of keys, which results in a DataFrame that is not in any particular order. As such the result of hash joins do not have any known divisions.
+_Hash joins_ are the default that Dask uses when no other join technique is suitable. Hash joins shuffle the data for all the input DataFrames to partition on the target key. Hash joins use the hash values of keys, which results in a DataFrame that is not in any particular order. As such the result of hash joins do not have any known divisions.
 
-*Broadcast* joins are ideal for joining large dataframes with small dataframes. In a broadcast join, Dask takes the smaller DataFrame and distributes it to all of the workers. This means that the smaller DataFrame must be able to fit in memory. To tell Dask that a DataFrame is a good candidate for broadcasting, you make sure it is all stored in one partition, e.g. call `repartition(npartitions=1)`.
+_Broadcast joins_ are ideal for joining large dataframes with small dataframes. In a broadcast join, Dask takes the smaller DataFrame and distributes it to all of the workers. This means that the smaller DataFrame must be able to fit in memory. To tell Dask that a DataFrame is a good candidate for broadcasting, you make sure it is all stored in one partition, e.g. call `repartition(npartitions=1)`.
 
-*Partitioned joins* happen when combining DataFrames along an index where the partitions/divisions are known for all the DataFrames. Since the input partitions are known, Dask is able to align the partitions between the DataFrames, involving less data transfer as each output partition has a smaller than full set of inputs.
+_Partitioned joins_ happen when combining DataFrames along an index where the partitions/divisions are known for all the DataFrames. Since the input partitions are known, Dask is able to align the partitions between the DataFrames, involving less data transfer as each output partition has a smaller than full set of inputs.
 
 Since partition and broadcast joins are faster, doing some work to help Dask can be worth it. For example, concatenating several DataFrames with known and aligned partitions/divisions, and one DataFrame which is unaligned, will result in an expensive hash join. Instead, try to either set the index and partition on the remaining DataFrame, or join the less expensive DataFrames first then perform the expensive join after.
 
-The fourth, *`stack_partitions`,* is different from all of the other options since it doesn't involve any movement of data. Instead, the resulting DataFrame partitions list is a union of the upstream partitions from the input DataFrames. Dask uses stack_partitions for most row-based combinations except when all of the input DataFrame divisions are known and they are not well ordered and you ask Dask to `interleave_partitions`. The `stack_partitions` technique is able to provide known partitioning in its output only when the input divisions are known and well ordered. If all of the divisions are known but not well ordered and you set `interleave_partitions` Dask will use a partitioned join instead. While this approach is comparatively inexpensive, it is not free, and can result in an excessively large number of partitions requiring you repartition anyway.
+The fourth, `stack_partitions`, is different from all of the other options since it doesn't involve any movement of data. Instead, the resulting DataFrame partitions list is a union of the upstream partitions from the input DataFrames. Dask uses stack_partitions for most row-based combinations except when all of the input DataFrame divisions are known and they are not well ordered and you ask Dask to `interleave_partitions`. The `stack_partitions` technique is able to provide known partitioning in its output only when the input divisions are known and well ordered. If all of the divisions are known but not well ordered and you set `interleave_partitions` Dask will use a partitioned join instead. While this approach is comparatively inexpensive, it is not free, and can result in an excessively large number of partitions requiring you repartition anyway.
 
 ==== Missing functionality
 
@@ -442,13 +442,13 @@ Like other functions in Dask `persist()`, does not modify the DataFrame -- and i
 
 === What other functions are different
 
-For performance reasons, various parts of Dask DataFrames behave a little differently than local Dataframes.
+For performance reasons, various parts of Dask DataFrames behave a little differently than local Dataframes:
 
-* reset_index - the index will start back over at zero on each partition
-* kurtosis - uses does not filter out NaNs, uses scipy defaults
-* concat - instead of coercing category types, each category type is expanded to the union of all of the categories it is concatenated with.
-* sort_values - Dask only supports single column sorts
-* When joining more than two DataFrames at the same time the join type must be one of outer or left.
+`reset_index`:: The index will start back over at zero on each partition.
+`kurtosis`:: Uses does not filter out NaNs, uses scipy defaults.
+`concat`:: Instead of coercing category types, each category type is expanded to the union of all of the categories it is concatenated with.
+`sort_values`:: Dask only supports single column sorts.
+Joining multiple DataFrames:: When joining more than two DataFrames at the same time, the join type must be one of outer or left.
 
 In our opinion it's important to be especially careful anytime you use any of these functions when porting your code to use Dask DataFrames, and these could result in difficult to track down correctness issues.
 

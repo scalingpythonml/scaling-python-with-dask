@@ -54,10 +54,10 @@ While Dask Arrays implement a large amount of the ndarray APIs this is not a com
 
 Since, as with distributed DataFrames, the partitioned nature of Dask Arrays make performance a bit different there are some unique Dask array functions not found in `numpy.linalg`:
 
-* map_overlap: You can use this for any windowed view of the data, as with map_overlap on Dask DataFrames
-* map_blocks: This is similar to Dask's DataFrames `map_partitions` and you can use it for implementing embarrassingly parallel operations that Dask has not yet, including new element-wise functions in numpy.
-* topk: Returns the topk elements of the array in place of fully sorting it (which is much more expensive).footnote:[https://docs.dask.org/en/stable/generated/dask.array.topk.html[topk] extracts the topk elements of each partition and then only needs to shuffle the k elements out of each partition.]
-* compute_chunk_sizes: Dask needs to know the chunk sizes to support indexing, and if an array has unknown chunk sizes you can call this function.
+`map_overlap`:: You can use this for any windowed view of the data, as with `map_overlap` on Dask DataFrames.
+`map_blocks`:: This is similar to Dask's DataFrames `map_partitions`, and you can use it for implementing embarrassingly parallel operations that Dask has not yet, including new element-wise functions in numpy.
+`topk`:: Returns the topk elements of the array in place of fully sorting it (which is much more expensive).footnote:[https://docs.dask.org/en/stable/generated/dask.array.topk.html[`topk`] extracts the topk elements of each partition and then only needs to shuffle the k elements out of each partition.]
+`compute_chunk_sizes`:: Dask needs to know the chunk sizes to support indexing, and if an array has unknown chunk sizes you can call this function.
 
 === Dask Bags
 

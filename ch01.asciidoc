@@ -72,7 +72,7 @@ In addition to the pandas' APIs, Dask supports scaling NumPy, scikit-learn, and 
 
 [NOTE]
 ====
-Dask can be extended to support data types besides NumPy and pandas, and this is how GPU support is implemented with link::$https://github.com/rapidsai/cudf$$[cuDF].
+Dask can be extended to support data types besides NumPy and pandas, and this is how GPU support is implemented with link:$$https://github.com/rapidsai/cudf$$[cuDF].
 ====
 
 

@@ -322,7 +322,7 @@ You can change the logging intervals with distributed.client.scheduler-info-inte
 
 ==== Saving and Sharing Dask Metrics/Performance Logs
 
-You can monitor Dask real-time with the dashboard, but it will disappear once you close out your cluster. You can save the html page, as well as export the metrics as a dataframe itself, and write out custom code for metrics.
+You can monitor Dask real-time with the dashboard, but it will disappear once you close out your cluster. You can save the html page, as well as export the metrics as a dataframe itself, and write out custom code for metrics (see <<ex_generate_performance_report>>).
 
 You can generate a performance report manually for any block of computation, without having to save the entire runtime report with the following code block. Any computation that you pass within `performance_report(“filename”)` will be saved under that file. Note that under the hood, this requires Bokeh to be installed.
 
@@ -398,7 +398,7 @@ Auto/adaptive scaling takes care of the question of "how many" but not "how big"
 * Use smaller worker size when debugging, unless you expect that the bug is due to the large number of workers given.
 * Size up worker memory allocation with the input data size and number of workers you are using.
 * The number of chunks in the data should roughly match the number of workers. Fewer workers than chunks will lead to some chunks not being worked upon, until the first round of computation is over, leading to a larger memory footprint of intermediate data. Conversely, more workers than the number of chunks will have idling workers.
-* Workers vs memory: If you have the option of having higher worker count and smaller individual worker memory (versus smaller worker count and larger individual worker memory), analyze your data’s chunk sizes. That chunk must fit in one worker with some room for computation, setting the minimum memory needed for your worker.
+* If you have the option of having higher worker count and smaller individual worker memory (versus smaller worker count and larger individual worker memory), analyze your data’s chunk sizes. That chunk must fit in one worker with some room for computation, setting the minimum memory needed for your worker.
 
 Fine tuning your machine sizes can become a never ending exercise, so it's important to know what "good enough" is for your purposes.
 

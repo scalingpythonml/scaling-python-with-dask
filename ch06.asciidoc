@@ -33,17 +33,18 @@ Not all other Python code is eagerly evaluated. In Python 3 some built-in functi
 
 Many common use cases can be made faster with careful application of futures:
 
-* Integrate with other async servers (like Tornado) – although we generally believe that most of the time, Dask is not the right solution for the "hot path", there are exceptions like dynamically computed analytic dashboards.
-* Request/Response pattern: make a call to a remote service and (later) block on its result. This can include querying services like databases, remote procedure calls, or even websites.
-* IO: Input/output can often be slow but you know you want them to start happening as soon as possible.
-* Timeouts: Sometimes you only care about a result if you can get it within a certain period of time. For example, think of a boosted ML model where you need to make a decision within a certain timeframe, collecting all scores from available models quickly and then skipping any that take too long.
-* Fire and forget: Sometimes you might not care about the result of a function call, but you do want to ensure it is called. Futures allow you to ensure a computation occurs without having to block on the result.
-* Actors: We'll covered these in the previous chapter, and the results from calling actors are futures.
+Integrate with other async servers (like Tornado):: Although we generally believe that most of the time, Dask is not the right solution for the "hot path", there are exceptions like dynamically computed analytic dashboards.
+Request/Response pattern:: Make a call to a remote service and (later) block on its result. This can include querying services like databases, remote procedure calls, or even websites.
+IO:: Input/output can often be slow but you know you want them to start happening as soon as possible.
+Timeouts:: Sometimes you only care about a result if you can get it within a certain period of time. For example, think of a boosted ML model where you need to make a decision within a certain timeframe, collecting all scores from available models quickly and then skipping any that take too long.
+Fire and forget:: Sometimes you might not care about the result of a function call, but you do want to ensure it is called. Futures allow you to ensure a computation occurs without having to block on the result.
+Actors:: We'll covered these in the previous chapter, and the results from calling actors are futures.
 
 === Launching Futures
 
-The syntax for launching dask futures is a little different than that for dask delayed. Dask futures are launched from the Dask distributed client with either `submit` for single futures or `map` for multiple futures.
+The syntax for launching dask futures is a little different than that for dask delayed. Dask futures are launched from the Dask distributed client with either `submit` for single futures or `map` for multiple futures, as shown in <<launching_futures_ch06_1686239180753>>.
 
+[[launching_futures_ch06_1686239180753]]
 .Launching futures
 ====
 [source, python]
@@ -61,9 +62,10 @@ While this `map` is somewhat similar to the `map` on Dask bags, each item result
 
 === Future Lifecycle
 
-Futures have a different lifecycle from `dask.delayed` beyond eager computation. With `dask.delayed` intermediate computations are automatically cleaned up, however Dask futures results are stored until the future is either explicitly canceled or the reference to it is garbage collected in Python. If you no longer need the value of a future, you can cancel it and free any storage space or cores used by calling `.cancel`. The future lifecycle is illustrated below:
+Futures have a different lifecycle from `dask.delayed` beyond eager computation. With `dask.delayed` intermediate computations are automatically cleaned up, however Dask futures results are stored until the future is either explicitly canceled or the reference to it is garbage collected in Python. If you no longer need the value of a future, you can cancel it and free any storage space or cores used by calling `.cancel`. The future lifecycle is illustrated in <<future_lifecycle_ch06_1686239207398>>.
 
-.Future Lifecycle
+[[future_lifecycle_ch06_1686239207398]]
+.Future lifecycle
 ====
 [source, python]
 ----
@@ -80,9 +82,10 @@ When using Dask in a Jupyter notebook the notebook may "hold on to" the result o
 
 === Fire and Forget
 
-Sometimes you no longer need a future, but you also don't want it to be canceled. This pattern is called "fire and forget." This is most useful for things like writing data out, updating a database, or other "side effect." If all reference to a future is lost, garbage collection can result in it being canceled. To work around this Dask has the aptly named `fire_and_forget` method, which allows you to take advantage of this pattern, as shown below, without needing to keep references around.
+Sometimes you no longer need a future, but you also don't want it to be canceled. This pattern is called "fire and forget." This is most useful for things like writing data out, updating a database, or other "side effect." If all reference to a future is lost, garbage collection can result in it being canceled. To work around this Dask has the aptly named `fire_and_forget` method, which allows you to take advantage of this pattern, as shown in <<fire_and_forget_ch06_1686239249531>>, without needing to keep references around.
 
-.Fire and Forget
+[[fire_and_forget_ch06_1686239249531]]
+.Fire and forget
 ====
 [source, python]
 ----
@@ -92,9 +95,10 @@ include::./examples/dask/Dask-Futures.py[tags=fire_and_forget2]
 
 === Retrieving Results
 
-More commonly, eventually, you'll want to know what the future has computed (or even just if it encountered an error). For futures that are not just side effects, you'll eventually want to get the return value (or error) from the futures. Futures have the blocking method, `result` which gives you back the value computed in the future or raises the exception from the future.
+More commonly, eventually, you'll want to know what the future has computed (or even just if it encountered an error). For futures that are not just side effects, you'll eventually want to get the return value (or error) from the futures. Futures have the blocking method `result`, as shown in <<get_result_ch06_1686239283618>>, which gives you back the value computed in the future or raises the exception from the future.
 
-.Get Result
+[[get_result_ch06_1686239283618]]
+.Get result
 ====
 [source, python]
 ----
@@ -102,9 +106,10 @@ include::./examples/dask/Dask-Futures.py[tags=get_result]
 ----
 ====
 
-You can extend this to multiple futures, as below, but there are ways to do it faster.
+You can extend this to multiple futures, as in <<get_a_list_of_results_ch06_1686239329136>>, but there are ways to do it faster.
 
-.Get A List of Results
+[[get_a_list_of_results_ch06_1686239329136]]
+.Get a list of results
 ====
 [source, python]
 ----
@@ -112,9 +117,10 @@ include::./examples/dask/Dask-Futures.py[tags=get_seq]
 ----
 ====
 
-If you've got multiple futures together, say you created them with `map`, you can get the results back as they become available. If you can process the results out of order, this can greatly improve your processing time.
+If you've got multiple futures together, say you created them with `map`, you can get the results back as they become available (<<get_list_results_as_avail_ch06_1686239357228>>). If you can process the results out of order, this can greatly improve your processing time.
 
-.Get A List of Results As They Become Available
+[[get_list_results_as_avail_ch06_1686239357228]]
+.Get a list of results as they become available
 ====
 [source, python]
 ----
@@ -122,10 +128,11 @@ include::./examples/dask/Dask-Futures.py[tags=as_completed]
 ----
 ====
 
-In this example, by processing futures as they complete you can have the main thread do its "business logic" (similar to combine step for an aggregate) for each element as it becomes available. If the futures finish at different times this can be a large speed up.
+In the preceding example, by processing futures as they complete you can have the main thread do its "business logic" (similar to combine step for an aggregate) for each element as it becomes available. If the futures finish at different times this can be a large speed up.
 
-If you have a deadline, like say scoring a model for ad servingfootnote:[We believe that this is one of the areas where Dask has more room for growth, and if you do want to implement a microservice for deadline critical events you may want to explore using Dask in conjunction with other systems like Ray.] or doing something funky with the stock market, you might not want to wait for all of your futures. Instead, the `wait` function allows you to fetch results with a timeout, as shown below:
+If you have a deadline, like say scoring a model for ad servingfootnote:[We believe that this is one of the areas where Dask has more room for growth, and if you do want to implement a microservice for deadline critical events you may want to explore using Dask in conjunction with other systems like Ray.] or doing something funky with the stock market, you might not want to wait for all of your futures. Instead, the `wait` function allows you to fetch results with a timeout, as shown in <<get_the_first_future_ch06_1686239413080>>.
 
+[[get_the_first_future_ch06_1686239413080]]
 .Get the first future (within a time limit)
 ====
 [source, python]
@@ -134,8 +141,9 @@ include::./examples/dask/Dask-Futures.py[tags=time_limit_first]
 ----
 ====
 
-This time limit can either apply to the entire set or one at a time. If you want all features finished by a given time then you need a bit more work, as shown below:
+This time limit can either apply to the entire set or one at a time. If you want all features finished by a given time then you need a bit more work, as shown in <<get_any_futures_that_finish_ch06_1686239442955>>.
 
+[[get_any_futures_that_finish_ch06_1686239442955]]
 .Get any futures that finish within a time limit
 ====
 [source, python]
@@ -144,8 +152,9 @@ include::./examples/dask/Dask-Futures.py[tags=time_limit_some]
 ----
 ====
 
-Now that you can get the results from futures, you can compare the execution time of Dask delayed v.s. Dask futures.
+Now that you can get the results from futures, you can compare the execution time of Dask delayed versus Dask futures, as shown in <<how_futures_faster_ch06_1686239467057>>.
 
+[[how_futures_faster_ch06_1686239467057]]
 .A quick example of how futures can be faster
 ====
 [source, python]

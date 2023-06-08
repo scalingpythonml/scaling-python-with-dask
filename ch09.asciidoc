@@ -4,14 +4,14 @@ Many users will already have analytic work that is currently deployed that they 
 
 === Why Dask
 
-Here are some of the reasons to consider if you should migrate into Dask, from an existing job that is implemented in Pandas, or distributed libraries like Pyspark.
+Here are some of the reasons to consider if you should migrate to Dask from an existing job that is implemented in Pandas, or distributed libraries like Pyspark:
 
-* Python and PyData stack: the developers preferred using Python-native stack, and code style can remain consistently Pythonic.
-* Richer ML integrations with Dask APIs: futures, delayed, and ML integrations require less glue code from the developer to maintain, as well as performance improvement from more flexible task graph management Dask offers.
-* Fine-grained task management: Dask’s task graph is generated and maintained real-time during runtime, and users can access the task dictionary synchronously.
-* Debugging overhead: Some developer teams prefer debugging experience in Python, as opposed to mixed python and java/scala stacktrace.
-* Development overhead: The development step in Dask can be done locally with ease with the developer’s laptop, as opposed to needing to connect to a powerful cloud machine in order to experiment.
-* Management UX: Dask visualization tools tend to be more visually pleasing and intuitive to reason, with native graphviz rendering for task graphs.
+Python and PyData stack:: The developers preferred using Python-native stack, and code style can remain consistently Pythonic.
+Richer ML integrations with Dask APIs:: Futures, delayed, and ML integrations require less glue code from the developer to maintain, as well as performance improvement from more flexible task graph management Dask offers.
+Fine-grained task management:: Dask’s task graph is generated and maintained real-time during runtime, and users can access the task dictionary synchronously.
+Debugging overhead:: Some developer teams prefer debugging experience in Python, as opposed to mixed python and java/scala stacktrace.
+Development overhead:: The development step in Dask can be done locally with ease with the developer’s laptop, as opposed to needing to connect to a powerful cloud machine in order to experiment.
+Management UX:: Dask visualization tools tend to be more visually pleasing and intuitive to reason, with native graphviz rendering for task graphs.
 
 It's important to remember that these benefits of Dask come with some important trade-offs we will discuss next.
 
@@ -19,28 +19,29 @@ It's important to remember that these benefits of Dask come with some important 
 
 Dask is in its infancy, and the use of Python Data stack to perform large-scale Extract, Transform, Load operations is fairly new. There are limitations to Dask, which mainly arise from the fact that PyData stack has traditionally not been used to perform large-scale data workloads. At the time of writing, there are some limits to the system. However, they are being addressed by developers, and a lot of this deficieicnes would be filled in. Some of the fine-grained considerations you should have are as follows:
 
-* Parquet scale limits: If parquet data exceeds 10TB scale, there are issues at the fastparquet and pyarrow level that slows Dask down, and metadata management overhead overwhelms.
-* ETL workloads with Parquet files at 10TB scale and beyond that includes a mutation, such as append and update, runs into consistency issues.
-* Weak datalake integrations: PyData stack has not engaged as much in the big data world traditionally, and the integrations on data lake management, such as Apache Iceberg, is missing.
-* High-level query optimization: Users of Spark would be familiar with the Catalyst optimizer that pushes down predicates for optimizing the physical work on the executors. This optimization layer is missing in Dask at the moment. Spark in its early years also did not have the Catalyst engine written yet, and there are work in progress to build this out for Dask.
+Parquet scale limits:: If parquet data exceeds 10TB scale, there are issues at the fastparquet and pyarrow level that slows Dask down, and metadata management overhead overwhelms.
++
+ETL workloads with Parquet files at 10TB scale and beyond that includes a mutation, such as append and update, runs into consistency issues.
+Weak datalake integrations:: PyData stack has not engaged as much in the big data world traditionally, and the integrations on data lake management, such as Apache Iceberg, is missing.
+High-level query optimization:: Users of Spark would be familiar with the Catalyst optimizer that pushes down predicates for optimizing the physical work on the executors. This optimization layer is missing in Dask at the moment. Spark in its early years also did not have the Catalyst engine written yet, and there are work in progress to build this out for Dask.
 
 Any list of limitations for a rapidly developing project like Dask may be out of date by the time you read it, so if any of these are blockers for your migration make sure to check Dask's status tracker.
 
 === Migration Roadmap
 
-While no engineering work is linear in process, it’s always a good idea to have a roadmap in mind. We’ve laid out an example of migration steps as a non-exhaustive list of items a team might want to think through when planning their move.
+While no engineering work is linear in process, it’s always a good idea to have a roadmap in mind. We’ve laid out an example of migration steps as a non-exhaustive list of items a team might want to think through when planning their move:
 
-* Deployment framework: What kind of machines and containerization famework will we want to deploy Dask on, and what are their pros and cons?
-* Tests: Do we have tests to ensure our migration correctness and achieves our desired goals??
+* What kind of machines and containerization famework will we want to deploy Dask on, and what are their pros and cons?
+* Do we have tests to ensure our migration correctness and achieves our desired goals??
 * What type of data is Dask able to ingest, and at what scale, and how does that differ from other platforms?
 * What is the compuation framework of Dask, and how do we think in Dask and Pythonic way to achieve the task?
 * How would we monitor and troubleshoot?
 
-We'll start by looking at the types of clusters, which goes with the deployment framework, as it is often one of the issues requiring collaboration with other teams or organiztions.
+We'll start by looking at the types of clusters, which goes with the deployment framework, as it is often one of the issues requiring collaboration with other teams or organizations.
 
 ==== Type of Clusters
 
-If you are considering moving your analytic engineering job, you probably have a system that’s provisioned to you by your organization. Dask is supported in many commonly used deployment and development environments, with some allowing more flexibility in scaling, dependency management, and support of heterogeneous worker types. We have used Dask on academic environments, commodity cloud, and directly over VMs / containers; and we've detailed the pros and cons, and some well-used and supported environments in Appedix A of this book.
+If you are considering moving your analytic engineering job, you probably have a system that’s provisioned to you by your organization. Dask is supported in many commonly used deployment and development environments, with some allowing more flexibility in scaling, dependency management, and support of heterogeneous worker types. We have used Dask on academic environments, commodity cloud, and directly over VMs / containers; and we've detailed the pros and cons, and some well-used and supported environments in <<appA>>.
 
 Depending on the cluster, your workers might be more transient than other types, and their IP address might not be static when they get spun up again. You should ensure Worker - Scheduler service discovery methods are put in place for your own cluster setup. It could be as simple as a shared file that they read from, or a more resilient broker. If no additional arguments are given, Dask workers would use `DASK_SCHEDULER_ADDRESS` environment variable to connect.
 
@@ -53,7 +54,7 @@ include::./examples/dask/Dask-Ch10_porting.py[tags=ex_yarn_deployment]
 ----
 ====
 
-For HPC deployments using job queuing systems such as PBS, Slurm, MOAB, SGE, LSF, and HTCondor, you should use dask-jobqueue.
+For HPC deployments using job queuing systems such as PBS, Slurm, MOAB, SGE, LSF, and HTCondor, you should use dask-jobqueue, as shown in <<ex_slurm_deployment_ch09_1685536141262>>.
 
 [[ex_slurm_deployment_ch09_1685536141262]]
 .Deploying Dask on using job-queue over Slurm
@@ -66,12 +67,12 @@ include::./examples/dask/Dask-Ch10_porting.py[tags=ex_slurm_deployment]
 
 ===== Data Sources
 
-You likely have a shared filesystem already set up by your organization’s admin. Enterprise users might be used to already robustly-provisioned distributed data sources, running on HDFS, blob storage like S3, which Dask works seamlessly. Dask also integrates well networked filesystems, as well as blob storage.
+You likely have a shared filesystem already set up by your organization’s admin. Enterprise users might be used to already robustly-provisioned distributed data sources, running on HDFS, blob storage like S3, which Dask works seamlessly. Dask also integrates well networked filesystems, as well as blob storage (see <<ex_s3_minio_rw>>).
 
 We found that one of the surprisingly useful use cases is connecting directly to network storage like NFS or FTP. When working on an academic dataset that’s large and clunky to work with (like a neuroimaging dataset that’s directly hosted by another organization), we could connect directly to the source filesystem. When using Dask this way, you should test out and consider network timeout allowances. Also note that, as of this writing, Dask does not have a connector to data lakes such as Iceberg.
 
 [[ex_s3_minio_rw]]
-.Read and Write to blob storage using Minio
+.Read and write to blob storage using Minio
 ====
 [source, python]
 ----
@@ -100,7 +101,7 @@ Dask DataFrame is not value-mutable in the way that Pandas Dataframe users might
 
 ==== Porting SQL to Dask
 
-Dask does not natively offer SQL engine, although it does natively offer options to read from SQL database. There are a number of different libraries you can use to interact with an existing SQL database, and treat Dask Dataframe as a SQL table and run SQL query directly. Some allow you to even build and server ML models directly using SQL ML syntax similar to that of Google's bigquery ML. In Chapter 13, we will show the use of Dask's native `read_sql()` function, and running SQL ML using dask-sql.
+Dask does not natively offer SQL engine, although it does natively offer options to read from SQL database. There are a number of different libraries you can use to interact with an existing SQL database, and treat Dask Dataframe as a SQL table and run SQL queries directly (<<ex_postgres_dataframe>>). Some allow you to even build and server ML models directly using SQL ML syntax similar to that of Google's bigquery ML. In Chapter 13, we will show the use of Dask's native `read_sql()` function, and running SQL ML using dask-sql.
 
 [[ex_postgres_dataframe]]
 .Reading from a Postgres database
@@ -111,7 +112,7 @@ include::./examples/dask/Dask-Ch10_porting.py[tags=ex_postgres_dataframe]
 ----
 ====
 
-Fugue-sql provides SQL compatibility to Pydata stack, including Dask. The project is in its infancy, but seems promising. The main advantage of fugue-sql is that the code is portable between Pandas, Dask, and Spark, giving a lot more interoperability. Fugue can run its SQL queries using DaskExecutionEngine, or you can run fugue queries over Dask DataFrame you already are using. Alternatively, you can run a quick SQL query on dask dataframe on your notebook as well. Here’s an example of using fugue in notebook. The downside of Fugue is that it requires ANTLR library, which requires a java runtime.
+Fugue-sql provides SQL compatibility to Pydata stack, including Dask. The project is in its infancy, but seems promising. The main advantage of fugue-sql is that the code is portable between Pandas, Dask, and Spark, giving a lot more interoperability. Fugue can run its SQL queries using DaskExecutionEngine, or you can run fugue queries over Dask DataFrame you already are using. Alternatively, you can run a quick SQL query on dask dataframe on your notebook as well. <<running_sql_over_dask_dataframe_ch09_1685553886459>> shows an example of using fugue in notebook. The downside of Fugue is that it requires ANTLR library, which requires a java runtime.
 
 [[running_sql_over_dask_dataframe_ch09_1685553886459]]
 .Running SQL over dask dataframe with Fugue SQL
@@ -159,7 +160,7 @@ Like many other distributed libraries, Dask provides logs, and you can configure
 
 Dask client exposes get_worker_logs() and get_scheduler_logs() method that can be accessed at runtime if desired. Additionally, similar to other distributed system logging, you can log events by topic, making them easily accessible by event types.
 
-The following is a toy example on adding a custom log event to the client. 
+<<ex_basic_logging_ch09_1685536244456>> is a toy example on adding a custom log event to the client. 
 
 [[ex_basic_logging_ch09_1685536244456]]
 .Basic logging by topic example
@@ -170,7 +171,7 @@ include::./examples/dask/Dask-Ch10_porting.py[tags=ex_basic_logging]
 ----
 ====
 
-The following example builds on the previous one, but swaps in the execution context to a distributed cluster setup, for potentially more complex, custom structured events. The Dask Client listens and accumulates these events and we can inspect them. We start with a Dask DataFrame, then run some compute-heavy task. This example uses a softmax function, which is a common computation in many ML uses. A common ML dilemma is whether to use a more complex activation or loss function for accuracy, sacrificing performance (thereby running less training epoch but gain a more stable gradient), or vice versa. To figure that out, we insert a code to log custom structured events to time the compute overhead of that specific function.
+<<structured-logging-on-workers_ch09_1685536283090>> builds on the previous one, but swaps in the execution context to a distributed cluster setup, for potentially more complex, custom structured events. The Dask Client listens and accumulates these events and we can inspect them. We start with a Dask DataFrame, then run some compute-heavy task. This example uses a softmax function, which is a common computation in many ML uses. A common ML dilemma is whether to use a more complex activation or loss function for accuracy, sacrificing performance (thereby running less training epoch but gain a more stable gradient), or vice versa. To figure that out, we insert a code to log custom structured events to time the compute overhead of that specific function.
 
 
 [[structured-logging-on-workers_ch09_1685536283090]]

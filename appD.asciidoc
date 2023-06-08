@@ -83,10 +83,10 @@ As with the rest of this book, we assume that you are using existing data source
 
 === Wordcount
 
-No streaming section would be complete without wordcount, but it's important to note that our streaming wordcount – in addition to the restriction with data loading – could not perform the aggregation in a distributed fashion.
+No streaming section would be complete without wordcount, but it's important to note that our streaming wordcount in <<streaming_wordcount_ex>>&mdash;in addition to the restriction with data loading&mdash;could not perform the aggregation in a distributed fashion.
 
 [[streaming_wordcount_ex]]
-.Streaming Wordcount Example
+.Streaming wordcount example
 ====
 [source, python]
 ----
@@ -94,7 +94,7 @@ include::./examples/dask/Streamz.py[tags=wc]
 ----
 ====
 
-In the above example you can see some of the current limitations of StreamZ, as well as some familiar concepts (like map). If you're interested in learning more the full https://streamz.readthedocs.io/en/latest/api.html[+++StreamZ API is covered here+++], although in our experience, some components will randomly not work on non-local streams.
+In the preceding example, you can see some of the current limitations of StreamZ, as well as some familiar concepts (like map). If you're interested in learning more the full https://streamz.readthedocs.io/en/latest/api.html[+++StreamZ API is covered here+++], although in our experience, some components will randomly not work on non-local streams.
 
 === GPU Pipelines on Dask Streaming
 
