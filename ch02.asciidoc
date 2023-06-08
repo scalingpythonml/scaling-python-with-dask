@@ -48,7 +48,7 @@ include::./examples/dask/Dask-Ch2-Hello-Worlds.py[tags=make_dask_client]
 
 One of the core building blocks of Dask is `dask.delayed`, which allows you to run functions in parallel and optionally distributed. When you wrap a function with `dask.delayed` and call it you get back a "delayed" object representing the desired computation.
 When you created a delayed object, Dask is just making a note of what you might want it to do. Like a lazy teenager you need to be explicit. You can force Dask to start computing the value with `dask.submit` which produces a "future".
-You can use `dask.compute` to both start computing the delayed objects and futures and return their values.footnote:[Provided they fit in memory].
+You can use `dask.compute` to both start computing the delayed objects and futures and return their values.footnote:[Provided they fit in memory.]
 
 
 
@@ -65,13 +65,13 @@ While artificial, an easy way to see the performance difference is by writing an
 include::./examples/dask/Dask-Ch2-Hello-Worlds.py[tags=sleepy_task_hello_world]
 ----
 
-When I run the above example, I get `In sequence 20.01662155520171, in parallel 6.259156636893749`, which shows that Dask can run some of the tasks in parallel, but not all of them.footnote:[When I run this on a cluster I get worse performance as there is overhead to distributing a task to a remote computer compared to the small delay.]
+When I run the above example, I get `In sequence 20.01662155520171, in parallel 6.259156636893749`, which shows that Dask can run some of the tasks in parallel, but not all of them.footnote:[When I run this on a cluster, I get worse performance, as there is overhead to distributing a task to a remote computer compared to the small delay.]
 
 
 [[nested_tasks]]
 ===== Nested tasks
 
-One of the neat things about `dask.delayed` is that you can launch tasks inside of other tasks.footnote:[If you are coming from Apache Spark, this is very different as only the driver/head node can launch tasks.] A straightforward real-world example of this is with a web crawler, where, when you visit a webpage, you want to fetch all of the links from that page.
+One of the neat things about `dask.delayed` is that you can launch tasks inside of other tasks.footnote:[If you are coming from Apache Spark, this is very different, as only the driver/head node can launch tasks.] A straightforward real-world example of this is with a web crawler, where, when you visit a webpage, you want to fetch all of the links from that page.
 
 [source, python]
 ----

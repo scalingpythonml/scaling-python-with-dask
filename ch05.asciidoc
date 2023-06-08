@@ -56,7 +56,7 @@ Since, as with distributed DataFrames, the partitioned nature of Dask Arrays mak
 
 * map_overlap: You can use this for any windowed view of the data, as with map_overlap on Dask DataFrames
 * map_blocks: This is similar to Dask's DataFrames `map_partitions` and you can use it for implementing embarrassingly parallel operations that Dask has not yet, including new element-wise functions in numpy.
-* topk: returns the topk elements of the array in place of fully sorting it (which is expensive). https://docs.dask.org/en/stable/generated/dask.array.topk.html[+++topk can be evaluated much less expensively+++]footnote:[topk extracts the topk elements of each partition and then only needs to shuffle the k elements out of each partition.].
+* topk: Returns the topk elements of the array in place of fully sorting it (which is much more expensive).footnote:[https://docs.dask.org/en/stable/generated/dask.array.topk.html[topk] extracts the topk elements of each partition and then only needs to shuffle the k elements out of each partition.]
 * compute_chunk_sizes: Dask needs to know the chunk sizes to support indexing, and if an array has unknown chunk sizes you can call this function.
 
 === Dask Bags
@@ -141,7 +141,7 @@ include::./examples/dask/Dask-Collections.py[tags=parallel_list]
 You don't always have to do the directory listing yourself. It can be worthwhile to check and see if there is a metastore, like hive or iceberg, which can give you the list of files without all of these slow API calls.
 ====
 
-This approach has some downsides; namely, all the file names come back to a single point, but this is rarely an issue. However, if even the list of your files is too big to fit in memory, you'll want to try recursive algorithm for directory discovery follow by an iterative algorithmfootnote:[Iterative algorithms involve using construct like "while" or "for" instead of recursive calls to the same function.] for file listing that keeps the names of the files in the bag. The code becomes a bit more complex, as shown in <<parallel_list_large>>, so it is rarely used.
+This approach has some downsides; namely, all the file names come back to a single point, but this is rarely an issue. However, if even the list of your files is too big to fit in memory, you'll want to try recursive algorithm for directory discovery follow by an iterative algorithm for file listing that keeps the names of the files in the bag.footnote:[Iterative algorithms involve using construct like "while" or "for" instead of recursive calls to the same function.] The code becomes a bit more complex, as shown in <<parallel_list_large>>, so it is rarely used.
 
 [[parallel_list_large]]
 .List the files in parallel without collecting to the driver

@@ -1,6 +1,6 @@
 == Dask with GPUs and Other Special Resources
 
-Sometimes the answer to our scaling problem isn't throwing more computers at it; it's throwing different types of resources at it. For example, ten thousand monkies trying to reproduce the works of Shakespeare v.s. one Shakespearefootnote:[Provided Shakespear is still alive. Which he is not.]. While performance varies, some benchmarks have shown up to an 85% improvement in model training times when using GPUs over CPUsfootnote:[https://datamadness.github.io/TensorFlow2-CPU-vs-GPU#:~:text=While%20setting%20up%20the%20GPU,required%20training%20time%20by%2085%25[+++https://datamadness.github.io/TensorFlow2-CPU-vs-GPU#:~:text=While%20setting%20up%20the%20GPU,required%20training%20time%20by%2085%25+++].]. Continuing its modular tradition, the GPU logic of Dask is found in the libraries and ecosystem surrounding it. The libraries can either run on a collection of GPU workers or parallelize work over different GPUs on one host.
+Sometimes the answer to our scaling problem isn't throwing more computers at it; it's throwing different types of resources at it. One example of this might be ten thousand monkeys trying to reproduce the works of Shakespeare, versus one Shakespeare.footnote:[Assuming Shakespeare were still alive, which he is not.] While performance varies, some benchmarks have shown https://datamadness.github.io/TensorFlow2-CPU-vs-GPU#:~:text=While%20setting%20up%20the%20GPU,required%20training%20time%20by%2085%25[up to an 85% improvement in model training times] when using GPUs over CPUs. Continuing its modular tradition, the GPU logic of Dask is found in the libraries and ecosystem surrounding it. The libraries can either run on a collection of GPU workers or parallelize work over different GPUs on one host.
 
 Most work we do on the computer is done on the "Central Processing Unit" (CPU). Graphics Processing Units (GPUs) were created for displaying video, but involve doing large amounts of vectorized floating point (e.g. non-integer) operations. With vectorized operations, the same operation is applied in parallel on large sets of data, like a `map`. Tensor-Processing Units are similar to GPUs, except without also being used for graphics.
 
@@ -36,7 +36,7 @@ GPUs are not well suited to branch-heavy non-vectorized workflows or workflows w
 
 === Making Dask Resource Aware
 
-If you have decided that your problem is well suited to a specialized resource, the next step is to make the scheduler aware of which machines, and processes, have the resource.footnote:[https://distributed.dask.org/en/latest/resources.html[+++https://distributed.dask.org/en/latest/resources.html+++]] You can do this by adding either environment variable or command line flag to the worker launch (e.g. `--resources "GPU=2"` or `DASK_DISTRIBUTED__WORKER__RESOURCES__GPU=2`).
+If you have decided that your problem is well suited to a specialized resource, the next step is to https://distributed.dask.org/en/latest/resources.html[make the scheduler aware of which machines and processes have the resource]. You can do this by adding either environment variable or command line flag to the worker launch (e.g. `--resources "GPU=2"` or `DASK_DISTRIBUTED__WORKER__RESOURCES__GPU=2`).
 
 For NVIDIA users the `dask-cuda` package can launch one worker per GPU, pining the GPU and thread together for performance. For example, on our Kubernetes cluster with GPU resources we configure the workers to use the `dask-cuda-worker` launcher as shown in <<ex_dask_cuda_k8s>>.
 
@@ -160,7 +160,7 @@ Most of the libraries that have some form of GPU support require compiling large
 
 === GPU Acceleration built on top of Dask
 
-The three main CUDA libraries extending Dask are, "cudf" (previously called dask-cudf), and "BlazingSQL"footnote:[This project may be end-of-life, there has not been a commit for an extended period of time and the website is just a hard-hat like those 1990s geocities websites.], and "cuML." Currently these libraries are focused on NVidia GPUs.
+The three main CUDA libraries extending Dask are cudf (previously called dask-cudf), BlazingSQL, and cuML.footnote:[BlazingSQL may be end-of-life; there has not been a commit for an extended period of time and the website is just a hard-hat like those 1990s geocities websites.] Currently these libraries are focused on NVidia GPUs.
 
 [NOTE]
 ====
@@ -201,7 +201,7 @@ Object-oriented and duck-typing are somewhat well suited to this, since, provide
 
 [WARNING]
 ====
-In a better world, we could submit a task requesting GPU resources, and if that does not get scheduled, we could switch back to CPU-only resources. Unfortunately, Dask's resources scheduling is closer to "best effort"footnote:[This is not as documented, https://distributed.dask.org/en/stable/resources.html[+++https://distributed.dask.org/en/stable/resources.html+++] so may change in the future.], so we may be scheduled on nodes without the resources we request.
+In a better world, we could submit a task requesting GPU resources, and if that does not get scheduled, we could switch back to CPU-only resources. Unfortunately, Dask's resources scheduling is closer to "best effort,"footnote:[This is not as https://distributed.dask.org/en/stable/resources.html[documented], and so may change in the future.] so we may be scheduled on nodes without the resources we request.
 ====
 
 === Conclusion

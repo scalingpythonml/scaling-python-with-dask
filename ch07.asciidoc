@@ -25,7 +25,7 @@ In the actor model, actors do the following:
 * Pass messages
 * Create new actors
 
-The actor model is a technique of dealing with state in parallel and distributed systems that avoid locks. While proper locking ensures that only one piece of code modifies a given value, it can be very expensive and difficult to get right. A common problem with locking is known as deadlocking—this is where resources are acquired/released in an incorrect order that the program can block forever. Locks slowness and difficulty only increase in distributed systemsfootnote:[See https://zookeeper.apache.org/doc/r3.7.0/zookeeperOver.html#zkPerfRW[+++https://zookeeper.apache.org/doc/r3.7.0/zookeeperOver.html#zkPerfRW+++] for an understanding of Zookeepers distributed performance]. The actor model was introduced in 1973footnote:[The actor model was extended in 1985 for concurrent computation – see ACTORS: A Model of Concurrent Computation in Distributed Systems by Agha, Gul Abdulnabi] and has since been implemented in most programming languages, with some popular modern implementations including Akka in Scala and the .NET languages.
+The actor model is a technique of dealing with state in parallel and distributed systems that avoid locks. While proper locking ensures that only one piece of code modifies a given value, it can be very expensive and difficult to get right. A common problem with locking is known as deadlocking—this is where resources are acquired/released in an incorrect order that the program can block forever. Locks slowness and difficulty only increase in distributed systems.footnote:[See the https://zookeeper.apache.org/doc/r3.7.0/zookeeperOver.html#zkPerfRW[+++ZooKeeper documentation+++] for an understanding of ZooKeeper's distributed performance.] The actor model was introduced in 1973 and has since been implemented in most programming languages,footnote:[The actor model was extended in 1985 for concurrent computation; see https://dspace.mit.edu/handle/1721.1/6952["Actors: A Model of Concurrent Computation in Distributed Systems"] by Gul Abdulnabi Agha.] with some popular modern implementations including Akka in Scala and the .NET languages.
 
 Conceptually it can be helpful to think of actors as storing state inside each actor and that each actor is then the only thing allowed to read or update the state. Whenever another part of the code wants to access or modify the state it must ask the actor to do this.
 
@@ -37,7 +37,7 @@ The actor model is a good fit for many distributed systems scenarios. Here are s
 ** ML Model weights
 ** Counters
 ** etc.
-* You want to work with single-threaded objects that do not require significant interaction from external components. This is especially useful for not fully understood legacy codefootnote:[Think COBOL where the author left and the documentation was lost but when you tried to turn it off accounting came running, literally.].
+* You want to work with single-threaded objects that do not require significant interaction from external components. This is especially useful for not fully understood legacy code.footnote:[Think COBOL where the author left and the documentation was lost but when you tried to turn it off accounting came running, literally.]
 
 Now that you have an understanding of the actor model in general, it's time for you to learn about how Dask implements it, and its trade-offs.
 
@@ -88,7 +88,7 @@ While having one actor per bank account does a good job of avoiding bottlenecks 
 
 ==== Scaling Dask actors
 
-The actor model described earlier in this chapter typically assumes that actors are lightweight, meaning they contain a single piece of state, and they do not require scaling/parallelization. In Dask and similar systemsfootnote:[Including Akka], actors are often used for coarser grainedfootnote:[A coarse grained actor means a single actor may contain multiple pieces of state rather than fine-grained where each piece of state would be represented as a separate actor. This is similar to the concept of https://www.martinfowler.com/eaaCatalog/coarseGrainedLock.html[+++coarse-grained locking+++].] implementations and can require scaling.
+The actor model described earlier in this chapter typically assumes that actors are lightweight, meaning they contain a single piece of state, and they do not require scaling/parallelization. In Dask and similar systems (including Akka), actors are often used for coarser grained implementations and can require scaling.footnote:[A _coarse grained_ actor means a single actor may contain multiple pieces of state rather than fine-grained where each piece of state would be represented as a separate actor. This is similar to the concept of https://www.martinfowler.com/eaaCatalog/coarseGrainedLock.html[+++coarse-grained locking+++].]
 
 As with dask delayed, you can scale actors both horizontally (across processes/machines) by creating multiple actors or vertically (with more resources). Scaling actors horizontally is not as simple as just adding more machines or workers, Dask can not break up a single actor across multiple processes.
 

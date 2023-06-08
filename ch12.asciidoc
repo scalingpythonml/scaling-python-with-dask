@@ -35,7 +35,7 @@ Dependency management allows you to control, at runtime or in advance, what soft
 .Deployment Option Comparisons
 [options="header"]
 |===
-|Deployment Method |Dynamic Scale |Recommended use case (by us)footnote:[This is largely based on our experiences and may be biased to large companies and academic environments. Please feel free to make your own call.] |Dependency Management |Notebook deployed insidefootnote:[There are some work arounds - https://blog.dask.org/2019/09/13/jupyter-on-dask[+++https://blog.dask.org/2019/09/13/jupyter-on-dask+++]] |Mixed Worker Types
+|Deployment Method |Dynamic Scale |Recommended use case (by us)footnote:[This is largely based on our experiences and may be biased to large companies and academic environments. Please feel free to make your own call.] |Dependency Management |Notebook deployed insidefootnote:[There are https://blog.dask.org/2019/09/13/jupyter-on-dask[some workarounds].] |Mixed Worker Types
 |localhost |No |Testing, solo dev, GPU only acceleration |Yes (runtime or pre-install) |Yes |No
 |ssh |No |Solo lab, testing, but generally no (k8s instead) |Runtime only |Yes |Yes (manual)
 |Slurm + GW |Yes |Existing HPC/slurm environments |Yes (runtime or pre-install) |Separate project |Varies
@@ -50,7 +50,7 @@ Dependency management allows you to control, at runtime or in advance, what soft
 
 There are two main ways to deploy Dask on Kubernetes,footnote:[PEP20 remain optimistic] "KubeCluster" and "HelmCluster." Helm is a popular tool for managing deployments on Kubernetes, with the deployments being specified in helm charts. Since Helm is the "newer" recommended way of managing deployments on Kubernetes we will cover that one here.
 
-https://helm.sh/docs/intro/install/[+++The helm documentation offers an excellent starting point on the different ways to install Helm+++], but for those in a hurry `curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash` will install Helm for you.footnote:[Note this installs "Helm 3.X:. As with Python3 Helm 3 has a large number of breaking changes over Helm2, so when your reading documentation (or installing packages) make sure it's referencing the current major versions (https://helm.sh/docs/topics/v2_v3_migration/[+++https://helm.sh/docs/topics/v2_v3_migration/+++]).]
+The https://helm.sh/docs/intro/install/[+++helm documentation+++] offers an excellent starting point on the different ways to install Helm, but for those in a hurry. `curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash` will install Helm for you.footnote:[Note this installs "Helm 3.X:. As with Python3, Helm 3 has a https://helm.sh/docs/topics/v2_v3_migration/[large number of breaking changes over Helm2], so when you're reading documentation (or installing packages), make sure it's referencing the current major versions.]
 
 [NOTE]
 ====
@@ -68,7 +68,7 @@ include::./examples/dask/kubernetes/install-dask-helm.sh[tags=install_operator]
 ----
 ====
 
-Now you can use the dask operator either by creating yaml files (likely not your favorite) or with the `KubeCluster` API as shown in <<helm_ex>> where we create a cluster then add additional worker types, allowing Dask to create two different kinds of workers.footnote:[Mixed worker types (see https://distributed.dask.org/en/stable/resources.html and https://www.dask.org/blog/how-to-run-different-worker-types-with-the-dask-helm-chart )]
+Now you can use the dask operator either by creating yaml files (likely not your favorite) or with the `KubeCluster` API, as shown in <<helm_ex>>, where we create a cluster then add additional worker types, allowing Dask to create two different kinds of workers.footnote:[Mixed worker types; see https://distributed.dask.org/en/stable/resources.html["Worker Resources"] in the Dask documentation and the blog article https://www.dask.org/blog/how-to-run-different-worker-types-with-the-dask-helm-chart["How to Run Different Worker Types with the Dask Helm Chart"].]
 
 [[helm_ex]]
 .Use Dask Operator
@@ -192,7 +192,7 @@ Part of running Dask remotely is being cable to connect to the server to run you
 Another option is to have Dask bind to a public IP address, but without careful firewall rules this means that anyone can access your Dask cluster, which is likely not your intention.
 ====
 
-In HPC environments you often already connect using SSH, so using SSH portforwarding is often the easiest way to connect. SSH port forwarding allows you to map an port on another computer to one on your local computer.footnote:[You can also run an SSH socks proxy which makes it easy to access other servers inside the HPC cluster, but requires changing your browser configuration (and does not work for the Dask client).] The default dask monitoring port is 8787, but if that port is busy,footnote:[Or you configure a different one] Dask may bind to a different port. The Dask server prints out which ports it is bound to at start time. To forward port 8787 on a remote machine to the same local port you could run `ssh -L localhost:8787:my-awesome-hpc-node.hpc.fake:8787`. You can use the same techniques (but with different port numbers) for a remote jupyter lab, or connecting a Dask client to a remote scheduler.
+In HPC environments you often already connect using SSH, so using SSH portforwarding is often the easiest way to connect. SSH port forwarding allows you to map an port on another computer to one on your local computer.footnote:[You can also run an SSH socks proxy which makes it easy to access other servers inside the HPC cluster, but requires changing your browser configuration (and does not work for the Dask client).] The default dask monitoring port is 8787, but if that port is busy (or you configure a different one), Dask may bind to a different port. The Dask server prints out which ports it is bound to at start time. To forward port 8787 on a remote machine to the same local port you could run `ssh -L localhost:8787:my-awesome-hpc-node.hpc.fake:8787`. You can use the same techniques (but with different port numbers) for a remote jupyter lab, or connecting a Dask client to a remote scheduler.
 
 [TIP]
 ====
@@ -389,7 +389,7 @@ If you see error messages such as “Worker exceeded 95% memory budget. Restarti
 
 By default behavior is when the worker’s memory is at around 60% full, it starts sending some data to disk. At over 80%, it stops allocating new data. At 95%, the worker is terminated preemptively, in order to avoid OOM. This means after your worker’s memory is more than 60% full, there will be performance degradations, and it’s usually best practice to keep memory pressure lower.
 
-Advanced users can use Active Memory Manager, a daemon that optimizes memory usage of workers on a holistic view of the cluster. You give this manager a particular goal to optimize for, such as reducing replication of the same data within the cluster, or retire_workers, a special advanced use case where you do memory transfer from one worker to another when the worker is being retired, or other custom policies. In some cases, it has shown up to 20% decrease in memory usage for the same task.footnote:[You can find out more about it at Dask’s documentation https://distributed.dask.org/en/latest/active_memory_manager.html.]
+Advanced users can use Active Memory Manager, a daemon that optimizes memory usage of workers on a holistic view of the cluster. You give this manager a particular goal to optimize for, such as reducing replication of the same data within the cluster, or retire_workers, a special advanced use case where you do memory transfer from one worker to another when the worker is being retired, or other custom policies. In some cases, it has shown up to 20% decrease in memory usage for the same task.footnote:[You can find out more about it in Dask’s https://distributed.dask.org/en/latest/active_memory_manager.html[documentation].]
 
 ==== Cluster Sizing
 
@@ -418,7 +418,7 @@ When pipelining multiple data streams into a job, you might have two datasets, w
 
 === Scheduled Jobs
 
-There are many different systems to make your jobs run on a schedule. This schedule can range from periodic and time based, to triggered by upstream events (like data becoming available). Popular tools to schedule jobs include Apache Airflow, Flyte, Argo, GithHub Actions, and Kubeflow.footnote:[Holden is an author of _Kubeflow for Machine Learning_, so she is biased here.] Airflow and Flyte both have built-in support for Dask, which can simplify running your scheduled task so we think that they are both excellent options for scheduled Dask jobs. The built-in operators make it easier to track failure, which is important as taking actions on stale data can be as bad as taking actions on wrong data.
+There are many different systems to make your jobs run on a schedule. This schedule can range from periodic and time based, to triggered by upstream events (like data becoming available). Popular tools to schedule jobs include Apache Airflow, Flyte, Argo, GitHub Actions, and Kubeflow.footnote:[Holden is a coauthor of pass:[<a href="https://learning.oreilly.com/library/view/kubeflow-for-machine/9781492050117/" class="orm:hideurl"><em>Kubeflow for Machine Learning</em></a>] (O'Reilly), so she is biased here.] Airflow and Flyte both have built-in support for Dask, which can simplify running your scheduled task so we think that they are both excellent options for scheduled Dask jobs. The built-in operators make it easier to track failure, which is important as taking actions on stale data can be as bad as taking actions on wrong data.
 
 We also often see people use unix crontabs and schtasks, but we advise against them as they run on a single machine and require substantial additional work.
 
