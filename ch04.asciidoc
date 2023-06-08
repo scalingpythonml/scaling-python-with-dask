@@ -38,7 +38,7 @@ Wildcard paths only work with filesystems that support directory listing. For ex
 
 When loading data, having the right number of partitions will speed up all of your operations.
 Sometimes it's not possible to load the data with the right number of partitions, and in those cases you can re-partition your data after the load.
-As discussed, more partitions allow for more parallelism but have a non-zero overhead. The different formats have slightly different ways to control this. HDF takes `chunksize`, indicating the number of rows per-partition. Parquet also takes `split_row_groups`, which takes an integer of logical partitioning desired out of the parquet file, and Dask will split the whole set into those chunks, or less. If not given, the default behavior is each partition to correspond to a parquet file. The text-based formats (CSV, fixed-width, etc.) take a `blocksize` parameter with the same meaning as Parquet's `chunksize` but a maximum value of 64MB. You can verify this by loading a dataset and seeing the number of tasks and partitions increase with smaller target sizes as in <<ex_load_1kb>>.
+As discussed, more partitions allow for more parallelism but have a non-zero overhead. The different formats have slightly different ways to control this. HDF takes `chunksize`, indicating the number of rows per-partition. Parquet also takes `split_row_groups`, which takes an integer of logical partitioning desired out of the parquet file, and Dask will split the whole set into those chunks, or less. If not given, the default behavior is each partition to correspond to a parquet file. The text-based formats (CSV, fixed-width, etc.) take a `blocksize` parameter with the same meaning as Parquet's `chunksize` but a maximum value of 64MB. You can verify this by loading a dataset and seeing the number of tasks and partitions increase with smaller target sizes, as in <<ex_load_1kb>>.
 
 [[ex_load_1kb]]
 .Dask DataFrame load CSV with 1KB chunks
@@ -121,7 +121,7 @@ On the flip side, if most of your downstream users consume all of the table or h
 Other systems commonly use metastores for partitioned reads and writes when dealing with large data sizes. Dask does not presently have the built-in ability to talk to a metastore, like Iceberg, Hive, or DeltaLake. Metastores can be useful for loading subsets tables and time-traveling (looking at old versions) when needed. The https://github.com/rajagurunath/dask_deltatable[dask deltatable] library integrates the reading DeltaLake table. Iceberg has a https://github.com/linkedin/iceberg/blob/master/site/docs/python-api-intro.md[built-in Python API] that you can use to get a list of files associated with a particular query, and then use Dask's existing file APIs on top of it. I expect the integrations with metastores will continue to improve rapidly.
 ****
 
-==== File Systems
+==== Filesystems
 
 Loading data can be a substantial amount of work and a bottleneck, so Dask distributes this like most other tasks. If you are using Dask distributed, each worker must have access to the files to parallelize the loading. Rather than copying the file to each worker, network file systems allow everyone to access the files. Dask’s file access layer uses the FSSPEC library (from the intake project) to access the different file systems. Since FSSPEC supports such a range of file systems, it does not install the requirements for every supported file system. You can see what file systems are supported and which ones need additional packages by running:
 
@@ -137,7 +137,7 @@ include::./examples/dask/Dask-Ch4-DataFrames.py[tags=fsspec]
 Many filesystems require some kind of configuration, be it endpoint or credentials. Often new filesystems, like MINIO, offer S3 compatible APIs but overload the endpoint and require some extra configuration to function. With Dask you specify the configuration parameters to the read/write function with `storage_options`. Everyone's configuration here will likely be a bit different.footnote:[https://filesystem-spec.readthedocs.io/en/latest/api.html#built-in-implementations[FSSPEC documentation] includes the specifics for configuring each of the backends.] Dask will use your storage_options dict as the keyword arguments to the underlying FSSPEC implementation. For example, my storage_options for minio are shown in <<minio_storage_options>>.
 
 [[minio_storage_options]]
-.Dask Configure MINIO
+.Dask configure MINIO
 ====
 [source, python]
 ----
@@ -164,7 +164,7 @@ Indexing into a DataFrame is one of the powerful features of pandas, but comes w
 Indexing is frequently used to filter the data to only have the components you need. I did this for the San Francisco Covid data by looking at just the case rates for people of all vaccine statuses, as shown in <<index_covid_data>>.
 
 [[index_covid_data]]
-.Dask DataFrame Indexing
+.Dask DataFrame indexing
 ====
 [source, python]
 ----
@@ -178,7 +178,7 @@ If you truly need positional indexing by row, you can implement your own by comp
 
 As mentioned in the previous chapter, shuffles are expensive. The primary causes of the expensive nature of shuffles are the the serialization overhead in moving data between processes and the comparative slowness of networks relative to reading data from memory. These costs scale as the amount of data being shuffled increases, so Dask has techniques to reduce the amount of data being shuffled. These techniques depend on certain data properties or the operation being performed.
 
-==== Rolling windows and map_overlap
+==== Rolling Windows and map_overlap
 
 One situation that can trigger the need for a shuffle is a rolling window, where at the edges of a partition your function needs some records from its neighbors.
 Dask Dataframe has a special `map_overlap` function in which you can specify a `look-after` window (also called a look-ahead window) and `look-before` window (also called a look-back window) of rows to transfer (either an integer or a time delta). The simplest example taking advantage of this is a rolling average shown in <<rolling_date_ex>>.
@@ -217,7 +217,7 @@ The first way to speed up your aggregations is to reduce the columns that you ar
 Therefore, if you need to compute the average and the max, you should compute both at the same time (<<max_mean>>).
 
 [[max_mean]]
-.Dask DataFrame Max Mean Together
+.Dask DataFrame max mean together
 ====
 [source, python]
 ----
@@ -282,7 +282,7 @@ With these slow aggregates, using Dask's aggregation class has no benefit over t
 Dask is unable to apply partial aggregations when you use the `apply` function.
 ====
 
-==== Full shuffles and partitioning
+==== Full Shuffles and Partitioning
 
 If an operation seems to be slower inside of Dask than you would expect from local working in local Data Frames it might be because it requires a full shuffle. An example of this is sorting which is inherently expensive in distributed systems because it, most often, requires a shuffle. Full shuffles are sometimes an unavoidable part of working in Dask. Counterintuitively, while full shuffles are themselves slow, you can use them to speed up future operations that are all happening on the same grouping key(s). As mentioned in the aggregation section, one of the ways a full shuffle is triggered is by using the `apply` method when partitioning is not aligned.
 
@@ -404,7 +404,7 @@ Since partition and broadcast joins are faster, doing some work to help Dask can
 
 The fourth, `stack_partitions`, is different from all of the other options since it doesn't involve any movement of data. Instead, the resulting DataFrame partitions list is a union of the upstream partitions from the input DataFrames. Dask uses stack_partitions for most row-based combinations except when all of the input DataFrame divisions are known and they are not well ordered and you ask Dask to `interleave_partitions`. The `stack_partitions` technique is able to provide known partitioning in its output only when the input divisions are known and well ordered. If all of the divisions are known but not well ordered and you set `interleave_partitions` Dask will use a partitioned join instead. While this approach is comparatively inexpensive, it is not free, and can result in an excessively large number of partitions requiring you repartition anyway.
 
-==== Missing functionality
+==== Missing Functionality
 
 Not all multi-DataFrame operations are implemented, like `compare`, which leads into the next section about the limitations of Dask DataFrames.
 
@@ -431,7 +431,7 @@ Some problems are generally unsuitable for data-parallel computing. For example,
 Dask's lazy evaluation, powered by its lineage graph, is normally beneficial, allowing it to combine steps automatically.
 However, when the graph gets too large Dask can struggle to manage it, which often shows up as a slow driver process or notebook, and sometimes an out of memory exception. Thankfully, you can work around this by writing out your DataFrame and reading it back in. Generally, Parquet is the best format for doing this as it is space-efficient and self-describing, so no schema inference is required.
 
-=== Re-Computed Data
+=== Re-computed Data
 
 Another challenge of lazy evaluation is if you want to re-use an element multiple times. For example, if you load a few DataFrames and then compute some different multiple pieces of information. You can ask Dask to keep a collection (including DataFrame, Series, etc.) in memory by running `client.persist(collection)`. Not all re-computed data needs to be avoided, e.g. if it's fast enough to load the DataFrames it might be fine. 
 
@@ -440,7 +440,7 @@ Another challenge of lazy evaluation is if you want to re-use an element multipl
 Like other functions in Dask `persist()`, does not modify the DataFrame -- and if you call functions on it you will still have your data recomputed. This is noteable different than Apache Spark.
 ====
 
-=== What other functions are different
+=== What Other Functions Are Different
 
 For performance reasons, various parts of Dask DataFrames behave a little differently than local Dataframes:
 
@@ -454,11 +454,11 @@ In our opinion it's important to be especially careful anytime you use any of th
 
 When porting existing pandas code to Dask, consider using the local single-machine version to produce test data sets to compare the results with to ensure that all changes are intentional.
 
-=== Data Science with Dask dataframe: putting it together
+=== Data Science with Dask Dataframe: Putting It Together
 
 Dask Dataframe has already proven to be a popular framework for big data uses, so we wanted to highlight a common use case and considerations. Here, we use a canonical data science challenge dataset, the NYC Yellow taxicab, and walk through what a data engineer working with this dataset might consider. In the subsequent chapters covering ML workloads, we will be using many of the dataframe tools to build on.
 
-==== Deciding to use Dask
+==== Deciding to Use Dask
 
 As discussed earlier, Dask excels in data-parallel tasks. A particularly good fit is a dataset that may already be available in columnar format, like Parquet. We also assess where the data lives, like S3 or other remote storage options. Many data scientists and engineers would probably have a dataset that cannot be contained on a single machine, or cannot be stored locally due to compliance constraints. Dask’s design lends itself well to these use cases.
 
@@ -494,7 +494,7 @@ include::./examples/dask/Dask-Ch13_ML.py[tags=ex_describe_percentiles]
 ----
 ====
 
-==== Plotting data
+==== Plotting Data
 
 Plotting data is often an important step in getting to know your dataset. Plotting big data is a tricky subject. We as data engineers often get around that issue by first working with a smaller sampled data. For that, Dask would work alongside a python plotting library like matplotlib and seaborn, just like Pandas. The advantage of Dask dataframe is that we are now able to plot the entire dataset, if desired. We can use plotting frameworks along with Dask to plot the entire dataset. Here, Dask does the filter, aggregation on the distributed workers, and only collect and give to a client with libraries like matplotlib to render.
 
@@ -512,7 +512,7 @@ include::./examples/dask/Dask-Ch13_ML.py[tags=ex_plot_distances]
 ----
 ====
 
-==== Inspecting data
+==== Inspecting Data
 
 Pandas DataFrame users would be familiar with .loc() and .iloc() for inspecting data at a particular row or column. This logic translates to Dask DataFrame, with important differences in .iloc() behaviors.
 

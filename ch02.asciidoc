@@ -25,7 +25,7 @@ Here we install a specific version of Dask rather than "just" the latest. If you
 You don't have to install Dask locally, although you probably will want to. There is a link:$$https://mybinder.org/v2/gh/dask/dask-examples/main?urlpath=lab$$[binderhub example with dask] as well as distributed options including link:$$https://cloud.coiled.io/$$[from the creators of Dask] that you can use to run Dask, as well as other providers like link:$$https://saturncloud.io/$$[Saturncloud]. That being said I recommend having Dask installed locally even if you end up using these services.
 ====
 
-.Using Dask Docker Images
+.Using Dask Docker images
 ****
 Another way to get Dask running locally is to use link:$$https://docs.dask.org/en/stable/how-to/deploy-dask/docker.html$$[example docker images] maintained by the Dask project. The benefit of this approach is that the same image can then be used in a distributed cluster, each node running the same docker image locally thus ensuring the compatibility of all the packages. Advanced users can use the Dask example Docker images as a base and add packages of their choice before link:$$https://www.sentinelone.com/blog/create-docker-image/$$[committing changes and saving it as a new image].
 ****
@@ -113,7 +113,7 @@ As with all distributed collections, what is expensive on a Dask Array is not th
 
 Creating a distributed collection from a local collection has the limit that the initial collection has to be able to fit on a single computer. You might ask yourself "why bother?", and there are still several benefits. Some of these are parallel operations, another is joining with a smaller collection with a larger collection, and a small collection that becomes big, like crawling the web. I'll cover loading larger collections into Dask in later chapters.
 
-===== Dask Bag and a word count
+===== Dask Bag and a wordcount
 
 Dask Bag implements more of the functional programming interfaces than Dask Array. The "hello world" of big data is wordcount, which is easier to implement with functional programming interfaces. Since you've already made a crawler function, you can turn its output into a Dask bag using the `from_delayed` function in <<make_bag_of_crawler>>.
 
@@ -160,7 +160,7 @@ include::./examples/dask/Dask-Ch2-Hello-Worlds.py[tags=wc_func]
 On Dask bags, `foldby`, `frequency`, and many other reductions return a single partition bag, meaning the data after reduction needs to fit in a single computer. Dask DataFrames handle reductions differently and don't have that same restriction.
 
 
-==== Dask DataFrame (Pandas / What People Wish Big Data Was)
+==== Dask DataFrame (Pandas/What People Wish Big Data Was)
 
 Pandas is one of the most popular Python data libraries and Dask has a DataFrame library that implements much of the pandas API.  Thanks to Python's duck-typing, you can often use Dask's distributed DataFrame library in place of pandas. Not all of the API will work exactly the same, and some parts are not implemented, so be sure you have good test coverage. 
 

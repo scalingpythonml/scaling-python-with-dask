@@ -1,4 +1,5 @@
-== How to evaluate Dask's components and libraries
+[[ch08]]
+== How to Evaluate Dask's Components and Libraries
 
 It's hard, although possible, to build reliable systems out of unreliable components.footnote:[Although in many ways that is what distributed systems are all about, from Hadoop Map/Reduce to Dask, fault tolerance because computers are unreliable are a big part of what we do.] Dask is a largely community-driven open-source project, and its components evolve at different rates. Not all parts of Dask are equally mature; even the components we cover in this book have different levels of support and development. While Dask's core parts are well-maintained and tested, some parts lack the same level of maintenance.
 
@@ -32,7 +33,7 @@ While there are many arguments for and against focusing on benchmarks, correctne
 
 Many Dask ecosystem projects use GitHubs built-in issue tracker, but if you don't see any activity, check the README and Developer guides to see if the project uses a different issue tracker. For example, many ASF projects use JIRA. Looking into how folks respond to issues gives you a good idea of what issues they consider important. You don't need to look at all of them, but a small sample of 10 will often give you a good idea (look at open and not fixed as well as closed and fixed).
 
-==== Community (and for better or worse, Companies and Universities)
+==== Community (and, for Better or Worse, Companies and Universities)
 
 As one of the unofficial ASF sayings goes, "Community over code."footnote:[We are uncertain of who exactly this quote originates from; it's appeared in the ASF director's position statement as well as in the Apache Way documentation.] The https://theapacheway.com/community-over-code/[Apache Way website] describes this as "the most successful long-lived projects value a broad and collaborative community over the details of the code itself." This saying matches our experience, where technical improvements are easier to copy from other projects, but the community is much harder to move. Measuring community is challenging, and it can be tempting to look at the number of developers or users, but we think it's essential to go beyond that.
 
@@ -75,7 +76,7 @@ A good check, when considering adding a new library to an existing environment, 
 
 While not every tool needs a book, although we do hope you find books useful, very few libraries are truly "self-explanatory." On the low end, for simple libraries, a few examples or well-written tests can serve as a stand-in for proper documentation. Complete documentation is a good sign of overall project maturity. Not all documentation is created equally, and as the saying goes, documentation is normally out of date as soon as finished (if not before). A good exercise to do, before you dive all the way into a new library, is to open up the documentation and try and run the examples. If the getting-started examples don't work (and you can't figure out how to fix them), you will likely be in for a rough ride.
 
-==== Open to contributions (code and otherwise)
+==== Open to Contributions (Code and Otherwise)
 
 If you find the library is promising, but not all the way there, it's important to be able to contribute your improvements back to the library. This is good for the community, and selfishly if you can't "upstream" your improvements, upgrading to new versions will be more challenging.footnote:[Changes from upstream open source you are unable to contribute back mean that you need to re-apply those changes every time you to go upgrade. While modern tools like git simplify the mechanics of this a little bit, it can be a time consuming process.] Many projects now days have "Contribution Guides" which can give you an idea of how they like to work, but nothing beats a real test contribution. A great place to start with a project is fixing its documentation with the eyes of a newcomer, especially those getting started examples from the previous section. Documentation often becomes out of sync in fast-moving projects, and if you find it difficult to get your documentation changes accepted, that is a strong indicator of how challenging it will be to contribute more complicated improvements later.
 
@@ -104,7 +105,7 @@ Frequent releases can be a good sign of a healthy library. If a project has not 
 
 Release history is one of the easiest metrics to game, as all it requires is the developers making a release. Some development styles will automatically create releases after every successful checkin, which in our opinion is an anti-pattern,footnote:[Snapshot artifacts are OK.] as you often want some additional level of human testing or checking before a full release.
 
-==== Commit Frequency (and volume)
+==== Commit Frequency (and Volume)
 
 Another popular metric people consider is commit frequency or volume. This metric is ill-suited as the frequency and volume can vary widely depending on coding styles which lack correlation with software quality. For example, developers who tend to squash commits can have lower commit volume, whereas developers who use rebases primarily will have a higher volume of commits.
 
@@ -115,7 +116,7 @@ On the flip side, the complete lack of recent commits can be a sign that a proje
 One of the simplest metrics to check is if people are using a package by looking at the installs. You can check PyPi package installs stats are available from https://pypistats.org/[+++pypistats+++] (<<dask-kubernetes-install-stats>>) or on https://cloud.google.com/blog/topics/developers-practitioners/analyzing-python-package-downloads-bigquery[+++Google's BigQuery+++], and conda installs using the https://www.anaconda.com/blog/get-python-package-download-statistics-with-condastats[+++condastats library+++].
 
 [[dask-kubernetes-install-stats]]
-.Dask Kubernetes Install Stats from PyPi Stats
+.Dask Kubernetes install stats from PyPi Stats
 image::images/spwd_0801.png[]
 
 Unfortunately, installation counts are a noisy metric, as PyPi downloads can come from CI pipelines to even someone spinning up a new cluster with the library installed but never used. Not only is this metric un-intentionally noisy, but the same techniques can also be used to increase the numbers artificially.
@@ -127,7 +128,7 @@ Looking for examples of people using a library has its limitations, especially w
 Another proxy for usage you can look at is the frequency of issues or mailing list posts. If a project is hosted on something like GitHub, stars can also be an interesting way of measuring usage – but as people can now buy GitHub stars just like Instagram likes (as shown in <<fig_ghstarsforsale>>) – don't weigh this metric too heavilyfootnote:[There some tools to try and help you dig deeper into the star data, including https://github.com/schosterbarak/ghrr[+++https://github.com/schosterbarak/ghrr+++] but we still think it's better to not spend too much time or weight on stars.].
 
 [[fig_ghstarsforsale]]
-.Sample of someone selling Github stars
+.Sample of someone selling GitHub stars
 image::images/spwd_0802.png[]
 
 Even setting aside people purchasing stars, what constitutes a project worth "starring" varies from person to person. Some projects will, while not purchasing stars, ask individuals to "star" their projects in talks which can quickly inflate this metric.footnote:[For example, we might ask you to star our https://github.com/scalingpythonml/scalingpythonml[example repo], and by doing this, we (hopefully) increase the number of *s without actually needing to increase our quality.]

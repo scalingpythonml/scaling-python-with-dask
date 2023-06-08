@@ -1,8 +1,9 @@
+[[ch07]]
 == Adding Changeable/Mutable State with Dask Actors
 
 Dask is focused on scaling analytic use cases, but you can use it to scale many other types of problems. So far most of the tools you have used in Dask are functional. Functional programming means that previous calls do not impact future calls. Stateless functions are common in distributed systems like Dask as they can safely be re-executed multiple times on failure. Updating the weights of a model during training is an example of state common in data science. One of the most common ways of handling state in a distributed system is with the actor model. This chapter will introduce both the general actor model, and Dask's specific implementation.
 
-Dask Futures offer a non-mutable distributed state, where values are stored on the workers. However, this doesn't work well for situations where you want to update the state, like changing the value in a bank account balance (as in the example below), or updating machine learning model weights during training.
+Dask Futures offer a non-mutable distributed state, where values are stored on the workers. However, this doesn't work well for situations where you want to update the state, like changing the value in a bank account balance (as in <<making_bank_acct_actor_ch07_1686239522527>>), or updating machine learning model weights during training.
 
 [TIP]
 ====
@@ -16,7 +17,7 @@ Of course, you don't have to use distributed mutable state. In some cases, you m
 Dask also has distributed mutable objects, covered in <<dds_scheduling>>.
 ====
 
-=== What is the Actor Model?
+=== What Is the Actor Model?
 
 In the actor model, actors do the following:
 
@@ -45,7 +46,7 @@ Now that you have an understanding of the actor model in general, it's time for 
 
 Dask Actors are one implementation of Actors, and some of the properties differ between Dask and other systems. Unlike the rest of Dask, Dask Actors are not resilient to failures. If the node, or process, running the actor fails, the data inside the actor is lost and Dask is not able to recover from it.
 
-==== Your First Actor (it's a bank account)
+==== Your First Actor (It's a Bank Account)
 
 Creating an actor in Dask is relatively simple. To start with, you make a normal Python class with functions that you will call. These functions are responsible for receiving and responding to "messages" in the actor model. Once you have your class, you `submit` it to Dask, along with the flag `actor=True`, and Dask gives you back a future representing a reference to the actor. When you get the `result` of this future, Dask creates and returns to you a "proxy" object which passes any function calls as messages to the actor.
 
@@ -123,7 +124,7 @@ Calls to dask delayed functions may be retried on failure, and if they call func
 
 Dask's Actor model is less full-featured than Ray's actor model, much like Ray's data frame is less full-featured than Dask's. You may wish to consider running Dask on Ray to get the best of both worlds. While Holden is biased, she suggests you check out her other book "Scaling Python with Ray" if you are interested in Ray.
 
-=== When to use Dask Actors
+=== When to Use Dask Actors
 
 A common problem in the industry is not realizing when our cool new tool is not the right tool for the job. As the saying goes "when you have a hammer the whole world looks like a nail." _You likely do not need actors and should stick with tasks if you are not mutating state._ It is important for you to remember that there are other options for handling state, as shown in the table below:
 

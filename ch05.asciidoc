@@ -22,13 +22,13 @@ Some common use cases for Dask arrays include:
 
 Similar to Dask DataFrames and pandas, if you wouldn't use an nparray for the problem at a smaller scale, a Dask Array may not be the right solution.
 
-==== Times to not use Dask Arrays
+==== Times to Not Use Dask Arrays
 
 If your data fits in memory on a single computer, using Dask array's are _unlikely_ to give you many benefits over nparrays, especially compared to local accelerators like Numba. Numba is well suited to vectorizing and parallelizing local tasks with and without GPUs. You can use Numba with and without Dask, and we'll look at how to further speed up Dask Arrays using Numba with Dask in the Dask GPU chapter.
 
 Dask Arrays, like their local counterpart, require that data is all of the same type. This means that they can not be used for semi-structured or mixed type (think strings and ints) data.
 
-==== Loading / Saving
+==== Loading/Saving
 
 As with Dask DataFrames, loading and writing functions start with `to_` or `read_` as the prefixes. Each format has its own configuration, but in general, the first positional argument is the location of the data to be read. The location can be a wildcard path of files (e.g., "s3://test-bucket/magic/*"), a list of files, or a regular file location.
 
@@ -83,7 +83,7 @@ We believe that the most common use case for Dask bags you will find is loading 
 
 Dask Bags has built-in readers for text files, with `read_text`, and avro files, with `read_avro`. Similarly you can write Dask bags to text files and avro files, although the results must be serializable. Bags are commonly used when Dask's built-in tools for reading data are not enough, so the next section will dive into how to go beyond these two built-in formats.
 
-==== Loading Messy Data With a Dask Bag
+==== Loading Messy Data with a Dask Bag
 
 Normally the goal with loading messy data is to get it into a structured format for further processing, or at least extract the components that you are interested in. While your data formats will likely be a bit different, this section will look at loading some "messy" JSON and then extracting some relevant fields. Don't worry, we call out places where different formats or sources may require different techniques.
 

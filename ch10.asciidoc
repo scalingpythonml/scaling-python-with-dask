@@ -1,3 +1,4 @@
+[[ch10]]
 == Dask with GPUs and Other Special Resources
 
 Sometimes the answer to our scaling problem isn't throwing more computers at it; it's throwing different types of resources at it. One example of this might be ten thousand monkeys trying to reproduce the works of Shakespeare, versus one Shakespeare.footnote:[Assuming Shakespeare were still alive, which he is not.] While performance varies, some benchmarks have shown https://datamadness.github.io/TensorFlow2-CPU-vs-GPU#:~:text=While%20setting%20up%20the%20GPU,required%20training%20time%20by%2085%25[up to an 85% improvement in model training times] when using GPUs over CPUs. Continuing its modular tradition, the GPU logic of Dask is found in the libraries and ecosystem surrounding it. The libraries can either run on a collection of GPU workers or parallelize work over different GPUs on one host.
@@ -13,7 +14,7 @@ This chapter will look at the current state of accelerated analytics on Python a
 Cloud accounts and machines with access to GPUs are especially of interest to less-than-savory folks on the internet due to the relative ease of mining crypto currency. For those used to working with only public data and lax security controls, take this as an opportunity to review your security process and restrict runtime access to only those who need it. Or be prepared for a really large cloud bill.
 ====
 
-=== Transparent v.s. non-Transparent Accelerators
+=== Transparent Versus Non-transparent Accelerators
 
 Accelerators largely break down into two categories: transparent (no code or change required), and non-transparent optimizers. If an accelerator is transparent or not largely depends on if someone below us in the stack has made it transparent to us.
 
@@ -21,7 +22,7 @@ TCP/IP offloading is generally transparent at the user space level, which means 
 
 The non-transparent accelerators include GPUs, Optane, QAT, and many more. Using these requires changing our code to be able to take advantage of them. Sometimes this can be as simple as swapping in a different library, but not always. Many non-transparent accelerators require either copying our data or special formatting to be able to operate. This means that if an operation is relatively fast, moving to an optimizer could make it slower.
 
-=== Understanding if GPUs or TPUs can help
+=== Understanding Whether GPUs or TPUs Can Help
 
 Not every problem is a good fit for GPU acceleration. GPUs are especially good at performing the same calculation on a large number of data points at the same time. If a problem is well suited to vectorized computation then there is a good chance that GPUs may be well suited to it.
 
@@ -74,14 +75,14 @@ It's important to note that Dask does not manage custom resources (including GPU
 Dask depends on well-behaved Python code, which does not use resources it has not asked for and releases the resources when finished. This most commonly happens with memory leaks (both accelerated and not) commonly with specialized libraries like CUDA which allocate memory outside of Python. These libraries often have special steps you need to call when you are done with the task you've asked to make the resources available for others.
 ====
 
-=== Installing the libraries
+=== Installing the Libraries
 
 Now that Dask is aware of the special resources on your cluster, it's time to make sure that your code can take advantage of them. Often, but not always, these accelerators will require some kind of special library installed, which may involve long compile times. When possible, installing the acceleration libraries from conda and pre-installing on the workers (in the container or on the host) when possible can help minimize this overhead.
 
 For Kubernetes (or other Docker container users) you can do this by making a custom container with the accelerator libraries pre-installed as in <<preinstall_gpu_docker>>.
 
 [[preinstall_gpu_docker]]
-.Pre-Install cudf
+.Pre-install cudf
 ====
 [source, python]
 ----
@@ -100,7 +101,7 @@ include::./examples/dask/preinstall_numba/build.sh[]
 ----
 ====
 
-=== Using Custom Resources inside your Dask Tasks
+=== Using Custom Resources Inside Your Dask Tasks
 
 It is important that you make sure your tasks that need accelerators run on worker processes with the accelerator available. You can ask for special resources when scheduling tasks with Dask, either explicitly in `client.submit` as in <<ex_submit_gpu>> or by adding an annotation to your existing code <<ex_annotate_gpu>>.
 
@@ -124,12 +125,12 @@ include::./examples/dask/DaskGPUs.py[tags=ex_annotate_gpu]
 
 If you move from a cluster with GPU resources to a cluster without, this code will hang indefinitely. The "CPU Fallback" design pattern covered later can mitigate this.
 
-==== Decorators (including numba)
+==== Decorators (Including Numba)
 
 Numba is a popular high-performance JIT (just in time) compilation library for Python, which has also has support for various accelerators. Most JIT code, and many decorator functions, are generally not directly serializable, so attempting to directly numba it with dask.submit does not work <<ex_dask_submit_numba_incorrect>>. Instead, the correct way is to wrap the function, as shown in <<ex_dask_submit_numba_correct>>.
 
 [[ex_dask_submit_numba_incorrect]]
-.Decorator Difficulty
+.Decorator difficulty
 ====
 [source, python]
 ----
@@ -138,7 +139,7 @@ include::./examples/dask/DaskGPUs.py[tags=ex_dask_submit_numba_incorrect]
 ====
 
 [[ex_dask_submit_numba_correct]]
-.Decorator Hack
+.Decorator hack
 ====
 [source, python]
 ----
@@ -159,7 +160,7 @@ We won't dive deep into the world of Python GPU libraries, but you may want to c
 
 Most of the libraries that have some form of GPU support require compiling large amounts of non-Python code. As such it's often best to install these libraries with conda which frequently has more complete binary packaging allowing you to skip the compile step.
 
-=== GPU Acceleration built on top of Dask
+=== GPU Acceleration Built on Top of Dask
 
 The three main CUDA libraries extending Dask are cudf (previously called dask-cudf), BlazingSQL, and cuML.footnote:[BlazingSQL may be end-of-life; there has not been a commit for an extended period of time and the website is just a hard-hat like those 1990s geocities websites.] Currently these libraries are focused on NVidia GPUs.
 

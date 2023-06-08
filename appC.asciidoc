@@ -26,13 +26,13 @@ You likely have your own standard debugging techniques for working with Python c
 
 With these tips you will (often) be able to find yourself in a familiar enough environment to use your traditional debugging tools, but some types of errors are a little bit more complicated.
 
-=== Native Errors (Seg Faults, Core Dumps, Etc.)
+=== Native Errors
 
 Native errors and core dumps can be challenging to debug for the same reasons as container errors. Since these types of errors often result in the container exiting, accessing the debugging information can become challenging. Depending on your deployment there may be a centralized log aggregator that collects all of the logs from the containers, although sometimes these can miss the final few parts of the log (which you likely care about the most). A "quick" solution to this is to add a "sleep" to the launch script (on failure) so that you can connect to the container (e.g. `[dasklaunchcommand] || sleep 100000`) and use native debugging tools.
 
 However, accessing the internals of a container can be easier said than done. In many production environments, you may not be able to get remote access (e.g. `kubectly exec` on Kubernetes) for security reasons. If that is the case, you can (sometimes) add a shutdown script to your container specification that copies the core files to a location that persists after the container shuts down (e.g. `s3` or `HDFS` or `NFS`). Your cluster administrator may also have recommended tools to help debug (and if not may be able to help you create a recommended path for your organization).
 
-=== Some Notes on Official Advice on Handling Bad Records
+=== Some Notes on Official Advice for Handling Bad Records
 
 https://docs.dask.org/en/stable/how-to/debug.html#remove-failed-futures-manually[+++Dask's official debugging guide recommends removing failed futures manually.+++] When loading data that can be processed in smaller chunks than entire partitions at a time, returning tuples with successful and failed data is better since removing entire partitions is not conducive to determining the root cause.
 

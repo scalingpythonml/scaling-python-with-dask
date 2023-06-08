@@ -28,7 +28,7 @@ As of this writing, StreamZ does not implement '_ipython_display_' in many place
 StreamZ is straightforward to install. It’s available from PyPi, and you can directly `pip` install it, although as with all libraries, you must make it available on all the workers. Once you have installed StreamZ you just need to create a Dask client (even in local mode) and import it, as shown in <<get_started_streamz>>.
 
 [[get_started_streamz]]
-.Getting Started with Streamz
+.Getting started with Streamz
 ====
 [source, python]
 ----
@@ -41,7 +41,7 @@ include::./examples/dask/Streamz.py[tags=get_started_streamz]
 When there are multiple clients, StreamZ uses the most recent Dask client created.
 ====
 
-=== Streaming Data Sources & Sinks
+=== Streaming Data Sources and Sinks
 
 So far in this book we've either loaded data from local collections or distributed file systems. While these can certainly serve as sources for streaming data (with some limitations), there are some additional data sources that exist in the streaming world. Streaming Data Sources are distinct as they do not have a defined end, and therefore behave a bit more like a generator than a list. Streaming sinks are conceptually similar to consumers of generators.
 
@@ -55,7 +55,7 @@ Some streaming data sources have the ability to "replay" or "look back" at messa
 StreamZs API documentation covers which https://streamz.readthedocs.io/en/latest/api.html#sources[+++sources+++] are supported; for simplicity we will focus here on Apache Kafka & the local iterable source. StreamZ does all loading in the head process and then you must "scatter" the result. Loading streaming data should look familiar with loading a local collection shown in <<load_ex_local>> and Kafka in <<load_ex_kafka>>.
 
 [[load_ex_local]]
-.Load Local Iterator
+.Load local iterator
 ====
 [source, python]
 ----

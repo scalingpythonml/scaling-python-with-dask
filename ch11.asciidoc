@@ -15,7 +15,7 @@ On memory-bound workloads, Dask’s high-level collections we have covered (such
 
 You can use Dask in conjunction with many popular machine learning libraries, including scikit-learn, and XGBoost. You may already be familiar with single-machine parallelism inside of your favorite ML library. Dask takes these single-machine frameworks, like joblib, and extends them to machines connected over the network.
 
-=== When to Use Dask-ML
+=== When to Use dask-ml
 
 Dask excels in parallel tasks with limited distributed mutable state (like large model weights). Dask is commonly used for inference/predictions on ML models, which is simpler than training. Training models, on the other hand, often require more inter-worker communication in the form of model weight updates and repeated loops with sometimes variable amounts of computation per training cycle. You can use Dask for both of these use cases, but adoption and tooling for training is not as widespread.
 
@@ -132,9 +132,9 @@ For hyperparameter search, Dask-ml has the Scikit equivalent of `GridSearchCV` f
 
 Cross-validation and hyperparameter tuning often is a costly process even with a smaller dataset, as anyone who’ve run scikit cross-validate would attest. Working with a larger dataset you are using Dask for can easily take much longer as the computation growth is exponential if running the same exhaustive search. Alternatively, Dask-ml implements several additional adaptive algorithms and hyperband based methods that approach the tuned parameter quicker with robust mathematical foundation.footnote:[Dask-ml’s own documentation has more info on adaptive and approximation CV methods implemented and its use cases.] The authors of the `HyperbandSearchCV` methods do ask that the use be cited.footnote:[They note in the documentation to cite the following paper if using this method: S. Sievert, T. Augspurger, and M. Rocklin, “Better and Faster Hyperparameter Optimization with Dask,” _Proceedings of the 18th Python in Science Conference_ (2019), https://doi.org/10.25080/Majora-7ddc1dd1-011[+++https://doi.org/10.25080/Majora-7ddc1dd1-011+++].]
 
-==== When There Is No Dask-ml Equivalent
+==== When There Is No dask-ml Equivalent
 
-If there is a function that exists in Scikit or other data science libraries but not in dask-ml, you can write the distributed version of your desired code. After all, Dask-ml can be thought of as a convenience wrapper around scikit-learn.
+If there is a function that exists in Scikit or other data science libraries but not in dask-ml, you can write the distributed version of your desired code. After all, dask-ml can be thought of as a convenience wrapper around scikit-learn.
 
 <<ex_daskml_port>> uses Scikit’s learning functions `SGDRegressor` and `LinearRegression`, and uses dask delayed to wrap the delayed functionality around the method. You can do this over any piece of code you may want to parallelize.
 
@@ -199,7 +199,7 @@ include::./examples/dask/Dask-Ch13_ML.py[tags=ex_xgb_early_stopping_and_inferenc
 ----
 ====
 
-=== ML models with Dask-SQL
+=== ML Models with Dask-SQL
 
 A much newer addition is another library, Dask-SQL, provides a convenient wrapper around simple ml model training workloads. <<Dask_sql_define_tables>> loads the same yellowcab taxi data as a dask dataframe, then registers the view to dask-sql context.
 

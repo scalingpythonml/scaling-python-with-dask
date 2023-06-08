@@ -1,3 +1,4 @@
+[[ch06]]
 == Advanced Task Scheduling: Futures and Friends
 
 So far in Dask, you have mostly seen lazy operations, where Dask doesn't do the work until something "forces" the computation. This pattern has a number of benefits, including allowing Dask's optimizer to combine steps when it makes sense. However, not all tasks are well suited to lazy evaluation. One common pattern not well suited to lazy evaluation is "fire-and-forget", where we call a function for its side effectfootnote:[Like writing a file to disk or updating a database record.] and necessarily care about the output. Trying to express this with lazy evaluation (e.g., dask.delayed) results in unnecessary blocking to force computation. When lazy evaluation is not what you need, you can explore Dask's futures. Futures can be used for much more than just "fire-and-forget" and you can return results from them. This chapter will explore a number of common use cases for futures.
@@ -29,7 +30,7 @@ Non-blocking eager evaluation still has some potential downsides compared to laz
 
 Not all other Python code is eagerly evaluated. In Python 3 some built-in functions use lazy evaluation, with operators like `map` returning iterators and only evaluating elements on request.
 
-=== Use cases for futures
+=== Use Cases for Futures
 
 Many common use cases can be made faster with careful application of futures:
 
@@ -60,7 +61,7 @@ Unlike with Dask delayed, as soon as the future is launched Dask begins to compu
 While this `map` is somewhat similar to the `map` on Dask bags, each item results in a separate task, whereas bags are able to group together tasks into partitions to reduce the overhead (although they are lazily evaluated).
 ====
 
-=== Future Lifecycle
+=== Future Life Cycle
 
 Futures have a different lifecycle from `dask.delayed` beyond eager computation. With `dask.delayed` intermediate computations are automatically cleaned up, however Dask futures results are stored until the future is either explicitly canceled or the reference to it is garbage collected in Python. If you no longer need the value of a future, you can cancel it and free any storage space or cores used by calling `.cancel`. The future lifecycle is illustrated in <<future_lifecycle_ch06_1686239207398>>.
 
@@ -170,7 +171,7 @@ In this, albeit contrived, example you can see how by starting the work as soon 
 As with `dask.delayed`, you can also launch futures from inside futures. The syntax is a bit different as you need to get an instance of the `client` object, which is not serializable, so `dask.distributed` has the special function `get_client` to get the client inside of a distributed function. Once you have the client, you can then launch the future like normal as shown in <<ex_nested>>.
 
 [[ex_nested]]
-.Launchinged a nested future
+.Launching a nested future
 ====
 [source, python]
 ----

@@ -58,7 +58,7 @@ ML models can be more difficult to validate without impacting users, but statist
 
 It is useful to think of what the implications could be of your pipeline failing, for example you might want to spend more time validating a pipeline which determines dosages of medicine in a clinical trial, compared to a job which predicts which version of your add will be the most successful.footnote:[We acknowledge that society is often not structured this way.]
 
-=== Peer to Peer Versus Centralized Distributed
+=== Peer-to-Peer Versus Centralized Distributed
 
 Even inside of a distributed system, there are various levels of "distributed."footnote:[Note: An alternate title for this section might be "How Dask Is Different From BitTorrent."] Dask is a "centralized" distributed system, where there is a static leader node responsible for various tasks and co-ordination amongst the workers. In more distributed systems, there is no static leader node, and if the head node goes away the remaining peers can elect a new head node, like Zookeeper. In even more distributed systems, there is no distinction between the head node, and all of the nodes in the cluster are effectively equally capable (from a software point of view, the hardware may be different).
 
@@ -76,7 +76,7 @@ Dask delayed, and Python's multiprocessing, both represent task parallelism. Wit
 
 Data parallelism refers to taking the same operation and running it in parallel on different chunks (or partitions) of data. This is a wonderful technique for operations on Data Frames and arrays. Data parallelism depends on partitioning to split up the work. We cover partitioning in detail in the Data Frame chapter.
 
-===== Shuffles and Narrow Versus Wide Transformations
+===== Shuffles and narrow versus wide transformations
 
 Narrow transformations (or data parallelism without any aggregation or shuffle) is often much faster than "wide" transformations which involve shuffles or aggregations. While this terminology is borrowed from the Spark community, the distinction (and implications for fault tolerance) apply to Dask's data parallel operations as well.
 
@@ -90,9 +90,9 @@ Load balancing is another way of looking at parallelism where a system (or syste
 
 On the other extreme "simple" load balancing, some systems like DNS round-robin based load balancing (not used in Dask) do not have any information about the system loads and just picks the "next" node. When tasks (or requests) are roughly equal in complexity, round-robin based load balancing can work well. This technique is most often used for handling web-requests or external API requests where you don't have a lot of control over the client making the requests. You are most likely to see this in model serving, like translating text or predicting fraudulent transactions.
 
-=== Network Fault Tolerance and the Consistent-Available-Partition Tolerant (CAP Theorem)
+=== Network Fault Tolerance and CAP Theorem
 
-If you search for "distributed computing concepts" you will likely come across the CAP theorem. The CAP theorem is most relevant for distributed data stores, but it's useful to understand regardless. The CAP theorem states that we can not build a distributed system that is consistent, available, and partition tolerant. Partitions can occur from hardware failure, or more commonly overloaded network links.
+If you search for "distributed computing concepts" you will likely come across the CAP theorem. The CAP theorem is most relevant for distributed data stores, but it's useful to understand regardless. The CAP theorem states that we cannot build a distributed system that is consistent, available, and partition tolerant. Partitions can occur from hardware failure, or more commonly overloaded network links.
 
 Dask itself has already made the trade-off of not being partition tolerant; whichever side of a network partition has the "leader" is the side that continues on, and the other side is unable to progress.
 

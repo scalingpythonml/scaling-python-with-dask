@@ -1,8 +1,9 @@
+[[ch09]]
 == Migrating Existing Analytic Engineering 
 
 Many users will already have analytic work that is currently deployed that they want to migrate over to Dask. This chapter will discuss the considerations, challenges, and experiences of users making the switch. The main migration pathway explored in the chapter is moving an existing big data engineering from another distributed framework, such as Spark, into Dask.
 
-=== Why Dask
+=== Why Dask?
 
 Here are some of the reasons to consider if you should migrate to Dask from an existing job that is implemented in Pandas, or distributed libraries like Pyspark:
 
@@ -27,9 +28,9 @@ High-level query optimization:: Users of Spark would be familiar with the Cataly
 
 Any list of limitations for a rapidly developing project like Dask may be out of date by the time you read it, so if any of these are blockers for your migration make sure to check Dask's status tracker.
 
-=== Migration Roadmap
+=== Migration Road Map
 
-While no engineering work is linear in process, it’s always a good idea to have a roadmap in mind. We’ve laid out an example of migration steps as a non-exhaustive list of items a team might want to think through when planning their move:
+While no engineering work is linear in process, it’s always a good idea to have a road map in mind. We’ve laid out an example of migration steps as a non-exhaustive list of items a team might want to think through when planning their move:
 
 * What kind of machines and containerization famework will we want to deploy Dask on, and what are their pros and cons?
 * Do we have tests to ensure our migration correctness and achieves our desired goals??
@@ -54,7 +55,7 @@ include::./examples/dask/Dask-Ch10_porting.py[tags=ex_yarn_deployment]
 ----
 ====
 
-For HPC deployments using job queuing systems such as PBS, Slurm, MOAB, SGE, LSF, and HTCondor, you should use dask-jobqueue, as shown in <<ex_slurm_deployment_ch09_1685536141262>>.
+For high-performance computing deployments using job queuing systems such as PBS, Slurm, MOAB, SGE, LSF, and HTCondor, you should use dask-jobqueue, as shown in <<ex_slurm_deployment_ch09_1685536141262>>.
 
 [[ex_slurm_deployment_ch09_1685536141262]]
 .Deploying Dask on using job-queue over Slurm
@@ -65,7 +66,7 @@ include::./examples/dask/Dask-Ch10_porting.py[tags=ex_slurm_deployment]
 ----
 ====
 
-===== Data Sources
+===== Data sources
 
 You likely have a shared filesystem already set up by your organization’s admin. Enterprise users might be used to already robustly-provisioned distributed data sources, running on HDFS, blob storage like S3, which Dask works seamlessly. Dask also integrates well networked filesystems, as well as blob storage (see <<ex_s3_minio_rw>>).
 
@@ -84,7 +85,7 @@ include::./examples/dask/Dask-Ch10_porting.py[tags=ex_s3_minio_rw]
 
 Translating an existing logic to Dask is a fairly intuitive process. Here are some considerations if you're coming from libraries such as R, pandas, and Spark, and how Dask might differ, especially as it relates to implementation in reading, accessing in distributed setting, modifying, and executing: use with other Python libraries. For detailed discussion on each structure, be sure to refer to previous chapters which introduced each Dask data structure.
 
-===== DataFrame Performance
+===== DataFrame performance
 
 If you have a job that you are already running on a different platform, it’s likely you are already using columnar storage format, like parquet, and reading at runtime. The datatype mapping from parquet to python datatypes is an inherently imprecise mapping. It’s a good idea to check dtypes when reading in any data at runtime, and the same applies to DataFrame. If type inference fails, a column would default to Object. Once you inspect and determine type inference is imprecise, specifying dtypes can speed up your job a lot. Additionally, it’s always a good idea to sanity-check strings, floating point numbers, datetime, and arrays. If type errors arise, keeping in mind the upstream data sources and their datatype is a good start. For example, if the parquet is generated from protobuf, depending on what encode and decode engine was used, there are differences in null checks, float, doubles, mixed precision types that are introduced in that stack.
 

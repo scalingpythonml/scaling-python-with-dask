@@ -32,13 +32,13 @@ Dependency management allows you to control, at runtime or in advance, what soft
 <<table_deployment_options_ch12>> compares some of the deployment options in Dask.
 
 [[table_deployment_options_ch12]]
-.Deployment Option Comparisons
+.Deployment option comparisons
 [options="header"]
 |===
-|Deployment Method |Dynamic Scale |Recommended use case (by us)footnote:[This is largely based on our experiences and may be biased to large companies and academic environments. Please feel free to make your own call.] |Dependency Management |Notebook deployed insidefootnote:[There are https://blog.dask.org/2019/09/13/jupyter-on-dask[some workarounds].] |Mixed Worker Types
+|Deployment method |Dynamic scale |Recommended use casefootnote:[This is largely based on our experiences and may be biased to large companies and academic environments. Please feel free to make your own call.] |Dependency Management |Notebook deployed insidefootnote:[There are https://blog.dask.org/2019/09/13/jupyter-on-dask[some workarounds].] |Mixed Worker Types
 |localhost |No |Testing, solo dev, GPU only acceleration |Yes (runtime or pre-install) |Yes |No
 |ssh |No |Solo lab, testing, but generally no (k8s instead) |Runtime only |Yes |Yes (manual)
-|Slurm + GW |Yes |Existing HPC/slurm environments |Yes (runtime or pre-install) |Separate project |Varies
+|Slurm + GW |Yes |Existing high-performance computing/slurm environments |Yes (runtime or pre-install) |Separate project |Varies
 |Dask "Cloud" |Yes |Not recommended, use Dask + K8s or YARN on cloud provider |Runtime only |Medium effortfootnote:[Some large commodity cloud providers were easier than others. Mika’s own experience ranks Google Cloud to be easiest, Amazon being the middle, and Azure being hardest to work with. Google cloud has a good working guide on using Dask on google cloud with RAPIDS Nvidia architecture, and well-documented workflow. Amazon Web Services similarly has good documentation on running Dask workers on multiple Amazon Elastic Container service (EC2) and guide on attaching S3 buckets. Azure needed some work to make worker provisioning work well, mostly due to their environment and user provisioning workflow being a bit different from AWS or GCP.] |No*
 |Dask + K8s |Yes |Cloud environments, existing K8s deployments, |Runtime or pre-install (but more effort) |Separate project, medium effort |Yes
 |Dask + YARN |Yes |Existing big data deployments |Runtime or pre-install (but more effort) |Separate project that has not been updated since 2019 |Yes*
@@ -60,7 +60,7 @@ The Dask on Kubernetes Helm chart deploys what is called an "operator." Currentl
 Since GPU resources are costly, it is typical to want only to allocate as many of them as needed. Some cluster manager interfaces, including Dask's Kubernetes plugin, allow you to configure multiple types of workers so that it will only allocate GPU workers when needed. On our Kubernetes cluster, we deploy Dask the Dask operator as in <<deploy_dask_operator_helm>>.
 
 [[deploy_dask_operator_helm]]
-.Deploy Dask Operator with Helm
+.Deploy Dask operator with Helm
 ====
 [source, bash]
 ----
@@ -71,7 +71,7 @@ include::./examples/dask/kubernetes/install-dask-helm.sh[tags=install_operator]
 Now you can use the dask operator either by creating yaml files (likely not your favorite) or with the `KubeCluster` API, as shown in <<helm_ex>>, where we create a cluster then add additional worker types, allowing Dask to create two different kinds of workers.footnote:[Mixed worker types; see https://distributed.dask.org/en/stable/resources.html["Worker Resources"] in the Dask documentation and the blog article https://www.dask.org/blog/how-to-run-different-worker-types-with-the-dask-helm-chart["How to Run Different Worker Types with the Dask Helm Chart"].]
 
 [[helm_ex]]
-.Use Dask Operator
+.Use Dask operator
 ====
 [source, python]
 ----
@@ -113,9 +113,9 @@ include::./examples/dask/Dask-Ch10_porting.py[tags=ex_yarn_deployment]
 ----
 ====
 
-=== Dask on High Performance Computing (HPC)
+=== Dask on High-Performance Computing
 
-Dask has gained a big academic and scientific user base, part of this comes from how you can use existing HPC clusters with Dask to make a readily available scalable scientific computing without rewriting all of your code.footnote:[In some ways HPC and cluster managers are different names for the same thing, with cluster managers coming out of industry and HPC out of research. HPC clusters tend to have and use a shared network storage that is not as common in industry.]
+Dask has gained a big academic and scientific user base, part of this comes from how you can use existing high-performance computing (HPC) clusters with Dask to make a readily available scalable scientific computing without rewriting all of your code.footnote:[In some ways HPC and cluster managers are different names for the same thing, with cluster managers coming out of industry and HPC out of research. HPC clusters tend to have and use a shared network storage that is not as common in industry.]
 
 You can turn your HPC account into a high-performance Dask environment that you can connect to from Jupyter on your local machine. Dask uses it's Dask Jobqueue library to support many HPC cluster types including: HTCondor, LSF, Moab, OAR, PBS, SGE, TORQUE, DRMAA, and SLURM. A separate library, Dask-MPI supports MPI clusters. <<ex_slurm_deployment_ch12_1685536157505>> shows a sample of how to us Dask on SLURM.
 
@@ -312,7 +312,7 @@ The System tab allows you to track the CPU, memory, network bandwidth, and file 
 The Profile tab allows you to see the amount of time spent on executing code, down to exact function call, on an aggregate level. This can be helpful in identifying tasks that create a bottleneck. <<task_duration_histogram_ch12_1685475458634>> shows a Task Duration Histogram, which shows a fine-grained view of each task and all the subroutines needed to call for that task, and their runtime. This can help quickly identify a task that is consistently longer than others.
 
 [[task_duration_histogram_ch12_1685475458634]]
-.Task Duration histogram for a Dask job
+.Task duration histogram for a Dask job
 image::images/spwd_1211.png[]
 
 [TIP]
@@ -375,7 +375,7 @@ We briefly touched on Adaptive scaling in previous chapters. You can enable auto
 
 ==== Persist and Delete Costly Data
 
-Some intermediate results can be used further down in the code execution, but not immediately after. In these cases, Dask might delete the data, not realizing it will need it further down, and you will end up needing another round of costly computation. If you identify this pattern, you can use .persist() command. With this command, you should also use Python’s built-in *del* command to ensure that it’s removed when no longer needed.
+Some intermediate results can be used further down in the code execution, but not immediately after. In these cases, Dask might delete the data, not realizing it will need it further down, and you will end up needing another round of costly computation. If you identify this pattern, you can use .persist() command. With this command, you should also use Python’s built-in `del` command to ensure that it’s removed when no longer needed.
 
 ==== Dask Nanny
 
