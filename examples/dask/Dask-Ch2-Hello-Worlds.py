@@ -87,7 +87,7 @@ def crawl(url, depth=0, maxdepth=1, maxlinks=4):
             if "href" in link:
                 c = c + 1
                 link_futures += crawl(link["href"], depth=(depth+1), maxdepth=maxdepth)
-                # Don't branch too much were still in local mode and the web is big
+                # Don't branch too much; we're still in local mode and the web is big
                 if c > maxlinks:
                     break
         for r in dask.compute(link_futures):
