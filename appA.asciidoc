@@ -138,7 +138,7 @@ Dask's core fault tolerance approach is "re-compute" lost data. This is the appr
 
 It is important to consider, with fault tolerance of Dask, what the fault condition possibilities are in the components Dask is connected to. While re-compute is a fine approach for distributed computing, distributed storage has different tradeoffs.
 
-Dask's approach to re-compute on failure means that the data that Dask used for the computation remains present for Dask to re-load when needed. In most systems, this will be the case, but in some streaming systems you may need to configure longer TTLs or otherwise have a buffer on-top to provide the reliability that Dask requires. Also if you are deploying your own storage layer, for example minio, it's important that you deploy it in such a way to minimize data loss.
+Dask's approach to re-compute on failure means that the data that Dask used for the computation remains present for Dask to re-load when needed. In most systems, this will be the case, but in some streaming systems you may need to configure longer TTLs or otherwise have a buffer on-top to provide the reliability that Dask requires. Also if you are deploying your own storage layer, for example MinIO, it's important that you deploy it in such a way to minimize data loss.
 
 Dask's fault tolerance does not extend to the "leader" node. A partial solution to this is often called high availability, where a system outside of Dask monitors and restarts your Dask leader node.
 

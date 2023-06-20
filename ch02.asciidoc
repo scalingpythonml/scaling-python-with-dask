@@ -1,7 +1,7 @@
 [[ch2_getting_started_with_dask]]
 == Getting Started with Dask
 
-We are so happy that you've decided to explore whether Dask is the system for you by trying it out. In this chapter, we will focus on getting started with Dask in its local mode. Using this, we'll explore a few more straightforward parallel computing tasks (including everyone's favorite, wordcount).
+We are so happy that you've decided to explore whether Dask is the system for you by trying it out. In this chapter, we will focus on getting started with Dask in its local mode. Using this, we'll explore a few more straightforward parallel computing tasks (including everyone's favorite, word count).
 
 === Installing Dask Locally
 
@@ -113,9 +113,9 @@ As with all distributed collections, what is expensive on a Dask array is not th
 
 Creating a distributed collection from a local collection has the limit that the initial collection has to be able to fit on a single computer. You might ask yourself "Why bother?," but there are several benefits. One of these is parallel operations, and another is the ability to join a smaller collection with a larger collection, and a small collection that becomes big, like crawling the web. I'll cover loading larger collections into Dask in later chapters.
 
-===== Dask bags and a wordcount
+===== Dask bags and a word count
 
-Dask bags implement more of the functional programming interfaces than Dask arrays. The "hello world" of big data is wordcount, which is easier to implement with functional programming interfaces. Since you've already made a crawler function, you can turn its output into a Dask bag using the `from_delayed` function in <<make_bag_of_crawler>>.
+Dask bags implement more of the functional programming interfaces than Dask arrays. The "hello world" of big data is word count, which is easier to implement with functional programming interfaces. Since you've already made a crawler function, you can turn its output into a Dask bag using the `from_delayed` function in <<make_bag_of_crawler>>.
 
 [[make_bag_of_crawler]]
 .Turning the crawler function's output into a Dask bag
@@ -126,7 +126,7 @@ include::./examples/dask/Dask-Ch2-Hello-Worlds.py[tags=make_bag_of_crawler]
 ----
 ====
 
-Now that you have a Dask bag collection, you can build everyone's favorite wordcount example on top of it. The first step is turning your bag of text into a bag of words, which you do by using `map` (<<make_a_bag_of_words>>). Once you have the bag of words, you can either use Dask's built-in `frequency` method (<<wc_freq>>) or write your own `frequency` method using functional transformations (<<wc_func>>).
+Now that you have a Dask bag collection, you can build everyone's favorite word count example on top of it. The first step is turning your bag of text into a bag of words, which you do by using `map` (<<make_a_bag_of_words>>). Once you have the bag of words, you can either use Dask's built-in `frequency` method (<<wc_freq>>) or write your own `frequency` method using functional transformations (<<wc_func>>).
 
 [[make_a_bag_of_words]]
 .Turning a bag of text into a bag of words
@@ -169,10 +169,10 @@ Pandas is one of the most popular Python data libraries, and Dask has a DataFram
 Your intuition around what's slow and fast with pandas does not carry over. We will explore this more in <<dask_df>>.
 ====
 
-To illustrate how you can use Dask DataFrame, we'll rework the wordcount example from the previous section to use it. As with Dask's other collections, you can create Dataframes from local collections, futures, or distributed files. Since you already made a crawler function, you can turn its output into a Dask bag using the `from_delayed` function from <<make_bag_of_crawler>>. Instead of using `map` and `foldby`, you can use pandas APIs like `explode` and `value_counts`, as shown in <<wc_dataframe>>.
+To illustrate how you can use Dask DataFrame, we'll rework the word count example from the previous section to use it. As with Dask's other collections, you can create Dataframes from local collections, futures, or distributed files. Since you already made a crawler function, you can turn its output into a Dask bag using the `from_delayed` function from <<make_bag_of_crawler>>. Instead of using `map` and `foldby`, you can use pandas APIs like `explode` and `value_counts`, as shown in <<wc_dataframe>>.
 
 [[wc_dataframe]]
-.DataFrame wordcount
+.DataFrame word count
 ====
 [source, python]
 ----

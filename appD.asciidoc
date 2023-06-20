@@ -81,12 +81,12 @@ StreamZs reading exclusively on a single head process is a likely place you may 
 
 As with the rest of this book, we assume that you are using existing data sources – and if that's not the case we encourage you to check out the Apache Kafka or Apache Pulsar documentation (along with the Kafka adapter) as well as the cloud offerings from confluent.
 
-=== Wordcount
+=== Word Count
 
-No streaming section would be complete without wordcount, but it's important to note that our streaming wordcount in <<streaming_wordcount_ex>>&mdash;in addition to the restriction with data loading&mdash;could not perform the aggregation in a distributed fashion.
+No streaming section would be complete without word count, but it's important to note that our streaming word count in <<streaming_wordcount_ex>>&mdash;in addition to the restriction with data loading&mdash;could not perform the aggregation in a distributed fashion.
 
 [[streaming_wordcount_ex]]
-.Streaming wordcount example
+.Streaming word count example
 ====
 [source, python]
 ----

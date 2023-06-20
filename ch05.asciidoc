@@ -61,7 +61,7 @@ Since, as with distributed DataFrames, the partitioned nature of Dask Arrays mak
 
 === Dask Bags
 
-To continue to draw parallels to Python's internal data structures you can think of bags as slightly-different lists or sets. You can think of bags like lists except without the concept of order (so no indexing operations). Alternatively, if you think of bags like sets, the difference is that bags allow duplicates. Dask's bags have the least number of restrictions on what they contain and similarly have the smallest API. In fact the wordcount example in <<hello_worlds>> covered most of the core of the APIs in bag.
+To continue to draw parallels to Python's internal data structures you can think of bags as slightly-different lists or sets. You can think of bags like lists except without the concept of order (so no indexing operations). Alternatively, if you think of bags like sets, the difference is that bags allow duplicates. Dask's bags have the least number of restrictions on what they contain and similarly have the smallest API. In fact the word count example in <<hello_worlds>> covered most of the core of the APIs in bag.
 
 [TIP]
 ====

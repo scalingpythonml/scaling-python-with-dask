@@ -112,7 +112,7 @@ Dask only implements filtered reads and writes for Parquet. If you are reading d
 
 Parquet is a self-describing format, which means it holds the schema/type information. The data is stored in a "columnar format" that allows for reading of just the columns you care about. If you need only some of the columns, pass the `columns=` flag when calling `read_parquet`.
 
-If you are loading data from Parquet with partitioning on the key that you care about you should add the filter to the `read_parquet`. This filter is not an arbitrary expression; rather, it is a tuple of key, operation, value. The key is a string representing the column, the operation is a string and one of `==`, `<`, `<=`, `>`, `>=`, `!=`, `in, or `not in`. The value is either a single value or list of values (for in) which you are interested in loading.
+If you are loading data from Parquet with partitioning on the key that you care about you should add the filter to the `read_parquet`. This filter is not an arbitrary expression; rather, it is a tuple of key, operation, value. The key is a string representing the column, the operation is a string and one of `==`, `<`, `<=`, `>`, `>=`, `!=`, `in`, or `not in`. The value is either a single value or list of values which you are interested in loading.
 
 While Dask has limited support for query push-down with partition reads, many other tools can automatically reduce the data read if it follows a known partitioning function. When you write data out, you can have Dask write the data to different directories based on partitioning keys by adding `partition_on`.
 
@@ -134,10 +134,10 @@ include::./examples/dask/Dask-Ch4-DataFrames.py[tags=fsspec]
 ----
 ====
 
-Many filesystems require some kind of configuration, be it endpoint or credentials. Often new filesystems, like MINIO, offer S3 compatible APIs but overload the endpoint and require some extra configuration to function. With Dask you specify the configuration parameters to the read/write function with `storage_options`. Everyone's configuration here will likely be a bit different.footnote:[https://filesystem-spec.readthedocs.io/en/latest/api.html#built-in-implementations[FSSPEC documentation] includes the specifics for configuring each of the backends.] Dask will use your storage_options dict as the keyword arguments to the underlying FSSPEC implementation. For example, my storage_options for minio are shown in <<minio_storage_options>>.
+Many filesystems require some kind of configuration, be it endpoint or credentials. Often new filesystems, like MinIO, offer S3 compatible APIs but overload the endpoint and require some extra configuration to function. With Dask you specify the configuration parameters to the read/write function with `storage_options`. Everyone's configuration here will likely be a bit different.footnote:[https://filesystem-spec.readthedocs.io/en/latest/api.html#built-in-implementations[FSSPEC documentation] includes the specifics for configuring each of the backends.] Dask will use your storage_options dict as the keyword arguments to the underlying FSSPEC implementation. For example, my storage_options for MinIO are shown in <<minio_storage_options>>.
 
 [[minio_storage_options]]
-.Dask configure MINIO
+.Dask configure MinIO
 ====
 [source, python]
 ----

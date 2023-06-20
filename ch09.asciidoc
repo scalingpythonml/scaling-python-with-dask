@@ -23,7 +23,7 @@ Dask is in its infancy, and the use of Python Data stack to perform large-scale 
 Parquet scale limits:: If parquet data exceeds 10TB scale, there are issues at the fastparquet and pyarrow level that slows Dask down, and metadata management overhead overwhelms.
 +
 ETL workloads with Parquet files at 10TB scale and beyond that includes a mutation, such as append and update, runs into consistency issues.
-Weak datalake integrations:: PyData stack has not engaged as much in the big data world traditionally, and the integrations on data lake management, such as Apache Iceberg, is missing.
+Weak data lake integrations:: PyData stack has not engaged as much in the big data world traditionally, and the integrations on data lake management, such as Apache Iceberg, is missing.
 High-level query optimization:: Users of Spark would be familiar with the Catalyst optimizer that pushes down predicates for optimizing the physical work on the executors. This optimization layer is missing in Dask at the moment. Spark in its early years also did not have the Catalyst engine written yet, and there are work in progress to build this out for Dask.
 
 Any list of limitations for a rapidly developing project like Dask may be out of date by the time you read it, so if any of these are blockers for your migration make sure to check Dask's status tracker.
@@ -73,7 +73,7 @@ You likely have a shared filesystem already set up by your organization’s admi
 We found that one of the surprisingly useful use cases is connecting directly to network storage like NFS or FTP. When working on an academic dataset that’s large and clunky to work with (like a neuroimaging dataset that’s directly hosted by another organization), we could connect directly to the source filesystem. When using Dask this way, you should test out and consider network timeout allowances. Also note that, as of this writing, Dask does not have a connector to data lakes such as Iceberg.
 
 [[ex_s3_minio_rw]]
-.Read and write to blob storage using Minio
+.Read and write to blob storage using MinIO
 ====
 [source, python]
 ----
