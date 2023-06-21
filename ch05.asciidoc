@@ -158,6 +158,11 @@ A fully iterative algorithm with fsspec would not be any faster than the naive l
 
 Dask bags are not well suited to most reduction or shuffling operations as its core `reduction` function reduces results down to one partition, requiring that all of the data fit on a single machine. You can reasonably use aggregations which are pure constant space, such as mean, min, and max. However, most of the time, you find yourself trying to aggregate your data, you should consider transforming your bag into a DataFrame with `bag.Bag.to_dataframe`.
 
+[TIP]
+====
+There are methods within all three Dask data types: Bag, Array, and Dataframe, to convert between them. However, some conversions require special attention. For example, when converting a Dask DataFrame to Dask Array, the resulting Dask Array will have `NaN` if you look at the shape it generates. This is because Dask DataFrame does not keep track of the number of rows in each DataFrame chunk.
+====
+
 === Conclusion
 
 While Dask DataFrames get the most use, Dask arrays and bags have their place. You can use Dask arrays to speed up and parallelize large multi-dimensional array processes. Dask bags allow you to work with data that doesn't fit nicely into a DataFrame, like PDFs or multidimensional nested data. These collections get much less focus and active development than Dask DataFrames, but may still have their place in your workflows. In the next chapter you will see how you can add state to your Dask programs including with operations on Dask's collections.
