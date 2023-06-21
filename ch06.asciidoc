@@ -12,7 +12,7 @@ Dask futures are a part of Dask's distributed client library, so you will get st
 
 [TIP]
 ====
-Despite the name, you can use Dask's distributed client locally.
+Despite the name, you can use Dask's distributed client locally. Refer to the Distributed section in Chapter 3.
 ====
 
 === Lazy and Eager Evaluation Revisited
