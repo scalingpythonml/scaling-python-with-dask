@@ -125,7 +125,10 @@ def do_some_io(data):
     return requests.get('https://httpbin.org/get', params=data)
     
 def business_logic():
-    # Make a future, but we don't really care about it's result, just that it happens
+    """
+    Make a future, but we don't really care about it's result, 
+    just that it happens
+    """
     future = client.submit(do_some_io, {"timbit": "awesome"})
     fire_and_forget(future)
     
@@ -217,7 +220,7 @@ from dask.distributed import wait
 from dask.distributed.client import FIRST_COMPLETED
 
 # Will throw an exception if no future completes in time
-# If it does not throw the result has two lists:
+# If it does not throw, the result has two lists:
 # The done list may return between one and all futures.
 # The not_done list may contain zero or more futures.
 finished = wait(futures, 1, return_when=FIRST_COMPLETED)

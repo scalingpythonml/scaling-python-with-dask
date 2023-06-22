@@ -75,7 +75,7 @@ urls = list(map(make_url, range(0, 10)))
 raw_json = bag.read_text(urls, linedelimiter="NODELIM")
 def clean_records(raw_records):
     import json
-    # We don't need the meta field just the results field
+    # We don't need the meta field, just the results field
     return json.loads(raw_records)["results"]
 cleaned_records = raw_json.map(clean_records).flatten()
 # And now we can convert it to a DataFrame

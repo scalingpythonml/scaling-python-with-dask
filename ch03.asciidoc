@@ -194,7 +194,7 @@ You can think of data as keyed when there is an index or the data can be looked 
 [[dask_df]]
 ==== Dask DataFrames
 
-Dataframes have the most options for partitioning. Dataframes can have partitions of different sizes, as well as known or unknown partitioning. With unknown partitioning, the data is distributed but Dask is unable to determine which partition holds a particular key. Unknown partitioning happens often, as any operation that could change the value of a key results in unknown partitioning. The `known_divisions` property on a DataFrame allows you to see if Dask knows the partitioning, and the `index` property shows the splits used and the column.
+DataFrames have the most options for partitioning. DataFrames can have partitions of different sizes, as well as known or unknown partitioning. With unknown partitioning, the data is distributed but Dask is unable to determine which partition holds a particular key. Unknown partitioning happens often, as any operation that could change the value of a key results in unknown partitioning. The `known_divisions` property on a DataFrame allows you to see if Dask knows the partitioning, and the `index` property shows the splits used and the column.
 
 If a DataFrame has the right partitioning, operations like `groupBy`, which would normally involve a lot of internode communication, can be executed with less communication. Accessing rows by ID requires that the DataFrame is partitioned on that key. If you want to change the column that your DataFrame is partitioned on, you can call `set_index` to change the index. Setting the index, like all the repartitioning operations, involves copying the data between workers, known as a _shuffle_.
 
@@ -272,34 +272,34 @@ The Dask UI also shows visualized representations of the task graph, without nee
 
 ==== Intermediate Task Results
 
-Intermediate task results are generally removed as soon as the dependent task has started to execute. This can be less than optimal when we need to perform multiple computations on the same piece of data. One solution to this is combining all of our execution together into one call to `dask.compute`, so that Dask is able to keep the data around as needed. This breaks down in both the interactive case where we don't know in advance what our computation is going to be and iterative cases. In those cases, some form of caching or persistence can be beneficial. You will learn about how to apply caching later in this chapter.
+Intermediate task results are generally removed as soon as the dependent task has started to execute. This can be less than optimal when we need to perform multiple computations on the same piece of data. One solution to this is combining all of our execution together into one call to `dask.compute`, so that Dask is able to keep the data around as needed. This breaks down in both the interactive case, where we don't know in advance what our computation is going to be, and iterative cases. In those cases, some form of caching or persistence can be beneficial. You will learn about how to apply caching later in this chapter.
 
 ==== Task Sizing
 
-Dask uses a centralized scheduler, which is a common technique for many systems. It does mean however that while the general task scheduling overhead is 1ms, as the number of tasks in a system increases the scheduler can become a bottleneck, and the overhead can grow. Counter-intuitively this means as our system grows we may benefit from larger coarser-grained tasks.
+Dask uses a centralized scheduler, which is a common technique for many systems. It does mean, however, that while the general task scheduling overhead is 1 ms, as the number of tasks in a system increases the scheduler can become a bottleneck, and the overhead can grow. Counterintuitively, this means as our system grows we may benefit from larger coarser-grained tasks.
 
-==== Too large Task Graphs
+==== Too-Large Task Graphs
 
-Sometimes the task graph itself can become too much for Dask to handle. This can show up as an out-of-memory exception on the client or scheduler or more commonly jobs that slow down with iterations. Most frequently this occurs with recursive algorithms. One common example of a situation where the graph can become too expensive to keep is distributed alternating least squares.
+Sometimes the task graph itself can become too much for Dask to handle. This can show up as an out-of-memory exception on the client or scheduler or, more commonly, jobs that slow down with iterations. Most frequently this occurs with recursive algorithms. One common example of a situation where the graph can become too expensive to keep is distributed alternating least squares.
 
-The first step when encountering a situation with a too-large task graph is to see if you can reduce the parallelism by using larger chunks of work or switching the algorithm. For example, if we think of fibonacci numbers computed with recursion, a better option would be using a dynamic programming or memoized solution instead of trying to distribute the computation task with Dask.
+The first step when encountering a situation with a too-large task graph is to see if you can reduce the parallelism by using larger chunks of work or switching the algorithm. For example, if we think of Fibonacci numbers computed with recursion, a better option would be using a dynamic programming or memoized solution instead of trying to distribute the computation task with Dask.
 
-If you have an iterative algorithm, and there isn't a better way to accomplish what you want, you can help Dask out by periodically writing out the intermediate work and reloading it.footnote:[You could also collect and scatter if the dataset is small enough.] By doing this Dask does not have to keep track of all of the steps involved in creating the data, but instead just needs to remember where the data is. The next two chapters will look at how to write and load data efficiently for these and other purposes.
+If you have an iterative algorithm, and there isn't a better way to accomplish what you want, you can help Dask out by periodically writing out the intermediate work and reloading it.footnote:[You could also collect and scatter if the dataset is small enough.] By doing this, Dask does not have to keep track of all of the steps involved in creating the data, but instead just needs to remember where the data is. The next two chapters will look at how to write and load data efficiently for these and other purposes.
 
 [TIP]
 ====
-In Spark the equivalent idea is expressed as "checkpointing."
+In Spark the equivalent idea is expressed as _checkpointing_.
 ====
 
 ==== Combining Computation
 
-To take the most advantage of Dask's graph optimization, it's important to submit your work in larger batches. First off, when you're blocking on the result with `dask.compute`, small batches can limit the parallelism. If you have a shared parent, say two results on the same data, submitting the computations together allows Dask to share the computation of the underlying data. You can verify if Dask is able to share a common node by calling visualize on your list of tasks, e.g. if you take example <<shared_data>> and visualize both the tasks together you'll see the shared node in <<shared_compute_node>>.
+To take the most advantage of Dask's graph optimization, it's important to submit your work in larger batches. First off, when you're blocking on the result with `dask.compute`, small batches can limit the parallelism. If you have a shared parent, say, two results on the same data, submitting the computations together allows Dask to share the computation of the underlying data. You can verify if Dask is able to share a common node by calling `visualize` on your list of tasks (e.g., if you take example <<shared_data>> and visualize both the tasks together, you'll see the shared node in <<shared_compute_node>>).
 
-Sometimes you can't submit the computation together, but you still know that you want to re-use some data. In those cases you should explore persistence.
+Sometimes you can't submit the computation together, but you still know that you want to reuse some data. In those cases you should explore persistence.
 
 ==== Persist, Caching, and Memoization
 
-Persistence allows you to keep specified Dask collections in memory on the cluster. To persist a collection for future re-use just call `dask.persist` on the collection. If you choose persistence, you will be responsible for telling Dask when you are done with a distributed collection. Unlike Spark, Dask does not have an east `unpersist` equivalent, instead, you need to release the underlying futures for each partition as shown in <<manual_persist>>.
+Persistence allows you to keep specified Dask collections in memory on the cluster. To persist a collection for future reuse, just call `dask.persist` on the collection. If you choose persistence, you will be responsible for telling Dask when you are done with a distributed collection. Unlike Spark, Dask does not have an easy `unpersist` equivalent; instead, you need to release the underlying futures for each partition as shown in <<manual_persist>>.
 
 [[manual_persist]]
 .Manual persistence and memory management with Dask
@@ -319,30 +319,30 @@ Dask's local mode has a best-effort caching system based on cachey. Since this o
 
 [WARNING]
 ====
-Dask does not raise an error when you attempt to use Dask caching in a distributed fashion, it just won't work. So when migrating code from local to distributed make sure to check for usage of Dask's local caching.
+Dask does not raise an error when you attempt to use Dask caching in a distributed fashion; it just won't work. So when migrating code from local to distributed, make sure to check for usage of Dask's local caching.
 ====
 
 === Fault Tolerance
 
-Dask's task graph is used to provide it's fault tolerance, as in Spark. Fault Tolerance becomes increasingly important the more computers you use. When you are using Dask on a single computer the concept of fault tolerance is less important since if your one computer fails there is nothing to recover. However, when you have 100s of machines, the odds of any one of those machines failing goes up. There are many different kinds of failures in a distributed system, but thankfully many of them can be handled in the same way.
+Dask's task graph is used to provide its fault tolerance, as in Spark. Fault tolerance becomes increasingly important the more computers you use. When you are using Dask on a single computer, the concept of fault tolerance is less important since if your one computer fails there is nothing to recover. However, when you have hundreds of machines, the odds of any one of those machines failing goes up. There are many different kinds of failures in a distributed system, but thankfully many of them can be handled in the same way.
 
-Dask automatically retries tasks where the scheduler loses connection to the worker. This retry is accomplished by using the same graph of computation Dask uses for lazy evaluation.
+Dask automatically retries tasks when the scheduler loses connection to the worker. This retry is accomplished by using the same graph of computation Dask uses for lazy evaluation.
 
 [WARNING]
 ====
-The dask client is _not_ fault tolerant to network issues connecting to the scheduler. One mitigation technique you can use is running your client in the same network as the scheduler.
+The Dask client is _not_ fault tolerant to network issues connecting to the scheduler. One mitigation technique you can use is running your client in the same network as the scheduler.
 ====
 
-Machine failure is a fact of life with distributed systems. When a worker fails, Dask will treat it in the same way as a network failure, retrying any necessary tasks. However, Dask can not recover from failures of the scheduler of your client code.footnote:[This is common for most systems like this. Spark does have limited ability to recover from head node failure, but has many restrictions and is not frequently used.] This makes it important that when you are running in a shared environment it is important to run your client and scheduler nodes at a high priority to avoid pre-emption.
+Machine failure is a fact of life with distributed systems. When a worker fails, Dask will treat it in the same way as a network failure, retrying any necessary tasks. However, Dask cannot recover from failures of the scheduler of your client code.footnote:[This is common for most systems like this. Spark does have limited ability to recover from head node failure, but has many restrictions and is not frequently used.] This makes it important that, when you are running in a shared environment, you run your client and scheduler nodes at a high priority to avoid preemption.
 
-Dask automatically retries software failures that exit or crash the worker. Much like machine failure, from Dask's point of view a worker exiting and a network failure look the same.
+Dask automatically retries software failures that exit or crash the worker. Much like machine failure, from Dask's point of view a worker exiting and a network failing look the same.
 
-IOErrors and OSErrors exceptions are the only two classes of exceptions Dask will retry. If your worker process raises one of these errors, they are pickled and transferred over to the scheduler. Dask's scheduler then retries the task. If your code encounters an IOError which should not be retried (e.g. say a webpage which doesn't exist), you'll need to wrap it in another exception to keep Dask from retrying it.
+IOErrors and OSErrors exceptions are the only two classes of exceptions Dask will retry. If your worker process raises one of these errors, they are pickled and transferred over to the scheduler. Dask's scheduler then retries the task. If your code encounters an IOError that should not be retried (e.g., a web page doesn't exist), you'll need to wrap it in another exception to keep Dask from retrying it.
 
-Since Dask retries failed computation, it's important to be careful with side-effects or changing values. For example, if you have a Dask Bag of transactions and were to update a database as part of a `map`, Dask might re-execute some of the operations on that bag multiple times resulting in the update to the database happening more than once. If we think of a withdrawal from an ATM, we can see how this would result in some unhappy customers, and incorrect data. Instead if you need to mutate small bits of data you can bring it back to a local collection.
+Since Dask retries failed computation, it's important to be careful with side effects or changing values. For example, if you have a Dask bag of transactions and were to update a database as part of a `map`, Dask might reexecute some of the operations on that bag multiple times, resulting in the update to the database happening more than once. If we think of a withdrawal from an ATM, we can see how this would result in some unhappy customers, and incorrect data. Instead, if you need to mutate small bits of data, you can bring them back to a local collection.
 
 If your program encounters any other exceptions, Dask will return the exception to your main thread.footnote:[For those migrating from Spark, this retry behavior is different. Spark will retry most exceptions, whereas Dask will only retry errors resulting in a worker exiting, or IOError or OSError.]
 
 === Conclusion
 
-After this chapter you should have a good grasp of how Dask is able to scale your Python code. You should now understand the basics of partitioning, why this matters, task sizing, and Dask approach to fault tolerance. This will hopefully set you up well for deciding when to apply Dask and the next few chapters where we do a deeper dive on Dask's collection libraries. In the next chapter we'll focus on Dask's DataFrames as they are the most full-featured of Dask's distributed collections.
+After this chapter you should have a good grasp of how Dask is able to scale your Python code. You should now understand the basics of partitioning, why this matters, task sizing, and Dask's approach to fault tolerance. This will hopefully set you up well for deciding when to apply Dask and for the next few chapters, where we do a deeper dive on Dask's collection libraries. In the next chapter we'll focus on Dask's DataFrames, as they are the most full-featured of Dask's distributed collections.

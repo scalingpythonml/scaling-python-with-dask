@@ -145,7 +145,7 @@ len(df)
 # In[16]:
 
 
-# What kind of file systems are supported?
+# What kind of filesystems are supported?
 #tag::known_fs[]
 from fsspec.registry import known_implementations
 known_implementations

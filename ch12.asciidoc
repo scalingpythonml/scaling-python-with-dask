@@ -68,7 +68,7 @@ include::./examples/dask/kubernetes/install-dask-helm.sh[tags=install_operator]
 ----
 ====
 
-Now you can use the dask operator either by creating yaml files (likely not your favorite) or with the `KubeCluster` API, as shown in <<helm_ex>>, where we create a cluster then add additional worker types, allowing Dask to create two different kinds of workers.footnote:[Mixed worker types; see https://distributed.dask.org/en/stable/resources.html["Worker Resources"] in the Dask documentation and the blog article https://www.dask.org/blog/how-to-run-different-worker-types-with-the-dask-helm-chart["How to Run Different Worker Types with the Dask Helm Chart"].]
+Now you can use the Dask operator either by creating yaml files (likely not your favorite) or with the `KubeCluster` API, as shown in <<helm_ex>>, where we create a cluster then add additional worker types, allowing Dask to create two different kinds of workers.footnote:[Mixed worker types; see https://distributed.dask.org/en/stable/resources.html["Worker Resources"] in the Dask documentation and the blog article https://www.dask.org/blog/how-to-run-different-worker-types-with-the-dask-helm-chart["How to Run Different Worker Types with the Dask Helm Chart"].]
 
 [[helm_ex]]
 .Use Dask operator
@@ -192,7 +192,7 @@ Part of running Dask remotely is being cable to connect to the server to run you
 Another option is to have Dask bind to a public IP address, but without careful firewall rules this means that anyone can access your Dask cluster, which is likely not your intention.
 ====
 
-In HPC environments you often already connect using SSH, so using SSH portforwarding is often the easiest way to connect. SSH port forwarding allows you to map an port on another computer to one on your local computer.footnote:[You can also run an SSH socks proxy which makes it easy to access other servers inside the HPC cluster, but requires changing your browser configuration (and does not work for the Dask client).] The default dask monitoring port is 8787, but if that port is busy (or you configure a different one), Dask may bind to a different port. The Dask server prints out which ports it is bound to at start time. To forward port 8787 on a remote machine to the same local port you could run `ssh -L localhost:8787:my-awesome-hpc-node.hpc.fake:8787`. You can use the same techniques (but with different port numbers) for a remote jupyter lab, or connecting a Dask client to a remote scheduler.
+In HPC environments you often already connect using SSH, so using SSH portforwarding is often the easiest way to connect. SSH port forwarding allows you to map an port on another computer to one on your local computer.footnote:[You can also run an SSH socks proxy which makes it easy to access other servers inside the HPC cluster, but requires changing your browser configuration (and does not work for the Dask client).] The default Dask monitoring port is 8787, but if that port is busy (or you configure a different one), Dask may bind to a different port. The Dask server prints out which ports it is bound to at start time. To forward port 8787 on a remote machine to the same local port you could run `ssh -L localhost:8787:my-awesome-hpc-node.hpc.fake:8787`. You can use the same techniques (but with different port numbers) for a remote jupyter lab, or connecting a Dask client to a remote scheduler.
 
 [TIP]
 ====
@@ -265,7 +265,7 @@ The Task Stream dashboard gives a high-level view of each worker and its behavio
 .An example of a task stream with well-balanced workers
 image::images/spwd_1204.png[]
 
-On the other hand, <<task_stream_with_too_many_ch12_1685475203241>> shows a situation where compute is uneven. You can see that there is a lot of whitespace between computation, meaning the workers are blocked and not actually computing during that time. Additionally, you see some workers start earlier, and some finish later, hinting that there are some issues with distributing the job. This could be due to inherent dependency of your code, or that there is suboptimal tuning. Changing the dataframe or array chunk sizes might make these less fragmented. You do see that when the job starts on each worker, they take roughly the same amount of work, meaning the work itself is still balanced fairly well, and distributing the workload is giving you good returns. This is a fairly contrived illustrative example, so this task only took a few seconds, but the same idea applies to longer and more bulky workloads as well.
+On the other hand, <<task_stream_with_too_many_ch12_1685475203241>> shows a situation where compute is uneven. You can see that there is a lot of whitespace between computation, meaning the workers are blocked and not actually computing during that time. Additionally, you see some workers start earlier, and some finish later, hinting that there are some issues with distributing the job. This could be due to inherent dependency of your code, or that there is suboptimal tuning. Changing the DataFrame or array chunk sizes might make these less fragmented. You do see that when the job starts on each worker, they take roughly the same amount of work, meaning the work itself is still balanced fairly well, and distributing the workload is giving you good returns. This is a fairly contrived illustrative example, so this task only took a few seconds, but the same idea applies to longer and more bulky workloads as well.
 
 [[task_stream_with_too_many_ch12_1685475203241]]
 .An example of a task stream with too many small data chunks
@@ -317,12 +317,12 @@ image::images/spwd_1211.png[]
 
 [TIP]
 ====
-You can change the logging intervals with distributed.client.scheduler-info-interval argument within dask client configurations.
+You can change the logging intervals with distributed.client.scheduler-info-interval argument within Dask client configurations.
 ====
 
 ==== Saving and Sharing Dask Metrics/Performance Logs
 
-You can monitor Dask real-time with the dashboard, but it will disappear once you close out your cluster. You can save the html page, as well as export the metrics as a dataframe itself, and write out custom code for metrics (see <<ex_generate_performance_report>>).
+You can monitor Dask real-time with the dashboard, but it will disappear once you close out your cluster. You can save the html page, as well as export the metrics as a DataFrame itself, and write out custom code for metrics (see <<ex_generate_performance_report>>).
 
 You can generate a performance report manually for any block of computation, without having to save the entire runtime report with the following code block. Any computation that you pass within `performance_report(“filename”)` will be saved under that file. Note that under the hood, this requires Bokeh to be installed.
 
@@ -337,7 +337,7 @@ include::./examples/dask/Dask-Ch14-Tuning.py[tags=ex_generate_performance_report
 ----
 ====
 
-Dask's Distributed scheduler provides the metrics info as a task stream object without using the UI itself. You can access the information in Task Stream UI tab from dask directly, down to the level of lines of code that you want this to be profiled over. <<ex_get_task_stream>> demonstrates how to use a taskstream, and then extracting some statistics out of them into a small pandas DataFrame for further analysis and sharing.
+Dask's Distributed scheduler provides the metrics info as a task stream object without using the UI itself. You can access the information in Task Stream UI tab from Dask directly, down to the level of lines of code that you want this to be profiled over. <<ex_get_task_stream>> demonstrates how to use a taskstream, and then extracting some statistics out of them into a small pandas DataFrame for further analysis and sharing.
 
 [[ex_get_task_stream]]
 .Generating and computing Dask’s runtime statistics with taskstream
@@ -408,7 +408,7 @@ We have briefly covered chunks and chunk sizes in earlier chapters. Now we expan
 
 For a given worker hardware configuration and computation you are doing, there will be a sweet spot for the chunk sizes, and the user’s job is to set this size. Finding the exact number might not be useful, but finding roughly what type of configuration is likely to give you the best result can make a huge difference.
 
-The key idea of chunking is load balancing computation and storage, at a cost of overhead of communications. On one end of the extreme, you have a single-machine data engineering, with your data in one Pandas dataframe, or if you have a single Dask dataframe with no partitioning. There is not much communication cost as all communication happens between your RAM and your GPU or CPU, with data moving through a single computer’s motherboard. As your data size grows, this monolithic block will not work, and you run into out-of-memory errors, losing all your previous in-memory computation. Hence, you would use a distributed system like Dask.
+The key idea of chunking is load balancing computation and storage, at a cost of overhead of communications. On one end of the extreme, you have a single-machine data engineering, with your data in one pandas DataFrame, or if you have a single Dask DataFrame with no partitioning. There is not much communication cost as all communication happens between your RAM and your GPU or CPU, with data moving through a single computer’s motherboard. As your data size grows, this monolithic block will not work, and you run into out-of-memory errors, losing all your previous in-memory computation. Hence, you would use a distributed system like Dask.
 
 On the other extreme, a very fragmented dataset with small chunk sizes over multiple machines connected over ethernet cables will be slower to work together as the communication overhead grows, and may even overrun the scheduler’s capacity to handle communications, gathering and coordinating. Maintaining a happy balance of the two extremes, knowing which problem requires which tools, is an essential job of a modern distributed data engineering.
 
@@ -457,6 +457,6 @@ include::./examples/dask/Dask-Ch10_porting.py[tags=ex_distributed_logging]
 
 === Conclusion
 
-In this chapter, you've learned of the various deployment options for Dask Distributed, from commodity cloud to High Performance Computing infrastructures. You’ve also learned Jupyter magics to simplify getting access to information with remote deployments. In our experience, Dask on Kubernetes and Dask on Ray on Kubernetes offers the flexibility we need. Your own decision about how to deploy dask here may be different, especially if you are working in a larger institution with existing cluster deployments. Most of the deployment options are covered in detail in the https://docs.dask.org/en/stable/deploying.html[+++"Deploying Dask Guide"+++], with the notable exception of Dask on Ray, which is covered in the https://docs.ray.io/en/latest/data/dask-on-ray.html[+++Ray documentation+++].
+In this chapter, you've learned of the various deployment options for Dask Distributed, from commodity cloud to High Performance Computing infrastructures. You’ve also learned Jupyter magics to simplify getting access to information with remote deployments. In our experience, Dask on Kubernetes and Dask on Ray on Kubernetes offers the flexibility we need. Your own decision about how to deploy Dask here may be different, especially if you are working in a larger institution with existing cluster deployments. Most of the deployment options are covered in detail in the https://docs.dask.org/en/stable/deploying.html[+++"Deploying Dask Guide"+++], with the notable exception of Dask on Ray, which is covered in the https://docs.ray.io/en/latest/data/dask-on-ray.html[+++Ray documentation+++].
 
 You’ve also learned of runtime considerations and metrics to track when running a distributed work, and the various tools in Dask’s dashboard to accomplish that, expanded with more advanced user-defined metrics generation. Using these metrics, you’ve learned the conceptual basis for tuning your Dask Distributed clusters, troubleshooting, and how it relates to the fundamental design principle of Dask and distributed computing.

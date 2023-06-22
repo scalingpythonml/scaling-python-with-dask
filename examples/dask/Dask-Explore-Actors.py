@@ -113,7 +113,7 @@ def inc(x):
     import time
     time.sleep(x)
     f = counter.add(x)
-    # Note: the actor (in this case `counter`) is serelizable, however the future we get back from it is not
+    # Note: the actor (in this case `counter`) is serializable, however the future we get back from it is not
     # this is likely because the future contains a network connection to the actor, so need to get it's
     # concrete value here. If we don't need the value you can avoid blocking and it will still execute.
     return f.result()

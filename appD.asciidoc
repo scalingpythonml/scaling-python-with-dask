@@ -43,7 +43,7 @@ When there are multiple clients, StreamZ uses the most recent Dask client create
 
 === Streaming Data Sources and Sinks
 
-So far in this book we've either loaded data from local collections or distributed file systems. While these can certainly serve as sources for streaming data (with some limitations), there are some additional data sources that exist in the streaming world. Streaming Data Sources are distinct as they do not have a defined end, and therefore behave a bit more like a generator than a list. Streaming sinks are conceptually similar to consumers of generators.
+So far in this book we've either loaded data from local collections or distributed filesystems. While these can certainly serve as sources for streaming data (with some limitations), there are some additional data sources that exist in the streaming world. Streaming Data Sources are distinct as they do not have a defined end, and therefore behave a bit more like a generator than a list. Streaming sinks are conceptually similar to consumers of generators.
 
 [NOTE]
 ====

@@ -169,7 +169,7 @@ Pandas is one of the most popular Python data libraries, and Dask has a DataFram
 Your intuition around what's slow and fast with pandas does not carry over. We will explore this more in <<dask_df>>.
 ====
 
-To illustrate how you can use Dask DataFrame, we'll rework the word count example from the previous section to use it. As with Dask's other collections, you can create Dataframes from local collections, futures, or distributed files. Since you already made a crawler function, you can turn its output into a Dask bag using the `from_delayed` function from <<make_bag_of_crawler>>. Instead of using `map` and `foldby`, you can use pandas APIs like `explode` and `value_counts`, as shown in <<wc_dataframe>>.
+To illustrate how you can use Dask DataFrame, we'll rework the word count example from the previous section to use it. As with Dask's other collections, you can create DataFrames from local collections, futures, or distributed files. Since you already made a crawler function, you can turn its output into a Dask bag using the `from_delayed` function from <<make_bag_of_crawler>>. Instead of using `map` and `foldby`, you can use pandas APIs like `explode` and `value_counts`, as shown in <<wc_dataframe>>.
 
 [[wc_dataframe]]
 .DataFrame word count

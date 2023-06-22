@@ -1,7 +1,7 @@
 [[ch05]]
 == Dask's Collections
 
-So far you've seen the basics of how Dask is built as well as how Dask uses these building blocks to support data science with DataFrames. Often overlooked, relative to DataFrames, this chapter explores where Dask's bag and array interfaces are more appropriate. As mentioned in the <<hello_worlds>> section, Dask bags implement common functional APIs and Dask Arrays implement a subset of numpy arrays.
+So far you've seen the basics of how Dask is built as well as how Dask uses these building blocks to support data science with DataFrames. Often overlooked, relative to DataFrames, this chapter explores where Dask's bag and array interfaces are more appropriate. As mentioned in <<hello_worlds>>, Dask bags implement common functional APIs and Dask arrays implement a subset of NumPy arrays.
 
 [TIP]
 ====
@@ -10,27 +10,27 @@ It's important to understand partitioning to understand collections. If you skip
 
 === Dask Arrays
 
-Dask Arrays implement a subset of the numpy ndarray interface, making them ideal for porting code that uses numpy to run on Dask. Much of your understanding from the previous chapter with DataFrames carries over to Dask Arrays, as well as much of your understanding of ndarrays.
+Dask arrays implement a subset of the NumPy ndarray interface, making them ideal for porting code that uses NumPy to run on Dask. Much of your understanding from the previous chapter with DataFrames carries over to Dask arrays, as well as much of your understanding of ndarrays.
 
 ==== Common Use Cases
 
 Some common use cases for Dask arrays include:
 
-* Large-scale imaging & astronomy data
+* Large-scale imaging and astronomy data
 * Weather data
-* Multi-dimensional data
+* Multidimensional data
 
-Similar to Dask DataFrames and pandas, if you wouldn't use an nparray for the problem at a smaller scale, a Dask Array may not be the right solution.
+Similar to Dask DataFrames and pandas, if you wouldn't use an nparray for the problem at a smaller scale, a Dask array may not be the right solution.
 
-==== Times to Not Use Dask Arrays
+==== When Not to Use Dask Arrays
 
-If your data fits in memory on a single computer, using Dask array's are _unlikely_ to give you many benefits over nparrays, especially compared to local accelerators like Numba. Numba is well suited to vectorizing and parallelizing local tasks with and without GPUs. You can use Numba with and without Dask, and we'll look at how to further speed up Dask Arrays using Numba with Dask in the Dask GPU chapter.
+If your data fits in memory on a single computer, using Dask array's is unlikely to give you many benefits over nparrays, especially compared to local accelerators like Numba. Numba is well suited to vectorizing and parallelizing local tasks with and without Graphics Processing Units (GPUs). You can use Numba with and without Dask, and we'll look at how to further speed up Dask arrays using Numba in <<ch10>>.
 
-Dask Arrays, like their local counterpart, require that data is all of the same type. This means that they can not be used for semi-structured or mixed type (think strings and ints) data.
+Dask arrays, like their local counterpart, require that data is all of the same type. This means that they cannot be used for semistructured or mixed-type data (think strings and ints).
 
 ==== Loading/Saving
 
-As with Dask DataFrames, loading and writing functions start with `to_` or `read_` as the prefixes. Each format has its own configuration, but in general, the first positional argument is the location of the data to be read. The location can be a wildcard path of files (e.g., "s3://test-bucket/magic/*"), a list of files, or a regular file location.
+As with Dask DataFrames, loading and writing functions start with `to_` or `read_` as the prefixes. Each format has its own configuration, but in general, the first positional argument is the location of the data to be read. The location can be a wildcard path of files (e.g., _s3://test-bucket/magic/*_), a list of files, or a regular file location.
 
 Dask arrays support reading the following formats:
 
@@ -44,24 +44,24 @@ And reading from and writing to:
 * tiledb
 * npy stacks (local disk only)
 
-In addition, to file formats, you can convert Dask Arrays to/from Dask bags and DataFrames (provided the types are compatible). As you may have noted, Dask does not support reading arrays from as many formats as you might, which can be an excellent use of bags (covered in the next section).
+In addition, you can convert Dask arrays to/from Dask bags and DataFrames (provided the types are compatible). As you may have noted, Dask does not support reading arrays from as many formats as you might expect, which can be an excellent use of bags (covered in the next section).
 
 ==== What's Missing
 
-While Dask Arrays implement a large amount of the ndarray APIs this is not a complete set. Like with Dask DataFrames, some of this is intentional (e.g. sort much of linalg, etc.) which would be slow, and other parts are just missing because no one has had the time to implement them yet.
+While Dask arrays implement a large amount of the ndarray APIs, it is not a complete set. As with Dask DataFrames, some of this is intentional (e.g., `sort`, much of `linalg`, etc., which would be slow), and other parts are just missing because no one has had the time to implement them yet.
 
 ==== Special Dask Functions
 
-Since, as with distributed DataFrames, the partitioned nature of Dask Arrays make performance a bit different there are some unique Dask array functions not found in `numpy.linalg`:
+Since, as with distributed DataFrames, the partitioned nature of Dask arrays make performance a bit different, there are some unique Dask array functions not found in `numpy.linalg`:
 
 `map_overlap`:: You can use this for any windowed view of the data, as with `map_overlap` on Dask DataFrames.
-`map_blocks`:: This is similar to Dask's DataFrames `map_partitions`, and you can use it for implementing embarrassingly parallel operations that Dask has not yet, including new element-wise functions in numpy.
+`map_blocks`:: This is similar to Dask's DataFrames `map_partitions`, and you can use it for implementing embarrassingly parallel operations that Dask has not yet, including new element-wise functions in NumPy.
 `topk`:: Returns the topk elements of the array in place of fully sorting it (which is much more expensive).footnote:[https://docs.dask.org/en/stable/generated/dask.array.topk.html[`topk`] extracts the topk elements of each partition and then only needs to shuffle the k elements out of each partition.]
 `compute_chunk_sizes`:: Dask needs to know the chunk sizes to support indexing, and if an array has unknown chunk sizes you can call this function.
 
 === Dask Bags
 
-To continue to draw parallels to Python's internal data structures you can think of bags as slightly-different lists or sets. You can think of bags like lists except without the concept of order (so no indexing operations). Alternatively, if you think of bags like sets, the difference is that bags allow duplicates. Dask's bags have the least number of restrictions on what they contain and similarly have the smallest API. In fact the word count example in <<hello_worlds>> covered most of the core of the APIs in bag.
+To continue to draw parallels to Python's internal data structures, you can think of bags as slightly different lists or sets. Bags are like lists except without the concept of order (so there are no indexing operations). Alternatively, if you think of bags like sets, the difference is that bags allow duplicates. Dask's bags have the least number of restrictions on what they contain and similarly have the smallest API. In fact, the word count example in <<hello_worlds>> covered most of the core of the APIs in bag.
 
 [TIP]
 ====
@@ -72,25 +72,25 @@ For users coming from Apache Spark, Dask bags are most closely related to Spark'
 
 Bags are an excellent choice when the structure of the data is unknown or otherwise not consistent. Some of the common use cases are as follows:
 
-* Grouping together a bunch of dask.delayed calls, for example for loading "messy" or unstructured (or unsupported) data
-* "Cleaning" (or adding structure) to unstructured data (like JSON)
-* Parallelizing a group of tasks over a fixed range: e.g. you want to call an API 100 times but you are not picky about the details.
-* Catch-all: if it doesn't fit in any other collection type, bag's your friend
+* Grouping together a bunch of `dask.delayed` calls: for example, for loading "messy" or unstructured (or unsupported) data.
+* "Cleaning" (or adding structure) to unstructured data (like JSON).
+* Parallelizing a group of tasks over a fixed range: for example, if you want to call an API 100 times but you are not picky about the details.
+* Catch-all: if it doesn't fit in any other collection type, bag's your friend.
 
-We believe that the most common use case for Dask bags you will find is loading "messy" data or data which Dask does not have built-in support for.
+We believe that the most common use case for Dask bags is loading messy data or data that Dask does not have built-in support for.
 
 ==== Loading and Saving Dask Bags
 
-Dask Bags has built-in readers for text files, with `read_text`, and avro files, with `read_avro`. Similarly you can write Dask bags to text files and avro files, although the results must be serializable. Bags are commonly used when Dask's built-in tools for reading data are not enough, so the next section will dive into how to go beyond these two built-in formats.
+Dask bags have built-in readers for text files, with `read_text`, and avro files, with `read_avro`. Similarly, you can write Dask bags to text files and avro files, although the results must be serializable. Bags are commonly used when Dask's built-in tools for reading data are not enough, so the next section will dive into how to go beyond these two built-in formats.
 
 ==== Loading Messy Data with a Dask Bag
 
-Normally the goal with loading messy data is to get it into a structured format for further processing, or at least extract the components that you are interested in. While your data formats will likely be a bit different, this section will look at loading some "messy" JSON and then extracting some relevant fields. Don't worry, we call out places where different formats or sources may require different techniques.
+Normally, the goal with loading messy data is to get it into a structured format for further processing, or at least extract the components that you are interested in. While your data formats will likely be a bit different, this section will look at loading some messy JSON and then extracting some relevant fields. Don't worry, we call out places where different formats or sources may require different techniques.
 
-For messy textual data, which is a common occurrence with JSON, you can save yourself some time by loading the data using bag's `read_text` function. The `read_text` function defaults to splitting up the records by line; however, many formats can not be processed by line. To get each whole file in a whole record, rather than split-up, you can set the `linedelimiter` parameter to one not found. Often REST APIs will return the results as a sub-component, so in <<preprocess_json>>, we load the https://datadashboard.fda.gov/ora/cd/recalls.htm[+++Food and Drug Administration (FDA) recall dataset+++] and strip it down to the part we care about. The FDA recall dataset is a wonderful "real-world" example of nested datasets often found in JSON data, which can be hard to process directly in DataFrames.
+For messy textual data, which is a common occurrence with JSON, you can save yourself some time by loading the data using bag's `read_text` function. The `read_text` function defaults to splitting up the records by line; however, many formats cannot be processed by line. To get each whole file in a whole record, rather than split up, you can set the `linedelimiter` parameter to one not found. Often REST APIs will return the results as a subcomponent, so in <<preprocess_json>>, we load the https://datadashboard.fda.gov/ora/cd/recalls.htm[+++Food and Drug Administration (FDA) recall dataset+++] and strip it down to the part we care about. The FDA recall dataset is a wonderful real-world example of nested datasets often found in JSON data, which can be hard to process directly in DataFrames.
 
 [[preprocess_json]]
-.Pre-process JSON
+.Preprocessing JSON
 ====
 [source, python]
 ----
@@ -98,10 +98,10 @@ include::./examples/dask/Dask-Collections.py[tags=preprocess_json]
 ----
 ====
 
-If you need to load data from a non-supported source (like a custom storage system) or a binary format, like protocol buffers or Flexible Image Transport System, you'll need to use lower-level APIs. For binary files that are still stored in a fsspec supported file system like S3, you can try the pattern in <<custom_load>>.
+If you need to load data from an unsupported source (like a custom storage system) or a binary format (like protocol buffers or Flexible Image Transport System), you'll need to use lower-level APIs. For binary files that are still stored in an FSSPEC-supported filesystem like S3, you can try the pattern in <<custom_load>>.
 
 [[custom_load]]
-.Load PDFS from an fsspec supported filesystem
+.Loading PDFS from an FSSPEC-supported filesystem
 ====
 [source, python]
 ----
@@ -109,10 +109,10 @@ include::./examples/dask/Dask-Collections.py[tags=custom_load]
 ----
 ====
 
-If you are not using a fsspec supported filesystem, you can still load the data as illustrated in <<custom_load_nonfs>>.
+If you are not using a FSSPEC-supported filesystem, you can still load the data as illustrated in <<custom_load_nonfs>>.
 
 [[custom_load_nonfs]]
-.Load data using a purely custom function
+.Loading data using a purely custom function
 ====
 [source, python]
 ----
@@ -122,13 +122,13 @@ include::./examples/dask/Dask-Collections.py[tags=custom_load_nonfs]
 
 [NOTE]
 ====
-Loading data in this fashion requires that each file be able to fit inside an worker/executor. If that is not the case, things get much more complicated. Implementing splittable data readers is beyond the scope of this book, but you can take a look at Dask's internal IO libraries (text is the easiest) to get some inspiration.
+Loading data in this fashion requires that each file be able to fit inside a worker/executor. If that is not the case, things get much more complicated. Implementing splittable data readers is beyond the scope of this book, but you can take a look at Dask's internal IO libraries (text is the easiest) to get some inspiration.
 ====
 
 Sometimes with nested directory structures, creating the list of files can take a long time. In that case, it's worthwhile to parallelize the listing of files as well. There are a number of different techniques to parallelize file listing, but for simplicity, we show parallel recursive listing in <<parallel_list>>.
 
 [[parallel_list]]
-.List the files in parallel (recursively)
+.Listing the files in parallel (recursively)
 ====
 [source, python]
 ----
@@ -141,10 +141,10 @@ include::./examples/dask/Dask-Collections.py[tags=parallel_list]
 You don't always have to do the directory listing yourself. It can be worthwhile to check and see if there is a metastore, like hive or iceberg, which can give you the list of files without all of these slow API calls.
 ====
 
-This approach has some downsides; namely, all the file names come back to a single point, but this is rarely an issue. However, if even the list of your files is too big to fit in memory, you'll want to try recursive algorithm for directory discovery follow by an iterative algorithm for file listing that keeps the names of the files in the bag.footnote:[Iterative algorithms involve using construct like "while" or "for" instead of recursive calls to the same function.] The code becomes a bit more complex, as shown in <<parallel_list_large>>, so it is rarely used.
+This approach has some downsides: namely, all the file names come back to a single point, but this is rarely an issue. However, if even the list of your files is too big to fit in memory, you'll want to try a recursive algorithm for directory discovery, followed by an iterative algorithm for file listing that keeps the names of the files in the bag.footnote:[Iterative algorithms involve using constructs like `while` or `for` instead of recursive calls to the same function.] The code becomes a bit more complex, as shown in <<parallel_list_large>>, so it is rarely used.
 
 [[parallel_list_large]]
-.List the files in parallel without collecting to the driver
+.Listing the files in parallel without collecting to the driver
 ====
 [source, python]
 ----
@@ -152,17 +152,17 @@ include::./examples/dask/Dask-Collections.py[tags=parallel_list_large]
 ----
 ====
 
-A fully iterative algorithm with fsspec would not be any faster than the naive listing since fsspec does not support querying for "just" directories.
+A fully iterative algorithm with FSSPEC would not be any faster than the naive listing, since FSSPEC does not support querying for just directories.
 
 ==== Limitations
 
-Dask bags are not well suited to most reduction or shuffling operations as its core `reduction` function reduces results down to one partition, requiring that all of the data fit on a single machine. You can reasonably use aggregations which are pure constant space, such as mean, min, and max. However, most of the time, you find yourself trying to aggregate your data, you should consider transforming your bag into a DataFrame with `bag.Bag.to_dataframe`.
+Dask bags are not well suited to most reduction or shuffling operations, as their core `reduction` function reduces results down to one partition, requiring that all of the data fit on a single machine. You can reasonably use aggregations that are purely constant space, such as mean, min, and max. However, most of the time you find yourself trying to aggregate your data, you should consider transforming your bag into a DataFrame with `bag.Bag.to_dataframe`.
 
 [TIP]
 ====
-All three Dask data types (bag, array, and dataframe) have methods for being converted to other data types. However, some conversions require special attention. For example, when converting a Dask dataframe to a Dask array, the resulting array will have `NaN` if you look at the shape it generates. This is because Dask dataframe does not keep track of the number of rows in each dataframe chunk.
+All three Dask data types (bag, array, and DataFrame) have methods for being converted to other data types. However, some conversions require special attention. For example, when converting a Dask DataFrame to a Dask array, the resulting array will have `NaN` if you look at the shape it generates. This is because Dask DataFrame does not keep track of the number of rows in each DataFrame chunk.
 ====
 
 === Conclusion
 
-While Dask DataFrames get the most use, Dask arrays and bags have their place. You can use Dask arrays to speed up and parallelize large multi-dimensional array processes. Dask bags allow you to work with data that doesn't fit nicely into a DataFrame, like PDFs or multidimensional nested data. These collections get much less focus and active development than Dask DataFrames, but may still have their place in your workflows. In the next chapter you will see how you can add state to your Dask programs including with operations on Dask's collections.
+While Dask DataFrames get the most use, Dask arrays and bags have their place. You can use Dask arrays to speed up and parallelize large multidimensional array processes. Dask bags allow you to work with data that doesn't fit nicely into a DataFrame, like PDFs or multidimensional nested data. These collections get much less focus and active development than Dask DataFrames, but may still have their place in your workflows. In the next chapter, you will see how you can add state to your Dask programs, including with operations on Dask's collections.

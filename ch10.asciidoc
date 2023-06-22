@@ -127,7 +127,7 @@ If you move from a cluster with GPU resources to a cluster without, this code wi
 
 ==== Decorators (Including Numba)
 
-Numba is a popular high-performance JIT (just in time) compilation library for Python, which has also has support for various accelerators. Most JIT code, and many decorator functions, are generally not directly serializable, so attempting to directly numba it with dask.submit does not work <<ex_dask_submit_numba_incorrect>>. Instead, the correct way is to wrap the function, as shown in <<ex_dask_submit_numba_correct>>.
+Numba is a popular high-performance JIT (just in time) compilation library for Python, which has also has support for various accelerators. Most JIT code, and many decorator functions, are generally not directly serializable, so attempting to directly numba it with Dask.submit does not work <<ex_dask_submit_numba_incorrect>>. Instead, the correct way is to wrap the function, as shown in <<ex_dask_submit_numba_correct>>.
 
 [[ex_dask_submit_numba_incorrect]]
 .Decorator difficulty
@@ -199,7 +199,7 @@ Allocating memory on GPUs tend to be slow, so many libraries hold on to these re
 
 CPU Fallback refers to attempting to use an accelerator, like GPU or TPU, and "falling-back" to the "regular" CPU code path if the accelerator is unavailable. In most cases, this is a good design pattern to follow, as accelerators (like GPUs) can be expensive and may not always be available. However, in some cases, the performance difference between CPU and GPU performance is so large, that falling back to CPU is unlikely to be able to succeed in a practical amount of time – this occurs most often with deep learning algorithms.
 
-Object-oriented and duck-typing are somewhat well suited to this, since, provided that two classes implement the same parts of the interface you are using, you can swap them around. However, much like swapping in Dask DataFrames for Pandas DataFrames, it is imperfect, especially when it comes to performance.
+Object-oriented and duck-typing are somewhat well suited to this, since, provided that two classes implement the same parts of the interface you are using, you can swap them around. However, much like swapping in Dask DataFrames for pandas DataFrames, it is imperfect, especially when it comes to performance.
 
 [WARNING]
 ====
