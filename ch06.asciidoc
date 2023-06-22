@@ -1,13 +1,13 @@
 [[ch06]]
 == Advanced Task Scheduling: Futures and Friends
 
-You can think of Dask's computational flow follows these four main logical steps, which can happen concurrently and recursively for each task:
+Dask's computational flow follows these four main logical steps, which can happen concurrently and recursively for each task:
 . Collect and read the input data.
-. Define and build the compute graph that represents the set of computations that needs to be performed on that data.
-. Run the computation, which is what happens when you run `.compute()`.
+. Define and build the compute graph representing the set of computations that needs to be performed on the data.
+. Run the computation (this happens when you run `.compute()`).
 . Pass the result as data to the next step.
 
-Now we introduce more ways to control this flow with Futures. So far in Dask, you have mostly seen lazy operations, where Dask doesn't do the work until something "forces" the computation. This pattern has a number of benefits, including allowing Dask's optimizer to combine steps when it makes sense. However, not all tasks are well suited to lazy evaluation. One common pattern not well suited to lazy evaluation is "fire-and-forget", where we call a function for its side effectfootnote:[Like writing a file to disk or updating a database record.] and necessarily care about the output. Trying to express this with lazy evaluation (e.g., dask.delayed) results in unnecessary blocking to force computation. When lazy evaluation is not what you need, you can explore Dask's futures. Futures can be used for much more than just "fire-and-forget" and you can return results from them. This chapter will explore a number of common use cases for futures.
+Now we introduce more ways to control this flow with futures. So far, you have mostly seen lazy operations in Dask, where Dask doesn't do the work until something "forces" the computation. This pattern has a number of benefits, including allowing Dask's optimizer to combine steps when it makes sense. However, not all tasks are well suited to lazy evaluation. One common pattern not well suited to lazy evaluation is "fire-and-forget", where we call a function for its side effectfootnote:[Like writing a file to disk or updating a database record.] and necessarily care about the output. Trying to express this with lazy evaluation (e.g., dask.delayed) results in unnecessary blocking to force computation. When lazy evaluation is not what you need, you can explore Dask's futures. Futures can be used for much more than just "fire-and-forget" and you can return results from them. This chapter will explore a number of common use cases for futures.
 
 [NOTE]
 ====
@@ -18,7 +18,7 @@ Dask futures are a part of Dask's distributed client library, so you will get st
 
 [TIP]
 ====
-Despite the name, you can use Dask's distributed client locally. Refer to the Distributed section in Chapter 3 for different local deployment types.
+Despite the name, you can use Dask's distributed client locally. Refer to <<distributed_ch03_1687438078727>> for different local deployment types.
 ====
 
 === Lazy and Eager Evaluation Revisited

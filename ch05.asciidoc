@@ -160,7 +160,7 @@ Dask bags are not well suited to most reduction or shuffling operations as its c
 
 [TIP]
 ====
-There are methods within all three Dask data types: Bag, Array, and Dataframe, to convert between them. However, some conversions require special attention. For example, when converting a Dask DataFrame to Dask Array, the resulting Dask Array will have `NaN` if you look at the shape it generates. This is because Dask DataFrame does not keep track of the number of rows in each DataFrame chunk.
+All three Dask data types (bag, array, and dataframe) have methods for being converted to other data types. However, some conversions require special attention. For example, when converting a Dask dataframe to a Dask array, the resulting array will have `NaN` if you look at the shape it generates. This is because Dask dataframe does not keep track of the number of rows in each dataframe chunk.
 ====
 
 === Conclusion
