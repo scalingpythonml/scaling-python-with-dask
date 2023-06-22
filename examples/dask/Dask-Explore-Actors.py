@@ -164,7 +164,7 @@ class BankAccount:
 
     def deposit(self, amount):
         if amount < 0:
-            raise Exception("Can not deposit negative amount")
+            raise Exception("Cannot deposit negative amount")
         self._balance += amount
         return self._balance
 
@@ -229,7 +229,7 @@ class SketchyBank:
 
     def deposit(self, key, amount):
         if amount < 0:
-            raise Exception("Can not deposit negative amount")
+            raise Exception("Cannot deposit negative amount")
         if key not in self._accounts:
             raise Exception(f"Could not find account {key}")
         self._accounts[key] += amount

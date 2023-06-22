@@ -22,14 +22,14 @@ class Account:
 
     def deposit(self, amount: float) -> float:
         if amount < 0:
-            raise Exception("Can not deposit negative amount")
+            raise Exception("Cannot deposit negative amount")
         self.balance = self.balance + amount
         self.storestate()
         return self.balance
 
     def withdraw(self, amount: float) -> float:
         if amount < 0:
-            raise Exception("Can not withdraw negative amount")
+            raise Exception("Cannot withdraw negative amount")
         balance = self.balance - amount
         if balance < self.minimal:
             raise Exception("Withdraw is not supported by current balance")

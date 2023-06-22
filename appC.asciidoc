@@ -21,7 +21,7 @@ You likely have your own standard debugging techniques for working with Python c
 * Be careful about referencing variables from outside of a function which can result in unintended scope capture serializing more data and objects than intended.
 * Sample data and try to reproduce locally (local debugging is often easier).
 * Use https://mypy-lang.org/[+++mypy+++] for type checking, while we haven't included types in many of our examples for space, in production code liberal type usage can catch tricky errors.
-* Having difficulty tracking down where a task is getting scheduled? Dask Actors can't move so use an actor to keep all invocations on one machine for debugging.
+* Having difficulty tracking down where a task is getting scheduled? Dask actors can't move so use an actor to keep all invocations on one machine for debugging.
 * When the issues do appear, regardless of parallelization, debugging your code in local single-threaded mode so it can be easier to understand what's going on.
 
 With these tips you will (often) be able to find yourself in a familiar enough environment to use your traditional debugging tools, but some types of errors are a little bit more complicated.

@@ -112,32 +112,33 @@ include::./examples/dask/Dask-Explore-Actors.py[tags=make_sketchy_bank]
 
 ==== Limitations
 
-As previously mentioned, Dask Actors are not resilient to machine or process failure. This is a design decision in Dask and is not true for all actor systems. Many, but not all, actor systems offer different options for the persistence and recovery of actors during failure. For example, Ray has the concept of recoverable actors (managed automatically inside of workflows or manually).
+As previously mentioned, Dask actors are not resilient to machine or process failure. This is a design decision in Dask and is not true for all actor systems. Many, but not all, actor systems offer different options for the persistence and recovery of actors during failure. For example, Ray has the concept of recoverable actors (managed automatically inside of workflows or manually).
 
 [WARNING]
 ====
-Calls to `dask.delayed` functions may be retried on failure, and if they call functions on actors those function calls will then be duplicated. If you can not have a function replayed then you need to ensure it is only called from inside other actors.
+Calls to `dask.delayed` functions may be retried on failure, and if they call functions on actors, those function calls will then be duplicated. If you cannot have a function replayed, then you need to ensure it is only called from inside other actors.
 ====
 
-Dask's Actor model is less full-featured than Ray's actor model, much like Ray's data frame is less full-featured than Dask's. You may wish to consider running Dask on Ray to get the best of both worlds. While Holden is biased, she suggests you check out her other book "Scaling Python with Ray" if you are interested in Ray.
+Dask's actor model is less full-featured than Ray's actor model, much like Ray's DataFrame is less full-featured than Dask's. You may wish to consider running Dask on Ray to get the best of both worlds. While Holden is biased, she suggests you check out her book _Scaling Python with Ray_ if you are interested in Ray.
 
 === When to Use Dask Actors
 
-A common problem in the industry is not realizing when our cool new tool is not the right tool for the job. As the saying goes "when you have a hammer the whole world looks like a nail." _You likely do not need actors and should stick with tasks if you are not mutating state._ It is important for you to remember that there are other options for handling state, as shown in the table below:
+A common problem in the industry is not realizing when our cool new tool is not the right tool for the job. As the saying goes, "When you have a hammer, the whole world looks like a nail." _You likely do not need actors and should stick with tasks if you are not mutating state._ It is important for you to remember that there are other options for handling state, as shown in <<table_ch07_1687457980057>>.
 
+[[table_ch07_1687457980057]]
 .Comparison of techniques for managing mutable state
 |===
 | |Local state (e.g., driver) |Dask actors |External distributed state (e.g., Zookeeper or Ray, or AKKA)
 
-|*Scaleable* |No, all state must fit on single machine |State within each actor must fit on a machine, but actors are spread out. |Yesfootnote:[Ray actors still require that the state within an actor must fit on a single machine. Ray has additional tools to "shard" or create "pools" of actors.]
-|*Resilient* |semi but no increase in resilience cost (e.g. loss of driver is already catastrophic) |No, loss of any worker with an actor becomes catastrophic. |Yes, loss of entire cluster can be recovered from
-|*Performance overhead* |RPC to driver |Same as dask.delayed |RPC to external system + external systems overhead
+|*Scalability* |No, all state must fit on single machine. |State within each actor must fit on a machine, but actors are spread out. |Yesfootnote:[Ray actors still require that the state within an actor must fit on a single machine. Ray has additional tools to shard or create pools of actors.]
+|*Resilience* |Medium, but no increase in resilience cost (e.g., loss of driver is already catastrophic). |No, loss of any worker with an actor becomes catastrophic. |Yes, loss of entire cluster can be recovered from.
+|*Performance overhead* |RPC to driver |Same as `dask.delayed` |RPC to external system + external systems overhead
 |*Code complexity* |Low |Medium |High (new library to learn and integrate), extra logic for avoiding duplicate execution
 |*Deployment complexity* |Low |Low |High (new system to maintain)
 |===
 
-As with most things in life, picking the right technique is a compromise specific to the problem you are trying to solve. We believe that for many situations one of the two local (e.g. driver) state or using Ray Actors in conjunction with Dask for its analytics powers can handle most cases where you need mutable state.
+As with most things in life, picking the right technique is a compromise specific to the problem you are trying to solve. We believe that one of the two local (e.g., driver) states, or using Ray actors in conjunction with Dask for its analytics powers, can handle most cases where you need mutable state.
 
 === Conclusion
 
-In this chapter you have learned the basics of how the actor model works as well as how Dask implements it. You've also learned some alternatives to dealing with state in a distributed system, and how to choose between them. Dask actors are a relatively new part of Dask, and do not have the same resilience properties as delayed functions. Failure of a worker containing an actor can not be recovered from. Many other actor systems offer some ability to recover from failures, and if you find yourself depending heavily on actors you may wish to explore alternatives.
+In this chapter you have learned the basics of how the actor model works as well as how Dask implements it. You've also learned some alternatives to dealing with state in a distributed system, and how to choose between them. Dask actors are a relatively new part of Dask, and do not have the same resilience properties as delayed functions. The failure of a worker containing an actor cannot be recovered from. Many other actor systems offer some ability to recover from failures, and if you find yourself depending heavily on actors, you may wish to explore alternatives.
