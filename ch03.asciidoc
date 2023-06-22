@@ -3,6 +3,15 @@
 
 Now that you've run your first few tasks with Dask, it's time to learn a little bit about what's happening behind the scenes. Depending on if you are using Dask locally or in a distributed fashion, the behavior can be a little different. While Dask does a good job of abstracting away many of the details of running on multiple threads or servers, having a solid grasp of how Dask is working will help you better decide both how and when to use it.
 
+To be familiar with Dask, you need to understand:
+
+* The deployment framework that Dask is able to run on, and its strengths and weaknesses
+* The types of data that Dask is able to read, and how you can interact with the data types in Dask
+* The computational pattern of Dask, and how to turn your ideas into Dask code
+* How to monitor and troubleshoot
+
+In this chapter, we will introduce each of these concepts, and we will expand upon them in the rest of the book.
+
 === Execution Backends
 
 Dask has many different execution backends, but I find it easiest to think about them in two groups, local and distributed. With local backends, you are limited in scale to what a single computer can handle. Local backends also have advantages like avoiding network overhead, simpler library management, and dollar cost.footnote:[Unless you work for a cloud provider and computers are close to free. If you do work for a cloud provider, please send us cloud credits.] Dask's distributed backend has many options for deployment, from cluster managers like Kubernetes to job queue&ndash;like systems.
@@ -51,6 +60,7 @@ include::./examples/dask/Dask-Ch3-Concepts.py[tags=dask_use_forkserver]
 
 Dask's local backends are designed for performance rather than for testing that your code will work on a distributed scheduler. To test that your code will run remotely, you should use Dask's distributed scheduler with a LocalCluster instead.
 
+[[distributed_ch03_1687438078727]]
 ==== Distributed (Dask Client and Scheduler)
 
 Dask has one distributed scheduler backend, and it talks to many different types of clusters, including a LocalCluster. Each type of cluster is supported in its own library, which schedules the schedulerfootnote:[Say that five times fast.] that the Dask client then connects to. Dask distributed deployments are more similar than the different local backends.
