@@ -42,7 +42,7 @@ except Exception as e:
     print(e)
 # - CompanyNumber
 #  ValueError("invalid literal for int() with base 10: 'SC312912'")
-#end::ex_load_uk_gender_pay_gap_infered
+#end::ex_load_uk_gender_pay_gap_infered[]
 
 
 # In[ ]:
