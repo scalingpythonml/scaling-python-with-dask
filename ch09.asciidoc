@@ -44,17 +44,6 @@ We'll start by looking at the types of clusters, which goes with the deployment 
 
 If you are considering moving your analytic engineering job, you probably have a system that’s provisioned to you by your organization. Dask is supported in many commonly used deployment and development environments, with some allowing more flexibility in scaling, dependency management, and support of heterogeneous worker types. We have used Dask on academic environments, commodity cloud, and directly over VMs/containers; we've detailed the pros and cons, and some well-used and supported environments, in <<appA>>.
 
-Depending on the cluster, your workers might be more transient than other types, and their IP addresses might not be static when they get spun up again. You should ensure worker/scheduler service discovery methods are put in place for your own cluster setup. It could be as simple as a shared file that they read from, or a more resilient broker. If no additional arguments are given, Dask workers would use the `DASK_SCHEDULER_ADDRESS` environment variable to connect.
-
-[[ex_yarn_deployment_ch09_1685536092648]]
-.Deploying Dask on Yarn with Dask-Yarn and skein
-====
-[source, python]
-----
-include::./examples/dask/Dask-Ch10_porting.py[tags=ex_yarn_deployment]
-----
-====
-
 For high-performance computing deployments using job queuing systems such as PBS, Slurm, MOAB, SGE, LSF, and HTCondor, you should use Dask-jobqueue, as shown in <<ex_slurm_deployment_ch09_1685536141262>>.
 
 [[ex_slurm_deployment_ch09_1685536141262]]
@@ -65,6 +54,8 @@ For high-performance computing deployments using job queuing systems such as PBS
 include::./examples/dask/Dask-Ch10_porting.py[tags=ex_slurm_deployment]
 ----
 ====
+
+Additional examples of YARN deployments and in-depth discussion are detailed in chapter 12.
 
 ===== Data sources
 
