@@ -192,7 +192,7 @@ Note that since Dask uses a centralized scheduler, the client is communicating w
 
 Dask also has a collection of data structures to simplify task coordination. These data structures include queues, locks/semaphores, events, and publish/subscriber topics. These distributed data structures aim to behave similarly to their local counterparts, but it's important to remember that the distributed nature of Dask adds overhead for coordination and remote procedure calls.
 
-For example, Dask's distributed variable is called `Variable`, which implements `get`, `set`, and `delete`. The `get` function takes a `timeout`, which should remind you that these operations are distributed in nature and therefore slower than updating a local variable. As with multithreaded global variables, race conditions can occur when different workers update the same local variable.
+For example, Dask's distributed variable is called `Variable`, which implements `get`, `set`, and `delete`. The `get` function takes a `timeout`, which should remind you that these operations are distributed in nature and therefore slower than updating a local variable. As with multi-threaded global variables, race conditions can occur when different workers update the same local variable.
 
 [TIP]
 ====

@@ -18,17 +18,17 @@ Dask has many different execution backends, but I find it easiest to think about
 
 ==== Local Backends
 
-Dask's three local backends are single-process, multithreaded, and multiprocess. The single-process backend has no parallelism and is mostly useful for validating that a problem is caused by concurrency. Multithreaded and multiprocess backends are ideal for problems where the data is small or the cost of copying it would be higher than computation time.
+Dask's three local backends are single-process, multi-threaded, and multi-process. The single-process backend has no parallelism and is mostly useful for validating that a problem is caused by concurrency. Multi-threaded and multi-process backends are ideal for problems where the data is small or the cost of copying it would be higher than computation time.
 
 [TIP]
 ====
 If you don't configure a specific local backend, Dask will pick the backend based on the library you are working with.
 ====
 
-The local multithreaded scheduler is able to avoid having to serialize data and interprocess communication costs. The multithreaded backend is suited for tasks where the majority of the computation is happening in native code, outside of Python. This is the case for many numeric libraries, such as pandas and NumPy. If that is the case for you, you can configure Dask to use multithreading, as shown in <<configure_dask_multithreading_ch03_1686241430957>>.
+The local multi-threaded scheduler is able to avoid having to serialize data and interprocess communication costs. The multi-threaded backend is suited for tasks where the majority of the computation is happening in native code, outside of Python. This is the case for many numeric libraries, such as pandas and NumPy. If that is the case for you, you can configure Dask to use multi-threading, as shown in <<configure_dask_multithreading_ch03_1686241430957>>.
 
 [[configure_dask_multithreading_ch03_1686241430957]]
-.Configuring Dask to use multithreading
+.Configuring Dask to use multi-threading
 ====
 [source, python]
 ----
@@ -36,7 +36,7 @@ include::./examples/dask/Dask-Ch3-Concepts.py[tags=threads]
 ----
 ====
 
-The local multiprocess backend (see <<configuring_dask_multiprocess_ch03_1686241509022>>) has some additional overhead over multithreaded, although it can be decreased on Unix & Unix-like systems.footnote:[Including OS X and Linux.] The multiprocess backend is able to avoid Python's global interpreter lock by launching separate processes. Launching a new process is more expensive than a new thread, and Dask needs to serialize data that moves between processes.footnote:[This also involves having to store a second copy of any object that is in the driver thread and then used in a worker. Since Dask shards its collections, this doesn't generally blow up as quickly as with normal multiprocessing.]
+The local multi-process backend (see <<configuring_dask_multiprocess_ch03_1686241509022>>) has some additional overhead over multi-threaded, although it can be decreased on Unix & Unix-like systems.footnote:[Including OS X and Linux.] The multi-process backend is able to avoid Python's global interpreter lock by launching separate processes. Launching a new process is more expensive than a new thread, and Dask needs to serialize data that moves between processes.footnote:[This also involves having to store a second copy of any object that is in the driver thread and then used in a worker. Since Dask shards its collections, this doesn't generally blow up as quickly as with normal multi-processing.]
 
 [[configuring_dask_multiprocess_ch03_1686241509022]]
 .Configuring Dask to use the multiprocess backend
@@ -50,7 +50,7 @@ include::./examples/dask/Dask-Ch3-Concepts.py[tags=process]
 If you are running on a Unix system, you can use the _forkserver_ (see <<configuring_dask_forkserver_ch03_1686241608423>>), which will https://docs.python.org/3/library/multiprocessing.html#contexts-and-start-methods[reduce the overhead of starting each Python interpreter]. Using the forkserver will not reduce the communication overhead.
 
 [[configuring_dask_forkserver_ch03_1686241608423]]
-.Configuring Dask to use the multiprocess forkserver
+.Configuring Dask to use the multi-process forkserver
 ====
 [source, python]
 ----

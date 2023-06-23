@@ -14,7 +14,7 @@ Dask is unique in the distributed computing ecosystem, because it integrates pop
 Dask simplifies scaling analytics, ML, and other  code written in Python,footnote:[Not _all_ Python code, however; for example, Dask would be a bad choice for scaling a web server (very stateful from the web socket needs).] allowing you to handle larger and more complex data and problems.
 Dask aims to fill the space where your existing tools, like pandas DataFrames, or your scikit-learn machine learning pipelines start to become too slow (or do not succeed).
 While the term "big data" is perhaps less in vogue now than a few years ago, the data size of the problems has not gotten smaller, and the complexity of the computation and models has not gotten simpler.
-Dask allows you to primarily use the existing interfaces that you are used to (such as pandas and multiprocessing) while going beyond the scale of a single core or even a single machine.
+Dask allows you to primarily use the existing interfaces that you are used to (such as pandas and multi-processing) while going beyond the scale of a single core or even a single machine.
 
 
 [NOTE]
@@ -25,7 +25,7 @@ On the other hand, if all your data fits in memory on a laptop, and you can fini
 
 === Where Does Dask Fit in the Ecosystem?
 
-Dask provides scalability to multiple, traditionally distinct tools. It is most often used to scale Python data libraries like pandas and NumPy. Dask extends existing tools for scaling, such as multiprocessing, allowing them to exceed their current limits of single machines to multicore and multimachine. The following provides a quick look at the ecosystem evolution:
+Dask provides scalability to multiple, traditionally distinct tools. It is most often used to scale Python data libraries like pandas and NumPy. Dask extends existing tools for scaling, such as multi-processing, allowing them to exceed their current limits of single machines to multi-core and multi-machine. The following provides a quick look at the ecosystem evolution:
 
 Early "big data" query:: Apache Hadoop and Apache Hive
 
@@ -39,14 +39,13 @@ Scalable data and ML tools:: Hadoop, Hive, Flink, Spark, TensorFlow, Koalas, Ray
 
 Compute resources:: Apache Hadoop Yarn, Kubernetes, Amazon Web Services, Slurm Workload Manager, etc.
 
-We say a problem is "compute-bound" if the limiting factor is not the amount of data, but rather the work we are doing on the data. Memory-bound problems are problems where the computation is not the limiting factor; rather the ability to store all of the data in memory is the limiting factor. Some problems can exhibit both compute- and memory-bound problems, as is often the case for large deep-learning problems.
+We say a problem is _compute-bound_ if the limiting factor is not the amount of data, but rather the work we are doing on the data. Memory-bound problems are problems where the computation is not the limiting factor; rather the ability to store all of the data in memory is the limiting factor. Some problems can exhibit both compute- and memory-bound problems, as is often the case for large deep-learning problems.
 
-Multicore (think multithreading) processing can help with compute-bound problems (up to the limit of the number of cores in a machine). Generally multicore processing is unable to help with memory-bound problems, as all Central Processing Units (CPUs) have similar access to the memory.footnote:[With the exception of non-uniform memory access (NUMA) systems.]
+Multi-core (think multi-threading) processing can help with compute-bound problems (up to the limit of the number of cores in a machine). Generally multi-core processing is unable to help with memory-bound problems, as all Central Processing Units (CPUs) have similar access to the memory.footnote:[With the exception of non-uniform memory access (NUMA) systems.]
 
 Accelerated processing, like specialized instruction sets or specialized hardware like Tensor Processing Units or Graphics Processing Units, is generally only useful for compute bound problems. Sometimes using accelerated processing can introduce memory bounding problems, as the amount of memory available to the accelerated computation can be smaller than the "main" system memory.
 
-
-Multi-Machine processing is important both of these classes of problems, namely "compute" bound and "memory" bound problems. Since the number of cores you can get in a machine (affordable) are limited, even if a problem is "only" compute bound at certain scales you will need to consider multi-machine processing. More commonly, memory bound problems are a good fit for multi-machine scaling as Dask can often split up the data between the different machines.
+Multi-machine processing is important both of these classes of problems, namely "compute" bound and "memory" bound problems. Since the number of cores you can get in a machine (affordable) are limited, even if a problem is "only" compute bound at certain scales you will need to consider multi-machine processing. More commonly, memory bound problems are a good fit for multi-machine scaling as Dask can often split up the data between the different machines.
 
 
 Dask has both multi-core and multi-machine scaling, allowing you to scale your Python code as you best see fit.
@@ -78,7 +77,7 @@ Dask can be extended to support data types besides NumPy and pandas, and this is
 
 ==== Parallel to Distributed Python
 
-Parallel Python encompasses a wide variety of tools ranging from multiprocessing to Celery.footnote:[Celery, often used for background job management, is an asynchronous task queue that can also split up and distribute work. But it is at a lower level than Dask and does not have the same high-level conveniences as Dask.] Dask gives you the ability to specify an arbitrary graph of dependencies and execute them in parallel. Under the hood, this execution can be either backed by a single machine (with threads or processes) or distributed across multiple workers.
+Parallel Python encompasses a wide variety of tools ranging from multi-processing to Celery.footnote:[Celery, often used for background job management, is an asynchronous task queue that can also split up and distribute work. But it is at a lower level than Dask and does not have the same high-level conveniences as Dask.] Dask gives you the ability to specify an arbitrary graph of dependencies and execute them in parallel. Under the hood, this execution can be either backed by a single machine (with threads or processes) or distributed across multiple workers.
 
 [NOTE]
 ====
@@ -98,7 +97,7 @@ Dask itself is not a library for accelerated Python, but you can use it in conju
 
 ===== SQL engines
 
-Dask itself does not have a SQL engine; however, link:$$https://fugue-tutorials.readthedocs.io/tutorials/fugue_sql/index.html$$[FugueSQL], link:$$https://dask-sql.readthedocs.io/en/latest/$$[dask-sql], and link:$$https://github.com/BlazingDB/blazingsql$$[BlazingSQL] use Dask to provide a distributed SQL engine.footnote:[Blazing SQL is no longer maintained, though its concepts are interesting and may find life in another project.] Dask-sql uses the popular Apache Calcite project, which powers many other SQL engines. BlazingSQL extends Dask DataFrames to support GPU operations. cuDF DataFrames have a slightly different representation. Apache Arrow makes it straightforward to convert a Dask DataFrame to cuDF and vice versa.
+Dask itself does not have a SQL engine; however, link:$$https://fugue-tutorials.readthedocs.io/tutorials/fugue_sql/index.html$$[FugueSQL], link:$$https://dask-sql.readthedocs.io/en/latest/$$[Dask-SQL], and link:$$https://github.com/BlazingDB/blazingsql$$[BlazingSQL] use Dask to provide a distributed SQL engine.footnote:[Blazing SQL is no longer maintained, though its concepts are interesting and may find life in another project.] Dask-sql uses the popular Apache Calcite project, which powers many other SQL engines. BlazingSQL extends Dask DataFrames to support GPU operations. cuDF DataFrames have a slightly different representation. Apache Arrow makes it straightforward to convert a Dask DataFrame to cuDF and vice versa.
 
 [TIP]
 ====

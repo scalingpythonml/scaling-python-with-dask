@@ -897,7 +897,7 @@ def rowwise_operation(row, arg *):
 
 
 def partition_operation(df):
-    # partition wise logic
+    # partition-wise logic
     result = df[col1].apply(rowwise_operation)
     return result
 

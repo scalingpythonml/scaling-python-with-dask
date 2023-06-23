@@ -68,7 +68,7 @@ include::./examples/dask/DaskGPUs.py[tags=dask_local_gpu]
 For homogenous clusters it may seem tempting to avoid labeling these resources, but unless you will always have a 1:1 mapping of worker process/thread to the accelerator (or the accelerator can be used by all workers at the same time), it is still beneficial to label these resources. This is important for non-shareable (or difficult-to-share) resources like GPUs/TPUs since Dask might schedule two tasks trying to access the GPU. But for shareable resources like NVMe drives, or TCP/IP offloading, if it's present on every node in the cluster and will always be, you can probably skip it.
 ====
 
-It's important to note that Dask does not manage custom resources (including GPUs). If another process uses all of the GPU cores without asking Dask, there is no protection for this. In some ways, this is reminiscent of early computing, where we had "cooperative" multitasking; we depend on our neighbors being well-behaved.
+It's important to note that Dask does not manage custom resources (including GPUs). If another process uses all of the GPU cores without asking Dask, there is no protection for this. In some ways, this is reminiscent of early computing, where we had "cooperative" multi-tasking; we depend on our neighbors being well-behaved.
 
 [WARNING]
 ====

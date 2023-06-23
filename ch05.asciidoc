@@ -18,7 +18,7 @@ Some common use cases for Dask arrays include:
 
 * Large-scale imaging and astronomy data
 * Weather data
-* Multidimensional data
+* Multi-dimensional data
 
 Similar to Dask DataFrames and pandas, if you wouldn't use an nparray for the problem at a smaller scale, a Dask array may not be the right solution.
 
@@ -165,4 +165,4 @@ All three Dask data types (bag, array, and DataFrame) have methods for being con
 
 === Conclusion
 
-While Dask DataFrames get the most use, Dask arrays and bags have their place. You can use Dask arrays to speed up and parallelize large multidimensional array processes. Dask bags allow you to work with data that doesn't fit nicely into a DataFrame, like PDFs or multidimensional nested data. These collections get much less focus and active development than Dask DataFrames, but may still have their place in your workflows. In the next chapter, you will see how you can add state to your Dask programs, including with operations on Dask's collections.
+While Dask DataFrames get the most use, Dask arrays and bags have their place. You can use Dask arrays to speed up and parallelize large multi-dimensional array processes. Dask bags allow you to work with data that doesn't fit nicely into a DataFrame, like PDFs or multi-dimensional nested data. These collections get much less focus and active development than Dask DataFrames, but may still have their place in your workflows. In the next chapter, you will see how you can add state to your Dask programs, including with operations on Dask's collections.

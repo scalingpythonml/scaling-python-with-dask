@@ -1,33 +1,33 @@
 [[ch12]]
 == Productionizing Dask: Notebooks, Deployment, Tuning, and Monitoring
 
-We have bundled most of the things we believe are going to be critical for you to move from your laptop into production in this chapter. Notebooks and deployments go together, as Dask's Notebook interface greatly simplifies many aspects of using its distributed deployments. While you don't need to use notebooks to access Dask, and in many cases, https://towardsdatascience.com/5-reasons-why-jupyter-notebooks-suck-4dc201e27086[+++notebooks have serious drawbacks+++], for interactive use cases, it's often hard to beat the tradeoffs. Interactive/exploratory work has a way of becoming permanent mission-critical workflows, and we cover the steps necessary to turn exploratory work into production deployments..
+We have bundled most of the things we believe are going to be critical for you to move from your laptop into production in this chapter. Notebooks and deployments go together, as Dask's notebook interface greatly simplifies many aspects of using its distributed deployments. While you don't need to use notebooks to access Dask, and in many cases https://towardsdatascience.com/5-reasons-why-jupyter-notebooks-suck-4dc201e27086[+++notebooks have serious drawbacks+++], for interactive use cases it's often hard to beat the trade-offs. Interactive/exploratory work has a way of becoming permanent mission-critical workflows, and we cover the steps necessary to turn exploratory work into production deployments.
 
-You can deploy Dask in many fashions, from running on top of other distributed compute engines like Ray to deploying on Yarn or a raw collection of machines. Once you've got your Dask job deployed, you'll likely need to tune it so you don't use your entire company’s AWS budget on one job. And then, finally, before you can walk away from a job you'll need to set up monitoring – so you know when it's broken.
+You can deploy Dask in many fashions, from running on top of other distributed compute engines like Ray to deploying on Yarn or a raw collection of machines. Once you've got your Dask job deployed, you'll likely need to tune it so you don't use your company’s entire AWS budget on one job. And then, finally, before you can walk away from a job, you'll need to set up monitoring&mdash;so you know when it's broken.
 
 [NOTE]
 ====
 If you're just here to learn how to use Dask with notebooks, feel free to skip ahead to that section. If you want to learn more about deploying Dask, congratulations and condolences on exceeding the scale you can handle on a single computer.
 ====
 
-In this chapter, we will cover some (but not all) of the deployment options for Dask and their trade-offs. You will learn how to integrate notebooks into the most common deployment environments. You'll see how to use these notebooks to track the progress of your Dask tasks and access the Dask UI when running remotely. We will finish covering some options for deploying your scheduled tasks, so you can take a vacation without lining up someone to press run on your notebook every day.
+In this chapter, we will cover some (but not all) of the deployment options for Dask and their trade-offs. You will learn how to integrate notebooks into the most common deployment environments. You'll see how to use these notebooks to track the progress of your Dask tasks and access the Dask UI when running remotely. We will finish by covering some options for deploying your scheduled tasks, so you can take a vacation without lining up someone to press run on your notebook every day.
 
 [NOTE]
 ====
-This chapter covers Dask's distributed deployments, but if your Dask program is happy in local mode don't feel the need to deploy a cluster just for the sake of it.footnote:[We don't (currently) work for cloud providers so if it fits on your laptop, more power to you. Just remember to use source control. If possible though, putting it on a server can be a useful exercise for capturing the dependencies and ensuring your production enviornment can survive the loss of a laptop.]
+This chapter covers Dask's distributed deployments, but if your Dask program is happy in local mode, don't feel the need to deploy a cluster just for the sake of it.footnote:[We don't (currently) work for cloud providers, so if it fits on your laptop, more power to you. Just remember to use source control. If possible, though, putting it on a server can be a useful exercise for capturing the dependencies and ensuring your production environment can survive the loss of a laptop.]
 ====
 
 === Factors to Consider in a Deployment Option
 
-When you are choosing how to Deploy Dask, there are many different factors to consider, but often the biggest one is what tools your organization is already using. Most of the deployment options map to different types of cluster managers (CMs). CMs manage sets of computers and provide some isolation between users and jobs. Isolation can be incredibly important, for example, if one user eats all of the candy (or CPU) then another user won't have any candy. Most cluster managers provide CPU and memory isolation, and some also isolate other resources (like disks and GPUs). Most clouds (AWS, GCP, etc.) offer both Kubernetes and Yarn cluster managers which can dynamically scale up and down the number of nodes. Dask does not need a CM to run, but without a cluster manager auto-scaling and other important features are not available.
+When you are choosing how to deploy Dask, there are many different factors to consider, but often the biggest one is what tools your organization is already using. Most of the deployment options map to different types of cluster managers (CMs). CMs manage sets of computers and provide some isolation between users and jobs. Isolation can be incredibly important&mdash;for example, if one user eats all of the candy (or CPU), then another user won't have any candy. Most cluster managers provide CPU and memory isolation, and some also isolate other resources (like disks and GPUs). Most clouds (AWS, GCP, etc.) offer both Kubernetes and Yarn cluster managers, which can dynamically scale up and down the number of nodes. Dask does not need a CM to run, but without one, auto-scaling and other important features are not available.
 
 When choosing a deployment mechanism, with or without a CM, some important factors to consider are the ability to scale up and down, multi-tenancy, dependency management, or if it supports heterogeneous workers.
 
-The ability to scale up and down (or dynamic scale), is important in many situations as computers cost money. Heterogeneous or mixed worker types are important for workloads that take advantage of accelerators (like GPUs), so that non-accelerated work can be scheduled on less-expensive nodes. Support for heterogeneous workers goes well with dynamic scaling, as the workers can be replaced,
+The ability to scale up and down (or _dynamic scale_) is important in many situations, as computers cost money. Heterogeneous or mixed worker types are important for workloads that take advantage of accelerators (like GPUs), so that non-accelerated work can be scheduled on less-expensive nodes. Support for heterogeneous workers goes well with dynamic scaling, as the workers can be replaced.
 
 Multi-tenancy can reduce wasted compute resources for systems that cannot scale up and down.
 
-Dependency management allows you to control, at runtime or in advance, what software is on the workers. This is critical in Dask; as if the workers and the client do not have the same libraries, your code may not function. Additionally, some libraries can be slow to install at runtime, so the ability to pre-install or share an environment can be beneficial for some use cases, especially those in deep learning.
+Dependency management allows you to control, at runtime or in advance, what software is on the workers. This is critical in Dask; if the workers and the client do not have the same libraries, your code may not function. Additionally, some libraries can be slow to install at runtime, so the ability to pre-install or share an environment can be beneficial for some use cases, especially those in deep learning.
 
 <<table_deployment_options_ch12>> compares some of the deployment options in Dask.
 
@@ -35,29 +35,29 @@ Dependency management allows you to control, at runtime or in advance, what soft
 .Deployment option comparisons
 [options="header"]
 |===
-|Deployment method |Dynamic scale |Recommended use casefootnote:[This is largely based on our experiences and may be biased to large companies and academic environments. Please feel free to make your own call.] |Dependency Management |Notebook deployed insidefootnote:[There are https://blog.dask.org/2019/09/13/jupyter-on-dask[some workarounds].] |Mixed Worker Types
-|localhost |No |Testing, solo dev, GPU only acceleration |Yes (runtime or pre-install) |Yes |No
+|Deployment method |Dynamic scale |Recommended use casefootnote:[This is largely based on our experiences and may be biased to large companies and academic environments. Please feel free to make your own call.] |Dependency management |Notebook deployed insidefootnote:[There are https://blog.dask.org/2019/09/13/jupyter-on-dask[some workarounds].] |Mixed worker types
+|localhost |No |Testing, solo dev, GPU-only acceleration |Yes (runtime or pre-install) |Yes |No
 |ssh |No |Solo lab, testing, but generally no (k8s instead) |Runtime only |Yes |Yes (manual)
-|Slurm + GW |Yes |Existing high-performance computing/slurm environments |Yes (runtime or pre-install) |Separate project |Varies
-|Dask "Cloud" |Yes |Not recommended, use Dask + K8s or Yarn on cloud provider |Runtime only |Medium effortfootnote:[Some large commodity cloud providers were easier than others. Mika’s own experience ranks Google Cloud to be easiest, Amazon being the middle, and Azure being hardest to work with. Google cloud has a good working guide on using Dask on google cloud with RAPIDS Nvidia architecture, and well-documented workflow. Amazon Web Services similarly has good documentation on running Dask workers on multiple Amazon Elastic Container service (EC2) and guide on attaching S3 buckets. Azure needed some work to make worker provisioning work well, mostly due to their environment and user provisioning workflow being a bit different from AWS or GCP.] |No*
-|Dask + K8s |Yes |Cloud environments, existing K8s deployments, |Runtime or pre-install (but more effort) |Separate project, medium effort |Yes
+|Slurm + GW |Yes |Existing high-performance computing/Slurm environments |Yes (runtime or pre-install) |Separate project |Varies
+|Dask "Cloud" |Yes |Not recommended; use Dask + K8s or Yarn on cloud provider |Runtime only |Medium effortfootnote:[Some large commodity cloud providers were easier than others. Mika’s own experience ranks Google Cloud as easiest, Amazon as moderate, and Azure as hardest to work with. Google Cloud has a good working guide on using Dask with RAPIDS NVIDIA architecture, and a well-documented workflow. Amazon Web Services similarly has good documentation on running Dask workers on multiple Amazon Elastic Container service (EC2) and a guide on attaching S3 buckets. Azure needed some work to make worker provisioning work well, mostly due to their environment and user provisioning workflow being a bit different from AWS or GCP.] |No*
+|Dask + K8s |Yes |Cloud environments, existing K8s deployments |Runtime or pre-install (but more effort) |Separate project, medium effort |Yes
 |Dask + Yarn |Yes |Existing big data deployments |Runtime or pre-install (but more effort) |Separate project that has not been updated since 2019 |Yes*
-|Dask + Ray + [CM] |Depends on CM |Existing Ray deployments, mutli-tool (TF etc.), or actor systems. |Depends on CM (always at least runtime) |Depends on CM |Yes
+|Dask + Ray + [CM] |Depends on CM |Existing Ray deployments, mutli-tool (TF, etc.), or actor systems. |Depends on CM (always at least runtime) |Depends on CM |Yes
 |coiled |yes |New cloud deployments |Yes, including magic "auto-sync" |No |Yes
 |===
 
 === Building Dask on Kubernetes Deployment
 
-There are two main ways to deploy Dask on Kubernetes,footnote:[PEP20 remain optimistic] "KubeCluster" and "HelmCluster." Helm is a popular tool for managing deployments on Kubernetes, with the deployments being specified in helm charts. Since Helm is the "newer" recommended way of managing deployments on Kubernetes we will cover that one here.
+There are two main ways to deploy Dask on Kubernetes:footnote:[PEP20 remain optimistic.] KubeCluster and HelmCluster. Helm is a popular tool for managing deployments on Kubernetes, with the deployments being specified in Helm charts. Since Helm is the newer recommended way of managing deployments on Kubernetes, we will cover that one here.
 
-The https://helm.sh/docs/intro/install/[+++helm documentation+++] offers an excellent starting point on the different ways to install Helm, but for those in a hurry. `curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash` will install Helm for you.footnote:[Note this installs "Helm 3.X:. As with Python3, Helm 3 has a https://helm.sh/docs/topics/v2_v3_migration/[large number of breaking changes over Helm2], so when you're reading documentation (or installing packages), make sure it's referencing the current major versions.]
+The https://helm.sh/docs/intro/install/[+++Helm documentation+++] offers an excellent starting point on the different ways to install Helm, but for those in a hurry, `curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash` will do it for you.footnote:[Note this installs Helm 3.X:. As with Python3, Helm 3 has a https://helm.sh/docs/topics/v2_v3_migration/[large number of breaking changes over Helm 2], so when you're reading documentation (or installing packages), make sure it's referencing the current major versions.]
 
 [NOTE]
 ====
-The Dask on Kubernetes Helm chart deploys what is called an "operator." Currently, installing operators requires the ability to install Custom Resource Definitions (CRDs), and may require administrator privileges. If you can't get the permissions (or someone with the permissions) you can still use the https://kubernetes.dask.org/en/latest/kubecluster.html[+++"vanilla" or "classic" deployment mode+++].
+The Dask on Kubernetes Helm chart deploys what is called an _operator_. Currently, installing operators requires the ability to install Custom Resource Definitions (CRDs), and may require administrator privileges. If you can't get the permissions (or someone with the permissions) you can still use the https://kubernetes.dask.org/en/latest/kubecluster.html[+++"vanilla" or "classic" deployment mode+++].
 ====
 
-Since GPU resources are costly, it is typical to want only to allocate as many of them as needed. Some cluster manager interfaces, including Dask's Kubernetes plugin, allow you to configure multiple types of workers so that it will only allocate GPU workers when needed. On our Kubernetes cluster, we deploy Dask the Dask operator as in <<deploy_dask_operator_helm>>.
+Since GPU resources are costly, it is typical to want only to allocate as many of them as needed. Some cluster manager interfaces, including Dask's Kubernetes plug-in, allow you to configure multiple types of workers so that it will only allocate GPU workers when needed. On our Kubernetes cluster, we deploy the Dask operator as shown in <<deploy_dask_operator_helm>>.
 
 [[deploy_dask_operator_helm]]
 .Deploy Dask operator with Helm
@@ -68,7 +68,7 @@ include::./examples/dask/kubernetes/install-dask-helm.sh[tags=install_operator]
 ----
 ====
 
-Now you can use the Dask operator either by creating yaml files (likely not your favorite) or with the `KubeCluster` API, as shown in <<helm_ex>>, where we create a cluster then add additional worker types, allowing Dask to create two different kinds of workers.footnote:[Mixed worker types; see https://distributed.dask.org/en/stable/resources.html["Worker Resources"] in the Dask documentation and the blog article https://www.dask.org/blog/how-to-run-different-worker-types-with-the-dask-helm-chart["How to Run Different Worker Types with the Dask Helm Chart"].]
+Now you can use the Dask operator either by creating YAML files (likely not your favorite) or with the `KubeCluster` API, as shown in <<helm_ex>>, where we create a cluster and then add additional worker types, allowing Dask to create two different kinds of workers.footnote:[Mixed worker types; see https://distributed.dask.org/en/stable/resources.html["Worker Resources"] in the Dask documentation and the blog article https://www.dask.org/blog/how-to-run-different-worker-types-with-the-dask-helm-chart["How to Run Different Worker Types with the Dask Helm Chart"].]
 
 [[helm_ex]]
 .Use Dask operator
@@ -79,13 +79,13 @@ include::./examples/dask/kubernetes/connect.py[]
 ----
 ====
 
-In 2020 Dask added a https://blog.dask.org/2020/08/31/helm_daskhub[+++"DaskHub" helm chart+++], which combines the deployment of JupyterHub with the Dask Gateway.
+In 2020 Dask added a https://blog.dask.org/2020/08/31/helm_daskhub[+++DaskHub Helm chart+++], which combines the deployment of JupyterHub with the Dask Gateway.
 
 === Dask on Ray
 
 Deploying Dask on Ray is a little bit different than all of the other options, in that it changes not only how Dask workers and tasks are scheduled, but also changes https://docs.ray.io/en/latest/ray-core/scheduling/memory-management.html#memory[+++how Dask objects are stored+++]. This can reduce the number of copies of the same object that need to be stored, allowing you to use your cluster memory more efficiently.
 
-If you have a Ray deployment available to you, enabling Dask can be incredibly straightforward as in <<dask_on_ray>>.
+If you have a Ray deployment available to you, enabling Dask can be incredibly straightforward, as shown in <<dask_on_ray>>.
 
 [[dask_on_ray]]
 .Dask on Ray
@@ -102,7 +102,7 @@ However, if you don't have an existing Ray cluster, you will still need to deplo
 
 Yarn is a popular cluster manager from the big data world, and is available in open source as well as commercial on-prem (Cloudera, etc.) and in clouds (e.g., Elastic Map Reduce).
 
-Depending on the cluster, your workers might be more transient than other types, and their IP address might not be static when they get spun up again. You should ensure Worker - Scheduler service discovery methods are put in place for your own cluster setup. It could be as simple as a shared file that they read from, or a more resilient broker. If no additional arguments are given, Dask workers would use DASK_SCHEDULER_ADDRESS environment variable to connect.
+Depending on the cluster, your workers might be more transient than other types, and their IP address might not be static when they get spun up again. You should ensure worker/scheduler service discovery methods are put in place for your own cluster setup. It could be as simple as a shared file that they read from, or a more resilient broker. If no additional arguments are given, Dask workers would use the `DASK_SCHEDULER_ADDRESS` environment variable to connect.
 
 [[ex_yarn_deployment_ch12_1685536104476]]
 .Deploying Dask on Yarn with Dask-Yarn and skein
@@ -115,7 +115,7 @@ include::./examples/dask/Dask-Ch10_porting.py[tags=ex_yarn_deployment]
 
 === Dask on High-Performance Computing
 
-Dask has gained a big academic and scientific user base, part of this comes from how you can use existing high-performance computing (HPC) clusters with Dask to make a readily available scalable scientific computing without rewriting all of your code.footnote:[In some ways HPC and cluster managers are different names for the same thing, with cluster managers coming out of industry and HPC out of research. HPC clusters tend to have and use a shared network storage that is not as common in industry.]
+Dask has gained a big academic and scientific user base. Part of this comes from how you can use existing high-performance computing (HPC) clusters with Dask to make readily available scalable scientific computing without rewriting all of your code.footnote:[In some ways, HPC and cluster managers are different names for the same thing, with cluster managers coming out of industry and HPC out of research. HPC clusters tend to have and use a shared network storage that is not as common in industry.]
 
 You can turn your HPC account into a high-performance Dask environment that you can connect to from Jupyter on your local machine. Dask uses it's Dask Jobqueue library to support many HPC cluster types including: HTCondor, LSF, Moab, OAR, PBS, SGE, TORQUE, DRMAA, and SLURM. A separate library, Dask-MPI supports MPI clusters. <<ex_slurm_deployment_ch12_1685536157505>> shows a sample of how to us Dask on SLURM.
 
