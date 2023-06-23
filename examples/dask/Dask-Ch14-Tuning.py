@@ -156,7 +156,7 @@ from dask import delayed
 from dask.distributed import Client
 
 #we give walltime of 4 hours to the cluster spawn
-#each Dask workers are told they have 5 min less than that for Dask to manage
+#Dask workers are told they have 5 min less than that for Dask to manage
 #we tell workers to stagger their start and close in a random interval of 5min
 # some workers will die, but others will be staggered alive, avoiding loss
 # of job
