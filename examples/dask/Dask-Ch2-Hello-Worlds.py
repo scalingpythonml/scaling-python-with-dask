@@ -183,7 +183,7 @@ initial_df = dd.from_delayed(delayed_dfs)
 wc_df = initial_df.text.str.split().explode().value_counts()
 
 dask.compute(wc_df)
-#end::wc_dataframe
+#end::wc_dataframe[]
 
 
 # In[ ]:

@@ -101,7 +101,7 @@ df_x = dd.read_parquet(
     filename,
     split_row_groups=2
 )
-# end::ex_load_nyc_taxi
+# end::ex_load_nyc_taxi[]
 
 
 # In[ ]:
@@ -249,7 +249,7 @@ with parallel_backend('dask'):
     gs.fit(X, y)
 print(gs.cv_results_)
 
-# end::ex_joblib
+# end::ex_joblib[]
 
 
 # In[ ]:
@@ -261,7 +261,7 @@ print(gs.cv_results_)
 # tag::ex_describe_percentiles[]
 pd.set_option('display.float_format', lambda x: '%.5f' % x)
 df.describe(percentiles=[.25, .5, .75]).compute()
-# end::ex_describe_percentiles
+# end::ex_describe_percentiles[]
 
 
 # In[ ]:
@@ -284,7 +284,7 @@ sns.distplot(
 plt.setp(axes, yticks=[])
 plt.tight_layout()
 plt.show()
-# end::ex_plot_distances
+# end::ex_plot_distances[]
 
 
 # In[ ]:
@@ -387,7 +387,7 @@ sns.distplot(df["log_trip_duration"], bins=100)
 X_train, X_test, y_train, y_test = train_test_split(
     df['trip_distance'], df['total_amount'])
 
-# end::ex_dask_random_split
+# end::ex_dask_random_split[]
 
 
 # In[ ]:
@@ -797,7 +797,7 @@ booster = xgb.dask.train(
     num_boost_round=4,
     evals=[(dtrain, "train")])
 
-# end::ex_xgb_basic_usage
+# end::ex_xgb_basic_usage[]
 
 
 # In[ ]:
@@ -836,7 +836,7 @@ xgb.plot_importance(model, max_num_features=28, height=0.7)
 
 pred = model.predict(dtest)
 pred = np.exp(pred) - 1
-# end::ex_xgb_train_plot_importance
+# end::ex_xgb_train_plot_importance[]
 
 
 # In[ ]:
@@ -869,7 +869,7 @@ def predict(client, model, X):
     assert isinstance(predictions, dd.Series)
     return predictions
 
-# end::ex_xgb_early_stopping_and_inference
+# end::ex_xgb_early_stopping_and_inference[]
 
 
 # In[ ]:
@@ -881,7 +881,7 @@ def load_model(path):
     with fs.open(path, 'rb') as f:
         img = Image.open(f)
         return img
-# end::dask_delayed_load_model
+# end::dask_delayed_load_model[]
 
 
 # In[ ]:
@@ -913,7 +913,7 @@ ddf.map_partitions(
         lambda row: rowwise_operation(row), axis=1), meta=(
             'ddf', object))
 
-# end::Dask_DataFrame_map_partition_inference
+# end::Dask_DataFrame_map_partition_inference[]
 
 
 # In[ ]:
@@ -1090,7 +1090,7 @@ def handle_partition(df):
 ddf = dd.read_csv("metadata.csv”)
 results = ddf.map_partitions(handle_partition)
 results.compute()
-# end::batched_operations
+# end::batched_operations[]
 
 
 # In[ ]:
