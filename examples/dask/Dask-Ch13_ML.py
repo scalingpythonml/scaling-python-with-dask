@@ -147,7 +147,7 @@ scaler.fit(trip_dist_df)
 trip_dist_df_scaled = scaler.transform(trip_dist_df)
 trip_dist_df_scaled.head()
 
-# tag::ex_scaling_variables[]
+# end::ex_scaling_variables[]
 
 
 # In[ ]:
@@ -160,7 +160,7 @@ cat = Categorizer(categories={"payment_type": CategoricalDtype([1, 2, 3, 4])})
 categorized_df = cat.fit_transform(payment_type_amt_df)
 categorized_df.dtypes
 payment_type_amt_df.head()
-# tag::ex_categorical_variables[]
+# end::ex_categorical_variables[]
 
 
 # In[ ]:
@@ -172,7 +172,7 @@ dummy = DummyEncoder()
 dummified_df = dummy.fit_transform(categorized_df)
 dummified_df.dtypes
 dummified_df.head()
-# tag::ex_dummy_variables[]
+# end::ex_dummy_variables[]
 
 
 # In[ ]:
@@ -430,7 +430,7 @@ train = train.categorize("store_and_fwd_flag")
 test = test.categorize("VendorID")
 test = test.categorize("passenger_count")
 test = test.categorize("store_and_fwd_flag")
-# tag::ex_categorical_variables_alt[]
+# end::ex_categorical_variables_alt[]
 
 
 # In[ ]:
@@ -479,7 +479,7 @@ dow_test = dd.get_dummies(
     prefix='dow',
     prefix_sep='_')
 
-# tag::ex_datetime_dummy_alt[]
+# end::ex_datetime_dummy_alt[]
 
 
 # In[ ]:
@@ -505,7 +505,7 @@ y_pred = reg.predict(X_test)
 
 r2_score(y_test, y_pred)
 
-# tag::linear_regression[]
+# end::linear_regression[]
 
 
 # In[ ]:
@@ -525,7 +525,7 @@ estimators = [ScikitLinearRegression(), ScikitSGDRegressor()]
 run_tasks = [dask.delayed(estimator.fit)(X_train, y_train)
              for estimator in estimators]
 run_tasks
-# tag::ex_daskml_port[]
+# end::ex_daskml_port[]
 
 
 # In[ ]:
@@ -588,7 +588,7 @@ store_and_fwd_flag_test = dd.get_dummies(
     prefix='sf',
     prefix_sep='_')
 
-# tag::ex_dask_dummy_alt[]
+# end::ex_dask_dummy_alt[]
 
 
 # In[ ]:
