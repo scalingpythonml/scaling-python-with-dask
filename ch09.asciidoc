@@ -30,7 +30,7 @@ Any list of limitations for a rapidly developing project like Dask may be out of
 
 === Migration Road Map
 
-While no engineering work is linear in process, it’s always a good idea to have a road map in mind. We’ve laid out an example of migration steps as a nonexhaustive list of items a team might want to think through when planning their move:
+While no engineering work is linear in process, it’s always a good idea to have a road map in mind. We’ve laid out an example of migration steps as a non-exhaustive list of items a team might want to think through when planning their move:
 
 * What kind of machines and containerization framework will we want to deploy Dask on, and what are their pros and cons?
 * Do we have tests to ensure our migration correctness and our desired goals?
@@ -81,9 +81,9 @@ include::./examples/dask/Dask-Ch10_porting.py[tags=ex_s3_minio_rw]
 
 ==== Development: Considerations
 
-Translating an existing logic to Dask is a fairly intuitive process. Here are some considerations if you're coming from libraries such as R, pandas, and Spark, and how Dask might differ from them. Some of these differences result from moving from a different low-level implementation, such as Java, and others result from moving from a single machine code to a scaled implementation, such as coming from pandas.
+Translating an existing logic to Dask is a fairly intuitive process. Here are some considerations if you're coming from libraries such as R, pandas, and Spark, and how Dask might differ from them. Some of these differences result from moving from a different low-level implementation, such as Java, and others result from moving from single-machine code to a scaled implementation, such as coming from pandas.
 
-===== DataFrame performance
+==== DataFrame Performance
 
 If you have a job that you are already running on a different platform, it’s likely you are already using columnar storage format, like Parquet, and reading at runtime. The data type mapping from Parquet to Python is inherently imprecise. It’s a good idea to check data types when reading in any data at runtime, and the same applies to DataFrame. If type inference fails, a column would default to object. Once you inspect and determine the type inference is imprecise, specifying data types can speed up your job a lot. Additionally, it’s always a good idea to check strings, floating point numbers, datetime, and arrays. If type errors arise, keeping in mind the upstream data sources and their data type is a good start. For example, if the Parquet is generated from protocol buffers, depending on what encode and decode engine was used, there are differences in null checks, float, doubles, and mixed precision types that are introduced in that stack.
 
@@ -111,10 +111,10 @@ include::./examples/dask/Dask-Ch10_porting.py[tags=ex_postgres_dataframe]
 ----
 ====
 
-Fugue-sql provides SQL compatibility to Pydata stack, including Dask. The project is in its infancy, but seems promising. The main advantage of fugue-sql is that the code is portable between pandas, Dask, and Spark, giving a lot more interoperability. Fugue can run its SQL queries using DaskExecutionEngine, or you can run fugue queries over Dask DataFrame you already are using. Alternatively, you can run a quick SQL query on Dask DataFrame on your notebook as well. <<running_sql_over_dask_dataframe_ch09_1685553886459>> shows an example of using fugue in notebook. The downside of Fugue is that it requires ANTLR library, which requires a java runtime.
+FugueSQL provides SQL compatibility to PyData stack, including Dask. The project is in its infancy, but seems promising. The main advantage of FugueSQL is that the code is portable between pandas, Dask, and Spark, giving a lot more interoperability. Fugue can run its SQL queries using DaskExecutionEngine, or you can run fugue queries over a Dask DataFrame you already are using. Alternatively, you can run a quick SQL query on Dask DataFrame on your notebook as well. <<running_sql_over_dask_dataframe_ch09_1685553886459>> shows an example of using FugueSQL in a notebook. The downside of FugueSQL is that it requires the ANTLR library, which requires a Java runtime.
 
 [[running_sql_over_dask_dataframe_ch09_1685553886459]]
-.Running SQL over Dask DataFrame with Fugue SQL
+.Running SQL over Dask DataFrame with FugueSQL
 ====
 [source, python]
 ----
