@@ -36,7 +36,7 @@ While no engineering work is linear in process, it’s always a good idea to hav
 * Do we have tests to ensure our migration correctness and our desired goals?
 * What type of data is Dask able to ingest, and at what scale, and how does that differ from other platforms?
 * What is the computation framework of Dask, and how do we think in Dask and Pythonic ways to achieve the task?
-* How would we monitor and troubleshoot?
+* How would we monitor and troubleshoot the code at runtime?
 
 We'll start by looking at the types of clusters, which goes with the deployment framework, as it is often one of the issues requiring collaboration with other teams or organizations.
 
@@ -65,9 +65,6 @@ For high-performance computing deployments using job queuing systems such as PBS
 include::./examples/dask/Dask-Ch10_porting.py[tags=ex_slurm_deployment]
 ----
 ====
-
-
-===== Data sources
 
 You likely have a shared filesystem already set up by your organization’s admin. Enterprise users might be used to already robustly provisioned distributed data sources, running on HDFS or blob storage like S3, which Dask works with seamlessly. Dask also integrates well with networked filesystems (see <<ex_s3_minio_rw>>).
 

@@ -73,7 +73,7 @@ def gen(x):
     return x
 
 
-f = gen("farts")
+f = gen("hello world")
 compute = string_magic(f, f)
 #end::dask_task_dependencies[]
 

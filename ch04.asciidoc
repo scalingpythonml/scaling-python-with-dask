@@ -153,7 +153,7 @@ Dask's reading and writing functions take the parameter `compression` to specify
 
 Just because the underlying compression algorithm may support random reads does not mean that the FSSPEC wrapper will. Unfortunately, there is no current, easy way to check what a compression format supports besides testing it out or reading the source code.
 
-Dask does not support "streaming" nonrandom access input formats. This means that the data inside each file must fit entirely in memory.
+Dask does not support "streaming" non-random access input formats. This means that the data inside each file must fit entirely in memory.
 ****
 
 === Indexing
@@ -225,7 +225,7 @@ include::./examples/dask/Dask-Ch4-DataFrames.py[tags=max_mean]
 ----
 ====
 
-For distributed systems like Dask, if an aggregation can be partially evaluated and then merged, you can potentially combine some records preshuffle. Not all partial aggregations are created equal. What matters with partial aggregations is that the amount of data is reduced when merging values with the same key compared to the original multiple values.
+For distributed systems like Dask, if an aggregation can be partially evaluated and then merged, you can potentially combine some records pre-shuffle. Not all partial aggregations are created equal. What matters with partial aggregations is that the amount of data is reduced when merging values with the same key compared to the original multiple values.
 
 The most efficient aggregations take a sublinear amount of space regardless of the number of records. Some of these can take constant space, such as sum, count, first, minimum, maximum, mean, and standard deviation.
 More complicated tasks, like quantiles and distinct counts, also have sublinear approximation options. These approximation options can be great, as exact answers can require linear growth in storage.footnote:[This can lead to out-of-memory exceptions while executing the aggregation. The linear growth in storage requires that (within a constant factor) all the data must be able to fit on a single process, which limits how effective Dask can be.]
@@ -248,7 +248,7 @@ include::./examples/dask/Dask-Ch4-DataFrames.py[tags=custom_agg]
 ----
 ====
 
-In some cases, like a pure summation, you don't need to do any postprocessing on `agg`&rsquo;s output, so you can skip the `finalize` function.
+In some cases, like a pure summation, you don't need to do any post-processing on `agg`&rsquo;s output, so you can skip the `finalize` function.
 
 Not all aggregations must be by key; you can also compute aggregations across all rows. Dask's custom aggregation interface, however, is only exposed with by-key operations.
 
@@ -418,7 +418,7 @@ Sometimes the API is just missing small parts, as both pandas and Dask are under
 An example is the `split` function from <<wc_dataframe>>. In local pandas, instead of doing `split().explode()`, you could have called `split(expand=true)`. Some of these missing parts can be excellent places where you can get involved and https://github.com/dask/dask/contribute[+++contribute to the Dask project+++] if you are interested.
 
 Some libraries do not parallelize as well as others. In these cases, a common approach is to try to filter or aggregate the data down enough that it can be represented locally and then apply the local libraries to the data.
-For example, with graphing, it's common to preaggregate the counts or take a random sample and graph the result.
+For example, with graphing, it's common to pre-aggregate the counts or take a random sample and graph the result.
 
 While much of the pandas DataFrame API will work, before you swap in Dask DataFrame, it's important to make sure you have good test coverage to catch the situations where it does not.
 
@@ -452,7 +452,7 @@ For performance reasons, various parts of Dask DataFrames behave a little differ
 `sort_values`:: Dask only supports single-column sorts.
 Joining multiple DataFrames:: When joining more than two DataFrames at the same time, the join type must be one of outer or left.
 
-In our opinion it's important to be especially careful anytime you use any of these functions when porting your code to use Dask DataFrames, as these could result in difficult-to-track-down correctness issues.
+When porting your code to use Dask DataFrames, you should be especially mindful anytime you use these functions, as they might not exactly work in the axis you intended. Work small first and test the correctness of the numbers, as issues can often be tricky to track down.
 
 When porting existing pandas code to Dask, consider using the local single-machine version to produce test datasets to compare the results with, to ensure that all changes are intentional.
 
@@ -481,7 +481,7 @@ Exploratory data analysis, often abbreviated EDA, is often the first step of dat
 
 ==== Loading Data
 
-The first time you load the data into your dev environment, you might encounter block-size issues or schema issues. While Dask tries to infer both, at times it cannot. Block-size issues will often show up when you call `.compute()` on trivial code and see one worker hitting the memory ceiling. In that case, some manual work would be involved in determining the right chunk size. Schema issues would show up as an error or warning as you read the data, or in subtle ways later on, such as mismatching float32 and float64. If you know the schema already, it’s a good idea to enforce that by specifying dtypes at reading.
+The first time you load the data into your dev environment, you might encounter block size issues or schema issues. While Dask tries to infer both, at times it cannot. Block size issues will often show up when you call `.compute()` on trivial code and see one worker hitting the memory ceiling. In that case, some manual work would be involved in determining the right chunk size. Schema issues would show up as an error or warning as you read the data, or in subtle ways later on, such as mismatching float32 and float64. If you know the schema already, it’s a good idea to enforce that by specifying dtypes at reading.
 
 As you further explore a dataset, you might encounter data printed by default in a format that you don’t like, for example, scientific notation. The control for that is through pandas, not Dask itself. Dask implicitly calls pandas, so you want to explicitly set your preferred format using pandas.
 
@@ -518,7 +518,7 @@ include::./examples/dask/Dask-Ch13_ML.py[tags=ex_plot_distances]
 
 Pandas DataFrame users would be familiar with `.loc()` and `.iloc()` for inspecting data at a particular row or column. This logic translates to Dask DataFrame, with important differences in `.iloc()` behaviors.
 
-Since Dask DataFrames potentially span multiple pandas DataFrames, `.iloc()` (a way to access the positions by index) doesn’t work exactly the same for Dask, since each smaller DataFrame would have its own `.iloc()` value, and Dask does not track the size of each smaller DataFrame. In other words, a global index value is hard for Dask to figure out, since Dask will have to iteratively count through each DataFrame to get to an index. Users should check `.iloc()` on their DataFrame and ensure that indices return the correct values.
+A sufficiently large Dask DataFrame will contain multiple pandas DataFrames. This changes the way we should think about numbering and addressing indices. For example, `.iloc()` (a way to access the positions by index) doesn’t work exactly the same for Dask, since each smaller DataFrame would have its own `.iloc()` value, and Dask does not track the size of each smaller DataFrame. In other words, a global index value is hard for Dask to figure out, since Dask will have to iteratively count through each DataFrame to get to an index. Users should check `.iloc()` on their DataFrame and ensure that indices return the correct values.
 
 [TIP]
 ====

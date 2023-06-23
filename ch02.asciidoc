@@ -111,7 +111,8 @@ include::./examples/dask/Dask-Ch2-Hello-Worlds.py[tags=dask_array]
 
 As with all distributed collections, what is expensive on a Dask array is not the same as what is expensive on a local array. In the next chapter you'll learn a bit more about how Dask arrays are implemented, and hopefully gain a better intuition around their performance.
 
-Creating a distributed collection from a local collection has the limit that the initial collection has to be able to fit on a single computer. You might ask yourself "Why bother?," but there are several benefits. One of these is parallel operations, and another is the ability to join a smaller collection with a larger collection, and a small collection that becomes big, like crawling the web. I'll cover loading larger collections into Dask in later chapters.
+Creating a distributed collection from a local collection uses the two fundamental building blocks of distributed computing, called the _scatter-gather pattern_. While the originating dataset must be from a local computer, fitting into a single machine, this already expands the number of processors you have at your disposal, as well as intermediate memory you can utilize, enabling you to better exploit modern cloud infrastructure and scale. 
+A practical use case would be a distributed web crawler, where the list of seed URLs to crawl might be a small dataset, but the memory you need to hold while crawling might be an order of magnitude larger, requiring distributed computing. 
 
 ===== Dask bags and a word count
 

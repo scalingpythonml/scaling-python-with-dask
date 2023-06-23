@@ -23,9 +23,9 @@ Despite the name, you can use Dask's distributed client locally. Refer to <<dist
 
 === Lazy and Eager Evaluation Revisited
 
-Eager evaluation is the most common form of evaluation in programming, including in Python. While most eager evaluation is blocking&mdash;that is, the program will not move to the next statement until the result is completed&mdash;you can still have asynchronous/nonblocking eager evaluation. Futures are one way of representing nonblocking eager computation.
+Eager evaluation is the most common form of evaluation in programming, including in Python. While most eager evaluation is blocking&mdash;that is, the program will not move to the next statement until the result is completed&mdash;you can still have asynchronous/non-blocking eager evaluation. Futures are one way of representing non-blocking eager computation.
 
-Nonblocking eager evaluation still has some potential downsides compared to lazy evaluation. Some of these challenges include:
+Non-blocking eager evaluation still has some potential downsides compared to lazy evaluation. Some of these challenges include:
 
 * Inability to combine adjacent stages (sometimes known as pipelining).
 * Unnecessary computation.
@@ -135,7 +135,7 @@ include::./examples/dask/Dask-Futures.py[tags=as_completed]
 ----
 ====
 
-In the preceding example, by processing futures as they complete you can have the main thread do its "business logic" (similar to `combine step` for an aggregate) for each element as it becomes available. If the futures finish at different times this can be a large speed increase.
+In the preceding example, by processing futures as they complete you can have the main thread do its "business logic" (similar to `combine` step for an aggregate) for each element as it becomes available. If the futures finish at different times this can be a large speed increase.
 
 If you have a deadline, like scoring a model for ad servingfootnote:[We believe that this is one of the areas where Dask has more room for growth, and if you do want to implement a microservice for deadline-critical events, you may want to explore using Dask in conjunction with other systems like Ray.] or doing something funky with the stock market, you might not want to wait for all of your futures. Instead, the `wait` function allows you to fetch results with a timeout, as shown in <<get_the_first_future_ch06_1686239413080>>.
 

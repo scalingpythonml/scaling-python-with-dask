@@ -41,7 +41,7 @@ Compute resources:: Apache Hadoop Yarn, Kubernetes, Amazon Web Services, Slurm W
 
 We say a problem is "compute-bound" if the limiting factor is not the amount of data, but rather the work we are doing on the data. Memory-bound problems are problems where the computation is not the limiting factor; rather the ability to store all of the data in memory is the limiting factor. Some problems can exhibit both compute- and memory-bound problems, as is often the case for large deep-learning problems.
 
-Multicore (think multithreading) processing can help with compute-bound problems (up to the limit of the number of cores in a machine). Generally multicore processing is unable to help with memory-bound problems, as all Central Processing Units (CPUs) have similar access to the memory.footnote:[With the exception of nonuniform memory access (NUMA) systems.]
+Multicore (think multithreading) processing can help with compute-bound problems (up to the limit of the number of cores in a machine). Generally multicore processing is unable to help with memory-bound problems, as all Central Processing Units (CPUs) have similar access to the memory.footnote:[With the exception of non-uniform memory access (NUMA) systems.]
 
 Accelerated processing, like specialized instruction sets or specialized hardware like Tensor Processing Units or Graphics Processing Units, is generally only useful for compute bound problems. Sometimes using accelerated processing can introduce memory bounding problems, as the amount of memory available to the accelerated computation can be smaller than the "main" system memory.
 

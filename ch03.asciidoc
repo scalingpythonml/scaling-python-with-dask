@@ -63,7 +63,7 @@ Dask's local backends are designed for performance rather than for testing that 
 [[distributed_ch03_1687438078727]]
 ==== Distributed (Dask Client and Scheduler)
 
-Dask has one distributed scheduler backend, and it talks to many different types of clusters, including a LocalCluster. Each type of cluster is supported in its own library, which schedules the schedulerfootnote:[Say that five times fast.] that the Dask client then connects to. Dask distributed deployments are more similar than the different local backends.
+Dask has one distributed scheduler backend, and it talks to many different types of clusters, including a LocalCluster. Each type of cluster is supported in its own library, which schedules the schedulerfootnote:[Say that five times fast.] that the Dask client then connects to. Using the distributed abstraction `dask.distributed` gives you portability between any type of cluster you may be using at the moment, including local. If you don't use `dask.distributed`, Dask can still run perfectly well on a local computer, in which case you are using a default single-machine scheduler provided in the Dask library.
 
 
 The Dask Client is your entry point into the Dask distributed scheduler. In <<ex_dask_k8s>> we will be using Dask with a Kubernetes cluster; if you have another type of cluster or want details, please see <<appa_clusterrs>>.

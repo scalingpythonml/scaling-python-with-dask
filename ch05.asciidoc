@@ -26,7 +26,7 @@ Similar to Dask DataFrames and pandas, if you wouldn't use an nparray for the pr
 
 If your data fits in memory on a single computer, using Dask array's is unlikely to give you many benefits over nparrays, especially compared to local accelerators like Numba. Numba is well suited to vectorizing and parallelizing local tasks with and without Graphics Processing Units (GPUs). You can use Numba with and without Dask, and we'll look at how to further speed up Dask arrays using Numba in <<ch10>>.
 
-Dask arrays, like their local counterpart, require that data is all of the same type. This means that they cannot be used for semistructured or mixed-type data (think strings and ints).
+Dask arrays, like their local counterpart, require that data is all of the same type. This means that they cannot be used for semi-structured or mixed-type data (think strings and ints).
 
 ==== Loading/Saving
 
@@ -55,7 +55,7 @@ While Dask arrays implement a large amount of the ndarray APIs, it is not a comp
 Since, as with distributed DataFrames, the partitioned nature of Dask arrays make performance a bit different, there are some unique Dask array functions not found in `numpy.linalg`:
 
 `map_overlap`:: You can use this for any windowed view of the data, as with `map_overlap` on Dask DataFrames.
-`map_blocks`:: This is similar to Dask's DataFrames `map_partitions`, and you can use it for implementing embarrassingly parallel operations that Dask has not yet, including new element-wise functions in NumPy.
+`map_blocks`:: This is similar to Dask's DataFrames `map_partitions`, and you can use it for implementing embarrassingly parallel operations that the standard Dask library has not yet implemented, including new element-wise functions in NumPy.
 `topk`:: Returns the topk elements of the array in place of fully sorting it (which is much more expensive).footnote:[https://docs.dask.org/en/stable/generated/dask.array.topk.html[`topk`] extracts the topk elements of each partition and then only needs to shuffle the k elements out of each partition.]
 `compute_chunk_sizes`:: Dask needs to know the chunk sizes to support indexing, and if an array has unknown chunk sizes you can call this function.
 
@@ -141,7 +141,7 @@ include::./examples/dask/Dask-Collections.py[tags=parallel_list]
 You don't always have to do the directory listing yourself. It can be worthwhile to check and see if there is a metastore, like hive or iceberg, which can give you the list of files without all of these slow API calls.
 ====
 
-This approach has some downsides: namely, all the file names come back to a single point, but this is rarely an issue. However, if even the list of your files is too big to fit in memory, you'll want to try a recursive algorithm for directory discovery, followed by an iterative algorithm for file listing that keeps the names of the files in the bag.footnote:[Iterative algorithms involve using constructs like `while` or `for` instead of recursive calls to the same function.] The code becomes a bit more complex, as shown in <<parallel_list_large>>, so it is rarely used.
+This approach has some downsides: namely, all the file names come back to a single point, but this is rarely an issue. However, if even the list of your files is too big to fit in memory, you'll want to try a recursive algorithm for directory discovery, followed by an iterative algorithm for file listing that keeps the names of the files in the bag.footnote:[Iterative algorithms involve using constructs like _while_ or _for_ instead of recursive calls to the same function.] The code becomes a bit more complex, as shown in <<parallel_list_large>>, so it is rarely used.
 
 [[parallel_list_large]]
 .Listing the files in parallel without collecting to the driver

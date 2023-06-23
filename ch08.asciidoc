@@ -1,7 +1,7 @@
 [[ch08]]
 == How to Evaluate Dask's Components and Libraries
 
-It's hard, although possible, to build reliable systems out of unreliable components.footnote:[Although in many ways that is what distributed systems are all about, from Hadoop Map/Reduce to Dask, fault tolerance because computers are unreliable are a big part of what we do.] Dask is a largely community-driven open source project, and its components evolve at different rates. Not all parts of Dask are equally mature; even the components we cover in this book have different levels of support and development. While Dask's core parts are well-maintained and tested, some parts lack the same level of maintenance.
+It's hard, although possible, to build reliable systems out of unreliable components.footnote:[Although in many ways, distributed systems have evolved to overcome their unreliable components. For example, fault tolerance is something a single machine cannot achieve but distributed systems can accomplish with replication.] Dask is a largely community-driven open source project, and its components evolve at different rates. Not all parts of Dask are equally mature; even the components we cover in this book have different levels of support and development. While Dask's core parts are well-maintained and tested, some parts lack the same level of maintenance.
 
 It's essential to understand the state of the components that you are considering using. If you need to use a less maintained or developed part of Dask, pass:[<a href="https://oreil.ly/IDXVs">defensive programming</a>], including thorough code testing, will become even more critical. Working on less-established parts of the Dask ecosystem can also be an exciting opportunity to become more involved and contribute fixes or documentation.
 
@@ -23,7 +23,7 @@ While we focus on the Dask ecosystem in this chapter, you can apply most of thes
 
 === Qualitative Considerations for Project Evaluation
 
-We start by focusing on qualitative tools since we believe these tools are the best for determining the suitability of a project for your project.
+We start by focusing on qualitative tools since we believe these tools are the best for determining the suitability of a particular library for your project.
 
 ==== Project Priorities
 
@@ -33,7 +33,7 @@ While there are many arguments for and against focusing on benchmarks, correctne
 
 Many Dask ecosystem projects use GitHub's built-in issue tracker, but if you don't see any activity, check the README and developer guides to see if the project uses a different issue tracker. For example, many ASF projects use JIRA. Looking into how folks respond to issues gives you a good idea of what issues they consider important. You don't need to look at all of them, but a small sample of 10 will often give you a good idea (look at open and not fixed, as well as closed and fixed).
 
-==== Community (and, for Better or Worse, Companies and Universities)
+==== Community
 
 As one of the unofficial ASF sayings goes, "Community over code."footnote:[We are uncertain of who exactly this quote originates from; it's appeared in the ASF director's position statement as well as in the Apache Way documentation.] The https://theapacheway.com/community-over-code/[Apache Way website] describes this as meaning "the most successful long-lived projects value a broad and collaborative community over the details of the code itself." This saying matches our experience, where technical improvements are easier to copy from other projects, but the community is much harder to move. Measuring community is challenging, and it can be tempting to look at the number of developers or users, but we think it's essential to go beyond that.
 
@@ -41,7 +41,7 @@ Finding the community associated with a particular project can be tricky. Take y
 
 There are multiple types of communities for open source software projects. The user community is the people who are using the software to build things. The developer community is the group working on improving the library. Some projects have large intersections between these communities, but often the user community is much larger than the developer community. We are biased toward evaluating the developer community, but it's important to ensure both are healthy. Software projects without enough developers will move slowly, and projects without users are frequently challenging to use by anyone except the developers.
 
-In many situations, a large community with enough assholes (or a lead asshole) can be a much less enjoyable environment than a small community of nice folks. You are less likely to be productive if you are not enjoying your work. Sadly, figuring out if someone is an asshole or if a community has assholes in it is a complex problem. If people are generally rude on the mailing list or in the issue tracker, this can be a sign that the community is not as welcoming to new members.footnote:[The Linux Kernel is a classic example of a somewhat https://www.zdnet.com/article/linux-developer-who-took-on-linus-torvalds-over-abuse-quits-toxic-kernel-community/[+++more challenging community.+++]]
+In many situations, a large community with enough jerks (or a lead jerk) can be a much less enjoyable environment than a small community of nice folks. You are less likely to be productive if you are not enjoying your work. Sadly, figuring out if someone is a jerk or if a community has jerks in it is a complex problem. If people are generally rude on the mailing list or in the issue tracker, this can be a sign that the community is not as welcoming to new members.footnote:[The Linux Kernel is a classic example of a somewhat https://www.zdnet.com/article/linux-developer-who-took-on-linus-torvalds-over-abuse-quits-toxic-kernel-community/[+++more challenging community.+++]]
 
 [NOTE]
 ====
@@ -76,7 +76,7 @@ A good check, when considering adding a new library to an existing environment, 
 
 While not every tool needs a book, although we do hope you find books useful, very few libraries are truly self-explanatory. On the low end, for simple libraries, a few examples or well-written tests can serve as a stand-in for proper documentation. Complete documentation is a good sign of overall project maturity. Not all documentation is created equal, and as the saying goes, documentation is normally out of date as soon as it is finished (if not before). A good exercise to do, before you dive all the way into a new library, is to open up the documentation and try to run the examples. If the getting-started examples don't work (and you can't figure out how to fix them), you will likely be in for a rough ride.
 
-==== Openness to Contributions (Code and Otherwise)
+==== Openness to Contributions
 
 If you find the library is promising, but not all the way there, it's important to be able to contribute your improvements back to the library. This is good for the community, and besides, if you can't upstream your improvements, upgrading to new versions will be more challenging.footnote:[Changes from upstream open source that you are unable to contribute back mean that you need to reapply those changes every time you upgrade. While modern tools like Git simplify the mechanics of this a little bit, it can be a time-consuming process.] Many projects nowadays have contribution guides that can give you an idea of how they like to work, but nothing beats a real test contribution. A great place to start with a project is fixing its documentation with the eyes of a newcomer, especially those getting-started examples from the previous section. Documentation often becomes out of sync in fast-moving projects, and if you find it difficult to get your documentation changes accepted, that is a strong indicator of how challenging it will be to contribute more complicated improvements later.
 
@@ -139,7 +139,7 @@ Software testing is second nature to many software engineers, but sometimes proj
 
 [NOTE]
 ====
-Test coverage numbers can be especially informative, but unfortunately, for projects built on top of systems like Dask,footnote:[This is because most of the Python tools that check code coverage assume that there is only one Python VM they need to attach to and see what parts of code are executed. However, in a distributed system, this is no longer the case and many of these automated tools do not work.] getting accurate test coverage information is a challenge. Instead, a more qualitative approach is often needed here. In nondistributed systems, test coverage can be an excellent automatically computed quantitative metric.
+Test coverage numbers can be especially informative, but unfortunately, for projects built on top of systems like Dask,footnote:[This is because most of the Python tools that check code coverage assume that there is only one Python VM they need to attach to and see what parts of code are executed. However, in a distributed system, this is no longer the case and many of these automated tools do not work.] getting accurate test coverage information is a challenge. Instead, a more qualitative approach is often needed here. In single-machine systems, test coverage can be an excellent automatically computed quantitative metric.
 ====
 
 We believe that most good libraries will have some form of continuous integration (CI) or automated testing, including proposed changes (or when a pull request is created). You can check if a GitHub project has continuous integration by looking at the pull-requests tab. CI can be very helpful for reducing bugs overall, especially regressions.footnote:[Where something that used to work stops working in a newer release.] Historically, use of CI was somewhat a matter of project preference, but with the creation of free tools, including GitHub actions, many multiperson software projects now have some form of CI. This is a common software engineering practice, and we consider it essential for libraries that we depend on.
