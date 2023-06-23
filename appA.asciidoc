@@ -6,63 +6,63 @@ We've covered a few distributed system concepts briefly as needed in this book, 
 
 === Testing
 
-Testing is an often overlooked part of data science and data engineering. Some of our tools, like SQL and Jupyter notebooks, do not encourage or make it easy to test – but this does not absolve us of the responsibility to test our code. Data privacy concerns can add another layer of challenge, where we don't want to store user data for testing, requiring us to put in the effort to create "fake" data for testing or break our code down into testable components where we don't need user data.
+Testing is an often overlooked part of data science and data engineering. Some of our tools, like SQL and Jupyter notebooks, do not encourage or make it easy to test&ndash;but this does not absolve us of the responsibility to test our code. Data privacy concerns can add another layer of challenge, where we don't want to store user data for testing, requiring us to put in the effort to create "fake" data for testing or break our code down into testable components where we don't need user data.
 
 ==== Manual Testing
 
-We often perform some kind of manual testing while writing software or data tools. This can include simply running the tool and "eye-balling" the results to see if they "look" reasonable. Manual testing is time-consuming and not automatically repeatable, so while it is great during development, it is insufficient for long-lived projects.
+We often perform some kind of manual testing while writing software or data tools. This can include simply running the tool and eyeballing the results to see if they look reasonable. Manual testing is time-consuming and not automatically repeatable, so while it is great during development, it is insufficient for long-lived projects.
 
 ==== Unit Testing
 
-Unit testing refers to testing individual "units" of code rather than the whole system together. This requires having your code be composed into different units, like modules or functions. While this is less common with notebooks, we believe that structuring your code for testability is a good practice to follow.
+Unit testing refers to testing individual units of code rather than the whole system together. This requires having your code be composed in different units, like modules or functions. While this is less common with notebooks, we believe that structuring your code for testability is a good practice to follow.
 
-Writing unit tests for notebooks can be challenging, doctests are slightly easier to in-line within a notebook. If you want to use traditional unit test libraries, the https://github.com/JoaoFelipe/ipython-unittest[+++ipython-unittest magics+++] lets you inline your unit tests within your notebook.
+Writing unit tests for notebooks can be challenging; doctests are slightly easier to inline within a notebook. If you want to use traditional unit test libraries, the https://github.com/JoaoFelipe/ipython-unittest[+++ipython-unittest magics+++] lets you inline your unit tests within your notebook.
 
 ==== Integration Testing
 
-Integration Testing refers to testing how different parts of a system work together. Integration testing is often much closer to the "real" usage of your code, but can be more complicated as it involves setting up other systems to test against. You can (to an extent) use some of the same libraries for integration testing, but these tests tend to involve more setup and teardown work.footnote:[This can include creating a database, filling it with data, starting up cluster services, etc.] Integration testing is also more likely to be "flaky" since making sure all of the different components your software needs are present in your test environment before starting the tests can be challenging.
+Integration testing refers to testing how different parts of a system work together. It is often much closer to the real usage of your code, but can be more complicated as it involves setting up other systems to test against. You can (to an extent) use some of the same libraries for integration testing, but these tests tend to involve more setup and teardown work.footnote:[This can include creating a database, filling it with data, starting up cluster services, etc.] Integration testing is also more likely to be "flaky," since making sure all of the different components your software needs are present in your test environment before starting the tests can be challenging.
 
 ==== Test-Driven Development
 
-Test-driven development involves taking the requirements or expectations of your code and writing tests and then writing the code after. For Data Science pipelines this can often be done with creating a sample input (sometimes called a golden set) and writing out what you expect the output to be. Test-driven development can be complicated, especially when integrating multiple data sources.
+Test-driven development involves taking the requirements or expectations of your code and writing tests and then writing the code after. For data science pipelines this can often be done by creating a sample input (sometimes called a golden set) and writing out what you expect the output to be. Test-driven development can be complicated, especially when integrating multiple data sources.
 
-While you don't need to use test-driven development, we believe it's important to make tests alongside the development of your data pipelines. While tests added after development are better than no tests, in our experience the context you have during the development helps you create better tests (and validate your assumptions early on).
+While you don't need to use test-driven development, we believe it's important to make tests alongside the development of your data pipelines. Tests added after development are better than no tests, but in our experience the context you have during the development helps you create better tests (and validate your assumptions early on).
 
 ==== Property Testing
 
-Property testing is a, potentially, great solution to the problem of the challenge of coming up with test data that covers all of the edge cases in terms of data that your code could trip up on. Instead of writing traditional "for input A result B is expected," you instead specify properties, like "if we have 0 customers, we should have 0 sales" or "for all (valid) customers they should have a fraud score after this pipeline."
+Property testing is a potentially great solution to the challenge of coming up with test data that covers all of the edge cases in terms of data that your code could trip up on. Instead of writing the traditional "for input A, result B is expected," you specify properties, like "if we have 0 customers, we should have 0 sales" or "all (valid) customers should have a fraud score after this pipeline."
 
 The most popular library for property testing in Python is https://hypothesis.readthedocs.io/en/latest/[+++Hypothesis+++].
 
 ==== Working with Notebooks
 
-Testing notebooks is painful, which is unfortunate given their immense popularity. Generally, you can either have your testing outside of the notebook which allows you the use of existing Python testing libraries, or try and put it inside the notebook.
+Testing notebooks is painful, which is unfortunate given their immense popularity. Generally, you can either have your testing outside of the notebook, which allows you the use of existing Python testing libraries, or try to put it inside the notebook.
 
-==== Out of Notebook Testing
+==== Out-of-Notebook Testing
 
-The "traditional" option (besides ignoring it) is to refactor the parts of your code you want to test into separate "regular" python files and test those using "normal" testing libraries. While the, partial, refactoring can be painful, rewriting to more testable components can bring benefits to debugging as well.
+The traditional option (besides ignoring it) is to refactor the parts of your code you want to test into separate regular Python files and test those using normal testing libraries. While the partial refactoring can be painful, rewriting to more testable components can bring benefits to debugging as well.
 
-The https://testbook.readthedocs.io/en/latest/[+++testbook project+++] is an alternative to refactoring, and takes interesting approach, allowing you to write your tests outside of your notebook, and does not require you to give up on notebooks. Instead you use the libraries decorator to annotate tests, for example `@testbook('untitled_7.ipynb', execute=True)` which will import and execute the notebook before executing the test. You can also control which parts of the notebook are executed, but this partial execution can be brittle and prone to breakage on updates.
+The https://testbook.readthedocs.io/en/latest/[+++testbook project+++] is an alternative to refactoring that takes interesting approach, allowing you to write your tests outside of your notebook, and not requiring you to give up on notebooks. Instead, you use the libraries decorator to annotate tests&mdash;for example, `@testbook('untitled_7.ipynb', execute=True)` will import and execute the notebook before executing the test. You can also control which parts of the notebook are executed, but this partial execution can be brittle and prone to breakage on updates.
 
-==== In Notebook Testing: In-Line Assertions
+==== In-Notebook Testing: In-Line Assertions
 
-Some people like to use in-line assertions in their notebooks as a form of testing. In this case if something fails (e.g. the assertion that there should be some customers), the rest of the notebook will not run. While we think that having in-line assertions is great, we don't believe it is a replacement for traditional testing.
+Some people like to use in-line assertions in their notebooks as a form of testing. In this case, if something fails (e.g., the assertion that there should be some customers), the rest of the notebook will not run. While we think that having in-line assertions is great, we don't believe it is a replacement for traditional testing.
 
 === Data and Output Validation
 
-While good testing can catch many problems, sometimes the real world is more creative than we can ever be and our code will still fail. In many situations, the worst case is that our program fails and produces an incorrect output that we don't know is incorrect and then we (or others) take action based on it's results. Validation attempts to notify us when our job has failed so that we can take action on it, before someone else does. In many ways it is like running spellcheck on a term paper before submission – if there's a few errors ok but if everything is red it's probably good to double check. Depending on what your job does, how to validate it will be different.
+While good testing can catch many problems, sometimes the real world is more creative than we can ever be, and our code will still fail. In many situations, the worst case is that our program fails and produces an incorrect output that we don't know is incorrect and then we (or others) take action based on its results. Validation attempts to notify us when our job has failed so that we can take action on it before someone else does. In many ways, it is like running spell-check on a term paper before submission&mdash;if there are a few errors, OK, but if everything is red, it's probably good to double-check. Depending on what your job does, validating it will be different.
 
-There are a number of different tools you can use to validate the output of your Dask job, including of course Dask its self. Some tools, like https://www.tensorflow.org/tfx/data_validation/get_started[+++TFX's data validation+++], attempt to compare previous versions for statistical similarity and schema changes.footnote:[We do not recommend TFX for new environments as it can be challenging to get running.] https://docs.pydantic.dev/[+++Pydantic+++] is relatively new, but has Dask integration, and does excellent type & schema validation. You can also do more complex statistical assertions using it's Hypothesis component (different than Python's Hypothesis).
+There are a number of different tools you can use to validate the output of your Dask job, including of course Dask itself. Some tools, like https://www.tensorflow.org/tfx/data_validation/get_started[+++TFX's data validation+++], attempt to compare previous versions for statistical similarity and schema changes.footnote:[We do not recommend TFX for new environments, as it can be challenging to get running.] https://docs.pydantic.dev/[+++Pydantic+++] is relatively new, but has Dask integration and does excellent type and schema validation. You can also do more complex statistical assertions using its Hypothesis component (which is different from Python's Hypothesis).
 
 ML models can be more difficult to validate without impacting users, but statistical techniques can still help (as well as incremental deployments). Since ML models are produced from data, a good (partial) step can be validating the data.
 
-It is useful to think of what the implications could be of your pipeline failing, for example you might want to spend more time validating a pipeline which determines dosages of medicine in a clinical trial, compared to a job which predicts which version of your add will be the most successful.footnote:[We acknowledge that society is often not structured this way.]
+It is useful to think of what the implications could be of your pipeline failing. For example, you might want to spend more time validating a pipeline that determines dosages of medicine in a clinical trial, compared to a job that predicts which version of your ad will be the most successful.footnote:[We acknowledge that society is often not structured this way.]
 
 === Peer-to-Peer Versus Centralized Distributed
 
-Even inside of a distributed system, there are various levels of "distributed."footnote:[Note: An alternate title for this section might be "How Dask Is Different From BitTorrent."] Dask is a "centralized" distributed system, where there is a static leader node responsible for various tasks and co-ordination amongst the workers. In more distributed systems, there is no static leader node, and if the head node goes away the remaining peers can elect a new head node, like Zookeeper. In even more distributed systems, there is no distinction between the head node, and all of the nodes in the cluster are effectively equally capable (from a software point of view, the hardware may be different).
+Even inside of a distributed system, there are various levels of "distributed."footnote:[Note: An alternate title for this section might be "How Dask Is Different From BitTorrent."] Dask is a centralized distributed system, where there is a static leader node responsible for various tasks and coordination among the workers. In more distributed systems, there is no static leader node, and if the head node goes away, the remaining peers can elect a new head node, like with Zookeeper. In even more distributed systems, there is no head node distinction, and all of the nodes in the cluster are effectively equally capable (from a software point of view; the hardware may be different).
 
-Centralized distributed systems tend to be faster, while encountering limitations earlier in terms of scaling and challenges around the failure of the centralized component.
+Centralized distributed systems tend to be faster while encountering limitations earlier in terms of scaling and challenges around the failure of the centralized component.
 
 === Methods of Parallelism
 
@@ -70,31 +70,31 @@ There are many different ways to split up our work, and in this book we've mostl
 
 ==== Task Parallelism
 
-`dask.delayed`, and Python's multiprocessing, both represent task parallelism. With task parallelism, you are not limited to executing the same code. Task parallelism offers the most flexibility, but requires more changes to your code to take advantage of.
+`dask.delayed` and Python's multiprocessing both represent task parallelism. With task parallelism, you are not limited to executing the same code. Task parallelism offers the most flexibility, but requires more changes to your code to take advantage of.
 
 ==== Data Parallelism
 
-Data parallelism refers to taking the same operation and running it in parallel on different chunks (or partitions) of data. This is a wonderful technique for operations on Data Frames and arrays. Data parallelism depends on partitioning to split up the work. We cover partitioning in detail in the Data Frame chapter.
+Data parallelism refers to taking the same operation and running it in parallel on different chunks (or partitions) of data. This is a wonderful technique for operations on DataFrames and arrays. Data parallelism depends on partitioning to split up the work. We cover partitioning in detail in <<ch04>>.
 
 ===== Shuffles and narrow versus wide transformations
 
-Narrow transformations (or data parallelism without any aggregation or shuffle) is often much faster than "wide" transformations which involve shuffles or aggregations. While this terminology is borrowed from the Spark community, the distinction (and implications for fault tolerance) apply to Dask's data parallel operations as well.
+Narrow transformations (or data parallelism without any aggregation or shuffle) is often much faster than "wide" transformations, which involve shuffles or aggregations. While this terminology is borrowed from the Spark community, the distinction (and implications for fault tolerance) apply to Dask's data parallel operations as well.
 
 ===== Limitations
 
-Data parallelism is not well suited to many different kinds of work. Even when working on data problems; it is not as well suited to doing many different things (non-uniform computation). Data parallelism is often poorly suited to computation on small amounts of data, for example model serving where you may need to evaluate a single request at a time.
+Data parallelism is not well suited to many different kinds of work. Even when working on data problems, it is not as well suited to doing many different things (non-uniform computation). Data parallelism is often poorly suited to computation on small amounts of data&mdash;for example, model serving where you may need to evaluate a single request at a time.
 
 ==== Load Balancing
 
-Load balancing is another way of looking at parallelism where a system (or systems) route the requests (or tasks) to different servers. Load balancing can range from basic, like round-robin, to "smart" taking advantage of information about the relative load, resources, and data on the workers/servers to schedule the task. The more complex the load balancing is, the more work the load balancer has to do. In Dask all of this load balancing is handled centrally, which requires that the head node has a relatively complete view of most workers state to intelligently assign tasks.
+Load balancing is another way of looking at parallelism where a system (or systems) route the requests (or tasks) to different servers. Load balancing can range from basic, like round-robin, to "smart," taking advantage of information about the relative load, resources, and data on the workers/servers to schedule the task. The more complex the load balancing is, the more work the load balancer has to do. In Dask all of this load balancing is handled centrally, which requires that the head node has a relatively complete view of most workers' state to intelligently assign tasks.
 
-On the other extreme "simple" load balancing, some systems like DNS round-robin based load balancing (not used in Dask) do not have any information about the system loads and just picks the "next" node. When tasks (or requests) are roughly equal in complexity, round-robin based load balancing can work well. This technique is most often used for handling web-requests or external API requests where you don't have a lot of control over the client making the requests. You are most likely to see this in model serving, like translating text or predicting fraudulent transactions.
+The other extreme is "simple" load balancing, where some systems, like DNS round-robin-based load balancing (not used in Dask), do not have any information about the system loads and just pick the "next" node. When tasks (or requests) are roughly equal in complexity, round-robin-based load balancing can work well. This technique is most often used for handling web requests or external API requests where you don't have a lot of control over the client making the requests. You are most likely to see this in model serving, like translating text or predicting fraudulent transactions.
 
 === Network Fault Tolerance and CAP Theorem
 
-If you search for "distributed computing concepts" you will likely come across the CAP theorem. The CAP theorem is most relevant for distributed data stores, but it's useful to understand regardless. The CAP theorem states that we cannot build a distributed system that is consistent, available, and partition tolerant. Partitions can occur from hardware failure, or more commonly overloaded network links.
+If you search for "distributed computing concepts," you will likely come across the CAP theorem. The CAP theorem is most relevant for distributed data stores, but it's useful to understand regardless. The theorem states that we cannot build a distributed system that is consistent, available, and partition-tolerant. Partitions can occur from hardware failure or, more commonly, overloaded network links.
 
-Dask itself has already made the trade-off of not being partition tolerant; whichever side of a network partition has the "leader" is the side that continues on, and the other side is unable to progress.
+Dask itself has already made the trade-off of not being partition-tolerant; whichever side of a network partition has the "leader" is the side that continues on, and the other side is unable to progress.
 
 It's important to understand how this applies to the resources that you are accessing from Dask. For example, you may find yourself in a case where a network partition means that Dask is unable to write its output. Or, in our opinion even worse, it can result in situations where the data you store from Dask is discarded.footnote:[This is not the most common fault tolerance of databases, but some default configurations of common databases can result in this.]
 
@@ -102,27 +102,27 @@ The https://jepsen.io/[+++Jepsen project+++], by Kyle Kingsbury, is one of the b
 
 === Recursion (Tail and Otherwise)
 
-Recursion refers to functions that call themselves (either directly or indirectly). When it’s indirect, it’s called _co-recursion_ and recursive functions that return the final value are called _tail-recursive_.footnote:[_Indirect_ here means with another function in between; for example, A calls B, which calls A, is an example of co-recursion.] Tail recursive functions are similar to loops, and sometimes the language can translate tail recursive calls into loops or maps.
+Recursion refers to functions that call themselves (either directly or indirectly). When it’s indirect, it’s called _co-recursion_, and recursive functions that return the final value are called _tail-recursive_.footnote:[_Indirect_ here means with another function in between; for example, A calls B, which calls A, is an example of co-recursion.] Tail-recursive functions are similar to loops, and sometimes the language can translate tail-recursive calls into loops or maps.
 
-Recursive functions are sometimes avoided in languages that cannot optimize them since there is overhead to calling a function. Instead, users will try and express the recursive logic using loops.
+Recursive functions are sometimes avoided in languages that cannot optimize them, since there is overhead to calling a function. Instead, users will try to express the recursive logic using loops.
 
-Excessive non-optimized recursion can result in a stackoverflow error. In C, Java, C&#x2b;&#x2b; and more stack memory is allocated separately from the main memory (also called heap memory). In Python the amount of recursion is controlled by `setrecursionlimit`. Python provides a https://chrispenner.ca/posts/python-tail-recursion[+++tail_recursive annotation+++] that you can use to help optimize these recursive calls.
+Excessive non-optimized recursion can result in a stack overflow error. In C, Java, [.keep-together]#C&#x2b;&#x2b;#, and more, stack memory is allocated separately from the main memory (also called heap memory). In Python, the amount of recursion is controlled by `setrecursionlimit`. Python provides a https://chrispenner.ca/posts/python-tail-recursion[+++tail-recursive annotation+++] that you can use to help optimize these recursive calls.
 
-In Dask, while recursive calls don’t have the exact same stack problem, excessive recursion can be one of the causes of load on the "head" node. This is because scheduling the recursive call must pass through the head node, and the excessive number of recursive functions will cause Dask's scheduler to slow down long before any stack size issues are countered.
+In Dask, while recursive calls don’t have the exact same stack problem, excessive recursion can be one of the causes of load on the head node. This is because scheduling the recursive call must pass through the head node, and the excessive number of recursive functions will cause Dask's scheduler to slow down long before any stack size issues are countered.
 
 === Versioning and Branching: Code and Data
 
-Versioning is an important computer science concept, and it can be applied to both code and data. Ideally versioning makes it easy to undo errors and go back to earlier versions or explore multiple directions simultaneously. Many of the items we produce are a combination of both our code and our data, to truly meet the goal of being able to quickly roll-back and support experimentation you will want to have versioning for both your code and your data.
+Versioning is an important computer science concept, and it can be applied to both code and data. Ideally, versioning makes it easy to undo errors and go back to earlier versions or explore multiple directions simultaneously. Many of the items we produce are a combination of both our code and our data; to truly meet the goal of being able to quickly roll back and support experimentation, you will want to have versioning for both your code and your data.
 
 Version control tools for source code have existed for a long time. For code, https://git-scm.com/[+++Git+++] has become the most popular open source version control system in usage, overtaking tools like Subversion, Concurrent Version Systems, and many more.
 
-While understanding Git thoroughly can be very complicated,footnote:[One classic https://xkcd.com/1597/[+++xkcd comic+++] comes surprisingly close to capturing our early experiences with Git.] for common usage there are a few https://git-scm.com/docs/giteveryday[+++core commands+++] that often see you through most of your usage. Teaching Git is beyond the scope of this appendix, but there are a great many resources including pass:[<a href="https://learning.oreilly.com/library/view/head-first-git/9781492092506/" class="orm:hideurl"><em>Head First Git</em></a>] by Raju Gandhi (O'Reilly) and _Oh Shit Git_ by Julia Evans, as well as free online resources.
+While understanding Git thoroughly can be very complicated,footnote:[One classic https://xkcd.com/1597/[+++XKCD comic+++] comes surprisingly close to capturing our early experiences with Git.] for common usage there are a few https://git-scm.com/docs/giteveryday[+++core commands+++] that often see you through. Teaching Git is beyond the scope of this appendix, but there are a great many resources, including pass:[<a href="https://learning.oreilly.com/library/view/head-first-git/9781492092506/" class="orm:hideurl"><em>Head First Git</em></a>] by Raju Gandhi (O'Reilly) and _Oh Shit, Git!_ by Julia Evans, as well as free online resources.
 
-Unfortunately, software version control tools don't currently have the best Notebook integration experience, often requiring additional tools like https://www.reviewnb.com/[+++ReviewNB+++] to make the changes understandable.
+Unfortunately, software version control tools don't currently have the best notebook integration experience, often requiring additional tools like https://www.reviewnb.com/[+++ReviewNB+++] to make the changes understandable.
 
-Now a natural question is, can you use the same tools for versioning your data as your software? Sometimes you can, provided that your data is small enough and does not contain any personal information using source control on data can be ok. However software tends to be stored in text and is normally relatively smaller than your data, and many of the source control tools do not work well when files start to exceed even a few 10MBs.
+Now, a natural question is, can you use the same tools for versioning your data as your software? Sometimes you can&mdash;provided that your data is small enough and does not contain any personal information, using source control on data can be OK. However, software tends to be stored in text and is normally relatively smaller than your data, and many of the source control tools do not work well when files start to exceed even a few dozen MBs.
 
-Instead, tools like https://lakefs.io/[+++LakeFS+++] add Git-like versioning semantics over top of existing external data stores (e.g., S3, HDFS, Iceberg, Delta).footnote:[Conflict of interest disclosure: I like the LakeFS people, and I've received a t-shirt from them. Some alternatives include project nessie (focused on Iceberg tables).] Another option is to make copies of your tables manually, but we find this leads to the familiar problem of "-final2-really-final" problem with naming notebooks and word docs.
+Instead, tools like https://lakefs.io/[+++LakeFS+++] add Git-like versioning semantics on top of existing external data stores (e.g., S3, HDFS, Iceberg, Delta).footnote:[Conflict-of-interest disclosure: I like the LakeFS people, and I've received a T-shirt from them. Some alternatives include Project Nessie (focused on Iceberg tables).] Another option is to make copies of your tables manually, but we find this leads to the familiar "-final2-really-final" problem with naming notebooks and Word docs.
 
 === Isolation and Noisy Neighbors
 
