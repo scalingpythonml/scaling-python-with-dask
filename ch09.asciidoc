@@ -120,11 +120,13 @@ FugueSQL provides SQL compatibility to PyData stack, including Dask. The project
 ----
 from fugue_notebook import setup
 setup (is_lab=True)
-ur = 'https://d37ci6vzurychx.cloudfront.net/trip-data/yellow_tripdata_2018-01.parquet'
+ur = ('https://d37ci6vzurychx.cloudfront.net/trip-data/'
+      'yellow_tripdata_2018-01.parquet')
 df = dd.read_parquet(url)
 
 %%fsql dask
-tempdf = SELECT VendorID, AVG (total_amount) AS average_fare FROM df GROUP BY VendorID
+tempdf = SELECT VendorID, AVG (total_amount) AS average_fare FROM df 
+GROUP BY VendorID
 
 SELECT *
 FROM tempdf
@@ -151,15 +153,15 @@ PRINT
 schema: VendorID:long, average_fare:double
 ----
 
-An alternate method is to use Dask-SQL library. This package uses Apache Calcite to provide the SQL parsing frontend, and is used to query Dask DataFrames. With that library, you can pass most of the SQL based operations to dask_sql context, and it will be handled. The engine handles standard SQL inputs like `SELECT`, `CREATE TABLE`, but also ML model creation, with `CREATE MODEL` syntax.
+An alternate method is to use the Dask-SQL library. This package uses Apache Calcite to provide the SQL parsing frontend, and is used to query Dask DataFrames. With that library, you can pass most of the SQL-based operations to the Dask-SQL context, and it will be handled. The engine handles standard SQL inputs like `SELECT`, `CREATE TABLE`, but also ML model creation, with the `CREATE MODEL` syntax.
 
 ==== Deployment Monitoring
 
-Like many other distributed libraries, Dask provides logs, and you can configure Dask logs to be sent to a storage system. The method will vary by the deployment environment, and whether jupyter is involved.
+Like many other distributed libraries, Dask provides logs, and you can configure Dask logs to be sent to a storage system. The method will vary by the deployment environment, and whether Jupyter is involved.
 
-Dask client exposes get_worker_logs() and get_scheduler_logs() method that can be accessed at runtime if desired. Additionally, similar to other distributed system logging, you can log events by topic, making them easily accessible by event types.
+The Dask client exposes the `get_worker_logs()` and `get_scheduler_logs()` methods, which can be accessed at runtime if desired. Additionally, similar to other distributed system logging, you can log events by topic, making them easily accessible by event types.
 
-<<ex_basic_logging_ch09_1685536244456>> is a toy example on adding a custom log event to the client. 
+<<ex_basic_logging_ch09_1685536244456>> is a toy example of adding a custom log event to the client. 
 
 [[ex_basic_logging_ch09_1685536244456]]
 .Basic logging by topic example
@@ -170,7 +172,7 @@ include::./examples/dask/Dask-Ch10_porting.py[tags=ex_basic_logging]
 ----
 ====
 
-<<structured-logging-on-workers_ch09_1685536283090>> builds on the previous one, but swaps in the execution context to a distributed cluster setup, for potentially more complex, custom structured events. The Dask Client listens and accumulates these events and we can inspect them. We start with a Dask DataFrame, then run some compute-heavy task. This example uses a softmax function, which is a common computation in many ML uses. A common ML dilemma is whether to use a more complex activation or loss function for accuracy, sacrificing performance (thereby running less training epoch but gain a more stable gradient), or vice versa. To figure that out, we insert a code to log custom structured events to time the compute overhead of that specific function.
+<<structured-logging-on-workers_ch09_1685536283090>> builds on the previous one, but swaps in the execution context to a distributed cluster setup, for potentially more complex, custom structured events. The Dask client listens and accumulates these events, and we can inspect them. We start with a Dask DataFrame, then run some compute-heavy task. This example uses a softmax function, which is a common computation in many ML uses. A common ML dilemma is whether to use a more complex activation or loss function for accuracy, sacrificing performance (thereby running less training epoch but gain a more stable gradient), or vice versa. To figure that out, we insert a code to log custom structured events to time the compute overhead of that specific function.
 
 
 [[structured-logging-on-workers_ch09_1685536283090]]
