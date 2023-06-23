@@ -1,46 +1,46 @@
 [[ch11]]
 == Machine Learning with Dask
 
-Now that you know Dask’s many different data types, computation patterns, deployment options and use of Dask libraries, we are ready to tackle Machine Learning. You will quickly find that ML with Dask is quite intuitive to use, as it runs on the same Python environment as the other many popular ML libraries. Much of the heavy work is done by Dask’s built-in data types and Dask’s distributed schedulers, making writing code an enjoyable experience for the user.footnote:[For those inclined to think writing data engineering code is “fun.”]
+Now that you know Dask’s many different data types, computation patterns, deployment options, and libraries, we are ready to tackle machine learning. You will quickly find that ML with Dask is quite intuitive to use, as it runs on the same Python environment as the many other popular ML libraries. Much of the heavy work is done by Dask’s built-in data types and Dask’s distributed schedulers, making writing code an enjoyable experience for the user.footnote:[For those inclined to think writing data engineering code is “fun.”]
 
-This chapter will primarily use Dask-ML library, a robustly supported ML library from Dask open source project, but also highlight other libraries, such as XGBoost and Scikit-learn. The Dask-ML library is designed to run both in clusters and locally.footnote:[This is especially important for non-batch inference where being able to use the same code can be of great benefit.] Dask-ML provides familiar interfaces by extending many common ML libraries. ML is different than many of the tasks discussed so far, as it requires the framework (here Dask-ML) to coordinate work more closely. This chapter will show some of the ways you can use it in your own programs, and offer tips.
+This chapter will primarily use the Dask-ML library, a robustly supported ML library from the Dask open source project, but we will also highlight other libraries, such as XGBoost and scikit-learn. The Dask-ML library is designed to run both in clusters and locally.footnote:[This is especially important for non-batch inference, where being able to use the same code can be of great benefit.] Dask-ML provides familiar interfaces by extending many common ML libraries. ML is different than many of the tasks discussed so far, as it requires the framework (here Dask-ML) to coordinate work more closely. This chapter will show some of the ways you can use it in your own programs, and offer tips.
 
-Since ML is such a wide and varied discipline, we are only able to cover some of the situations where Dask-ML is useful. This chapter will discuss some of the common work patterns, such as exploratory data analysis, random split, featurization, regression, and deep learning inferences from a practitioner’s perspective on ramping up on Dask. If you don't see your particular library or use case represented, it may still be possible to accelerate with Dask, and you should look at Dask-ML's https://ml.dask.org/modules/api.html[+++API guide+++]. However, ML is not Dask's primary focus so you may find that you need to use other tools, like Ray.
+Since ML is such a wide and varied discipline, we are only able to cover some of the situations where Dask-ML is useful. This chapter will discuss some of the common work patterns, such as exploratory data analysis, random split, featurization, regression, and deep learning inferences, from a practitioner’s perspective on ramping up on Dask. If you don't see your particular library or use case represented, it may still be possible to accelerate with Dask, and you should look at Dask-ML's https://ml.dask.org/modules/api.html[+++API guide+++]. However, ML is not Dask's primary focus, so you may find that you need to use other tools, like Ray.
 
 === Parallelizing ML
 
-Many ML workloads face scaling challenges in two dimensions: model size and data size. Training models with large features or components, like many deep learning models, often become compute bound, where training, predicting, and evaluating the model becomes slow and harder to manage. On the other hand, many ML models, even seemingly simple ones like regression, often get stretched to their limits with large volumes of training datasets that don’t fit into one machine, getting memory-bound in their scaling challenges.
+Many ML workloads face scaling challenges in two dimensions: model size and data size. Training models with large features or components, like many deep learning models, often become compute-bound, where training, predicting, and evaluating the model becomes slow and harder to manage. On the other hand, many ML models, even seemingly simple ones like regression, often get stretched to their limits with large volumes of training datasets that don’t fit into one machine, getting memory-bound in their scaling challenges.
 
-On memory-bound workloads, Dask’s high-level collections we have covered (such as Dask array, DataFrame, and bag) combine with dask-ml libraries to offer native scaling. For compute-bound workloads, Dask parallelizes training through integrations such as Dask-ML and Dask-joblib. In the case of Scikit, Dask can manage cluster-wide work allocation, using joblib. You might notice each workflow requires a different library, this is because each ML tool uses its own method of parallelization that Dask extends.
+On memory-bound workloads, Dask’s high-level collections that we have covered (such as Dask array, DataFrame, and bag) combine with Dask-ML libraries to offer native scaling. For compute-bound workloads, Dask parallelizes training through integrations such as Dask-ML and Dask-joblib. In the case of scikit-learn, Dask can manage cluster-wide work allocation, using Dask-joblib. You might notice each workflow requires a different library; this is because each ML tool uses its own method of parallelization that Dask extends.
 
-You can use Dask in conjunction with many popular machine learning libraries, including scikit-learn, and XGBoost. You may already be familiar with single-machine parallelism inside of your favorite ML library. Dask takes these single-machine frameworks, like joblib, and extends them to machines connected over the network.
+You can use Dask in conjunction with many popular machine learning libraries, including scikit-learn and XGBoost. You may already be familiar with single-machine parallelism inside of your favorite ML library. Dask takes these single-machine frameworks, like Dask-joblib, and extends them to machines connected over the network.
 
-=== When to Use dask-ml
+=== When to Use Dask-ML
 
-Dask excels in parallel tasks with limited distributed mutable state (like large model weights). Dask is commonly used for inference/predictions on ML models, which is simpler than training. Training models, on the other hand, often require more inter-worker communication in the form of model weight updates and repeated loops with sometimes variable amounts of computation per training cycle. You can use Dask for both of these use cases, but adoption and tooling for training is not as widespread.
+Dask excels in parallel tasks with limited distributed mutable state (like large model weights). Dask is commonly used for inference/predictions on ML models, which is simpler than training. Training models, on the other hand, often require more inter-worker communication in the form of model weight updates and repeated loops, with sometimes variable amounts of computation per training cycle. You can use Dask for both of these use cases, but adoption and tooling for training is not as widespread.
 
-Dask's integration with common data preparation tools – including pandas, NumPy, pytorch, and tensorflow – makes it easier to build inference pipelines. In JVM based tools, like Spark, working with those libraries comes at a higher overhead.
+Dask's integration with common data preparation tools&mdash;including pandas, NumPy, PyTorch, and TensorFlow&mdash;makes it easier to build inference pipelines. In JVM-based tools, like Spark, working with those libraries comes at a higher overhead.
 
-Another great use case for Dask is feature engineering and plotting large datasets before training. Dask’s preprocessing functions often use the same signatures, and functions the same way as Scikit-learn, but it distributes the work across machines. Similarly with plotting and visualization, Dask is able to generate a beautiful plot of large dataset beyond the usual limits of matplotlib / seaborn.
+Another great use case for Dask is feature engineering and plotting large datasets before training. Dask’s pre-processing functions often use the same signatures, and functions the same way as scikit-learn, but it distributes the work across machines. Similarly with plotting and visualization, Dask is able to generate a beautiful plot of a large dataset beyond the usual limits of matplotlib/seaborn.
 
-For more involved ML and deep learning work, some users opt to generate Pytorch or Tensorflow models separately, and then use the models generated for inference workloads using Dask. This keeps the workload on Dask side "embarassingly parallel." Alternatively, some users opt to write the training data as a Dask DataFrame using Delayed pattern, which is fed into Keras or Torch. Be warned that this is a medium level of effort to do so.
+For more involved ML and deep learning work, some users opt to generate PyTorch or TensorFlow models separately, and then use the models generated for inference workloads using Dask. This keeps the workload on the Dask side embarassingly parallel. Alternatively, some users opt to write the training data as a Dask DataFrame using the delayed pattern, which is fed into Keras or Torch. Be warned that there is a medium level of effort to do so.
 
-As discussed in previous chapters, the Dask project is still in the early phase of its life, and some of these libraries are still a work in progress, and come with disclaimers. We went through extra caution to validate most of the numerical methods used in the Dask-ml library to make sure the logic and mathematics are sound, and work as expected. However, some dependent libraries come with warnings that it’s not yet ready for prime time, especially as it relates to GPU-aware workloads and massively distributed workloads. We expect these to get sorted out as the community grows and users contribute with their feedback.
+As discussed in previous chapters, the Dask project is still in the early phase of its life, and some of these libraries are still a work in progress, and come with disclaimers. We went through extra caution to validate most of the numerical methods used in the Dask-ML library to make sure the logic and mathematics are sound and work as expected. However, some dependent libraries come with warnings that it’s not yet ready for prime time, especially as it relates to GPU-aware workloads and massively distributed workloads. We expect these to get sorted out as the community grows and users contribute their feedback.
 
-=== Getting Started with dask-ml Library and XGBoost for Dask
+=== Getting Started with Dask-ML and XGBoost
 
-Dask-ml is the officially supported ML library for Dask. Here, we will walk through the functionalities provided in dask-ml api, and how it connects to Dask, pandas, and Scikit into its functions, and some differences between Dask version and its Scikit equivalents. Additionally, we will walk through a few XGBoost, gradient boost integrations. We will primarily use the New York City Yellowcab taxi data we previously used to walk through examples. You can access the dataset directly from the https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page[New York City website].
+Dask-ML is the officially supported ML library for Dask. Here, we will walk through the functionalities provided in the Dask-ML API; how it connects Dask, pandas, and scikit-learn into its functions; and some differences between Dask and its scikit-learn equivalents. Additionally, we will walk through a few XGBoost gradient boost integrations. We will primarily use the New York City yellow taxi cab data we previously used to walk through examples. You can access the dataset directly from the https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page[New York City website].
 
 ==== Feature Engineering
 
-As with any good Data Science workflow, we start with cleaning up, applying scalers, and transforms. Dask-ml has drop-in replacements for most of the preprocessing API from scikit-learn, including `StandardScaler`, `PolynomialFeatures`, `MinMaxScaler`, etc.
+As with any good data science workflow, we start with clean-up, applying scalers, and transforms. Dask-ML has drop-in replacements for most of the pre-processing API from scikit-learn, including `StandardScaler`, `PolynomialFeatures`, `MinMaxScaler`, etc.
 
-You can pass multiple columns to the transformers, and each will be normalized, resulting in a delayed Dask DataFrame that you should call compute on.
+You can pass multiple columns to the transformers, and each will be normalized, resulting in a delayed Dask DataFrame that you should call `compute` on.
 
-In <<ex_scaling_variables>>, we scale trip distances, which is in miles, and total amount, which is in dollars, to their own scaled variables. This is a continuation from the exploratory data analysis we did on NYC Yellowcab data in <<ch04>>.
+In <<ex_scaling_variables>>, we scale trip distances, which are in miles, and total amount, which is in dollars, to their own scaled variables. This is a continuation from the exploratory data analysis we did on the data in <<ch04>>.
 
 [[ex_scaling_variables]]
-.Dask DataFrame preprocessing with StandardScaler
+.Dask DataFrame pre-processing with StandardScaler
 ====
 [source, python]
 ----
@@ -48,12 +48,12 @@ include::./examples/dask/Dask-Ch13_ML.py[tags=ex_scaling_variables]
 ----
 ====
 
-For categorical variables, while there is `OneHotEncoder` in Dask-ml, it’s not as efficient and one-to-one replacement as its Scikit equivalent. At this point we recommend using `Categorizer` to encode a categorical dtype.footnote:[For performance reasons. At the time of writing, Dask’s OneHotEncoder calls get_dummies method from pandas, which is a slower implementation that scikit-learn’s OneHotEncoder. Categorizer on the other hand, uses a Dask DataFrame aggregation method to scan through categories efficiently.]
+For categorical variables, while there is `OneHotEncoder` in Dask-ML, it’s not as efficient and one-to-one in replacement as its scikit-learn equivalent. At this point we recommend using `Categorizer` to encode a categorical dtype.footnote:[For performance reasons&mdash;at the time of writing, Dask’s `OneHotEncoder` calls the `get_dummies` method from pandas, which is a slower implementation than scikit-learn’s `OneHotEncoder`. `Categorizer`, on the other hand, uses a Dask DataFrame aggregation method to scan through categories efficiently.]
 
-<<ex_categorical_variables>> shows how you would categorize a particular column while preserving the existing DataFrame. We select `payment_type`, which is encoded originally as an integer, but really a four-category categorical variable. We call dask-ml’s Categorizer, while using pandas’ CategoricalDtype to give type hints. While Dask does have type inference (e.g. it can auto-infer the type), it is always better to be explicit in your program.
+<<ex_categorical_variables>> shows how you would categorize a particular column while preserving the existing DataFrame. We select `payment_type`, which is encoded originally as an integer but is really a four-category categorical variable. We call Dask-ML’s `Categorizer`, while using pandas’ `CategoricalDtype` to give type hints. While Dask does have type inference (e.g., it can auto-infer the type), it is always better to be explicit in your program.
 
 [[ex_categorical_variables]]
-.Dask DataFrame preprocessing as categorical variable using dask-ml
+.Dask DataFrame pre-processing as categorical variable using Dask-ML
 ====
 [source, python]
 ----
@@ -61,12 +61,12 @@ include::./examples/dask/Dask-Ch13_ML.py[tags=ex_categorical_variables]
 ----
 ====
 
-Alternatively, you can opt to use Dask DataFrame’s built-in categorizer. While pandas is permissive with Object or String based column types, Dask will reject these columns, unless it was read first as a categorical variable. There are two ways you can do this: declare a column as categorical at reading the data, with `dtype=\{col: categorical}`, or convert before invoking get_dummies, by using `df.categorize(“col1”)`. The reasoning here is that Dask is lazily evaluated, and cannot create a dummy variable out of a column without having a full list of unique values seen. Calling `.categorize()` is convenient and allows for dynamic handling of additional categories, but keep in mind that it does need to scan the entire column first to get the categories, then another full scan to transform the column, so if you know the categories already and it won’t change, you should just invoke `DummyEncoder`.
+Alternatively, you can opt to use Dask DataFrame’s built-in categorizer. While pandas is permissive with Object and String as categorical data types, Dask will reject these columns unless they are read first as a categorical variable. There are two ways you can do this: declare a column as categorical at reading the data, with `dtype=\{col: categorical}`, or convert before invoking `get_dummies`, by using `df.categorize(“col1”)`. The reasoning here is that Dask is lazily evaluated, and cannot create a dummy variable out of a column without having a full list of unique values seen. Calling `.categorize()` is convenient and allows for dynamic handling of additional categories, but keep in mind that it does need to scan the entire column first to get the categories, then do another full scan to transform the column. So if you know the categories already and they won’t change, you should just invoke `DummyEncoder`.
 
-<<ex_categorical_variables_alt>> categorizes multiple columns at once. Nothing is materialized until you call execute, so you can chain many of these preprocesses at once.
+<<ex_categorical_variables_alt>> categorizes multiple columns at once. Nothing is materialized until you call `execute`, so you can chain many of these pre-processes at once.
 
 [[ex_categorical_variables_alt]]
-.Dask DataFrame preprocessing as categorical variable using Dask DataFrame built-in
+.Dask DataFrame pre-processing as categorical variable using the Dask DataFrame built-in
 ====
 [source, python]
 ----
@@ -74,12 +74,12 @@ include::./examples/dask/Dask-Ch13_ML.py[tags=ex_categorical_variables_alt]
 ----
 ====
 
-`DummyEncoder` is the dask-ml equivalent to sklearn `OneHotEncoder`, which will turn the variables into uint8, eight-bit unsigned integer, which is more memory efficient.
+`DummyEncoder` is the Dask-ML equivalent to scikit-learn's `OneHotEncoder`, which will turn the variables into uint8, an eight-bit unsigned integer, which is more memory-efficient.
 
-Again, there is a Dask DataFrame function that gives you a similar result. <<ex_dummy_variables>> demonstrates this on categorical columns, and <<ex_datetime_dummy_alt>> preprocesses datetime. Datetime can be tricky to work with. In this case, Python natively deserializes the datetime. Remember to always check datetime conversion and apply the necessary transforms beforehand.
+Again, there is a Dask DataFrame function that gives you a similar result. <<ex_dummy_variables>> demonstrates this on categorical columns, and <<ex_datetime_dummy_alt>> pre-processes datetime. Datetime can be tricky to work with. In this case, Python natively deserializes the datetime. Remember to always check datetime conversion and apply the necessary transforms beforehand.
 
 [[ex_dummy_variables]]
-.Dask DataFrame preprocessing as dummy variable using Dask DataFrame built-in
+.Dask DataFrame pre-processing as dummy variable using the Dask DataFrame built-in
 ====
 [source, python]
 ----
@@ -88,7 +88,7 @@ include::./examples/dask/Dask-Ch13_ML.py[tags=ex_dummy_variables]
 ====
 
 [[ex_datetime_dummy_alt]]
-.Dask DataFrame preprocessing datetime as dummy variable using Dask DataFrame built-in
+.Dask DataFrame pre-processing datetime as dummy variable using Dask DataFrame built-in
 ====
 [source, python]
 ----
@@ -96,7 +96,7 @@ include::./examples/dask/Dask-Ch13_ML.py[tags=ex_datetime_dummy_alt]
 ----
 ====
 
-Dask-ml's train-test-split method has more flexibility than Dask DataFrames version. Both are partition-aware, and we using them instead of the Scikit equivalent. Scikit’s train-test-split can be called here, but it is not partition-aware, and can result in a large data movement between workers, whereas the Dask implementations would split the train-test over each partition, avoiding the shuffle (<<ex_dask_random_split>>).
+Dask-ML's `train_test_split` method has more flexibility than the Dask DataFrames version. Both are partition-aware, and we using them instead of the scikit-learn equivalent. scikit-learn's `train_test_split` can be called here, but it is not partition-aware, and can result in a large data movement between workers, whereas the Dask implementations would split the train-test over each partition, avoiding the shuffle (<<ex_dask_random_split>>).
 
 [[ex_dask_random_split]]
 .Dask DataFrame pseudorandom split
@@ -113,12 +113,12 @@ As a side effect of random splits happening by each partition block, the random 
 
 Many of Scikit’s model selection related functions, including cross-validation, hyperparameter search, clustering, regression, imputation, and scoring methods are ported into Dask as a drop-in replacement. There are a few noteworthy improvements that make the functions run more efficiently than a simple parallel computing architecture, by using Dask’s task-graph views.
 
-Most regression-based models have been implemented for Dask use and can be used as a replacement for Scikit (see the footnote for an important caveat).footnote:[Most linear models in Dask-ml use a base implementation of the Generalized Linear Model library that has been implemented for Dask. We have verified the code for mathematical correctness, but the writers of this library have not endorsed the use of their GLM library for prime-time yet.] Many Scikit users would be familiar with the task of `.reshape()` for pandas, needing them to convert pandas DataFrame into 2D array in order for Scikit-learn to work. For some dask-ml functions you still need to also call `ddf.to_dask_array()` in order to convert a DataFrame to an array before training. Lately, some dask-ml has been improved to directly work on Dask DataFrames, but not all libraries.
+Most regression-based models have been implemented for Dask use and can be used as a replacement for Scikit (see the footnote for an important caveat).footnote:[Most linear models in Dask-ML use a base implementation of the Generalized Linear Model library that has been implemented for Dask. We have verified the code for mathematical correctness, but the writers of this library have not endorsed the use of their GLM library for prime-time yet.] Many Scikit users would be familiar with the task of `.reshape()` for pandas, needing them to convert pandas DataFrame into 2D array in order for Scikit-learn to work. For some Dask-ML functions you still need to also call `ddf.to_dask_array()` in order to convert a DataFrame to an array before training. Lately, some Dask-ML has been improved to directly work on Dask DataFrames, but not all libraries.
 
-<<linear_regression>> runs through a straightforward multivariate linear regression using dask-ml. Say you want to build a regression model on two predictor columns and one output column. You would apply the `.to_array()` to convert datatype into Dask arrays and then pass into Dask-ml implementation of LinearRegression. Note how we needed to materialize the conversion into arrays, and we gave explicit chunk size. This is because Dask-ml’s underlying implementation with linear models is not quite fully able to infer chunk sizes from previous steps. We also purposefully use sklearn’s scoring library, not dask-ml. We are noticing implementation issues with dask-ml that doesn’t play well with chunk sizes.footnote:[Dask-ml Version 2023.3.24, Some of the generalized linear models used relies on dask-glm 0.1.0.] Thankfully, at this point, this calculation is a reduce step, which works without any Dask specific logic.footnote:[Simple reduce operation, so we don’t need to preserve the chunking from previous steps.]
+<<linear_regression>> runs through a straightforward multivariate linear regression using Dask-ML. Say you want to build a regression model on two predictor columns and one output column. You would apply the `.to_array()` to convert datatype into Dask arrays and then pass into Dask-ML implementation of LinearRegression. Note how we needed to materialize the conversion into arrays, and we gave explicit chunk size. This is because Dask-ML’s underlying implementation with linear models is not quite fully able to infer chunk sizes from previous steps. We also purposefully use sklearn’s scoring library, not Dask-ML. We are noticing implementation issues with Dask-ML that doesn’t play well with chunk sizes.footnote:[Dask-ML Version 2023.3.24, Some of the generalized linear models used relies on dask-glm 0.1.0.] Thankfully, at this point, this calculation is a reduce step, which works without any Dask specific logic.footnote:[Simple reduce operation, so we don’t need to preserve the chunking from previous steps.]
 
 [[linear_regression]]
-.Linear regression with dask-ml
+.Linear regression with Dask-ML
 ====
 [source, python]
 ----
@@ -126,20 +126,20 @@ include::./examples/dask/Dask-Ch13_ML.py[tags=linear_regression]
 ----
 ====
 
-Note that function parameters for models for Scikit and Dask-ml are identical, but some are not supported as of now. For example, `LogisticRegression` is available in Dask-ml but multiclass solver is not supported, meaning that there is no exact equivalent for multiclass solvers implemented in dask-ml yet. So, if you want to use multinomial loss solver newton-cg or newton-cholesky, it might not work. For most uses of `LogisticRegression`, a default liblinear solver would do the trick. In practice, this limitation would only pertain to more niche and advanced use cases.
+Note that function parameters for models for Scikit and Dask-ML are identical, but some are not supported as of now. For example, `LogisticRegression` is available in Dask-ML but multiclass solver is not supported, meaning that there is no exact equivalent for multiclass solvers implemented in Dask-ML yet. So, if you want to use multinomial loss solver newton-cg or newton-cholesky, it might not work. For most uses of `LogisticRegression`, a default liblinear solver would do the trick. In practice, this limitation would only pertain to more niche and advanced use cases.
 
-For hyperparameter search, Dask-ml has the Scikit equivalent of `GridSearchCV` for exhaustive search over parameter values, and `RandomizedSearchCV` for randomly trying hyperparameters from a list. These can be run directly similar to its scikit variant, if the data and resulting model does not require much scaling.
+For hyperparameter search, Dask-ML has the Scikit equivalent of `GridSearchCV` for exhaustive search over parameter values, and `RandomizedSearchCV` for randomly trying hyperparameters from a list. These can be run directly similar to its scikit variant, if the data and resulting model does not require much scaling.
 
-Cross-validation and hyperparameter tuning often is a costly process even with a smaller dataset, as anyone who has run scikit cross-validate would attest. Dask users often deal with datasets large enough that use of exhaustive search algorithms is not feasible. As an alternative, Dask-ml implements several additional adaptive algorithms and hyperband based methods that approach the tuned parameter quicker with robust mathematical foundation.footnote:[Dask-ml’s own documentation has more info on adaptive and approximation CV methods implemented and its use cases.] The authors of the `HyperbandSearchCV` methods do ask that the use be cited.footnote:[They note in the documentation to cite the following paper if using this method: S. Sievert, T. Augspurger, and M. Rocklin, “Better and Faster Hyperparameter Optimization with Dask,” _Proceedings of the 18th Python in Science Conference_ (2019), https://doi.org/10.25080/Majora-7ddc1dd1-011[+++https://doi.org/10.25080/Majora-7ddc1dd1-011+++].]
+Cross-validation and hyperparameter tuning often is a costly process even with a smaller dataset, as anyone who has run scikit cross-validate would attest. Dask users often deal with datasets large enough that use of exhaustive search algorithms is not feasible. As an alternative, Dask-ML implements several additional adaptive algorithms and hyperband based methods that approach the tuned parameter quicker with robust mathematical foundation.footnote:[Dask-ML’s own documentation has more info on adaptive and approximation CV methods implemented and its use cases.] The authors of the `HyperbandSearchCV` methods do ask that the use be cited.footnote:[They note in the documentation to cite the following paper if using this method: S. Sievert, T. Augspurger, and M. Rocklin, “Better and Faster Hyperparameter Optimization with Dask,” _Proceedings of the 18th Python in Science Conference_ (2019), https://doi.org/10.25080/Majora-7ddc1dd1-011[+++https://doi.org/10.25080/Majora-7ddc1dd1-011+++].]
 
-==== When There Is No dask-ml Equivalent
+==== When There Is No Dask-ML Equivalent
 
-If there is a function that exists in Scikit or other data science libraries but not in dask-ml, you can write the distributed version of your desired code. After all, dask-ml can be thought of as a convenience wrapper around scikit-learn.
+If there is a function that exists in Scikit or other data science libraries but not in Dask-ML, you can write the distributed version of your desired code. After all, Dask-ML can be thought of as a convenience wrapper around scikit-learn.
 
 <<ex_daskml_port>> uses Scikit’s learning functions `SGDRegressor` and `LinearRegression`, and uses `dask.delayed` to wrap the delayed functionality around the method. You can do this over any piece of code you may want to parallelize.
 
 [[ex_daskml_port]]
-.Linear regression with dask-ml
+.Linear regression with Dask-ML
 ====
 [source, python]
 ----
@@ -162,9 +162,9 @@ include::./examples/dask/Dask-Ch13_ML.py[tags=ex_joblib]
 
 ==== XGBoost with Dask
 
-XGBoost is a popular python gradient boosting library, used for parallel tree boosting. Well-known gradient boosting methods include boostrap aggregation (bagging). Various gradient boosting methods have been used in High Energy Physics data analysis at the Large Hadron Collider, used to train Deep Neural Networks to confirm the discovery of the Higgs Boson. Gradient Boosting methods are currently used in scientific areas such as geological or climate studies. Given its importance, we found XGBoost on Dask-ml to be a well-implemented library, ready for users.
+XGBoost is a popular python gradient boosting library, used for parallel tree boosting. Well-known gradient boosting methods include boostrap aggregation (bagging). Various gradient boosting methods have been used in High Energy Physics data analysis at the Large Hadron Collider, used to train Deep Neural Networks to confirm the discovery of the Higgs Boson. Gradient Boosting methods are currently used in scientific areas such as geological or climate studies. Given its importance, we found XGBoost on Dask-ML to be a well-implemented library, ready for users.
 
-Dask-ml has built-in support for XGBoost to work with Dask arrays and DataFrames. By using XGBClassifiers within dask_ml, you will be setting up XGBoost in distributed mode that works with your Dask cluster. When you do so, XGBoost’s master process lives in Dask scheduler, and XGBoost’s worker processes to be on Dask’s worker processes. The data distribution is handled using Dask DataFrame, split into pandas DataFrame, talking between Dask worker and XGBoost worker on the same machine.
+Dask-ML has built-in support for XGBoost to work with Dask arrays and DataFrames. By using XGBClassifiers within dask_ml, you will be setting up XGBoost in distributed mode that works with your Dask cluster. When you do so, XGBoost’s master process lives in Dask scheduler, and XGBoost’s worker processes to be on Dask’s worker processes. The data distribution is handled using Dask DataFrame, split into pandas DataFrame, talking between Dask worker and XGBoost worker on the same machine.
 
 XGBoost uses a DMatrix (data matrix) as its standard data format it works with. XGBoost has a built-in Dask compatible DMatrix, which takes in Dask array and Dask DataFrame. Once the Dask environment is set up, the use of gradient booster is as you would expect. Specify the learning rate, threads, objective functions, as usual. <<ex_xgb_basic_usage>> works with a Dask CUDA cluster, and runs a standard gradient booster training.
 
@@ -225,7 +225,7 @@ include::./examples/dask/Dask-Ch13_ML.py[tags=Dask_sql_linear_regression]
 ----
 ====
 
-Similarly, as shown in <<Dask_sql_XGBClassifier>>, you can run classification models, similar to the XGBoost model we have discussed earlier using dask-ml library.
+Similarly, as shown in <<Dask_sql_XGBClassifier>>, you can run classification models, similar to the XGBoost model we have discussed earlier using the Dask-ML library.
 
 [[Dask_sql_XGBClassifier]]
 .Defining, training, and predicting a classifier built using XGBoost with dask-sql
@@ -238,7 +238,7 @@ include::./examples/dask/Dask-Ch13_ML.py[tags=Dask_sql_XGBClassifier]
 
 === Inference and Deployment
 
-Regardless of the libraries chosen to train and validate your model (which could be using some of the Dask-ml libraries, or trained without using Dask at all), here are some of the considerations to keep in mind when using Dask for model inference deployment.
+Regardless of the libraries chosen to train and validate your model (which could be using some of the Dask-ML libraries, or trained without using Dask at all), here are some of the considerations to keep in mind when using Dask for model inference deployment.
 
 ==== Distributing Data and Models Manually
 
@@ -262,7 +262,7 @@ include::./examples/dask/Dask-Ch13_ML.py[tags=dask_delayed_load_model]
 
 ==== Large-Scale Inferences with Dask
 
-When using Dask for inference on scale, you would distribute trained models to each worker, and then distribute Dask collections (DataFrame or array) over these partitions to work on a portion of the collection at a time, parallelizing the workflow. This strategy would work well in a straightforward inference deployment. We will cover one of the ways to achieve this: defining the workflow manually using map_partition, and then wrapping existing functions with PyTorch or Keras/Tensorflow models. For PyTorch based models, you can wrap Skorch with the model, which allows it to be used with Dask-ml API. For Tensorflow models, you would use SciKeras to create a Scikit-learn compatible model, which would allow it to be used for Dask-ml. For Pytorch, dask-pytorch-ddp library from saturncloud is currently the most widely used. As for Keras and Tensorflow, be aware that while it’s doable, there are some issues with Tensorflow not liking some of its threads being moved to other workers.
+When using Dask for inference on scale, you would distribute trained models to each worker, and then distribute Dask collections (DataFrame or array) over these partitions to work on a portion of the collection at a time, parallelizing the workflow. This strategy would work well in a straightforward inference deployment. We will cover one of the ways to achieve this: defining the workflow manually using map_partition, and then wrapping existing functions with PyTorch or Keras/TensorFlow models. For PyTorch based models, you can wrap Skorch with the model, which allows it to be used with Dask-ML API. For TensorFlow models, you would use SciKeras to create a Scikit-learn compatible model, which would allow it to be used for Dask-ML. For Pytorch, dask-pytorch-ddp library from saturncloud is currently the most widely used. As for Keras and TensorFlow, be aware that while it’s doable, there are some issues with TensorFlow not liking some of its threads being moved to other workers.
 
 The most generic way to deploy inference is using Dask DataFrame’s `map_partitions` (see <<Dask_DataFrame_map_partition_inference>>). You can take your custom inference function that will be runs on each row, with the data mapped over each worker by partition.
 

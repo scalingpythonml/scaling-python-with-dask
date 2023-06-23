@@ -14,9 +14,10 @@ import dask
 #tag::dask_local_gpu[]
 from dask_cuda import LocalCUDACluster
 from dask.distributed import Client
-#NOTE: The resources= flag is important, by default the LocalCUDACluster *does not* label any resources which can make
-# porting your code to a cluster where some workers have GPUs and some not
-# painful.
+#NOTE: The resources= flag is important, by default the 
+# LocalCUDACluster *does not* label any resources which can make
+# porting your code to a cluster where some workers have GPUs and 
+# some don't is painful.
 cluster = LocalCUDACluster(resources={"GPU": 1})
 client = Client(cluster)
 #end::dask_local_gpu[]
@@ -120,9 +121,6 @@ print(move_mean(arr, 3))
 
 def wrapped_move_mean(*args):
     return move_mean(*args)
-
-
-# In[ ]:
 
 
 a = dask.delayed(wrapped_move_mean)(arr, 3)

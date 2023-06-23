@@ -90,7 +90,7 @@ Normally, the goal with loading messy data is to get it into a structured format
 For messy textual data, which is a common occurrence with JSON, you can save yourself some time by loading the data using bag's `read_text` function. The `read_text` function defaults to splitting up the records by line; however, many formats cannot be processed by line. To get each whole file in a whole record, rather than split up, you can set the `linedelimiter` parameter to one not found. Often REST APIs will return the results as a subcomponent, so in <<preprocess_json>>, we load the https://datadashboard.fda.gov/ora/cd/recalls.htm[+++Food and Drug Administration (FDA) recall dataset+++] and strip it down to the part we care about. The FDA recall dataset is a wonderful real-world example of nested datasets often found in JSON data, which can be hard to process directly in DataFrames.
 
 [[preprocess_json]]
-.Preprocessing JSON
+.Pre-processing JSON
 ====
 [source, python]
 ----

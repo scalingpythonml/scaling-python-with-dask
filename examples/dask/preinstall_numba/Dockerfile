@@ -7,7 +7,7 @@ RUN conda config --add channels rpi
 # numba and conda-forge channels
 RUN conda config --add channels numba
 RUN conda config --add channels conda-forge
-# some CUDA specific stuff
+# some CUDA-specific stuff
 RUN conda config --add channels rapidsai
 # Accelerator libraries often involve a lot of native code so it's
 # faster to install with conda.
