@@ -74,7 +74,7 @@ include::./examples/dask/Dask-Ch10_porting.py[tags=ex_s3_minio_rw]
 
 ==== Development: Considerations
 
-Translating an existing logic to Dask is a fairly intuitive process. Here are some considerations if you're coming from libraries such as R, Pandas, and Spark, and how Dask might differ from them. Some of these are differences resulting from moving from a different low-level implementation, such as Java, and some are differences resulting from taking a single machine code to scaled implementation, such as coming from Pandas.
+Translating an existing logic to Dask is a fairly intuitive process. Here are some considerations if you're coming from libraries such as R, Pandas, and Spark, and how Dask might differ from them. Some of these are differences resulting from moving from a different low-level implementation, such as Java, and some are differences are from taking a single machine code to scaled implementation, such as coming from Pandas.
 
 ===== DataFrame performance
 
