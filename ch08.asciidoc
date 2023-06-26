@@ -5,7 +5,7 @@ It's hard, although possible, to build reliable systems out of unreliable compon
 
 Still, there are already dozens of popular libraries specifically for Dask, and the open source Dask community is growing around them. This gives us some confidence that many of these libraries are here to stay. <<libraries_used_with_dask_1687806941692>> shows a non-exhaustive list of foundational libraries in use and their relation to the core Dask project. It is meant as a roadmap for users, and is not an endorsement of individual projects. Though we haven't attempted to cover all the projects shown here, we offer evaluation of some individual projects throughout the book.
 
-[libraries_used_with_dask_1687806941692]
+[[libraries_used_with_dask_1687806941692]]
 .Libraries frequently used with Dask
 [options="header"]
 |===
