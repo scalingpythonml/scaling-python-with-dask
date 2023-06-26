@@ -122,7 +122,7 @@ Alternatively, you can run the same cluster with the CLI interface that Dask-Yar
 ====
 [source, python]
 ----
-include:./examples/dask/Dask-Ch14-Tuning.py[tags=ex_yarn_deployment_CLI_tuning]
+include::./examples/dask/Dask-Ch14-Tuning.py[tags=ex_yarn_deployment_CLI_tuning]
 ----
 ====
 
