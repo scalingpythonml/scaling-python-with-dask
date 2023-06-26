@@ -163,11 +163,6 @@ import pandas as pd
 
 
 #tag::dask_on_ray[]
-
-
-# In[ ]:
-
-
 import dask
 
 

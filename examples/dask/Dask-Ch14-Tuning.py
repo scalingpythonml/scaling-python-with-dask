@@ -252,7 +252,7 @@ get_ipython().system('dask-yarn status application_1516806604516_0019')
 get_ipython().system('dask-yarn kill application_1516806604516_0019')
 get_ipython().system('yarn logs -applicationId application_1516806604516_0019')
 
-#end::ex_yarn_deployment_tuning[]
+#end::ex_yarn_deployment_CLI_tuning[]
 
 
 # In[ ]:
