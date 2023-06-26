@@ -3,7 +3,48 @@
 
 It's hard, although possible, to build reliable systems out of unreliable components.footnote:[Although in many ways, distributed systems have evolved to overcome their unreliable components. For example, fault tolerance is something a single machine cannot achieve but distributed systems can accomplish with replication.] Dask is a largely community-driven open source project, and its components evolve at different rates. Not all parts of Dask are equally mature; even the components we cover in this book have different levels of support and development. While Dask's core parts are well-maintained and tested, some parts lack the same level of maintenance.
 
-Still, there are already dozens of popular libraries specific for Dask, and the open-source community around Dask is growing around them, that gives us some confidence that many of these are here to stay. We prepared a non-exhaustive list of foundational libraries in use, and its relation to the core Dask project. The following table is meant as a roadmap for the users, not our endorsement of individual repository. For the libraries we cover in this book, we offer some of our own evaluation of those libraries as well.
+Still, there are already dozens of popular libraries specifically for Dask, and the open source Dask community is growing around them. This gives us some confidence that many of these libraries are here to stay. <<libraries_used_with_dask_1687806941692>> shows a non-exhaustive list of foundational libraries in use and their relation to the core Dask project. It is meant as a roadmap for users, and is not an endorsement of individual projects. Though we haven't attempted to cover all the projects shown here, we offer evaluation of some individual projects throughout the book.
+
+[libraries_used_with_dask_1687806941692]
+.Libraries frequently used with Dask
+[options="header"]
+|===
+|*Category* |*Subcategory* |*Libraries*
+|Dask project | a|
+* Dask
+* Distributed
+* dask-ml
+|*Data structures:pass:[<sup><a href="#libraries_table_foonote">a</a></sup>] Extend functionality, specific scientific data handling, or deployment hardware options of Dask built-in data structures |Functionalities and convenience a|
+* _xarray_: adds axis labels for Dask array
+* _sparse_: an efficient implementation for sparse arrays and matrices, often found in ML and deep learning
+* _pint_: scientific unit conversion
+* _dask-geopandas_: parallelization of geopandas
+| |Hardware a|
+* _RAPIDS project_: NVIDIA-led effort to extend Cuda data structure for Dask
+* _dask-cuda_:pass:[<span data-type="footnote" id="libraries_table_foonote">Covered in this book.</span>] provides CUDACluster, an extension of Dask's cluster that better manages Cuda-enabled Dask workers
+* _CuPY_:pass:[<sup><a href="#libraries_table_foonote">a</a></sup>] GPU-enabled arrays
+* _CuDF_:pass:[<sup><a href="#libraries_table_foonote">a</a></sup>] Cuda DataFrame as partitions in Dask DataFrame
+|*Deployment:pass:[<sup><a href="#libraries_table_foonote">a</a></sup>] Extend deployment options for use with Dask distributed |Containers a|
+* _dask-kubernetes_:pass:[<sup><a href="#libraries_table_foonote">a</a></sup>] Dask on k8s
+* _dask-helm_:pass:[<sup><a href="#libraries_table_foonote">a</a></sup>] alternate Dask on k8s and jupyterhub on k8s
+| |Cloud a|
+* _dask-cloudprovider_: commodity cloud APIs
+* _dask-gateway_
+* _Dask-Yarn_:pass:[<sup><a href="#libraries_table_foonote">a</a></sup>] for Yarn/Hadoop
+| |GPU a|
+* _dask-cuda_: Dask cluster optimized for GPUs
+| |HPC a|
+* _dask-jobqueue_:pass:[<sup><a href="#libraries_table_foonote">a</a></sup>] deployment for PBS, SLURM, MOAB, SGE, LSF, and HTCondor
+* _dask-mpi_:pass:[<sup><a href="#libraries_table_foonote">a</a></sup>] deployment for MPI
+|*ML and analytics:pass:[<sup><a href="#libraries_table_foonote">a</a></sup>] Extend ML libraries and computation with Dask | a|
+* _dask-ml_:pass:[<sup><a href="#libraries_table_foonote">a</a></sup>] Distributed implementation of scikit-learn and more
+* _xgboost_:pass:[<sup><a href="#libraries_table_foonote">a</a></sup>] gradient boosting with native Dask support
+* _light-gbm_:pass:[<sup><a href="#libraries_table_foonote">a</a></sup>] another tree-based learning algorithm with native Dask support
+* _dask-sql_:pass:[<sup><a href="#libraries_table_foonote">a</a></sup>] CPU-based SQL engine for Dask (ETL/compute logic can be run on SQL context; similar to SparkSQL)
+* _BlazingSQL_:pass:[<sup><a href="#libraries_table_foonote">a</a></sup>] SQL query on cuDF and Dask
+* _FugueSQL_:pass:[<sup><a href="#libraries_table_foonote">a</a></sup>] portability between Pandas, Dask, and Spark, using the same SQL code (downside: requires ANTLR, a JVM-based tool)
+* _Dask-on-Ray_:pass:[<sup><a href="#libraries_table_foonote">a</a></sup>] Dask's distributed data structures and task graphs, run on Ray scheduler
+|===
 
 It's essential to understand the state of the components that you are considering using. If you need to use a less maintained or developed part of Dask, pass:[<a href="https://oreil.ly/IDXVs">defensive programming</a>], including thorough code testing, will become even more critical. Working on less-established parts of the Dask ecosystem can also be an exciting opportunity to become more involved and contribute fixes or documentation.
 
