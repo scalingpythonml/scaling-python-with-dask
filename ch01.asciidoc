@@ -124,7 +124,7 @@ From a systems perspective, the biggest differences between Ray and Dask are han
 
 While Dask is many things, it is not a magic wand you wave over your code to make it faster.
 There are places where Dask has largely compatible drop-in APIs, but misusing them can result in slower execution.
-Dask is not a code rewriting or just-in-time (JIT) tool; instead, Dask allows you to scale these tools to run on clusters. Dask focuses on Python and may not be the right tool for scaling languages not tightly integrated with Python (such as Go). Dask does not have built-in catalog support (e.g., Hive or Iceberg), so reading and writing data from tables stored with them can pose a challenge.
+Dask is not a code rewriting or just-in-time (JIT) tool; instead, Dask allows you to scale these tools to run on clusters. Dask focuses on Python and may not be the right tool for scaling languages not tightly integrated with Python (such as Go). Dask does not have built-in catalog support (e.g., Hive or Iceberg), so reading and writing data from tables stored with the catalogs can pose a challenge.
 
 
 

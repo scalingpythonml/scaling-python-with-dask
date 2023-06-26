@@ -49,7 +49,9 @@ include::./examples/dask/Dask-Ch4-DataFrames.py[tags=ex_load_1kb]
 ----
 ====
 
-Loading CSV and JSON files can be more complicated than Parquet, and other self-describing data types don't have any schema information encoded. Dask DataFrames need to know the types of the different columns to serialize the data correctly. By default, Dask will automatically look at the first few records and guess the data types for each column. This process is known as schema inference (see <<ex_load_uk_gender_pay_gap_infered>>), and can be quite slow.
+Loading CSV and JSON files can be more complicated than Parquet, and other self-describing data types don't have any schema information encoded. Dask DataFrames need to know the types of the different columns to serialize the data correctly. By default, Dask will automatically look at the first few records and guess the data types for each column. This process is known as schema inference, and it can be quite slow.
+
+Unfortunately, schema inference does not always work. For example, if you try to load the UK's gender pay gap disparity data from _https&#x200b;://gender-pay-gap.service.gov.uk/viewing/download-data/2021_, when you access the data, as in <<ex_load_uk_gender_pay_gap_infered>>, you will get an error of "Mismatched dtypes found in pass:[<code>pd.read_csv</code>/<code>pd.read_table</code>]." When Dask's column type inference is incorrect you can override it (per column) by specifying the `dtype` parameter as shown in <<ex_load_uk_gender_pay_gap>>.
 
 [[ex_load_uk_gender_pay_gap_infered]]
 .Dask DataFrame loading CSV, depending entirely on inference
@@ -59,8 +61,6 @@ Loading CSV and JSON files can be more complicated than Parquet, and other self-
 include::./examples/dask/Dask-Ch4-DataFrames.py[tags=ex_load_uk_gender_pay_gap_infered]
 ----
 ====
-
-Unfortunately, schema inference does not always work. For example, if you try to load the UK's gender pay gap disparity data from _https&#x200b;://gender-pay-gap.service.gov.uk/viewing/download-data/2021_, when you access the data, as in <<ex_load_uk_gender_pay_gap_infered>>, you will get an error of "Mismatched dtypes found in pass:[<code>pd.read_csv</code>/<code>pd.read_table</code>]." When Dask's column type inference is incorrect you can override it (per column) by specifying the `dtype` parameter as shown in <<ex_load_uk_gender_pay_gap>>.
 
 [[ex_load_uk_gender_pay_gap]]
 .Dask DataFrame loading CSV and specifying data type
@@ -88,9 +88,7 @@ Dask does not detect sorted data on load. Instead, if you have presorted data, a
 
 You can also connect Dask to databases or microservices. Relational databases are a fantastic tool and are often quite performant at both simple reads and writes. Often relational databases support distributed deployment whereby the data is split up on multiple nodes, and this is mostly used with large datasets. They tend to be great at handling transactions at scale, but running analytic capabilities on the same node can encounter issues. Dask can be used to efficiently read and compute over this SQL database.
 
-You can use Dask's built-in support for loading SQL databases using SQLAlchemy (see <<ex_read_SQL_Dataframe>>). For Dask to split up the query on multiple machines, you need to give it an index key. Often SQL databases will have a primary key or numerical index key that you can use for this purpose (e.g., `read_sql_table("customers", index_col="customer_id")`). 
-
-More advanced connections to databases or microservices are best made using the bag interface and writing your custom load code, which you will learn more about in the next chapter.
+You can use Dask's built-in support for loading SQL databases using SQLAlchemy. For Dask to split up the query on multiple machines, you need to give it an index key. Often SQL databases will have a primary key or numerical index key that you can use for this purpose (e.g., `read_sql_table("customers", index_col="customer_id")`). An example of this is shown in <<ex_read_SQL_Dataframe>>. 
 
 [[ex_read_SQL_Dataframe]]
 .Reading from and writing to SQL with Dask DataFrame
@@ -100,6 +98,8 @@ More advanced connections to databases or microservices are best made using the 
 include::./examples/dask/Dask-Ch4-DataFrames.py[tags=ex_read_SQL_Dataframe]
 ----
 ====
+
+More advanced connections to databases or microservices are best made using the bag interface and writing your custom load code, which you will learn more about in the next chapter.
 
 .Partitioned Reads and Writes with Parquet
 ****
@@ -293,7 +293,7 @@ You will most commonly use full shuffles to repartition your data. It's importan
 Dask has three primary methods for controlling the partitioning of a DataFrame: `set_index`, `repartition`, and `shuffle` (see <<table_ch04_1687446786141>>). You use `set_index` when changing the partitioning to a new key/index. `repartition` keeps the same key/index but changes the splits. `repartition` and `set_index` take similar parameters, with `repartition` not taking an index key name. In general, if you are not changing the column used for the index, you should use `repartition`. `shuffle` is a bit different since it does not produce a known partitioning scheme that operations like `groupby` can take advantage of.
 
 [[table_ch04_1687446786141]]
-.AU: please add a title
+.Functions to control partitioning
 [options="header"]
 |===
 |Method |Changes index key |Sets number of partitions |Results in a known partitioning scheme |Ideal use case
@@ -327,7 +327,7 @@ include::./examples/dask/Dask-Ch4-DataFrames.py[tags=set_index_with_rolling_wind
 Dask, including for rolling time windows, assumes that your partition index is monotonically increasing.footnote:[Strictly increasing with no repeated values (e.g., 1, 4, 7 is monotonically increasing, but 1, 4, 4, 7 is not).]
 ====
 
-So far, you've had to specify the number of partitions, or the specific divisions, but you might be wondering if Dask can just figure this out itself. Thankfully, Dask's repartition function has the ability to pick divisions for a given target size. However, doing this is a non-trivial cost as Dask must evaluate the DataFrame as well as the repartition itself.
+So far, you've had to specify the number of partitions, or the specific divisions, but you might be wondering if Dask can just figure this out itself. Thankfully, Dask's repartition function has the ability to pick divisions for a given target size, as shown in <<repartition_ex>>. However, doing this is a non-trivial cost as Dask must evaluate the DataFrame as well as the repartition itself.
 
 [[repartition_ex]]
 .Dask DataFrame automatic partitioning
@@ -485,7 +485,7 @@ The first time you load the data into your dev environment, you might encounter 
 
 As you further explore a dataset, you might encounter data printed by default in a format that you don’t like, for example, scientific notation. The control for that is through pandas, not Dask itself. Dask implicitly calls pandas, so you want to explicitly set your preferred format using pandas.
 
-Summary statistics on the data works just like `.describe()` from pandas, along with specified percentiles or `.quantile()`. Remember to chain multiple computes together if you are running several of these, which will save compute time back and forth.
+Summary statistics on the data works just like `.describe()` from pandas, along with specified percentiles or `.quantile()`. Remember to chain multiple computes together if you are running several of these, which will save compute time back and forth. Using Dask DataFrame `describe` is shown in <<ex_describe_percentiles>>.
 
 [[ex_describe_percentiles]]
 .Dask DataFrame describing percentiles with pretty formatting
@@ -498,12 +498,7 @@ include::./examples/dask/Dask-Ch13_ML.py[tags=ex_describe_percentiles]
 
 ==== Plotting Data
 
-Plotting data is often an important step in getting to know your dataset. Plotting big data is a tricky subject. We as data engineers often get around that issue by first working with a smaller sampled dataset. For that, Dask would work alongside a Python plotting library like matplotlib and seaborn, just like pandas. The advantage of Dask DataFrame is that we are now able to plot the entire dataset, if desired. We can use plotting frameworks along with Dask to plot the entire dataset. Here, Dask does the filtering, the aggregation on the distributed workers, and only collects and gives to a client with libraries like matplotlib to render.
-
-[TIP]
-====
-Note that if you’re used to the NumPy logic, you will have to think of the Dask DataFrame layer when plotting. For example, NumPy users would be familiar with `df[col].values` syntax for defining plotting variables. The `.values` mean a different action in Dask; what we pass is `df[col]` instead.
-====
+Plotting data is often an important step in getting to know your dataset. Plotting big data is a tricky subject. We as data engineers often get around that issue by first working with a smaller sampled dataset. For that, Dask would work alongside a Python plotting library like matplotlib and seaborn, just like pandas. The advantage of Dask DataFrame is that we are now able to plot the entire dataset, if desired. We can use plotting frameworks along with Dask to plot the entire dataset. Here, Dask does the filtering, the aggregation on the distributed workers, and only collects and gives to a client with libraries like matplotlib to render. Plotting a Dask DataFrame is shown in <<ex_plot_distances>>.
 
 [[ex_plot_distances]]
 .Dask DataFrame plotting trip distance
@@ -512,6 +507,11 @@ Note that if you’re used to the NumPy logic, you will have to think of the Das
 ----
 include::./examples/dask/Dask-Ch13_ML.py[tags=ex_plot_distances]
 ----
+====
+
+[TIP]
+====
+Note that if you’re used to the NumPy logic, you will have to think of the Dask DataFrame layer when plotting. For example, NumPy users would be familiar with `df[col].values` syntax for defining plotting variables. The `.values` mean a different action in Dask; what we pass is `df[col]` instead.
 ====
 
 ==== Inspecting Data

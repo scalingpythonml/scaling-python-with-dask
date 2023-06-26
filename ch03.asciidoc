@@ -1,5 +1,5 @@
 [[ch_3]]
-== Understanding Enough of How Dask Works
+== The Basics of How Dask Works
 
 Now that you've run your first few tasks with Dask, it's time to learn a little bit about what's happening behind the scenes. Depending on if you are using Dask locally or in a distributed fashion, the behavior can be a little different. While Dask does a good job of abstracting away many of the details of running on multiple threads or servers, having a solid grasp of how Dask is working will help you better decide both how and when to use it.
 
@@ -36,7 +36,7 @@ include::./examples/dask/Dask-Ch3-Concepts.py[tags=threads]
 ----
 ====
 
-The local multi-process backend (see <<configuring_dask_multiprocess_ch03_1686241509022>>) has some additional overhead over multi-threaded, although it can be decreased on Unix & Unix-like systems.footnote:[Including OS X and Linux.] The multi-process backend is able to avoid Python's global interpreter lock by launching separate processes. Launching a new process is more expensive than a new thread, and Dask needs to serialize data that moves between processes.footnote:[This also involves having to store a second copy of any object that is in the driver thread and then used in a worker. Since Dask shards its collections, this doesn't generally blow up as quickly as with normal multi-processing.]
+The local multi-process backend, shown in <<configuring_dask_multiprocess_ch03_1686241509022>>, has some additional overhead over multi-threaded, although it can be decreased on Unix & Unix-like systems.footnote:[Including OS X and Linux.] The multi-process backend is able to avoid Python's global interpreter lock by launching separate processes. Launching a new process is more expensive than a new thread, and Dask needs to serialize data that moves between processes.footnote:[This also involves having to store a second copy of any object that is in the driver thread and then used in a worker. Since Dask shards its collections, this doesn't generally blow up as quickly as with normal multi-processing.]
 
 [[configuring_dask_multiprocess_ch03_1686241509022]]
 .Configuring Dask to use the multiprocess backend
@@ -47,7 +47,7 @@ include::./examples/dask/Dask-Ch3-Concepts.py[tags=process]
 ----
 ====
 
-If you are running on a Unix system, you can use the _forkserver_ (see <<configuring_dask_forkserver_ch03_1686241608423>>), which will https://docs.python.org/3/library/multiprocessing.html#contexts-and-start-methods[reduce the overhead of starting each Python interpreter]. Using the forkserver will not reduce the communication overhead.
+If you are running on a Unix system, you can use the _forkserver_, shown in <<configuring_dask_forkserver_ch03_1686241608423>>, which will https://docs.python.org/3/library/multiprocessing.html#contexts-and-start-methods[reduce the overhead of starting each Python interpreter]. Using the forkserver will not reduce the communication overhead.
 
 [[configuring_dask_forkserver_ch03_1686241608423]]
 .Configuring Dask to use the multi-process forkserver
@@ -66,7 +66,7 @@ Dask's local backends are designed for performance rather than for testing that 
 Dask has one distributed scheduler backend, and it talks to many different types of clusters, including a LocalCluster. Each type of cluster is supported in its own library, which schedules the schedulerfootnote:[Say that five times fast.] that the Dask client then connects to. Using the distributed abstraction `dask.distributed` gives you portability between any type of cluster you may be using at the moment, including local. If you don't use `dask.distributed`, Dask can still run perfectly well on a local computer, in which case you are using a default single-machine scheduler provided in the Dask library.
 
 
-The Dask Client is your entry point into the Dask distributed scheduler. In <<ex_dask_k8s>> we will be using Dask with a Kubernetes cluster; if you have another type of cluster or want details, please see <<appa_clusterrs>>.
+The Dask Client is your entry point into the Dask distributed scheduler. In this chapter, we will be using Dask with a Kubernetes cluster; if you have another type of cluster or want details, please see <<ch12>>.
 
 ===== Auto-scaling
 
@@ -81,9 +81,9 @@ Dask's client is not fault tolerant, so while Dask can handle the failures of it
 
 Part of why Dask is so powerful is the Python ecosystem that it is in. While Dask will pickle, or serialize (see <<ser_pick_dtl>>), and send our code to the workers, this doesn't include the libraries we use.footnote:[Automatically picking up and shipping the libraries would be very hard and also slow, although it can be done under certain circumstances.] To take advantage of that ecosystem, you need to be able to use additional libraries. During the exploration phase, it is common to install packages at runtime as you discover that you need them.
 
-The `PipInstall` worker plug-in takes a list of packages and installs them at run-time on all of the workers. Looking back at the scraping example, to install bs4 you would call `distributed.diagnostics.plugin.PipInstall(["bs4"])`. Any new workers that are launched by Dask then need to wait for the package to be installed. The `PipInstall` plug-in is ideal for quick prototyping when you are discovering which packages you need. You can think of `PipInstall` as the replacement for `!pip install` in a notebook over having a virtualenv.
+The `PipInstall` worker plug-in takes a list of packages and installs them at run-time on all of the workers. Looking back at the web crawler in <<ch2_getting_started_with_dask>>, to install bs4 you would call `distributed.diagnostics.plugin.PipInstall(["bs4"])`. Any new workers that are launched by Dask then need to wait for the package to be installed. The `PipInstall` plug-in is ideal for quick prototyping when you are discovering which packages you need. You can think of `PipInstall` as the replacement for `!pip install` in a notebook over having a virtualenv.
 
-To avoid the slowness of having to install packages each time a new worker is launched, you should try to preinstall your libraries. Each cluster manager (e.g., Yarn, Kubernetes, Coiled, Saturn, etc.) has its own methods for managing dependencies. This can happen at runtime or at setup where the packages are preinstalled. The specifics for the different cluster managers are covered in <<app_deploy>>.
+To avoid the slowness of having to install packages each time a new worker is launched, you should try to preinstall your libraries. Each cluster manager (e.g., Yarn, Kubernetes, Coiled, Saturn, etc.) has its own methods for managing dependencies. This can happen at runtime or at setup where the packages are preinstalled. The specifics for the different cluster managers are covered in <<ch12>>.
 
 With Kubernetes, for example, the default startup script checks for the presence of some key environment variables (`EXTRA_APT_PACKAGES`, `EXTRA_CONDA_PACKAGES`, and `EXTRA_PIP_PACKAGES`), which, in conjunction with customized worker specs, can be used to add dependencies at runtime. Some of them, like Coiled and Kubernetes, allow for adding dependencies when building an image for our workers. Others, like Yarn, use preallocated conda/virtual environment packing.
 
@@ -170,7 +170,7 @@ The Dask UI is a great place to see if you might have stragglers.
 
 ==== Dask Arrays
 
-Dask arrays' partitions are called _chunks_ and represent the number of elements. Dask does not always know the size of each chunk, although it always knows the number of chunks, but when you apply a filter or load data, Dask is unaware of the size of each chunk. Indexing or slicing a Dask array requires that Dask knows the size of each chunk so it can find the chunk(s) with the desired elements. Depending on how your Dask array was created, Dask may or may not know the size of each chunk. We talk about this more in the Dask collection chapter. If you want to index into an array where Dask does not know the chunk sizes, you will need to first call `compute_chunk_sizes()` on the array. When creating a Dask array from a local collection, you can specify the target chunk size as shown in <<custom_array_chunk_size>>.
+Dask arrays' partitions are called _chunks_ and represent the number of elements. Dask does not always know the size of each chunk, although it always knows the number of chunks, but when you apply a filter or load data, Dask is unaware of the size of each chunk. Indexing or slicing a Dask array requires that Dask knows the size of each chunk so it can find the chunk(s) with the desired elements. Depending on how your Dask array was created, Dask may or may not know the size of each chunk. We talk about this more in <<ch05>>. If you want to index into an array where Dask does not know the chunk sizes, you will need to first call `compute_chunk_sizes()` on the array. When creating a Dask array from a local collection, you can specify the target chunk size as shown in <<custom_array_chunk_size>>.
 
 [[custom_array_chunk_size]]
 .Custom array chunk size
@@ -293,7 +293,7 @@ In Spark the equivalent idea is expressed as _checkpointing_.
 
 ==== Combining Computation
 
-To take the most advantage of Dask's graph optimization, it's important to submit your work in larger batches. First off, when you're blocking on the result with `dask.compute`, small batches can limit the parallelism. If you have a shared parent, say, two results on the same data, submitting the computations together allows Dask to share the computation of the underlying data. You can verify if Dask is able to share a common node by calling `visualize` on your list of tasks (e.g., if you take example <<shared_data>> and visualize both the tasks together, you'll see the shared node in <<shared_compute_node>>).
+To take the most advantage of Dask's graph optimization, it's important to submit your work in larger batches. First off, when you're blocking on the result with `dask.compute`, small batches can limit the parallelism. If you have a shared parent, say, two results on the same data, submitting the computations together allows Dask to share the computation of the underlying data. You can verify if Dask is able to share a common node by calling `visualize` on your list of tasks (e.g., if you take pass:[Examples <a data-type="xref" data-xrefstyle="select:labelnumber" href="#custom_array_chunk_size">#custom_array_chunk_size</a> and <a data-type="xref" data-xrefstyle="select:labelnumber" href="#task_dependencies_example_ch03_1686946028901">#task_dependencies_example_ch03_1686946028901</a>] and visualize both the tasks together, you'll see the shared node in <<vis_ex>>).
 
 Sometimes you can't submit the computation together, but you still know that you want to reuse some data. In those cases you should explore persistence.
 
