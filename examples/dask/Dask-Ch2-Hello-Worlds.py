@@ -166,7 +166,7 @@ dask.compute(word_count)
 # In[ ]:
 
 
-#tag::wc_dataframe
+#tag::wc_dataframe[]
 import dask.dataframe as dd
 
 
