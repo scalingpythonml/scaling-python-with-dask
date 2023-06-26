@@ -3,6 +3,8 @@
 
 It's hard, although possible, to build reliable systems out of unreliable components.footnote:[Although in many ways, distributed systems have evolved to overcome their unreliable components. For example, fault tolerance is something a single machine cannot achieve but distributed systems can accomplish with replication.] Dask is a largely community-driven open source project, and its components evolve at different rates. Not all parts of Dask are equally mature; even the components we cover in this book have different levels of support and development. While Dask's core parts are well-maintained and tested, some parts lack the same level of maintenance.
 
+Still, there are already dozens of popular libraries specific for Dask, and the open-source community around Dask is growing around them, that gives us some confidence that many of these are here to stay. We prepared a non-exhaustive list of foundational libraries in use, and its relation to the core Dask projects. The following table is meant as a roadmap for the users, not our endorsement of individual projects. For the libraries we cover in this book, we offer some of our own evaluation of those libraries as well.
+
 It's essential to understand the state of the components that you are considering using. If you need to use a less maintained or developed part of Dask, pass:[<a href="https://oreil.ly/IDXVs">defensive programming</a>], including thorough code testing, will become even more critical. Working on less-established parts of the Dask ecosystem can also be an exciting opportunity to become more involved and contribute fixes or documentation.
 
 [NOTE]
