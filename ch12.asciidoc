@@ -229,7 +229,7 @@ If you are using Dask's JupyterLab extension (see <<jupyter-lab-extension_ch12_1
 .Dask web UI inside JupyterHub using the JupyterLab extension
 image::images/spwd_1202.png[]
 
-The JupyterLab extension links to the Dask web UI, and you can also get a link through the clusters repr. If the cluster link does not work/is not accessible, you can try installing the `jupyter-server-proxy` extension so you can use the notebook host as a https://en.wikipedia.org/wiki/Jump_server[+++jump host+++].
+The JupyterLab extension links to the Dask web UI, and you can also get a link through the cluster's `repr`. If the cluster link does not work/is not accessible, you can try installing the `jupyter-server-proxy` extension so you can use the notebook host as a https://en.wikipedia.org/wiki/Jump_server[+++jump host+++].
 
 ==== Watching Progress
 
@@ -418,7 +418,7 @@ When pipelining multiple data streams into a job, you might have two datasets, w
 
 === Scheduled Jobs
 
-There are many different systems to make your jobs run on a schedule. This schedule can range from periodic and time-based, to triggered by upstream events (like data becoming available). Popular tools to schedule jobs include Apache Airflow, Flyte, Argo, GitHub Actions, and Kubeflow.footnote:[Holden is a coauthor of pass:[<a href="https://learning.oreilly.com/library/view/kubeflow-for-machine/9781492050117/" class="orm:hideurl"><em>Kubeflow for Machine Learning</em></a>] (O'Reilly), so she is biased here.] Airflow and Flyte both have built-in support for Dask, which can simplify running your scheduled task, so we think that they are both excellent options for scheduled Dask jobs. The built-in operators make it easier to track failure, which is important as taking actions on stale data can be as bad as taking actions on wrong data.
+There are many different systems to make your jobs run on a schedule. This schedule can range from periodic and time-based, to triggered by upstream events (like data becoming available). Popular tools to schedule jobs include Apache Airflow, Flyte, Argo, GitHub Actions, and Kubeflow.footnote:[Holden is a co-author of pass:[<a href="https://learning.oreilly.com/library/view/kubeflow-for-machine/9781492050117/" class="orm:hideurl"><em>Kubeflow for Machine Learning</em></a>] (O'Reilly), so she is biased here.] Airflow and Flyte both have built-in support for Dask, which can simplify running your scheduled task, so we think that they are both excellent options for scheduled Dask jobs. The built-in operators make it easier to track failure, which is important as taking actions on stale data can be as bad as taking actions on wrong data.
 
 We also often see people use Unix crontabs and schtasks, but we advise against them as they run on a single machine and require substantial additional work.
 

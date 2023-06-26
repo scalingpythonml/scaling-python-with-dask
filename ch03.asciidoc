@@ -284,7 +284,7 @@ Sometimes the task graph itself can become too much for Dask to handle. This can
 
 The first step when encountering a situation with a too-large task graph is to see if you can reduce the parallelism by using larger chunks of work or switching the algorithm. For example, if we think of Fibonacci numbers computed with recursion, a better option would be using a dynamic programming or memoized solution instead of trying to distribute the computation task with Dask.
 
-If you have an iterative algorithm, and there isn't a better way to accomplish what you want, you can help Dask out by periodically writing out the intermediate work and reloading it.footnote:[You could also collect and scatter if the dataset is small enough.] By doing this, Dask does not have to keep track of all of the steps involved in creating the data, but instead just needs to remember where the data is. The next two chapters will look at how to write and load data efficiently for these and other purposes.
+If you have an iterative algorithm, and there isn't a better way to accomplish what you want, you can help Dask out by periodically writing out the intermediate work and re-loading it.footnote:[You could also collect and scatter if the dataset is small enough.] By doing this, Dask does not have to keep track of all of the steps involved in creating the data, but instead just needs to remember where the data is. The next two chapters will look at how to write and load data efficiently for these and other purposes.
 
 [TIP]
 ====

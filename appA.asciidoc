@@ -126,59 +126,59 @@ Instead, tools like https://lakefs.io/[+++LakeFS+++] add Git-like versioning sem
 
 === Isolation and Noisy Neighbors
 
-So far, we've talked about isolation in the context of being able to have your Python packages, but there are more kinds of isolation. Some other levels of isolation include CPU, GPU, memory, and network.footnote:[For example, two ML tasks on the same node may both try to use all of the CPU resources.] Many cluster managers do not provide full isolation – this means that if your tasks get scheduled on the "wrong" nodes, they might have bad performance. A common solution to this is requesting the amounts of resources in-line with the full node to avoid having other jobs scheduled alongside your own.
+So far, we've talked about isolation in the context of being able to have your Python packages, but there are more kinds of isolation. Some other levels of isolation include CPU, GPU, memory, and network.footnote:[For example, two ML tasks on the same node may both try to use all of the CPU resources.] Many cluster managers do not provide full isolation&mdash;this means that if your tasks get scheduled on the wrong nodes, they might have bad performance. A common solution to this is requesting the amounts of resources in-line with the full node to avoid having other jobs scheduled alongside your own.
 
-Strict isolation can also have downsides, especially if they don't support "bursting." Strict isolation without bursting can result in resource "waste" but for mission-critical workflows this is often the tradeoff.
+Strict isolation can also have downsides, especially if they don't support bursting. Strict isolation without bursting can result in resource waste, but for mission-critical workflows this is often the trade-off.
 
 === Machine Fault Tolerance
 
-Fault tolerance is a key concept in distributed computing because the more computers you add, the higher the probability of a fault on any given computer goes up. In some smaller deployments of Dask, machine fault tolerance is not as important, so if you're running Dask exclusively in local mode or on ~3 computers you keep under your desk, you might be ok to skip this section.footnote:[We choose three here since the probability of the failure of a worker node that does not have the driver is only 2x that of the driver (which we can't recover from), and this scales linearly as you add more machines.]
+Fault tolerance is a key concept in distributed computing because the more computers you add, the higher the probability of a fault on any given computer. In some smaller deployments of Dask, machine fault tolerance is not as important, so if you're running Dask exclusively in local mode or on around three computers you keep under your desk, you might be OK to skip this section.footnote:[We choose three here since the probability of the failure of a worker node that does not have the driver is only 2x that of the driver (which we can't recover from), and this scales linearly as you add more machines.]
 
-Dask's core fault tolerance approach is "re-compute" lost data. This is the approach chosen by many modern data-parallel systems since failures are not super common, so making the situation with no failures fast is the priority.footnote:[You can cache intermediate steps to reduce the cost of recomputing, but this only works if the cached location has not failed and requires you to clean up any caching.]
+Dask's core fault tolerance approach is to re-compute lost data. This is the approach chosen by many modern data-parallel systems since failures are not super common, so making the situation with no failures fast is the priority.footnote:[You can cache intermediate steps to reduce the cost of recomputing, but this only works if the cached location has not failed and requires you to clean up any caching.]
 
-It is important to consider, with fault tolerance of Dask, what the fault condition possibilities are in the components Dask is connected to. While re-compute is a fine approach for distributed computing, distributed storage has different tradeoffs.
+It is important to consider, with fault tolerance of Dask, what the fault condition possibilities are in the components Dask is connected to. While re-compute is a fine approach for distributed computing, distributed storage has different trade-offs.
 
-Dask's approach to re-compute on failure means that the data that Dask used for the computation remains present for Dask to re-load when needed. In most systems, this will be the case, but in some streaming systems you may need to configure longer TTLs or otherwise have a buffer on-top to provide the reliability that Dask requires. Also if you are deploying your own storage layer, for example MinIO, it's important that you deploy it in such a way to minimize data loss.
+Dask's approach to re-compute on failure means that the data that Dask used for the computation remains present to re-load when needed. In most systems, this will be the case, but in some streaming systems you may need to configure longer TTLs or otherwise have a buffer on top to provide the reliability that Dask requires. Also, if you are deploying your own storage layer (e.g., MinIO), it's important that you deploy it in a way to minimize data loss.
 
-Dask's fault tolerance does not extend to the "leader" node. A partial solution to this is often called high availability, where a system outside of Dask monitors and restarts your Dask leader node.
+Dask's fault tolerance does not extend to the leader node. A partial solution to this is often called high availability, where a system outside of Dask monitors and restarts your Dask leader node.
 
 Fault tolerance techniques are often also used when scaling down, since they both involve the loss of a node.
 
 === Scalability (Up and Down)
 
-Scalability refers to the ability of a distributed system to grow to handle larger problems and the sometimes overlooked ability to shrink when the needs are reduced (say after the grad students go to sleep). In computer science, we generally categorize scalability as either "horizontal" or "vertical." Horizontal scaling refers to adding more computers, whereas vertical scaling refers to using bigger computers.
+Scalability refers to the ability of a distributed system to grow to handle larger problems and the sometimes overlooked ability to shrink when the needs are reduced (say after the grad students go to sleep). In computer science, we generally categorize scalability as either _horizontal_ or _vertical_. Horizontal scaling refers to adding more computers, whereas vertical scaling refers to using bigger computers.
 
-Another important consideration is "auto" versus "manual" scaling. In automatic scaling, the execution engine (in our case Dask) will scale the resources for us. Dask's auto-scaler which will horizontally scale by adding your workers when needed (provided the deployment supports it). To scale up vertically you can add larger instance types to Dask's auto-scaler and request those resources with your jobs.
+Another important consideration is _auto_ versus _manual_ scaling. In automatic scaling, the execution engine (in our case Dask) will scale the resources for us. Dask's auto-scaler will horizontally scale by adding your workers when needed (provided the deployment supports it). To scale up vertically, you can add larger instance types to Dask's auto-scaler and request those resources with your jobs.
 
 [NOTE]
 ====
-In a way, Dask's task "stealing" can be viewed as a form of automatic vertical scaling. If a node is incapable (or especially slow) handling a task, then another Dask worker can "steal" the task. In practice, the auto-scaler does not allocate higher resource nodes unless you schedule a task that asks for those resources.
+In a way, Dask's task "stealing" can be viewed as a form of automatic vertical scaling. If a node is incapable of (or especially slow at) handling a task, then another Dask worker can "steal" the task. In practice, the auto-scaler does not allocate higher resource nodes unless you schedule a task that asks for those resources.
 ====
 
 === Cache, Memory, Disk, and Networking: How the Performance Changes
 
-Dask jobs are frequently data heavy, and the cost of transferring data to the CPU (or GPU) can have a large impact on performance. CPU cache is normally more than an order of magnitude faster than reading from memory. Reading data from an SSD is roughly 4x slower than memory, and sending data within a data center can be ~10 times slower.footnote:[Exact performance numbers depend on your hardware.] CPU caches can normally only contain a few elements.
+Dask jobs are frequently data-heavy, and the cost of transferring data to the CPU (or GPU) can have a large impact on performance. CPU cache is normally more than an order of magnitude faster than reading from memory. Reading data from an SSD is roughly 4x slower than memory, and sending data within a data center can be ~10 times slower.footnote:[Exact performance numbers depend on your hardware.] CPU caches can normally only contain a few elements.
 
-Transferring data from RAM (or even worse disk/network) can result in the CPU "stalling" or not being able to do any useful work. This makes "chaining" operations especially important.
+Transferring data from RAM (or even worse, disk/network) can result in the CPU stalling or not being able to do any useful work. This makes chaining operations especially important.
 
 The https://computers-are-fast.github.io/[+++Computers Are Fast website+++] does an excellent job of illustrating these performance impacts with real code.
 
 === Hashing
 
-Hashing is an important part of not only Dask, but also computer science in general. Dask uses hashing to convert complex data types into integers to assign the data to the correct partition. Hashing is generally a "one-way" operation which embeds the larger key space into a smaller key-space. For many operations, like with assigning data to the correct partitions, you want hashing to be fast. However for tasks like pseudonymization & passwords you intentionally choose slower hashing algorithms and frequently add more iterations to make it more difficult to reverse. It's important to pick the right hashing algorithm to match your purposes since the different behaviors could be a feature in one use case but a bug in the other.
+Hashing is an important part of not only Dask, but also computer science in general. Dask uses hashing to convert complex data types into integers to assign the data to the correct partition. Hashing is generally a "one-way" operation that embeds the larger key space into a smaller key space. For many operations, like assigning data to the correct partitions, you want hashing to be fast. However, for tasks like pseudonymization and passwords, you intentionally choose slower hashing algorithms and frequently add more iterations to make it more difficult to reverse. It's important to pick the right hashing algorithm to match your purposes, since the different behaviors could be a feature in one use case but a bug in the other.
 
 === Data Locality
 
-Data transfer costs can quickly overwhelm data compute costs for simple computation. When possible, scheduling tasks on nodes that already have the data is often much faster since the task has to be scheduled somewhere (e.g. you pay the network cost of copying the task regardless), but you can avoid moving the data if you put the task in the right place. Network copies are also generally slower than disk.
+Data transfer costs can quickly overwhelm data compute costs for simple computation. When possible, scheduling tasks on nodes that already have the data is often much faster since the task has to be scheduled somewhere (e.g., you pay the network cost of copying the task regardless), but you can avoid moving the data if you put the task in the right place. Network copies are also generally slower than disk.
 
-Dask allows you to specify a desired worker in your client.submit with `workers=`. Also if you have data that is going to be accessed everywhere, rather than doing a regular scatter you can broadcast it by adding `broadcast=True` so that all workers have a full copy of the collection.
+Dask allows you to specify a desired worker in your client.submit with `workers=`. Also, if you have data that is going to be accessed everywhere, rather than doing a regular scatter, you can broadcast it by adding `broadcast=True` so that all workers have a full copy of the collection.
 
 === Exactly Once Versus At Least Once
 
-In most software development the concept of "exactly once" is so much of a given that we don't even think of it as a requirement. For example, double applied debits or credits to a bank account could be catastrophic. Exactly once execution in Dask requires the use of external systems because of Dask's approach to fault tolerance. A common approach is to use a database (distributed or non-distributed) along with transactions to ensure exactly once execution.
+In most software development the concept of _exactly once_ is so much of a given that we don't even think of it as a requirement. For example, double applied debits or credits to a bank account could be catastrophic. Exactly-once execution in Dask requires the use of external systems because of Dask's approach to fault tolerance. A common approach is to use a database (distributed or non-distributed) along with transactions to ensure exactly-once execution.
 
-Not all distributed systems have this challenge. Systems where the inputs and outputs are controlled and fault tolerance is achieved by redundant writes have an easier time with exactly once execution. Some systems that use recompute on failure are still able to offer exactly once execution by integrating distributed locks.
+Not all distributed systems have this challenge. Systems where the inputs and outputs are controlled and fault tolerance is achieved by redundant writes have an easier time with exactly-once execution. Some systems that use recompute on failure are still able to offer exactly-once execution by integrating distributed locks.
 
 === Conclusion
 
-Distributed Systems are fun, but as you can see from the distributed systems concepts, they add a substantial amount of overhead. If you don't need distributed systems, then using Dask in local mode and using local data stores can greatly simplify your life. Regardless of whether you decide on local mode or distributed, having an understanding of general systems concepts will help you build better Dask pipelines.
+Distributed systems are fun, but as you can see from the distributed systems concepts, they add a substantial amount of overhead. If you don't need distributed systems, then using Dask in local mode and using local data stores can greatly simplify your life. Regardless of whether you decide on local mode or distributed, having an understanding of general systems concepts will help you build better Dask pipelines.

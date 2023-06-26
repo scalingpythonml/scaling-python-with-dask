@@ -51,13 +51,16 @@ import time
 #tag::make_kafka_stream[]
 batched_kafka_stream = Stream.from_kafka_batched(
     topic="quickstart-events",
-    dask=True, # StreamZ will call scatter internally for us
-    max_batch_size=2, # We want this to run quickly so small batches.
+    dask=True, # Streamz will call scatter internally for us
+    max_batch_size=2, # We want this to run quickly, so small batches
     consumer_params={
         'bootstrap.servers': 'localhost:9092',
-        'auto.offset.reset': 'earliest', #Start from the start
-        'group.id': 'my_special_streaming_app12'}, # Consumer group id, Kafka will only deliver messages once* per consumer group.
-    poll_interval=0.01) #Note some sources take a string and some take a float :/
+        'auto.offset.reset': 'earliest', # Start from the start
+        # Consumer group id
+        # Kafka will only deliver messages once per consumer group
+        'group.id': 'my_special_streaming_app12'},
+    #Note some sources take a string and some take a float :/
+    poll_interval=0.01) 
 #end::make_kafka_stream[]
 
 
@@ -73,9 +76,10 @@ local_wc_stream = (batched_kafka_stream
                    .gather()
                    .flatten().flatten() # We need to flatten twice.
                    .frequencies()
-                   ) #ideally we'd call flatten frequencies before the gather, but they don't work on DaskStream
+                   ) # Ideally we'd call flatten frequencies before the gather, 
+                     # but they don't work on DaskStream
 local_wc_stream.sink(lambda x: print(f"WC {x}"))
-# Start processing the stream now that we've defined our sinks.
+# Start processing the stream now that we've defined our sinks
 batched_kafka_stream.start()
 #end::wc[]
 

@@ -31,7 +31,7 @@ urls = ["https://gender-pay-gap.service.gov.uk/viewing/download-data/2021",
 raw_chunks = bag.read_text(
     urls,
     files_per_partition=1,
-    linedelimiter="FAAAAAAAAAAAAAAAARTS")
+    linedelimiter="FAAAAAARTS")
 
 
 def maybe_load_data(data):
