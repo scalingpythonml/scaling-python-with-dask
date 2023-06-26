@@ -42,7 +42,29 @@ We'll start by looking at the types of clusters, which goes with the deployment 
 
 ==== Types of Clusters
 
-If you are considering moving your analytic engineering job, you probably have a system that’s provisioned to you by your organization. Dask is supported in many commonly used deployment and development environments, with some allowing more flexibility in scaling, dependency management, and support of heterogeneous worker types. We have used Dask on academic environments, commodity cloud, and directly over VMs/containers; we've detailed the pros and cons, and some well-used and supported environments, in <<appA>>. Examples of Yarn deployments and in-depth discussion are detailed in <<ch12>>.
+If you are considering moving your analytic engineering job, you probably have a system that’s provisioned to you by your organization. Dask is supported in many commonly used deployment and development environments, with some allowing more flexibility in scaling, dependency management, and support of heterogeneous worker types. We have used Dask on academic environments, commodity cloud, and directly over VMs/containers; we've detailed the pros and cons, and some well-used and supported environments, in <<appA>>.
+
+More examples of Yarn deployments and in-depth discussion are detailed in <<ch12>>.
+
+[[ex_yarn_deployment_ch09_1685536092648]]
+.Deploying Dask on Yarn with Dask-Yarn and skein
+====
+[source, python]
+----
+include::./examples/dask/Dask-Ch10_porting.py[tags=ex_yarn_deployment]
+----
+====
+
+For high-performance computing deployments using job queuing systems such as PBS, Slurm, MOAB, SGE, LSF, and HTCondor, you should use Dask-jobqueue, as shown in <<ex_slurm_deployment_ch09_1685536141262>>.
+
+[[ex_slurm_deployment_ch09_1685536141262]]
+.Deploying Dask using job-queue over Slurm
+====
+[source, python]
+----
+include::./examples/dask/Dask-Ch10_porting.py[tags=ex_slurm_deployment]
+----
+====
 
 You likely have a shared filesystem already set up by your organization’s admin. Enterprise users might be used to already robustly provisioned distributed data sources, running on HDFS or blob storage like S3, which Dask works with seamlessly. Dask also integrates well with networked filesystems (see <<ex_s3_minio_rw>>).
 
