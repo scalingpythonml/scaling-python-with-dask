@@ -14,7 +14,7 @@ Still, there are already dozens of popular libraries specifically for Dask, and 
 * Dask
 * Distributed
 * dask-ml
-|*Data structures:pass:[<sup><a href="#libraries_table_foonote">a</a></sup>] Extend functionality, specific scientific data handling, or deployment hardware options of Dask built-in data structures |Functionalities and convenience a|
+|*Data structures*: Extend functionality, specific scientific data handling, or deployment hardware options of Dask built-in data structures |Functionalities and convenience a|
 * _xarray_: adds axis labels for Dask array
 * _sparse_: an efficient implementation for sparse arrays and matrices, often found in ML and deep learning
 * _pint_: scientific unit conversion
@@ -24,7 +24,7 @@ Still, there are already dozens of popular libraries specifically for Dask, and 
 * _dask-cuda_:pass:[<span data-type="footnote" id="libraries_table_foonote">Covered in this book.</span>] provides CUDACluster, an extension of Dask's cluster that better manages Cuda-enabled Dask workers
 * _CuPY_:pass:[<sup><a href="#libraries_table_foonote">a</a></sup>] GPU-enabled arrays
 * _CuDF_:pass:[<sup><a href="#libraries_table_foonote">a</a></sup>] Cuda DataFrame as partitions in Dask DataFrame
-|*Deployment:pass:[<sup><a href="#libraries_table_foonote">a</a></sup>] Extend deployment options for use with Dask distributed |Containers a|
+|*Deployment*: Extend deployment options for use with Dask distributed |Containers a|
 * _dask-kubernetes_:pass:[<sup><a href="#libraries_table_foonote">a</a></sup>] Dask on k8s
 * _dask-helm_:pass:[<sup><a href="#libraries_table_foonote">a</a></sup>] alternate Dask on k8s and jupyterhub on k8s
 | |Cloud a|
@@ -36,7 +36,7 @@ Still, there are already dozens of popular libraries specifically for Dask, and 
 | |HPC a|
 * _dask-jobqueue_:pass:[<sup><a href="#libraries_table_foonote">a</a></sup>] deployment for PBS, SLURM, MOAB, SGE, LSF, and HTCondor
 * _dask-mpi_:pass:[<sup><a href="#libraries_table_foonote">a</a></sup>] deployment for MPI
-|*ML and analytics:pass:[<sup><a href="#libraries_table_foonote">a</a></sup>] Extend ML libraries and computation with Dask | a|
+|*ML and analytics*: Extend ML libraries and computation with Dask | a|
 * _dask-ml_:pass:[<sup><a href="#libraries_table_foonote">a</a></sup>] Distributed implementation of scikit-learn and more
 * _xgboost_:pass:[<sup><a href="#libraries_table_foonote">a</a></sup>] gradient boosting with native Dask support
 * _light-gbm_:pass:[<sup><a href="#libraries_table_foonote">a</a></sup>] another tree-based learning algorithm with native Dask support
