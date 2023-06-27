@@ -3,7 +3,7 @@
 
 We have bundled most of the things we believe are going to be critical for you to move from your laptop into production in this chapter. Notebooks and deployments go together, as Dask's notebook interface greatly simplifies many aspects of using its distributed deployments. While you don't need to use notebooks to access Dask, and in many cases https://towardsdatascience.com/5-reasons-why-jupyter-notebooks-suck-4dc201e27086[+++notebooks have serious drawbacks+++], for interactive use cases it's often hard to beat the trade-offs. Interactive/exploratory work has a way of becoming permanent mission-critical workflows, and we cover the steps necessary to turn exploratory work into production deployments.
 
-You can deploy Dask in many fashions, from running on top of other distributed compute engines like Ray to deploying on Yarn or a raw collection of machines. Once you've got your Dask job deployed, you'll likely need to tune it so you don't use your company’s entire AWS budget on one job. And then, finally, before you can walk away from a job, you'll need to set up monitoring&mdash;so you know when it's broken.
+You can deploy Dask in many fashions, from running on top of other distributed compute engines like Ray to deploying on YARN or a raw collection of machines. Once you've got your Dask job deployed, you'll likely need to tune it so you don't use your company’s entire AWS budget on one job. And then, finally, before you can walk away from a job, you'll need to set up monitoring&mdash;so you know when it's broken.
 
 [NOTE]
 ====
@@ -19,7 +19,7 @@ This chapter covers Dask's distributed deployments, but if your Dask program is 
 
 === Factors to Consider in a Deployment Option
 
-When you are choosing how to deploy Dask, there are many different factors to consider, but often the biggest one is what tools your organization is already using. Most of the deployment options map to different types of cluster managers (CMs). CMs manage sets of computers and provide some isolation between users and jobs. Isolation can be incredibly important&mdash;for example, if one user eats all of the candy (or CPU), then another user won't have any candy. Most cluster managers provide CPU and memory isolation, and some also isolate other resources (like disks and GPUs). Most clouds (AWS, GCP, etc.) offer both Kubernetes and Yarn cluster managers, which can dynamically scale up and down the number of nodes. Dask does not need a CM to run, but without one, auto-scaling and other important features are not available.
+When you are choosing how to deploy Dask, there are many different factors to consider, but often the biggest one is what tools your organization is already using. Most of the deployment options map to different types of cluster managers (CMs). CMs manage sets of computers and provide some isolation between users and jobs. Isolation can be incredibly important&mdash;for example, if one user eats all of the candy (or CPU), then another user won't have any candy. Most cluster managers provide CPU and memory isolation, and some also isolate other resources (like disks and GPUs). Most clouds (AWS, GCP, etc.) offer both Kubernetes and YARN cluster managers, which can dynamically scale up and down the number of nodes. Dask does not need a CM to run, but without one, auto-scaling and other important features are not available.
 
 When choosing a deployment mechanism, with or without a CM, some important factors to consider are the ability to scale up and down, multi-tenancy, dependency management, or if it supports heterogeneous workers.
 
@@ -39,9 +39,9 @@ Dependency management allows you to control, at runtime or in advance, what soft
 |localhost |No |Testing, solo dev, GPU-only acceleration |Yes (runtime or pre-install) |Yes |No
 |ssh |No |Solo lab, testing, but generally no (k8s instead) |Runtime only |Yes |Yes (manual)
 |Slurm + GW |Yes |Existing high-performance computing/Slurm environments |Yes (runtime or pre-install) |Separate project |Varies
-|Dask "Cloud" |Yes |Not recommended; use Dask + K8s or Yarn on cloud provider |Runtime only |Medium effortfootnote:[Some large commodity cloud providers were easier than others. Mika’s own experience ranks Google Cloud as easiest, Amazon as moderate, and Azure as hardest to work with. Google Cloud has a good working guide on using Dask with RAPIDS NVIDIA architecture, and a well-documented workflow. Amazon Web Services similarly has good documentation on running Dask workers on multiple Amazon Elastic Container service (EC2) and a guide on attaching S3 buckets. Azure needed some work to make worker provisioning work well, mostly due to their environment and user provisioning workflow being a bit different from AWS or GCP.] |No*
+|Dask "Cloud" |Yes |Not recommended; use Dask + K8s or YARN on cloud provider |Runtime only |Medium effortfootnote:[Some large commodity cloud providers were easier than others. Mika’s own experience ranks Google Cloud as easiest, Amazon as moderate, and Azure as hardest to work with. Google Cloud has a good working guide on using Dask with RAPIDS NVIDIA architecture, and a well-documented workflow. Amazon Web Services similarly has good documentation on running Dask workers on multiple Amazon Elastic Container service (EC2) and a guide on attaching S3 buckets. Azure needed some work to make worker provisioning work well, mostly due to their environment and user provisioning workflow being a bit different from AWS or GCP.] |No*
 |Dask + K8s |Yes |Cloud environments, existing K8s deployments |Runtime or pre-install (but more effort) |Separate project, medium effort |Yes
-|Dask + Yarn |Yes |Existing big data deployments |Runtime or pre-install (but more effort) |Separate project that has not been updated since 2019 |Yes*
+|Dask + YARN |Yes |Existing big data deployments |Runtime or pre-install (but more effort) |Separate project that has not been updated since 2019 |Yes*
 |Dask + Ray + [CM] |Depends on CM |Existing Ray deployments, mutli-tool (TF, etc.), or actor systems. |Depends on CM (always at least runtime) |Depends on CM |Yes
 |coiled |yes |New cloud deployments |Yes, including magic "auto-sync" |No |Yes
 |===
@@ -98,16 +98,16 @@ include::./examples/dask/Dask-ChN-spark_to_ray_to_dask.py[tags=dask_on_ray]
 
 However, if you don't have an existing Ray cluster, you will still need to deploy Ray somewhere with the same considerations as Dask. Deploying Ray is beyond the scope of this book. Ray's https://docs.ray.io/en/latest/serve/production-guide/index.html[+++production guide+++] has details for deploying on Ray, as does _Scaling Python with Ray_.
 
-=== Dask on Yarn
+=== Dask on YARN
 
-Yarn is a popular cluster manager from the big data world, and is available in open source as well as commercial on-prem (Cloudera, etc.) and in clouds (e.g., Elastic Map Reduce). There are several ways to run Dask on a Yarn cluster: one is Dask-Yarn, the other is Dask-Gateway. Dask-Gateway is potentially a bit more involved, as it adds a centrally managed server that runs to manage Dask clusters, but gains more fine-grained security and administrative controls.  While both are similar in essence, we write examples using Dask-Yarn.
+YARN is a popular cluster manager from the big data world that is available in open source as well as commercial on-premises (e.g., Cloudera) and cloud (e.g., Elastic Map Reduce). There are several ways to run Dask on a YARN cluster: one is with Dask-Yarn and the other is with Dask-Gateway. While the two methods are similar, Dask-Gateway is potentially a bit more involved, as it adds a centrally managed server that runs to manage Dask clusters, but it has more fine-grained security and administrative controls. 
 
 Depending on the cluster, your workers might be more transient than other types, and their IP address might not be static when they get spun up again. You should ensure worker/scheduler service discovery methods are put in place for your own cluster setup. It could be as simple as a shared file that they read from, or a more resilient broker. If no additional arguments are given, Dask workers would use the `DASK_SCHEDULER_ADDRESS` environment variable to connect.
 
 <<ex_yarn_deployment_ch12_1685536104476>> expands on <<ex_yarn_deployment_ch09_1685536092648>> with a custom conda environment and logging framework.
 
 [[ex_yarn_deployment_ch12_1685536104476]]
-.Deploying Dask on Yarn with custom conda environment
+.Deploying Dask on YARN with a custom conda environment
 ====
 [source, python]
 ----
@@ -115,10 +115,10 @@ include::./examples/dask/Dask-Ch14-Tuning.py[tags=ex_yarn_deployment_tuning]
 ----
 ====
 
-Alternatively, you can run the same cluster with the CLI interface that Dask-Yarn exposes, as shown in <<ex_yarn_deployment_CLI_tuning>>. You would first deploy YARN in the shell script of your choosing, and then it will invoke the python file you want to run. Inside that python file, you will reference the deployed YARN cluster as shown below. This can be an easier way to chain your jobs, inspect and pull logs. Note that CLI is only supported in Python versions above 2.7.6.
+Alternatively, you can run the cluster with the CLI interface that Dask-Yarn exposes. You would first deploy YARN in the shell script of your choosing; it then invokes the Python file you want to run. Within the Python file, you reference the deployed YARN cluster, as shown in <<ex_yarn_deployment_CLI_tuning>>. This can be an easier way to chain your jobs and inspect and pull logs. Note that the CLI is supported only in Python versions above 2.7.6.
 
 [[ex_yarn_deployment_CLI_tuning]]
-.Deploying Dask on Yarn with CLI interface through shell
+.Deploying Dask on YARN with CLI interface through shell
 ====
 [source, python]
 ----
@@ -178,7 +178,7 @@ include::./examples/dask/Dask-Ch14-Tuning.py[tags=ex_slurm_deployment_tuning]
 
 [TIP]
 ====
-Always ensure your walltime requests don't run afoul HPC resource managers. For example, SLURM has a backfill scheduler that applies its own logic, and if you request too long a walltime can be stuck in the queue, unable to spin up on time. Dask client could show error out with non-descriptive messages, such as “Failed to start worker process. Restarting.” At the point of writing, there aren’t much ways to surface specific deployment issues without some logging code from user end.
+Always ensure your walltime requests don't run afoul of HPC resource managers. For example, Slurm has a backfill scheduler that applies its own logic, and if you request too long a walltime, it can get stuck in the queue, unable to spin up on time. In such a case, the Dask client may error out with a non-descriptive message, such as “Failed to start worker process. Restarting.” At the time of writing, there aren’t many ways to surface specific deployment issues without some logging code from the user end.
 ====
 
 On the more advanced end, you can control your cluster configuration by updating the Dask-jobqueue YAML file, which is generated on first run and stored at _/.config/dask/jobqueue.yaml_. The jobqueue configuration file contains, commented out, default configurations for many different types of clusters. To get started editing it, uncomment the cluster type you are using (e.g., Slurm), and then you can change the values to meet your specific needs. The jobqueue configuration file allows you to configure additional parameters not available through the Python constructor.
@@ -187,14 +187,14 @@ If Dask starts to run out of memory, by default, it will write start to write da
 
 [TIP]
 ====
-Adaptive scaling is a great way to scale your job up and down while your application is up and running, especially on busy shared machines like HPC. However, each HPC system is unique and sometimes the way Dask-jobqueue handles adaptive scaling creates issues. We have encountered a problem when running Dask Adaptive Scaling on SLURM using jobqueue, but with some could be configured properly.
+_Adaptive scaling_ is a great way to scale your job up and down while your application is up and running, especially on busy shared machines like HPC systems. However, each HPC system is unique, and sometimes the way Dask-jobqueue handles adaptive scaling creates issues. We have encountered such a problem when running Dask adaptive scaling on Slurm using jobqueue but with some effort were able to configure it properly.
 ====
 
 Dask also uses files for locking, which can cause issues when using a shared network drive, as is common in HPC clusters. If there are multiple workers working simultaneously, it uses a locking mechanism, which excludes another process from accessing this file, to orchestrate itself. Some issues on HPC can come down to an incomplete locking transaction, or an inability to write a file on disk due to administrative restrictions. Worker configs can be toggled to disable this behavior.
 
 [TIP]
 ====
-Cluster parameters, such as memory allocation, number of jobs, workers, processes, and CPU per task, are quite sensitive to user input and can be difficult to grasp at the beginning. For example, if you launch an HPC cluster with multiple processes on the same cluster, each process will take a fraction of total memory allocated. For example, 10 processes with 30GB memory means each process will get 3GB memory. If your workflow at peak has more than 95% of the process memory, 2.85GB, your process will be paused and even terminated early due to memory overflow risks, ending up with indeterminate behavior on whether your job will finish or not. For more on memory management, refer to Worker Memory Management section in this chapter.
+Cluster parameters, such as memory allocation and number of jobs, workers, processes, and CPUs per task, are quite sensitive to user input and can be difficult to grasp at the beginning. For example, if you launch an HPC cluster with multiple processes, each process will take a fraction of total allocated memory. Ten processes with 30 GB of memory would mean each process gets 3 GB of memory. If your workflow at peak has more than 95% of the process memory (2.85 GB in our example), your process will be paused and even terminated early due to memory overflow risks, potentially resulting in an incomplete job. For more on memory management, refer to <<worker_memory_management_ch12_1687869893068>>.
 ====
 
 For HPC users, most processes you launch have a _walltime_, a limited amount of time that the job is allowed to stay on, and then gets ended. You can stagger the creation of workers in such a way that you will have at least one worker running at all times, creating an infinite worker loop. Alternatively, you can also stagger the creation and end of the workers, so that you avoid all of the workers ending simultaneously. <<ex_hpc_infinite_workers>> shows you how.
@@ -417,6 +417,7 @@ Complications may arise if a worker that contains a computationally expensive an
 
 If you see error messages such as “Worker exceeded 95% memory budget. Restarting,” this is likely where it came from. It’s the class responsible for starting workers, monitoring, terminating, and restarting the workers. This memory fraction, as well as spillover location, can be set in the _distributed.yaml_ configuration file. HPC users can turn the nanny’s memory monitoring off if the system itself has its own memory management strategies. If the system also restarts killed jobs, you could turn off nanny with the `--no-nanny` option.
 
+[[worker_memory_management_ch12_1687869893068]]
 ==== Worker Memory Management
 
 By default, when the worker’s memory is around 60% full, it starts sending some data to disk. At over 80%, it stops allocating new data. At 95%, the worker is terminated preemptively, in order to avoid running out of memory. This means after your worker’s memory is more than 60% full, there will be performance degradations, and it’s usually best practice to keep memory pressure lower.

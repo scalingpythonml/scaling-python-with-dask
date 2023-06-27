@@ -37,7 +37,7 @@ From an abstraction point of view, Dask sits above the machines and cluster mana
 
 Scalable data and ML tools:: Hadoop, Hive, Flink, Spark, TensorFlow, Koalas, Ray, Dask, etc.
 
-Compute resources:: Apache Hadoop Yarn, Kubernetes, Amazon Web Services, Slurm Workload Manager, etc.
+Compute resources:: Apache Hadoop YARN, Kubernetes, Amazon Web Services, Slurm Workload Manager, etc.
 
 We say a problem is _compute-bound_ if the limiting factor is not the amount of data, but rather the work we are doing on the data. Memory-bound problems are problems where the computation is not the limiting factor; rather the ability to store all of the data in memory is the limiting factor. Some problems can exhibit both compute- and memory-bound problems, as is often the case for large deep-learning problems.
 

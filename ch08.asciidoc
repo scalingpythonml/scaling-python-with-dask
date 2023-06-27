@@ -30,7 +30,7 @@ Still, there are already dozens of popular libraries specifically for Dask, and 
 | |Cloud a|
 * _dask-cloudprovider_: commodity cloud APIs
 * _dask-gateway_
-* _Dask-Yarn_:pass:[<sup><a class="tablefootnote" href="#libraries_table_foonote">a</a></sup>] for Yarn/Hadoop
+* _Dask-Yarn_:pass:[<sup><a class="tablefootnote" href="#libraries_table_foonote">a</a></sup>] for YARN/Hadoop
 | |GPU a|
 * _dask-cuda_: Dask cluster optimized for GPUs
 | |HPC a|

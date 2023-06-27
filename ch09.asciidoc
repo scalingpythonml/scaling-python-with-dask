@@ -44,10 +44,10 @@ We'll start by looking at the types of clusters, which goes with the deployment 
 
 If you are considering moving your analytic engineering job, you probably have a system that’s provisioned to you by your organization. Dask is supported in many commonly used deployment and development environments, with some allowing more flexibility in scaling, dependency management, and support of heterogeneous worker types. We have used Dask on academic environments, commodity cloud, and directly over VMs/containers; we've detailed the pros and cons, and some well-used and supported environments, in <<appA>>.
 
-<<ex_yarn_deployment_ch09_1685536092648>> shows an example of a Yarn deployment. More examples and in-depth discussion are detailed in <<ch12>>.
+<<ex_yarn_deployment_ch09_1685536092648>> shows an example of a YARN deployment. More examples and in-depth discussion are detailed in <<ch12>>.
 
 [[ex_yarn_deployment_ch09_1685536092648]]
-.Deploying Dask on Yarn with Dask-Yarn and skein
+.Deploying Dask on YARN with Dask-Yarn and skein
 ====
 [source, python]
 ----
