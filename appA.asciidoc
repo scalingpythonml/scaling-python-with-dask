@@ -70,7 +70,7 @@ There are many different ways to split up our work, and in this book we've mostl
 
 ==== Task Parallelism
 
-`dask.delayed` and Python's multiprocessing both represent task parallelism. With task parallelism, you are not limited to executing the same code. Task parallelism offers the most flexibility, but requires more changes to your code to take advantage of.
+`dask.delayed` and Python's multi-processing both represent task parallelism. With task parallelism, you are not limited to executing the same code. Task parallelism offers the most flexibility, but requires more changes to your code to take advantage of.
 
 ==== Data Parallelism
 

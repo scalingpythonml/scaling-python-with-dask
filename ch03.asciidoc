@@ -39,7 +39,7 @@ include::./examples/dask/Dask-Ch3-Concepts.py[tags=threads]
 The local multi-process backend, shown in <<configuring_dask_multiprocess_ch03_1686241509022>>, has some additional overhead over multi-threaded, although it can be decreased on Unix & Unix-like systems.footnote:[Including OS X and Linux.] The multi-process backend is able to avoid Python's global interpreter lock by launching separate processes. Launching a new process is more expensive than a new thread, and Dask needs to serialize data that moves between processes.footnote:[This also involves having to store a second copy of any object that is in the driver thread and then used in a worker. Since Dask shards its collections, this doesn't generally blow up as quickly as with normal multi-processing.]
 
 [[configuring_dask_multiprocess_ch03_1686241509022]]
-.Configuring Dask to use the multiprocess backend
+.Configuring Dask to use the multi-process backend
 ====
 [source, python]
 ----
