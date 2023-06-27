@@ -6,12 +6,17 @@
 /*--Table lines--*/
 table td { border-bottom: 0.25pt solid cmyk(0%,0%,0%,100%); }
 
+/* no border beneath footnote cell in tables */
+tr.footnotes td {
+  border-bottom: none !important;
+}
+
 /* fix spacing above table lists not preceded by a paragraph */
-td > ul:nth-child(1) {
+td > div > ul:nth-child(1) {
   margin-top: 0pt !important;
   padding-top: 0pt !important;
 }
-td > ul:nth-child(1) > li:nth-child(1) {
+td > div > ul:nth-child(1) > li:nth-child(1) {
   margin-top: 0pt !important;
   padding-top: 0pt !important;
 }

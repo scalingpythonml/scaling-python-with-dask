@@ -1,10 +1,10 @@
 
 /* fix spacing above table lists not preceded by a paragraph */
-td > ul:nth-child(1) {
+td > div > ul:nth-child(1) {
   margin-top: 0pt !important;
   padding-top: 0pt !important;
 }
-td > ul:nth-child(1) > li:nth-child(1) {
+td > div > ul:nth-child(1) > li:nth-child(1) {
   margin-top: 0pt !important;
   padding-top: 0pt !important;
 }
