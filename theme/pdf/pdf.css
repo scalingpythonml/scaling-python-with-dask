@@ -3,6 +3,24 @@
 /*--------Put Your Custom CSS Rules Below--------*/
 /*--- This oneoff overrides the code in https://github.com/oreillymedia/<name_of_theme>/blob/master/pdf/pdf.css---*/
 
+/*--Table lines--*/
+table td { border-bottom: 0.25pt solid cmyk(0%,0%,0%,100%); }
+
+/* fix spacing above table lists not preceded by a paragraph */
+td > ul:nth-child(1) {
+  margin-top: 0pt !important;
+  padding-top: 0pt !important;
+}
+td > ul:nth-child(1) > li:nth-child(1) {
+  margin-top: 0pt !important;
+  padding-top: 0pt !important;
+}
+
+/* duplicate anchor tags to table footnote should be black */
+a.tablefootnote {
+  color: cmyk(0%, 0%, 0%, 100%);
+}
+
 /* style for line of code following table in example with notebook-style output */
 pre.example-cont {
   margin-left: 0;
