@@ -14,26 +14,26 @@ Still, there are already dozens of popular libraries specifically for Dask, and 
 * Dask
 * Distributed
 * dask-ml
-|*Data structures*: Extend functionality, specific scientific data handling, or deployment hardware options of Dask built-in data structures |Functionalities and convenience a|
+.2+|*Data structures*: Extend functionality, specific scientific data handling, or deployment hardware options of Dask built-in data structures |Functionalities and convenience a|
 * _xarray_: adds axis labels for Dask array
 * _sparse_: an efficient implementation for sparse arrays and matrices, often found in ML and deep learning
 * _pint_: scientific unit conversion
 * _dask-geopandas_: parallelization of geopandas
-| |Hardware a|
+|Hardware a|
 * _RAPIDS project_: NVIDIA-led effort to extend Cuda data structure for Dask
 * _dask-cuda_:pass:[<span data-type="footnote" id="libraries_table_foonote">Covered in this book.</span>] provides CUDACluster, an extension of Dask's cluster that better manages Cuda-enabled Dask workers
 * _CuPY_:pass:[<sup><a class="tablefootnote" href="#libraries_table_foonote">a</a></sup>] GPU-enabled arrays
 * _CuDF_:pass:[<sup><a class="tablefootnote" href="#libraries_table_foonote">a</a></sup>] Cuda DataFrame as partitions in Dask DataFrame
-|*Deployment*: Extend deployment options for use with Dask distributed |Containers a|
+.4+|*Deployment*: Extend deployment options for use with Dask distributed |Containers a|
 * _dask-kubernetes_:pass:[<sup><a class="tablefootnote" href="#libraries_table_foonote">a</a></sup>] Dask on k8s
 * _dask-helm_:pass:[<sup><a class="tablefootnote" href="#libraries_table_foonote">a</a></sup>] alternate Dask on k8s and jupyterhub on k8s
-| |Cloud a|
+|Cloud a|
 * _dask-cloudprovider_: commodity cloud APIs
 * _dask-gateway_
 * _Dask-Yarn_:pass:[<sup><a class="tablefootnote" href="#libraries_table_foonote">a</a></sup>] for YARN/Hadoop
-| |GPU a|
+|GPU a|
 * _dask-cuda_: Dask cluster optimized for GPUs
-| |HPC a|
+|HPC a|
 * _dask-jobqueue_:pass:[<sup><a class="tablefootnote" href="#libraries_table_foonote">a</a></sup>] deployment for PBS, SLURM, MOAB, SGE, LSF, and HTCondor
 * _dask-mpi_:pass:[<sup><a class="tablefootnote" href="#libraries_table_foonote">a</a></sup>] deployment for MPI
 |*ML and analytics*: Extend ML libraries and computation with Dask | a|
