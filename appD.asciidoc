@@ -52,7 +52,7 @@ Streamz has limited sink (or write destination) support, meaning in many cases i
 
 Some streaming data sources have the ability to replay or look back at messages that have been published (up to a configurable time period), which is especially useful for a recompute-based approach to fault tolerance. Two of the popular distributed data sources (and sinks) are Apache Kafka and Apache Pulsar, both of which have the ability to look back at previous messages. An example streaming system that lacks this ability is RabbitMQ.
 
-Streamz's https://streamz.readthedocs.io/en/latest/api.html#sources[+++API documentation+++] covers which sources are supported; for simplicity, we will focus here on Apache Kafka and the local iterable source. Streamz does all loading in the head process, and then you must scatter the result. Loading streaming data should look familiar, with loading a local collection shown in <<load_ex_local>> and Kafka in <<load_ex_kafka>>.
+Streamz's https://oreil.ly/LOpPJ[+++API documentation+++] covers which sources are supported; for simplicity, we will focus here on Apache Kafka and the local iterable source. Streamz does all loading in the head process, and then you must scatter the result. Loading streaming data should look familiar, with loading a local collection shown in <<load_ex_local>> and Kafka in <<load_ex_kafka>>.
 
 [[load_ex_local]]
 .Load local iterator
@@ -94,11 +94,11 @@ include::./examples/dask/Streamz.py[tags=wc]
 ----
 ====
 
-In the preceding example, you can see some of the current limitations of Streamz, as well as some familiar concepts (like `map`). If you're interested in learning more, refer to the https://streamz.readthedocs.io/en/latest/api.html[+++Streamz API documentation+++]; note, however, that in our experience, some components will randomly not work on non-local streams.
+In the preceding example, you can see some of the current limitations of Streamz, as well as some familiar concepts (like `map`). If you're interested in learning more, refer to the https://oreil.ly/VpkEz[+++Streamz API documentation+++]; note, however, that in our experience, some components will randomly not work on non-local streams.
 
 === GPU Pipelines on Dask Streaming
 
-If you are working with GPUs, the https://anaconda.org/rapidsai/custreamz[+++cuStreamz project+++] simplifies the integration of cuDF with Streamz. cuStreamz uses a number of custom components for performance, like loading data from Kafka into the GPU instead of having to first land in a Dask DataFrame and then convert it. cuStreamz also implements a custom version of checkpointing with more flexibility than the default Streamz project. The developers behind the project, who are largely employed by people hoping to sell you more GPUs, https://medium.com/rapids-ai/detecting-malicious-iot-network-traffic-using-rapids-forest-inference-library-and-custreamz-7d953f215588[+++claim up to an 11x speed-up+++].
+If you are working with GPUs, the https://oreil.ly/QCk7O[+++cuStreamz project+++] simplifies the integration of cuDF with Streamz. cuStreamz uses a number of custom components for performance, like loading data from Kafka into the GPU instead of having to first land in a Dask DataFrame and then convert it. cuStreamz also implements a custom version of checkpointing with more flexibility than the default Streamz project. The developers behind the project, who are largely employed by people hoping to sell you more GPUs, https://oreil.ly/6wUpB[+++claim up to an 11x speed-up+++].
 
 === Limitations, Challenges, and Workarounds
 

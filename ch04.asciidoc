@@ -118,7 +118,7 @@ While Dask has limited support for query push-down with partition reads, many ot
 
 On the flip side, if most of your downstream users consume all of the table or have unique columns they are filtering on, a partitioned write can decrease performance. Since listing files on a network filesystem is not free, discovering the files becomes more expensive when you have partitioned writes that you are not taking advantage of.
 
-Other systems commonly use metastores for partitioned reads and writes when dealing with large data sizes. Dask does not presently have the built-in ability to talk to a metastore, like Iceberg, Hive, or DeltaLake. Metastores can be useful for loading subsets tables and time-traveling (looking at old versions) when needed. The https://github.com/rajagurunath/dask_deltatable[Dask _deltatable_ library] integrates reading the DeltaLake table. Iceberg has a https://github.com/linkedin/iceberg/blob/master/site/docs/python-api-intro.md[built-in Python API] that you can use to get a list of files associated with a particular query, and then use Dask's existing file APIs on top of it. I expect the integrations with metastores will continue to improve rapidly.
+Other systems commonly use metastores for partitioned reads and writes when dealing with large data sizes. Dask does not presently have the built-in ability to talk to a metastore, like Iceberg, Hive, or DeltaLake. Metastores can be useful for loading subsets tables and time-traveling (looking at old versions) when needed. The https://oreil.ly/2i2Dd[Dask _deltatable_ library] integrates reading the DeltaLake table. Iceberg has a https://oreil.ly/tIP9S[built-in Python API] that you can use to get a list of files associated with a particular query, and then use Dask's existing file APIs on top of it. I expect the integrations with metastores will continue to improve rapidly.
 ****
 
 ==== Filesystems
@@ -134,7 +134,7 @@ include::./examples/dask/Dask-Ch4-DataFrames.py[tags=fsspec]
 ----
 ====
 
-Many filesystems require some kind of configuration, be it endpoint or credentials. Often new filesystems, like MinIO, offer S3-compatible APIs but overload the endpoint and require some extra configuration to function. With Dask you specify the configuration parameters to the read/write function with `storage_options`. Everyone's configuration here will likely be a bit different.footnote:[https://filesystem-spec.readthedocs.io/en/latest/api.html#built-in-implementations[FSSPEC documentation] includes the specifics for configuring each of the backends.] Dask will use your `storage_options` dict as the keyword arguments to the underlying FSSPEC implementation. For example, my `storage_options` for MinIO are shown in <<minio_storage_options>>.
+Many filesystems require some kind of configuration, be it endpoint or credentials. Often new filesystems, like MinIO, offer S3-compatible APIs but overload the endpoint and require some extra configuration to function. With Dask you specify the configuration parameters to the read/write function with `storage_options`. Everyone's configuration here will likely be a bit different.footnote:[https://oreil.ly/ZfcRv[FSSPEC documentation] includes the specifics for configuring each of the backends.] Dask will use your `storage_options` dict as the keyword arguments to the underlying FSSPEC implementation. For example, my `storage_options` for MinIO are shown in <<minio_storage_options>>.
 
 [[minio_storage_options]]
 .Dask configure MinIO
@@ -340,14 +340,14 @@ include::./examples/dask/Dask-Ch4-DataFrames.py[tags=repartition]
 
 [WARNING]
 ====
-Dask's set_index has a similar `partition_size` parameter, but as of this writing, https://github.com/dask/dask/issues/7110[only works to reduce the number of partitions].
+Dask's set_index has a similar `partition_size` parameter, but as of this writing, https://oreil.ly/3I9Gm[only works to reduce the number of partitions].
 ====
 
 As you've seen at the start of this chapter, when writing a DataFrame, each partition is given its own file, but sometimes this can result in files that are too big or too small. Some tools can only accept one file as input, so you need to repartition everything into a single partition. Other times, the data storage system is optimized for a certain file size, like the HDFS default block size of 128 MB. The good news is techniques such as `repartition` and `set_index` solve these problems for you.
 
 === Embarrassingly Parallel Operations
 
-Dask's `map_partitions` function applies a function to each of the partitions underlying pandas DataFrames, and the result is also a pandas DataFrame. Functions implemented with `map_partitions` are embarrassingly parallel since they don't require any inter-worker transfer of data.footnote:[https://en.wikipedia.org/wiki/Embarrassingly_parallel[Embarrassingly parallel problems] are ones where the overhead of distributed computing and communication is low.]
+Dask's `map_partitions` function applies a function to each of the partitions underlying pandas DataFrames, and the result is also a pandas DataFrame. Functions implemented with `map_partitions` are embarrassingly parallel since they don't require any inter-worker transfer of data.footnote:[https://oreil.ly/30938[Embarrassingly parallel problems] are ones where the overhead of distributed computing and communication is low.]
 Dask implements `map` with `map_partitions`, as well as many row-wise operations.
 If you want to use a row-wise operation that you find missing, you can implement it yourself, as shown in <<filna_ex>>.
 
@@ -415,7 +415,7 @@ Not all multi-DataFrame operations are implemented, like `compare`, which leads 
 Dask's DataFrame implements most, but not all, of the pandas DataFrame API. Some of the pandas API is not implemented in Dask because of the development time involved. Other parts are not used to avoid exposing an API that would be unexpectedly slow.
 
 Sometimes the API is just missing small parts, as both pandas and Dask are under active development.
-An example is the `split` function from <<wc_dataframe>>. In local pandas, instead of doing `split().explode()`, you could have called `split(expand=true)`. Some of these missing parts can be excellent places where you can get involved and https://github.com/dask/dask/contribute[+++contribute to the Dask project+++] if you are interested.
+An example is the `split` function from <<wc_dataframe>>. In local pandas, instead of doing `split().explode()`, you could have called `split(expand=true)`. Some of these missing parts can be excellent places where you can get involved and https://oreil.ly/Txd_R[+++contribute to the Dask project+++] if you are interested.
 
 Some libraries do not parallelize as well as others. In these cases, a common approach is to try to filter or aggregate the data down enough that it can be represented locally and then apply the local libraries to the data.
 For example, with graphing, it's common to pre-aggregate the counts or take a random sample and graph the result.

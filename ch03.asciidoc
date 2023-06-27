@@ -47,7 +47,7 @@ include::./examples/dask/Dask-Ch3-Concepts.py[tags=process]
 ----
 ====
 
-If you are running on a Unix system, you can use the _forkserver_, shown in <<configuring_dask_forkserver_ch03_1686241608423>>, which will https://docs.python.org/3/library/multiprocessing.html#contexts-and-start-methods[reduce the overhead of starting each Python interpreter]. Using the forkserver will not reduce the communication overhead.
+If you are running on a Unix system, you can use the _forkserver_, shown in <<configuring_dask_forkserver_ch03_1686241608423>>, which will https://oreil.ly/U9voe[reduce the overhead of starting each Python interpreter]. Using the forkserver will not reduce the communication overhead.
 
 [[configuring_dask_forkserver_ch03_1686241608423]]
 .Configuring Dask to use the multi-process forkserver
@@ -120,7 +120,7 @@ Cloudpickle serializes the functions and the generic Python types in Dask. Most 
 
 [WARNING]
 ====
-Dask has its own ability to extend serialization, but the registry methods are not automatically sent to the workers, and it's not always used.footnote:[See Dask distributed GitHub issues https://github.com/dask/distributed/issues/5561[5561] and https://github.com/dask/distributed/issues/2953[2953].]
+Dask has its own ability to extend serialization, but the registry methods are not automatically sent to the workers, and it's not always used.footnote:[See Dask distributed GitHub issues https://oreil.ly/DmFxp[5561] and https://oreil.ly/RxzGS[2953].]
 ====
 
 Dask has built-in special handling for NumPy arrays, sparse, and cuPY. These serializations tend to be more space-efficient than the default serializers. When you make a class that contains one of these types and does not require any special initialization, you should call `register_generic(YourClass)` from `dask.distributed.protocol` to take advantage of Dask's special handling.
@@ -315,7 +315,7 @@ include::./examples/dask/Dask-Ch3-Concepts.py[tags=manual_persist]
 A common mistake is to persist and cache things that are not used more than once, or are inexpensive to compute.
 ====
 
-Dask's local mode has a best-effort caching system based on cachey. Since this only works in local mode I won't go into the details, but if you are running in local mode you can take a look at https://docs.dask.org/en/stable/caching.html[the local cache documentation].
+Dask's local mode has a best-effort caching system based on cachey. Since this only works in local mode I won't go into the details, but if you are running in local mode you can take a look at https://oreil.ly/VFSVQ[the local cache documentation].
 
 [WARNING]
 ====

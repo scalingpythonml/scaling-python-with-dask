@@ -10,7 +10,7 @@ This book is primarily focused on data science and related tasks because, in our
 
 === A Note on Responsibility
 
-As the saying goes, with great power comes great responsibility. Dask, and tools like it, enables you to process more data and build more complex models. It's essential not to get carried away with collecting data simply for the sake of it, and stop to ask yourself if including a new field in your model might have some unintended real-world implications. You don't have to search very hard to find stories of well-meaning engineers and data scientists accidentally building models or tools that caused devastating impacts, like increased auditing of minorities, hiring algorithms discriminating based on gender, or subtler things like biases in https://en.wikipedia.org/wiki/Word_embedding[word embeddings] (a way to represent the meanings of words as vectors). Please use your newfound powers with this in mind, for one never wants to end up in a textbook for the wrong reasons.
+As the saying goes, with great power comes great responsibility. Dask, and tools like it, enables you to process more data and build more complex models. It's essential not to get carried away with collecting data simply for the sake of it, and stop to ask yourself if including a new field in your model might have some unintended real-world implications. You don't have to search very hard to find stories of well-meaning engineers and data scientists accidentally building models or tools that caused devastating impacts, like increased auditing of minorities, hiring algorithms discriminating based on gender, or subtler things like biases in https://oreil.ly/tqjth[word embeddings] (a way to represent the meanings of words as vectors). Please use your newfound powers with this in mind, for one never wants to end up in a textbook for the wrong reasons.
 
 === Conventions Used in This Book
 
@@ -41,7 +41,7 @@ Once published in print and excluding O’Reilly’s distinctive design elements
 
 === Using Code Examples
 
-The https://github.com/scalingpythonml/scalingpythonml[+++Scaling Python ML Github+++] contains the majority of the examples in this book. They are mainly under the _dask_ directory but with more esoteric parts (such as the cross-platform CUDA container) in separate top-level directories.
+The https://oreil.ly/scaling-python-dask-code[+++Scaling Python ML GitHub repo+++] contains the majority of the examples in this book. They are mainly under the _dask_ directory but with more esoteric parts (such as the cross-platform CUDA container) in separate top-level directories.
 
 If you have a technical question or a problem using the code examples, please email pass:[<a class="email" href="mailto:support@oreilly.com"><em>support@oreilly.com</em></a>].
 

@@ -4,8 +4,8 @@
 
 Dask is a framework for parallelized computing with Python that scales from multiple cores on one machine to data centers with thousands of machines. It has both low-level task APIs and higher-level data-focused APIs. The low-level task APIs power Dask's integration with a wide variety of Python libraries. Having public APIs has allowed an ecosystem of tools to grow around Dask for various use cases.
 
-Continuum Analytics, now known as Anaconda Inc, started the open source, DARPA-funded link:$$https://blaze.readthedocs.io/en/latest/index.html$$[Blaze project], which has evolved into Dask.
-Continuum has participated in developing many essential libraries and even conferences in the Python data analytics space. Dask remains an open source project, with much of its development now being supported by link:$$https://coiled.io/$$[Coiled].
+Continuum Analytics, now known as Anaconda Inc, started the open source, DARPA-funded link:$$https://oreil.ly/FyqwQ$$[Blaze project], which has evolved into Dask.
+Continuum has participated in developing many essential libraries and even conferences in the Python data analytics space. Dask remains an open source project, with much of its development now being supported by link:$$https://oreil.ly/BMLuP$$[Coiled].
 
 Dask is unique in the distributed computing ecosystem, because it integrates popular data science, parallel, and scientific computing libraries. Dask's integration of different libraries allows developers to reuse much of their existing knowledge at scale. You can also frequently reuse some of your code with minimal changes.
 
@@ -66,12 +66,12 @@ Another significant cultural difference comes from packaging, with many projects
 ==== Data Science
 
 One of the most popular Python libraries in the data science ecosystem is pandas.
-Apache Spark (and its Python companion, PySpark) is also one of the most popular tools for distributed data science. It has support for both Python and JVM languages. Spark's first attempt at DataFrames more closely resembled SQL than what you may think of as DataFrames. While Spark has started to integrate pandas support with the link:$$https://koalas.readthedocs.io/en/latest/$$[Koalas project], in my opinion, Dask's support of data science library APIs is one of the best.footnote:[Of course, opinions vary. See, for example, https://tomaspeluritis.medium.com/war-of-data-frames-i-r-a-p-read-aggregate-and-print-cd37b8f8849c["Single Node Processing — Spark, Dask, Pandas, Modin, Koalas Vol. 1"], https://databricks.com/blog/2021/04/07/benchmark-koalas-pyspark-and-dask.html["Benchmark: Koalas (PySpark) and Dask"], and https://coiled.io/blog/dask-as-a-spark-replacement/["Spark vs. Dask vs. Ray"].] 
+Apache Spark (and its Python companion, PySpark) is also one of the most popular tools for distributed data science. It has support for both Python and JVM languages. Spark's first attempt at DataFrames more closely resembled SQL than what you may think of as DataFrames. While Spark has started to integrate pandas support with the link:$$https://oreil.ly/VmU6O$$[Koalas project], in my opinion, Dask's support of data science library APIs is one of the best.footnote:[Of course, opinions vary. See, for example, https://oreil.ly/HBExc["Single Node Processing — Spark, Dask, Pandas, Modin, Koalas Vol. 1"], https://oreil.ly/PNZPm["Benchmark: Koalas (PySpark) and Dask"], and https://oreil.ly/eA28o["Spark vs. Dask vs. Ray"].] 
 In addition to the pandas APIs, Dask supports scaling NumPy, scikit-learn, and other data science tools.
 
 [NOTE]
 ====
-Dask can be extended to support data types besides NumPy and pandas, and this is how GPU support is implemented with link:$$https://github.com/rapidsai/cudf$$[cuDF].
+Dask can be extended to support data types besides NumPy and pandas, and this is how GPU support is implemented with link:$$https://oreil.ly/m-K8W$$[cuDF].
 ====
 
 
@@ -97,7 +97,7 @@ Dask itself is not a library for accelerated Python, but you can use it in conju
 
 ===== SQL engines
 
-Dask itself does not have a SQL engine; however, link:$$https://fugue-tutorials.readthedocs.io/tutorials/fugue_sql/index.html$$[FugueSQL], link:$$https://dask-sql.readthedocs.io/en/latest/$$[Dask-SQL], and link:$$https://github.com/BlazingDB/blazingsql$$[BlazingSQL] use Dask to provide a distributed SQL engine.footnote:[Blazing SQL is no longer maintained, though its concepts are interesting and may find life in another project.] Dask-sql uses the popular Apache Calcite project, which powers many other SQL engines. BlazingSQL extends Dask DataFrames to support GPU operations. cuDF DataFrames have a slightly different representation. Apache Arrow makes it straightforward to convert a Dask DataFrame to cuDF and vice versa.
+Dask itself does not have a SQL engine; however, link:$$https://oreil.ly/sBLQM$$[FugueSQL], link:$$https://oreil.ly/ZMVD1$$[Dask-SQL], and link:$$https://oreil.ly/4gHru$$[BlazingSQL] use Dask to provide a distributed SQL engine.footnote:[Blazing SQL is no longer maintained, though its concepts are interesting and may find life in another project.] Dask-sql uses the popular Apache Calcite project, which powers many other SQL engines. BlazingSQL extends Dask DataFrames to support GPU operations. cuDF DataFrames have a slightly different representation. Apache Arrow makes it straightforward to convert a Dask DataFrame to cuDF and vice versa.
 
 [TIP]
 ====
@@ -110,13 +110,13 @@ Dask-sql can read data from parts of the Hadoop ecosystem that Dask cannot read 
 
 As mentioned previously, you can specify arbitrary graphs in Dask, and if you chose, you could write your workflows using Dask itself. You can call system commands and parse their results, but just because you can do something doesn't mean it will be fun or simple.
 
-The household namefootnote:[Assuming a fairly nerdy household.] for workflow scheduling in the big data ecosystem is Apache Airflow. While Airflow has a wonderful collection of operators, making it easy to express complex task types easily, it is notoriously difficult to scale.footnote:[With one thousand tasks per hour taking substantial tuning and manual consideration; see https://medium.com/@keozchan/scaling-airflow-to-1000-tasks-hour-aac3207b26ec["Scaling Airflow to 1000 Tasks/Hour"].] Dask can be used to run link:$$https://airflow.apache.org/docs/apache-airflow/1.10.1/howto/executor/use-dask.html$$[Airflow tasks]. Alternatively, it can be used as a backend for other task scheduling systems like link:$$https://github.com/prefecthq/prefect$$[Prefect]. Prefect aims to bring Airflow-like functionality to Dask with a large predefined task library. Since Prefect used Dask as an execution backend from the start, it has a tighter integration and lower overhead than Airflow on Dask.
+The household namefootnote:[Assuming a fairly nerdy household.] for workflow scheduling in the big data ecosystem is Apache Airflow. While Airflow has a wonderful collection of operators, making it easy to express complex task types easily, it is notoriously difficult to scale.footnote:[With one thousand tasks per hour taking substantial tuning and manual consideration; see https://oreil.ly/tVbSf["Scaling Airflow to 1000 Tasks/Hour"].] Dask can be used to run link:$$https://oreil.ly/Vw54J$$[Airflow tasks]. Alternatively, it can be used as a backend for other task scheduling systems like link:$$https://oreil.ly/9Xmvo$$[Prefect]. Prefect aims to bring Airflow-like functionality to Dask with a large predefined task library. Since Prefect used Dask as an execution backend from the start, it has a tighter integration and lower overhead than Airflow on Dask.
 
 
 [NOTE]
 ====
 Few tools cover all of the same areas, with the most similar tool being Ray.
-Dask and Ray both expose Python APIs, with underlying extensions when needed. There is a link:$$https://github.com/ray-project/ray/issues/642$$[GitHub issue] where the creators of both systems compare their similarities and differences.
+Dask and Ray both expose Python APIs, with underlying extensions when needed. There is a link:$$https://oreil.ly/cPJpW$$[GitHub issue] where the creators of both systems compare their similarities and differences.
 From a systems perspective, the biggest differences between Ray and Dask are handling state, fault tolerance, and centralized versus decentralized scheduling. Ray implements more of its logic in [.keep-together]#C&#x2b;&#x2b;#, which can have performance benefits but is also more difficult to read. From a user point of view, Dask has more of a data science focus, and Ray emphasizes distributed state and actor support. Dask can use Ray as a backend for scheduling.footnote:[Or, flipping the perspective, Ray is capable of using Dask to provide data science functionality.]
 ====
 

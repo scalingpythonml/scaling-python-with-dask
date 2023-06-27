@@ -5,7 +5,7 @@ Now that you know Dask’s many different data types, computation patterns, depl
 
 This chapter will primarily use the Dask-ML library, a robustly supported ML library from the Dask open source project, but we will also highlight other libraries, such as XGBoost and scikit-learn. The Dask-ML library is designed to run both in clusters and locally.footnote:[This is especially important for non-batch inference, where being able to use the same code can be of great benefit.] Dask-ML provides familiar interfaces by extending many common ML libraries. ML is different than many of the tasks discussed so far, as it requires the framework (here Dask-ML) to coordinate work more closely. This chapter will show some of the ways you can use it in your own programs, and offer tips.
 
-Since ML is such a wide and varied discipline, we are only able to cover some of the situations where Dask-ML is useful. This chapter will discuss some of the common work patterns, such as exploratory data analysis, random split, featurization, regression, and deep learning inferences, from a practitioner’s perspective on ramping up on Dask. If you don't see your particular library or use case represented, it may still be possible to accelerate with Dask, and you should look at Dask-ML's https://ml.dask.org/modules/api.html[+++API guide+++]. However, ML is not Dask's primary focus, so you may find that you need to use other tools, like Ray.
+Since ML is such a wide and varied discipline, we are only able to cover some of the situations where Dask-ML is useful. This chapter will discuss some of the common work patterns, such as exploratory data analysis, random split, featurization, regression, and deep learning inferences, from a practitioner’s perspective on ramping up on Dask. If you don't see your particular library or use case represented, it may still be possible to accelerate with Dask, and you should look at Dask-ML's https://oreil.ly/eJGHU[+++API guide+++]. However, ML is not Dask's primary focus, so you may find that you need to use other tools, like Ray.
 
 === Parallelizing ML
 
@@ -29,7 +29,7 @@ As discussed in previous chapters, the Dask project is still in the early phase 
 
 === Getting Started with Dask-ML and XGBoost
 
-Dask-ML is the officially supported ML library for Dask. Here, we will walk through the functionalities provided in the Dask-ML API; how it connects Dask, pandas, and scikit-learn into its functions; and some differences between Dask and its scikit-learn equivalents. Additionally, we will walk through a few XGBoost gradient boost integrations. We will primarily use the New York City yellow taxi cab data we previously used to walk through examples. You can access the dataset directly from the https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page[New York City website].
+Dask-ML is the officially supported ML library for Dask. Here, we will walk through the functionalities provided in the Dask-ML API; how it connects Dask, pandas, and scikit-learn into its functions; and some differences between Dask and its scikit-learn equivalents. Additionally, we will walk through a few XGBoost gradient boost integrations. We will primarily use the New York City yellow taxi cab data we previously used to walk through examples. You can access the dataset directly from the https://oreil.ly/lbU5V[New York City website].
 
 ==== Feature Engineering
 

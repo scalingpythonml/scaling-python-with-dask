@@ -1,7 +1,7 @@
 [[ch12]]
 == Productionizing Dask: Notebooks, Deployment, Tuning, and Monitoring
 
-We have bundled most of the things we believe are going to be critical for you to move from your laptop into production in this chapter. Notebooks and deployments go together, as Dask's notebook interface greatly simplifies many aspects of using its distributed deployments. While you don't need to use notebooks to access Dask, and in many cases https://towardsdatascience.com/5-reasons-why-jupyter-notebooks-suck-4dc201e27086[+++notebooks have serious drawbacks+++], for interactive use cases it's often hard to beat the trade-offs. Interactive/exploratory work has a way of becoming permanent mission-critical workflows, and we cover the steps necessary to turn exploratory work into production deployments.
+We have bundled most of the things we believe are going to be critical for you to move from your laptop into production in this chapter. Notebooks and deployments go together, as Dask's notebook interface greatly simplifies many aspects of using its distributed deployments. While you don't need to use notebooks to access Dask, and in many cases https://oreil.ly/oi09S[+++notebooks have serious drawbacks+++], for interactive use cases it's often hard to beat the trade-offs. Interactive/exploratory work has a way of becoming permanent mission-critical workflows, and we cover the steps necessary to turn exploratory work into production deployments.
 
 You can deploy Dask in many fashions, from running on top of other distributed compute engines like Ray to deploying on YARN or a raw collection of machines. Once you've got your Dask job deployed, you'll likely need to tune it so you don't use your company’s entire AWS budget on one job. And then, finally, before you can walk away from a job, you'll need to set up monitoring&mdash;so you know when it's broken.
 
@@ -35,7 +35,7 @@ Dependency management allows you to control, at runtime or in advance, what soft
 .Deployment option comparisons
 [options="header"]
 |===
-|Deployment method |Dynamic scale |Recommended use casefootnote:[This is largely based on our experiences and may be biased to large companies and academic environments. Please feel free to make your own call.] |Dependency management |Notebook deployed insidefootnote:[There are https://blog.dask.org/2019/09/13/jupyter-on-dask[some workarounds].] |Mixed worker types
+|Deployment method |Dynamic scale |Recommended use casefootnote:[This is largely based on our experiences and may be biased to large companies and academic environments. Please feel free to make your own call.] |Dependency management |Notebook deployed insidefootnote:[There are https://oreil.ly/TqhBb[some workarounds].] |Mixed worker types
 |localhost |No |Testing, solo dev, GPU-only acceleration |Yes (runtime or pre-install) |Yes |No
 |ssh |No |Solo lab, testing, but generally no (k8s instead) |Runtime only |Yes |Yes (manual)
 |Slurm + GW |Yes |Existing high-performance computing/Slurm environments |Yes (runtime or pre-install) |Separate project |Varies
@@ -50,11 +50,11 @@ Dependency management allows you to control, at runtime or in advance, what soft
 
 There are two main ways to deploy Dask on Kubernetes:footnote:[PEP20 remain optimistic.] KubeCluster and HelmCluster. Helm is a popular tool for managing deployments on Kubernetes, with the deployments being specified in Helm charts. Since Helm is the newer recommended way of managing deployments on Kubernetes, we will cover that one here.
 
-The https://helm.sh/docs/intro/install/[+++Helm documentation+++] offers an excellent starting point on the different ways to install Helm, but for those in a hurry, `curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash` will do it for you.footnote:[Note this installs Helm 3.X:. As with Python3, Helm 3 has a https://helm.sh/docs/topics/v2_v3_migration/[large number of breaking changes over Helm 2], so when you're reading documentation (or installing packages), make sure it's referencing the current major versions.]
+The https://oreil.ly/EBzBm[+++Helm documentation+++] offers an excellent starting point on the different ways to install Helm, but for those in a hurry, `curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash` will do it for you.footnote:[Note this installs Helm 3.X:. As with Python3, Helm 3 has a https://oreil.ly/vR5BM[large number of breaking changes over Helm 2], so when you're reading documentation (or installing packages), make sure it's referencing the current major versions.]
 
 [NOTE]
 ====
-The Dask on Kubernetes Helm chart deploys what is called an _operator_. Currently, installing operators requires the ability to install Custom Resource Definitions (CRDs), and may require administrator privileges. If you can't get the permissions (or someone with the permissions) you can still use the https://kubernetes.dask.org/en/latest/kubecluster.html[+++"vanilla" or "classic" deployment mode+++].
+The Dask on Kubernetes Helm chart deploys what is called an _operator_. Currently, installing operators requires the ability to install Custom Resource Definitions (CRDs), and may require administrator privileges. If you can't get the permissions (or someone with the permissions) you can still use the https://oreil.ly/-MLRk[+++"vanilla" or "classic" deployment mode+++].
 ====
 
 Since GPU resources are costly, it is typical to want only to allocate as many of them as needed. Some cluster manager interfaces, including Dask's Kubernetes plug-in, allow you to configure multiple types of workers so that it will only allocate GPU workers when needed. On our Kubernetes cluster, we deploy the Dask operator as shown in <<deploy_dask_operator_helm>>.
@@ -68,7 +68,7 @@ include::./examples/dask/kubernetes/install-dask-helm.sh[tags=install_operator]
 ----
 ====
 
-Now you can use the Dask operator either by creating YAML files (likely not your favorite) or with the `KubeCluster` API, as shown in <<helm_ex>>, where we create a cluster and then add additional worker types, allowing Dask to create two different kinds of workers.footnote:[Mixed worker types; see https://distributed.dask.org/en/stable/resources.html["Worker Resources"] in the Dask documentation and the blog article https://www.dask.org/blog/how-to-run-different-worker-types-with-the-dask-helm-chart["How to Run Different Worker Types with the Dask Helm Chart"].]
+Now you can use the Dask operator either by creating YAML files (likely not your favorite) or with the `KubeCluster` API, as shown in <<helm_ex>>, where we create a cluster and then add additional worker types, allowing Dask to create two different kinds of workers.footnote:[Mixed worker types; see https://oreil.ly/O52ib["Worker Resources"] in the Dask documentation and the blog article https://oreil.ly/mJR6b["How to Run Different Worker Types with the Dask Helm Chart"].]
 
 [[helm_ex]]
 .Use Dask operator
@@ -79,11 +79,11 @@ include::./examples/dask/kubernetes/connect.py[]
 ----
 ====
 
-In 2020 Dask added a https://blog.dask.org/2020/08/31/helm_daskhub[+++DaskHub Helm chart+++], which combines the deployment of JupyterHub with the Dask Gateway.
+In 2020 Dask added a https://oreil.ly/otOQX[+++DaskHub Helm chart+++], which combines the deployment of JupyterHub with the Dask Gateway.
 
 === Dask on Ray
 
-Deploying Dask on Ray is a little bit different than all of the other options, in that it changes not only how Dask workers and tasks are scheduled, but also changes https://docs.ray.io/en/latest/ray-core/scheduling/memory-management.html#memory[+++how Dask objects are stored+++]. This can reduce the number of copies of the same object that need to be stored, allowing you to use your cluster memory more efficiently.
+Deploying Dask on Ray is a little bit different than all of the other options, in that it changes not only how Dask workers and tasks are scheduled, but also changes https://oreil.ly/PIwuX[+++how Dask objects are stored+++]. This can reduce the number of copies of the same object that need to be stored, allowing you to use your cluster memory more efficiently.
 
 If you have a Ray deployment available to you, enabling Dask can be incredibly straightforward, as shown in <<dask_on_ray>>.
 
@@ -96,7 +96,7 @@ include::./examples/dask/Dask-ChN-spark_to_ray_to_dask.py[tags=dask_on_ray]
 ----
 ====
 
-However, if you don't have an existing Ray cluster, you will still need to deploy Ray somewhere with the same considerations as Dask. Deploying Ray is beyond the scope of this book. Ray's https://docs.ray.io/en/latest/serve/production-guide/index.html[+++production guide+++] has details for deploying on Ray, as does _Scaling Python with Ray_.
+However, if you don't have an existing Ray cluster, you will still need to deploy Ray somewhere with the same considerations as Dask. Deploying Ray is beyond the scope of this book. Ray's https://oreil.ly/PNb0_[+++production guide+++] has details for deploying on Ray, as does _Scaling Python with Ray_.
 
 === Dask on YARN
 
@@ -136,7 +136,7 @@ You can turn your HPC account into a high-performance Dask environment that you 
 
 ==== Setting Up Dask in a Remote Cluster
 
-The first step to using Dask on your cluster is to set up your own Python and iPython environments in the cluster. The exact way to do that will vary by your cluster’s admin’s preferences. Generally, users often use https://docs.python.org/3/library/venv.html[+++virtualenv+++] or https://docs.conda.io/en/latest/miniconda.html[+++miniconda+++] to install related libraries on a user level. Miniconda makes it easier to use not just your own libraries, but your own version of Python. Once that is done, ensure your Python command points to the Python binary in your user space by running `which python` or installing and importing a library not available in system Python.
+The first step to using Dask on your cluster is to set up your own Python and iPython environments in the cluster. The exact way to do that will vary by your cluster’s admin’s preferences. Generally, users often use https://oreil.ly/mLAOj[+++virtualenv+++] or https://oreil.ly/zXsTP[+++miniconda+++] to install related libraries on a user level. Miniconda makes it easier to use not just your own libraries, but your own version of Python. Once that is done, ensure your Python command points to the Python binary in your user space by running `which python` or installing and importing a library not available in system Python.
 
 The Dask-jobqueue library converts your Dask settings and configurations into a job script that is submitted to the HPC cluster. The following example starts a cluster with Slurm workers, and the semantics are similar for other HPC API. Dask-MPI uses a slightly different pattern, so be sure to refer to its documentation for details. `job_directives_skip` is an optional parameter, used to ignore errors in cases where auto-generated job script inserts some commands that your particular cluster does not recognize. `job_script_prologue` is also an optional parameter that specifies shell commands to be run at each worker spawn. This is a good place to ensure proper Python environments are set up, or a cluster-specific setup script.
 
@@ -261,7 +261,7 @@ If you are using Dask's JupyterLab extension (see <<jupyter-lab-extension_ch12_1
 .Dask web UI inside JupyterHub using the JupyterLab extension
 image::images/spwd_1202.png[]
 
-The JupyterLab extension links to the Dask web UI, and you can also get a link through the cluster's `repr`. If the cluster link does not work/is not accessible, you can try installing the `jupyter-server-proxy` extension so you can use the notebook host as a https://en.wikipedia.org/wiki/Jump_server[+++jump host+++].
+The JupyterLab extension links to the Dask web UI, and you can also get a link through the cluster's `repr`. If the cluster link does not work/is not accessible, you can try installing the `jupyter-server-proxy` extension so you can use the notebook host as a https://oreil.ly/0eIhP[+++jump host+++].
 
 ==== Watching Progress
 
@@ -422,7 +422,7 @@ If you see error messages such as “Worker exceeded 95% memory budget. Restarti
 
 By default, when the worker’s memory is around 60% full, it starts sending some data to disk. At over 80%, it stops allocating new data. At 95%, the worker is terminated preemptively, in order to avoid running out of memory. This means after your worker’s memory is more than 60% full, there will be performance degradations, and it’s usually best practice to keep memory pressure lower.
 
-Advanced users can use Active Memory Manager, a daemon that optimizes memory usage of workers on a holistic view of the cluster. You give this manager a particular goal to optimize for, such as reducing replication of the same data within the cluster, or `retire_workers`, a special advanced use case where you do memory transfer from one worker to another when the worker is being retired, or other custom policies. In some cases, it has been shown to decrease memory usage up to 20% for the same task.footnote:[You can find out more about it in Dask’s https://distributed.dask.org/en/latest/active_memory_manager.html[documentation].]
+Advanced users can use Active Memory Manager, a daemon that optimizes memory usage of workers on a holistic view of the cluster. You give this manager a particular goal to optimize for, such as reducing replication of the same data within the cluster, or `retire_workers`, a special advanced use case where you do memory transfer from one worker to another when the worker is being retired, or other custom policies. In some cases, it has been shown to decrease memory usage up to 20% for the same task.footnote:[You can find out more about it in Dask’s https://oreil.ly/MhMHf[documentation].]
 
 ==== Cluster Sizing
 
@@ -457,7 +457,7 @@ We also often see people use Unix crontabs and schtasks, but we advise against t
 
 [TIP]
 ====
-For scheduled jobs on Kubernetes, you can also have your scheduler create a https://kubernetes.dask.org/en/latest/operator_resources.html#daskjob[+++DaskJob resource+++], which will run your Dask program inside the cluster.
+For scheduled jobs on Kubernetes, you can also have your scheduler create a https://oreil.ly/Uw5Rp[+++DaskJob resource+++], which will run your Dask program inside the cluster.
 ====
 
 In <<appA>>, you will learn details about testing and validation, which are especially important for scheduled and automated jobs, as there is no time for manual checking.
@@ -481,6 +481,6 @@ include::./examples/dask/Dask-Ch10_porting.py[tags=ex_distributed_logging]
 
 === Conclusion
 
-In this chapter, you've learned the various deployment options for Dask distributed, from commodity cloud to HPC infrastructures. You’ve also learned Jupyter magics to simplify getting access to information with remote deployments. In our experience, Dask on Kubernetes and Dask on Ray on Kubernetes offers the flexibility we need. Your own decision about how to deploy Dask here may be different, especially if you are working in a larger institution with existing cluster deployments. Most of the deployment options are covered in detail in the https://docs.dask.org/en/stable/deploying.html[+++"Deploy Dask Clusters" guide+++], with the notable exception of Dask on Ray, which is covered in the https://docs.ray.io/en/latest/data/dask-on-ray.html[+++Ray documentation+++].
+In this chapter, you've learned the various deployment options for Dask distributed, from commodity cloud to HPC infrastructures. You’ve also learned Jupyter magics to simplify getting access to information with remote deployments. In our experience, Dask on Kubernetes and Dask on Ray on Kubernetes offers the flexibility we need. Your own decision about how to deploy Dask here may be different, especially if you are working in a larger institution with existing cluster deployments. Most of the deployment options are covered in detail in the https://oreil.ly/j8ueU[+++"Deploy Dask Clusters" guide+++], with the notable exception of Dask on Ray, which is covered in the https://oreil.ly/Q18f2[+++Ray documentation+++].
 
 You’ve also learned about runtime considerations and metrics to track when running a distributed work, and the various tools in Dask’s dashboard to accomplish that, expanded with more advanced user-defined metrics generation. Using these metrics, you’ve learned the conceptual basis for tuning your Dask Distributed clusters, troubleshooting, and how this relates to the fundamental design principle of Dask and distributed computing.

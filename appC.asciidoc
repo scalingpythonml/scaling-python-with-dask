@@ -11,7 +11,7 @@ Some of this advice is common across distributed systems, including Ray and Apac
 
 === Using Debuggers
 
-There are a few different options for using debuggers in Dask. PyCharm and PDB both support connecting to remote debugger processes, but figuring out where your task is running and also setting up the remote debugger can be a challenge. For details on PyCharm remote debugging, see the JetBrains article https://www.jetbrains.com/help/pycharm/remote-debugging-with-product.html[+++"Remote Debugging with PyCharm"+++]. One option is to use epdb and run `import epdb; epdb.serve()` inside of an actor. The easiest option, which is not perfect, is to have Dask re-run failed tasks locally by running `client.recreate_error_locally` on the future that failed.
+There are a few different options for using debuggers in Dask. PyCharm and PDB both support connecting to remote debugger processes, but figuring out where your task is running and also setting up the remote debugger can be a challenge. For details on PyCharm remote debugging, see the JetBrains article https://oreil.ly/HGl90[+++"Remote Debugging with PyCharm"+++]. One option is to use epdb and run `import epdb; epdb.serve()` inside of an actor. The easiest option, which is not perfect, is to have Dask re-run failed tasks locally by running `client.recreate_error_locally` on the future that failed.
 
 === General Debugging Tips with Dask
 
@@ -20,7 +20,7 @@ You likely have your own standard debugging techniques for working with Python c
 * Break up failing functions into smaller functions; smaller functions make it easier to isolate the problem.
 * Be careful about referencing variables from outside of a function, which can result in unintended scope capture, serializing more data and objects than intended.
 * Sample data and try to reproduce locally (local debugging is often easier).
-* Use https://mypy-lang.org/[+++mypy+++] for type checking. While we haven't included types in many of our examples for space, in production code liberal type usage can catch tricky errors.
+* Use https://mypy-lang.org[+++mypy+++] for type checking. While we haven't included types in many of our examples for space, in production code liberal type usage can catch tricky errors.
 * Having difficulty tracking down where a task is getting scheduled? Dask actors can't move, so use an actor to keep all invocations on one machine for debugging.
 * When the issues do appear, regardless of parallelization, debugging your code in local single-threaded mode can make it easier to understand what's going on.
 
@@ -34,7 +34,7 @@ However, accessing the internals of a container can be easier said than done. In
 
 === Some Notes on Official Advice for Handling Bad Records
 
-Dask's https://docs.dask.org/en/stable/how-to/debug.html#remove-failed-futures-manually[+++official debugging guide+++] recommends removing failed futures manually. When loading data that can be processed in smaller chunks than entire partitions at a time, returning tuples with successful and failed data is better, since removing entire partitions is not conducive to determining the root cause. This technique is demonstrated in <<dask-debugging-handle_appC_1686051006707>>.
+Dask's https://oreil.ly/I9wDw[+++official debugging guide+++] recommends removing failed futures manually. When loading data that can be processed in smaller chunks than entire partitions at a time, returning tuples with successful and failed data is better, since removing entire partitions is not conducive to determining the root cause. This technique is demonstrated in <<dask-debugging-handle_appC_1686051006707>>.
 
 [[dask-debugging-handle_appC_1686051006707]]
 .Alternative approach to bad data handling
@@ -52,7 +52,7 @@ Bad records here does not mean exclusively records that fail to load or parse; t
 
 === Dask Diagnostics
 
-Dask has built-in diagnostic tools for both https://docs.dask.org/en/stable/diagnostics-distributed.html[+++distributed+++] and https://docs.dask.org/en/stable/diagnostics-local.html[+++local+++] schedulers. The local diagnostics are more featureful with pretty much every part of debugging. These diagnostics can be especially great for debugging situations where you see a slow degradation of performance over time.
+Dask has built-in diagnostic tools for both https://oreil.ly/Uin87[+++distributed+++] and https://oreil.ly/JO4qR[+++local+++] schedulers. The local diagnostics are more featureful with pretty much every part of debugging. These diagnostics can be especially great for debugging situations where you see a slow degradation of performance over time.
 
 [NOTE]
 ====

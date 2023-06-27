@@ -7,7 +7,7 @@ We are so happy that you've decided to explore whether Dask is the system for yo
 
 Installing Dask locally is reasonably straightforward. If you want to start running on multiple machines, it's often easier when you start with a conda environment (or virtualenv). This lets you figure out what packages you depend on by running `pip freeze` to make sure they're on all of the workers when it's time to scale.
 
-While you can just run `pip install -U dask`, I prefer using a conda environment since it's easier to match the version of Python to that on my cluster, which allows me to connect my local machine to the cluster directly.footnote:[There are downsides to deploying your Dask application in this way, as discussed in <<ch12>>, but it can be an excellent debugging technique.] If you don't have conda on your machine, link:$$https://github.com/conda-forge/miniforge/releases$$[Miniforge] is a good quick way to get conda installed across multiple platforms. Installing Dask into a new conda environment is shown in <<install_conda_env_with_dask>>.
+While you can just run `pip install -U dask`, I prefer using a conda environment since it's easier to match the version of Python to that on my cluster, which allows me to connect my local machine to the cluster directly.footnote:[There are downsides to deploying your Dask application in this way, as discussed in <<ch12>>, but it can be an excellent debugging technique.] If you don't have conda on your machine, link:$$https://oreil.ly/qVDa7$$[Miniforge] is a good quick way to get conda installed across multiple platforms. Installing Dask into a new conda environment is shown in <<install_conda_env_with_dask>>.
 
 [[install_conda_env_with_dask]]
 .Installing Dask into a new conda environment
@@ -22,12 +22,12 @@ Here we install a specific version of Dask rather than just the latest. If you'r
 
 [NOTE]
 ====
-You don't have to install Dask locally, although you probably will want to. There is a link:$$https://mybinder.org/v2/gh/dask/dask-examples/main?urlpath=lab$$[binderhub example with Dask] and distributed options, including link:$$https://cloud.coiled.io/$$[one from the creators of Dask], that you can use to run Dask, as well as other providers like link:$$https://saturncloud.io/$$[SaturnCloud]. That being said, I recommend having Dask installed locally even if you end up using these services.
+You don't have to install Dask locally, although you probably will want to. There is a link:$$https://oreil.ly/EK5n5$$[binderhub example with Dask] and distributed options, including link:$$https://oreil.ly/3UEq-$$[one from the creators of Dask], that you can use to run Dask, as well as other providers like link:$$https://oreil.ly/_6SyV$$[SaturnCloud]. That being said, I recommend having Dask installed locally even if you end up using these services.
 ====
 
 .Using Dask Docker Images
 ****
-Another way to get Dask running locally is to use link:$$https://docs.dask.org/en/stable/how-to/deploy-dask/docker.html$$[example Docker images] maintained by the Dask project. The benefit of this approach is that the same image can then be used in a distributed cluster, each node running the same Docker image locally, thus ensuring the compatibility of all the packages. Advanced users can use the Dask example Docker images as a base and add packages of their choice before link:$$https://www.sentinelone.com/blog/create-docker-image/$$[committing changes and saving it as a new image].
+Another way to get Dask running locally is to use link:$$https://oreil.ly/zCeHQ$$[example Docker images] maintained by the Dask project. The benefit of this approach is that the same image can then be used in a distributed cluster, each node running the same Docker image locally, thus ensuring the compatibility of all the packages. Advanced users can use the Dask example Docker images as a base and add packages of their choice before link:$$https://oreil.ly/S1ms1$$[committing changes and saving it as a new image].
 ****
 
 [[hello_worlds]]
@@ -187,4 +187,4 @@ include::./examples/dask/Dask-Ch2-Hello-Worlds.py[tags=wc_dataframe]
 In this chapter you got Dask working on your local machine, as well as had a tour of the different "hello world" (or getting started) examples with most of Dask's different built-in libraries. Subsequent chapters will dive into these different tools in more detail.
 
 
-Now that you've got Dask working on your local machine, if you want, you can jump on over to <<ch12>> and look at the different deployment mechanisms. For the most part, you can run the examples in local mode, albeit sometimes a little slower or at a smaller scale. However, the next chapter will look at the core concepts of Dask, and one of the upcoming examples both emphasizes the benefits of having Dask running on multiple machines and is generally easier to explore on a cluster. If you don't have a cluster available, you may wish to set up a simulated one using something like link:$$https://microk8s.io/$$[MicroK8s].
+Now that you've got Dask working on your local machine, if you want, you can jump on over to <<ch12>> and look at the different deployment mechanisms. For the most part, you can run the examples in local mode, albeit sometimes a little slower or at a smaller scale. However, the next chapter will look at the core concepts of Dask, and one of the upcoming examples both emphasizes the benefits of having Dask running on multiple machines and is generally easier to explore on a cluster. If you don't have a cluster available, you may wish to set up a simulated one using something like link:$$https://microk8s.io$$[MicroK8s].

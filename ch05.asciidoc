@@ -56,7 +56,7 @@ Since, as with distributed DataFrames, the partitioned nature of Dask arrays mak
 
 `map_overlap`:: You can use this for any windowed view of the data, as with `map_overlap` on Dask DataFrames.
 `map_blocks`:: This is similar to Dask's DataFrames `map_partitions`, and you can use it for implementing embarrassingly parallel operations that the standard Dask library has not yet implemented, including new element-wise functions in NumPy.
-`topk`:: Returns the topk elements of the array in place of fully sorting it (which is much more expensive).footnote:[https://docs.dask.org/en/stable/generated/dask.array.topk.html[`topk`] extracts the topk elements of each partition and then only needs to shuffle the k elements out of each partition.]
+`topk`:: Returns the topk elements of the array in place of fully sorting it (which is much more expensive).footnote:[https://oreil.ly/vUjgv[`topk`] extracts the topk elements of each partition and then only needs to shuffle the k elements out of each partition.]
 `compute_chunk_sizes`:: Dask needs to know the chunk sizes to support indexing, and if an array has unknown chunk sizes you can call this function.
 
 === Dask Bags
@@ -87,7 +87,7 @@ Dask bags have built-in readers for text files, with `read_text`, and avro files
 
 Normally, the goal with loading messy data is to get it into a structured format for further processing, or at least extract the components that you are interested in. While your data formats will likely be a bit different, this section will look at loading some messy JSON and then extracting some relevant fields. Don't worry, we call out places where different formats or sources may require different techniques.
 
-For messy textual data, which is a common occurrence with JSON, you can save yourself some time by loading the data using bag's `read_text` function. The `read_text` function defaults to splitting up the records by line; however, many formats cannot be processed by line. To get each whole file in a whole record, rather than split up, you can set the `linedelimiter` parameter to one not found. Often REST APIs will return the results as a subcomponent, so in <<preprocess_json>>, we load the https://datadashboard.fda.gov/ora/cd/recalls.htm[+++Food and Drug Administration (FDA) recall dataset+++] and strip it down to the part we care about. The FDA recall dataset is a wonderful real-world example of nested datasets often found in JSON data, which can be hard to process directly in DataFrames.
+For messy textual data, which is a common occurrence with JSON, you can save yourself some time by loading the data using bag's `read_text` function. The `read_text` function defaults to splitting up the records by line; however, many formats cannot be processed by line. To get each whole file in a whole record, rather than split up, you can set the `linedelimiter` parameter to one not found. Often REST APIs will return the results as a subcomponent, so in <<preprocess_json>>, we load the https://oreil.ly/3Xmd_[+++Food and Drug Administration (FDA) recall dataset+++] and strip it down to the part we care about. The FDA recall dataset is a wonderful real-world example of nested datasets often found in JSON data, which can be hard to process directly in DataFrames.
 
 [[preprocess_json]]
 .Pre-processing JSON
