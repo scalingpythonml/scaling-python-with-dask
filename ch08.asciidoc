@@ -156,13 +156,13 @@ On the flip side, the complete lack of recent commits can be a sign that a proje
 
 ==== Library Usage
 
-One of the simplest metrics to check is if people are using a package, which you can see by looking at the installs. You can check PyPi package installs stats on https://oreil.ly/1HHL8[+++pypistats+++] (see <<dask-kubernetes-install-stats>>) or on https://oreil.ly/83RIO[+++Google's BigQuery+++], and conda installs using the https://oreil.ly/4STsP[+++condastats library+++].
+One of the simplest metrics to check is if people are using a package, which you can see by looking at the installs. You can check PyPI package installs stats on the https://oreil.ly/1HHL8[+++PyPI Stats website+++] (see <<dask-kubernetes-install-stats>>) or on https://oreil.ly/83RIO[+++Google's BigQuery+++], and conda installs using the https://oreil.ly/4STsP[+++condastats library+++].
 
 [[dask-kubernetes-install-stats]]
-.Dask Kubernetes install stats from PyPi Stats
+.Dask Kubernetes install stats from PyPI Stats
 image::images/spwd_0801.png[]
 
-Unfortunately, installation counts are a noisy metric, as PyPi downloads can come from anything from CI pipelines to even someone spinning up a new cluster with the library installed but never used. Not only is this metric unintentionally noisy, but the same techniques can also be used to increase the numbers artificially.
+Unfortunately, installation counts are a noisy metric, as PyPI downloads can come from anything from CI pipelines to even someone spinning up a new cluster with the library installed but never used. Not only is this metric unintentionally noisy, but the same techniques can also be used to increase the numbers artificially.
 
 Instead of depending heavily on the number of package installs, we like to see if we can find examples of people using the libraries&mdash;such as by searching for imports on GitHub or https://oreil.ly/FrPTE[+++SourceGraph+++]. For example, we can try to get an approximate number of people using Streamz or cuDF with Dask by searching pass:[<a href="https://oreil.ly/gQWZY"><code>(file:requirements.txt OR file:setup.py) cudf AND dask</code></a>] and pass:[<a href="https://oreil.ly/tYIJu"><code>(file:requirements.txt OR file:setup.py) streamz AND dask</code></a>] with SourceGraph, which yields 72 and 33, respectively. This only captures a few, but when we compare this to the same query for Dask (which yields 500+), it suggests that Streamz has lower usage than cuDF in the Dask ecosystem.
 

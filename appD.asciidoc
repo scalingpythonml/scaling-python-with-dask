@@ -25,7 +25,7 @@ As of this writing, Streamz does not implement `ipython_display` in many places,
 
 === Getting Started with Streamz on Dask
 
-Streamz is straightforward to install. It’s available from PyPi, and you can use `pip` to install it, although as with all libraries, you must make it available on all the workers. Once you have installed Streamz, you just need to create a Dask client (even in local mode) and import it, as shown in <<get_started_streamz>>.
+Streamz is straightforward to install. It’s available from PyPI, and you can use `pip` to install it, although as with all libraries, you must make it available on all the workers. Once you have installed Streamz, you just need to create a Dask client (even in local mode) and import it, as shown in <<get_started_streamz>>.
 
 [[get_started_streamz]]
 .Getting started with Streamz
