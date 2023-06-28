@@ -4,10 +4,16 @@
 /*--- This oneoff overrides the code in https://github.com/oreillymedia/<name_of_theme>/blob/master/pdf/pdf.css---*/
 
 /*--Table lines--*/
-table tr { border-bottom: 0.25pt solid cmyk(0%,0%,0%,100%); }
+table td { border-bottom: 0.25pt solid cmyk(0%,0%,0%,100%); }
 
 /* no border beneath footnote row in tables */
-tr.footnotes {
+tr.footnotes td {
+  border-bottom: none !important;
+}
+
+/* no border on tds with rowspan in ch8 table */
+#libraries_used_with_dask_1687806941692 > tbody > tr:nth-child(2) > td:nth-child(1),
+#libraries_used_with_dask_1687806941692 > tbody > tr:nth-child(4) > td:nth-child(1) {
   border-bottom: none !important;
 }
 
