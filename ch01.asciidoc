@@ -51,7 +51,7 @@ Multi-machine processing is important both of these classes of problems, namely 
 Dask has both multi-core and multi-machine scaling, allowing you to scale your Python code as you best see fit.
 
 
-Much of Dask's power comes from the tools and libraries built on top of it, which fit into their parts of the data processing ecosystem (such as BlazingSQL). Your background and interest will naturally shape how you first view Dask, so in the following subsections, I'll briefly discuss how you can use Dask for different types of problems, as well as how it compares to some existing tools.
+Much of Dask's power comes from the tools and libraries built on top of it, which fit into their parts of the data processing ecosystem (such as BlazingSQL). Your background and interest will naturally shape how you first view Dask, so in the following subsections, we'll briefly discuss how you can use Dask for different types of problems, as well as how it compares to some existing tools.
 
 ==== Big Data
 
@@ -130,5 +130,5 @@ Dask is not a code rewriting or just-in-time (JIT) tool; instead, Dask allows yo
 
 === Conclusion
 
-Dask is one of the possible options for scaling your analytical Python code. It covers various deployment options, from multiple cores on a single computer to data centers. Dask takes a modular approach, compared to many other tools in similar spaces, which means that taking the time to understand the ecosystem and libraries around it is essential. The right choice to scale your software depends on your code, the ecosystem, data consumers, and sources for your project. I hope I've convinced you that it's worth the time to play with Dask a bit, which you do in the next chapter.
+Dask is one of the possible options for scaling your analytical Python code. It covers various deployment options, from multiple cores on a single computer to data centers. Dask takes a modular approach, compared to many other tools in similar spaces, which means that taking the time to understand the ecosystem and libraries around it is essential. The right choice to scale your software depends on your code, the ecosystem, data consumers, and sources for your project. We hope we've convinced you that it's worth the time to play with Dask a bit, which you do in the next chapter.
 

@@ -14,7 +14,7 @@ In this chapter, we will introduce each of these concepts, and we will expand up
 
 === Execution Backends
 
-Dask has many different execution backends, but I find it easiest to think about them in two groups, local and distributed. With local backends, you are limited in scale to what a single computer can handle. Local backends also have advantages like avoiding network overhead, simpler library management, and dollar cost.footnote:[Unless you work for a cloud provider and computers are close to free. If you do work for a cloud provider, please send us cloud credits.] Dask's distributed backend has many options for deployment, from cluster managers like Kubernetes to job queue&ndash;like systems.
+Dask has many different execution backends, but we find it easiest to think about them in two groups, local and distributed. With local backends, you are limited in scale to what a single computer can handle. Local backends also have advantages like avoiding network overhead, simpler library management, and dollar cost.footnote:[Unless you work for a cloud provider and computers are close to free. If you do work for a cloud provider, please send us cloud credits.] Dask's distributed backend has many options for deployment, from cluster managers like Kubernetes to job queue&ndash;like systems.
 
 ==== Local Backends
 
@@ -315,7 +315,7 @@ include::./examples/dask/Dask-Ch3-Concepts.py[tags=manual_persist]
 A common mistake is to persist and cache things that are not used more than once, or are inexpensive to compute.
 ====
 
-Dask's local mode has a best-effort caching system based on cachey. Since this only works in local mode I won't go into the details, but if you are running in local mode you can take a look at https://oreil.ly/VFSVQ[the local cache documentation].
+Dask's local mode has a best-effort caching system based on cachey. Since this only works in local mode, we won't go into the details, but if you are running in local mode, you can take a look at https://oreil.ly/VFSVQ[the local cache documentation].
 
 [WARNING]
 ====

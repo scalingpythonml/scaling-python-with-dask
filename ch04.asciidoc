@@ -118,7 +118,7 @@ While Dask has limited support for query push-down with partition reads, many ot
 
 On the flip side, if most of your downstream users consume all of the table or have unique columns they are filtering on, a partitioned write can decrease performance. Since listing files on a network filesystem is not free, discovering the files becomes more expensive when you have partitioned writes that you are not taking advantage of.
 
-Other systems commonly use metastores for partitioned reads and writes when dealing with large data sizes. Dask does not presently have the built-in ability to talk to a metastore, like Iceberg, Hive, or DeltaLake. Metastores can be useful for loading subsets tables and time-traveling (looking at old versions) when needed. The https://oreil.ly/2i2Dd[Dask _deltatable_ library] integrates reading the DeltaLake table. Iceberg has a https://oreil.ly/tIP9S[built-in Python API] that you can use to get a list of files associated with a particular query, and then use Dask's existing file APIs on top of it. I expect the integrations with metastores will continue to improve rapidly.
+Other systems commonly use metastores for partitioned reads and writes when dealing with large data sizes. Dask does not presently have the built-in ability to talk to a metastore, like Iceberg, Hive, or DeltaLake. Metastores can be useful for loading subsets tables and time-traveling (looking at old versions) when needed. The https://oreil.ly/2i2Dd[Dask _deltatable_ library] integrates reading the DeltaLake table. Iceberg has a https://oreil.ly/tIP9S[built-in Python API] that you can use to get a list of files associated with a particular query, and then use Dask's existing file APIs on top of it. We expect the integrations with metastores will continue to improve rapidly.
 ****
 
 ==== Filesystems
@@ -161,7 +161,7 @@ Dask does not support "streaming" non-random access input formats. This means th
 Indexing into a DataFrame is one of the powerful features of pandas, but comes with some restrictions when moving into a distributed system like Dask. Since Dask does not track the size of each partition, positional indexing by row is not supported. You can use positional indexing for columns, as well as label indexing for columns or rows.
 
 
-Indexing is frequently used to filter the data to only have the components you need. I did this for the San Francisco COVID-19 data by looking at just the case rates for people of all vaccine statuses, as shown in <<index_covid_data>>.
+Indexing is frequently used to filter the data to only have the components you need. We did this for the San Francisco COVID-19 data by looking at just the case rates for people of all vaccine statuses, as shown in <<index_covid_data>>.
 
 [[index_covid_data]]
 .Dask DataFrame indexing
@@ -252,7 +252,7 @@ In some cases, like a pure summation, you don't need to do any post-processing o
 
 Not all aggregations must be by key; you can also compute aggregations across all rows. Dask's custom aggregation interface, however, is only exposed with by-key operations.
 
-Dask's built-in full DataFrame aggregations use a lower-level interface called `apply_contact_apply` for partial aggregations. Rather than learn two different APIs for partial aggregations, I prefer to do a static `groupby` by providing a constant grouping function. This way, we only have to know one interface for aggregations. You can use this to find the aggregate COVID-19 numbers across the DataFrame, as shown in <<agg_entire>>.
+Dask's built-in full DataFrame aggregations use a lower-level interface called `apply_contact_apply` for partial aggregations. Rather than learn two different APIs for partial aggregations, we prefer to do a static `groupby` by providing a constant grouping function. This way, we only have to know one interface for aggregations. You can use this to find the aggregate COVID-19 numbers across the DataFrame, as shown in <<agg_entire>>.
 
 [[agg_entire]]
 .Aggregate entire DataFrame
@@ -263,7 +263,7 @@ include::./examples/dask/Dask-Ch4-DataFrames.py[tags=agg_entire]
 ----
 ====
 
-When built-in aggregation exists, it will likely be better than anything you or I would write. Sometimes a partial aggregation is partially implemented, as in the case of Dask's HyperLogLog: it is implemented only for full DataFrames. You can often translate simple aggregations using `apply_contact_apply` or `aca` by copying the `chunk` function, using the `combine` parameter for `agg`, and using the `aggregate` parameter for `finalize`. This is shown via porting Dask's HyperLogLog implementation in <<custom_agg_hyperloglog>>.
+When built-in aggregation exists, it will likely be better than anything we would write. Sometimes a partial aggregation is partially implemented, as in the case of Dask's HyperLogLog: it is implemented only for full DataFrames. You can often translate simple aggregations using `apply_contact_apply` or `aca` by copying the `chunk` function, using the `combine` parameter for `agg`, and using the `aggregate` parameter for `finalize`. This is shown via porting Dask's HyperLogLog implementation in <<custom_agg_hyperloglog>>.
 
 [[custom_agg_hyperloglog]]
 .Wrapping Dask's HyperLogLog in dd.Aggregation
