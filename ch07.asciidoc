@@ -1,5 +1,5 @@
 [[ch07]]
-== Adding Changeable/Mutable State with Dask Actors
+== Adding Changeable/Mutable State [.keep-together]#with Dask Actors#
 
 Dask is focused on scaling analytic use cases, but you can use it to scale many other types of problems. So far, most of the tools you have used in Dask are functional. Functional programming means that previous calls do not impact future calls. Stateless functions are common in distributed systems like Dask, as they can safely be re-executed multiple times on failure. Updating the weights of a model during training is an example of state common in data science. One of the most common ways of handling state in a distributed system is with the actor model. This chapter will introduce both the general actor model and Dask's specific implementation.
 
@@ -52,7 +52,7 @@ Creating an actor in Dask is relatively simple. To start with, you make a normal
 Note this is effectively an object-oriented bank account implementation, except we don't have any locks since we only ever have a single thread changing the values.
 ====
 
-Let's take a look at how you can implement a common example actor for a bank account. In <<making_bank_acct_actor_ch07_1686239522527>>, we define three methods&mdash;pass:[<code>balance</code>], `deposit`, and `withdrawal`&mdash;that can be used to interact with the actor. Once the actor is defined, we ask Dask to schedule the actor so that we can call it.
+Let's take a look at how you can implement a common example actor for a bank account. In <<making_bank_acct_actor_ch07_1686239522527>>, we define three methods&mdash;pass:[<code>balance</code>], `deposit`, and [.keep-together]#`withdrawal`#&mdash;that can be used to interact with the actor. Once the actor is defined, we ask Dask to schedule the actor so that we can call it.
 
 [[making_bank_acct_actor_ch07_1686239522527]]
 .Making a bank account actor
@@ -91,7 +91,7 @@ While having one actor per bank account does a good job of avoiding bottlenecks,
 
 The actor model described earlier in this chapter typically assumes that actors are lightweight, meaning they contain a single piece of state, and do not require scaling/parallelization. In Dask and similar systems (including Akka), actors are often used for coarser-grained implementations and can require scaling.footnote:[A _coarse-grained_ actor is one that may contain multiple pieces of state; a _fine-grained_ actor is one where each piece of state would be represented as a separate actor. This is similar to the concept of https://oreil.ly/7RMkS[+++coarse-grained locking+++].]
 
-As with `dask.delayed`, you can scale actors both horizontally (across processes/machines) by creating multiple actors or vertically (with more resources). Scaling actors horizontally is not as simple as just adding more machines or workers, since Dask cannot break up a single actor across multiple processes.
+As with `dask.delayed`, you can scale actors both horizontally (across pro&#x2060;cesses/&#x200b;machines) by creating multiple actors or vertically (with more resources). Scaling actors horizontally is not as simple as just adding more machines or workers, since Dask cannot break up a single actor across multiple processes.
 
 To scale actors horizontally, it is up to you to break up the state in such a way that you can have multiple actors handling it. One technique sometimes used is _actor pools_ (see <<figure0701_ch07_1686049800930>>). These pools can either have a static mapping of, say, user -> actor or, in the situation where the actors share a database, round-robin or other non-deterministic balancing can be used.
 

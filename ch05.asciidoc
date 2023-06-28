@@ -24,7 +24,7 @@ Similar to Dask DataFrames and pandas, if you wouldn't use an nparray for the pr
 
 ==== When Not to Use Dask Arrays
 
-If your data fits in memory on a single computer, using Dask array's is unlikely to give you many benefits over nparrays, especially compared to local accelerators like Numba. Numba is well suited to vectorizing and parallelizing local tasks with and without Graphics Processing Units (GPUs). You can use Numba with and without Dask, and we'll look at how to further speed up Dask arrays using Numba in <<ch10>>.
+If your data fits in memory on a single computer, using Dask array's is unlikely to give you many benefits over nparrays, especially compared to local accelerators like Numba. Numba is well suited to vectorizing and parallelizing local tasks with and without Graphics Processing Units (GPUs). You can use Numba with and without Dask, and we'll look at how to further speed up Dask arrays using Numba in [.keep-together]#<<ch10>>.#
 
 Dask arrays, like their local counterpart, require that data is all of the same type. This means that they cannot be used for semi-structured or mixed-type data (think strings and ints).
 

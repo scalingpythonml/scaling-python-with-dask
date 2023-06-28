@@ -55,7 +55,8 @@ myfuture = client.submit(slow, 5) # Starts running
 del myfuture # future may be GCd and then stop since there are no other references
 
 myfuture = client.submit(slow, 5) # Starts running
-myfuture.cancel() # Future stops running, any other references point to cancelled future
+# Future stops running, any other references point to cancelled future
+myfuture.cancel()
 #end::understanding_futures_lifecycle[]
 
 

@@ -1,7 +1,8 @@
 [[ch06]]
-== Advanced Task Scheduling: Futures and Friends
+== Advanced Task Scheduling: [.keep-together]#Futures and Friends#
 
 Dask's computational flow follows these four main logical steps, which can happen concurrently and recursively for each task:
+
 . Collect and read the input data.
 . Define and build the compute graph representing the set of computations that needs to be performed on the data.
 . Run the computation (this happens when you run `.compute()`).
@@ -27,12 +28,12 @@ Eager evaluation is the most common form of evaluation in programming, including
 
 Non-blocking eager evaluation still has some potential downsides compared to lazy evaluation. Some of these challenges include:
 
-* Inability to combine adjacent stages (sometimes known as pipelining).
-* Unnecessary computation.
+* Inability to combine adjacent stages (sometimes known as pipelining)
+* Unnecessary computation
 ** Repeated subgraphs cannot be detected by Dask's optimizer.
 ** Even if nothing depends on the result of the future, it may be computed.footnote:[Although if the only reference to it gets garbage collected, it may not.]
-* Potential excessive blocking when futures launch and block on other futures.
-* More careful memory management is required.
+* Potential excessive blocking when futures launch and block on other futures
+* A need for more careful memory management
 
 Not all other Python code is eagerly evaluated. In Python 3 some built-in functions use lazy evaluation, with operators like `map` returning iterators and only evaluating elements on request.
 
@@ -40,7 +41,7 @@ Not all other Python code is eagerly evaluated. In Python 3 some built-in functi
 
 Many common use cases can be made faster with careful application of futures:
 
-Integrate with other async servers (like Tornado):: Although we generally believe that most of the time, Dask is not the right solution for the "hot path," there are exceptions, like dynamically computed analytic dashboards.
+Integrating with other async servers (like Tornado):: Although we generally believe that most of the time Dask is not the right solution for the "hot path," there are exceptions, like dynamically computed analytic dashboards.
 Request/response pattern:: Make a call to a remote service and (later) block on its result. This can include querying services like databases, remote procedure calls, or even websites.
 IO:: Input/output can often be slow, but you know you want them to start happening as soon as possible.
 Timeouts:: Sometimes you only care about a result if you can get it within a certain period of time. For example, think of a boosted ML model where you need to make a decision within a certain timeframe, collecting all scores from available models quickly and then skipping any that take too long.

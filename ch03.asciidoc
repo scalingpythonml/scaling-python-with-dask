@@ -1,5 +1,5 @@
 [[ch_3]]
-== The Basics of How Dask Works
+== How Dask Works: The Basics
 
 Now that you've run your first few tasks with Dask, it's time to learn a little bit about what's happening behind the scenes. Depending on if you are using Dask locally or in a distributed fashion, the behavior can be a little different. While Dask does a good job of abstracting away many of the details of running on multiple threads or servers, having a solid grasp of how Dask is working will help you better decide both how and when to use it.
 
@@ -63,7 +63,7 @@ Dask's local backends are designed for performance rather than for testing that 
 [[distributed_ch03_1687438078727]]
 ==== Distributed (Dask Client and Scheduler)
 
-Dask has one distributed scheduler backend, and it talks to many different types of clusters, including a LocalCluster. Each type of cluster is supported in its own library, which schedules the schedulerfootnote:[Say that five times fast.] that the Dask client then connects to. Using the distributed abstraction `dask.distributed` gives you portability between any type of cluster you may be using at the moment, including local. If you don't use `dask.distributed`, Dask can still run perfectly well on a local computer, in which case you are using a default single-machine scheduler provided in the Dask library.
+Dask has one distributed scheduler backend, and it talks to many different types of clusters, including a LocalCluster. Each type of cluster is supported in its own library, which schedules the schedulerfootnote:[Say that five times fast.] that the Dask client then connects to. Using the distributed abstraction `dask.distributed` gives you portability between any type of cluster you may be using at the moment, including local. If you don't use pass:[<code>dask&#x200b;.dis&#x2060;tributed</code>], Dask can still run perfectly well on a local computer, in which case you are using a default single-machine scheduler provided in the Dask library.
 
 
 The Dask Client is your entry point into the Dask distributed scheduler. In this chapter, we will be using Dask with a Kubernetes cluster; if you have another type of cluster or want details, please see <<ch12>>.
@@ -103,7 +103,7 @@ If you're using the Dask client to connect to a cluster, the UI will be running 
 For remote notebook users, the hostname of the scheduler node may not be reachable directly from your computer. One option is to use the jupyter proxy; for example, I go to `https://jupyter.pigscanfly.ca/user/holdenk/proxy/dask-jovyan-4c81d51e-3.jhub:8787/status` to access the endpoint `dask-jovyan-4c81d51e-3.jhub:8787/status`.
 ====
 
-The Dask UI during the running of the examples of this chapter is shown in <<fig_dask_ui>>.
+The Dask UI during the running of the examples of this chapter is shown in [.keep-together]#<<fig_dask_ui>>.#
 
 [[fig_dask_ui]]
 .The Dask UI
@@ -259,7 +259,7 @@ You don't need to pass around real values. For example, if one function updates 
 
 Visualizing the task graph is an excellent tool for you to use while learning about task graphs and debugging in the future. The `visualize` function is defined both in the Dask library and on all Dask objects. Instead of calling `.visualize` separately on multiple objects, you should call `dask.visualize` with the list of objects you are planning to compute to see how Dask combines the task graph.
 
-You should try this out now by visualizing everyone's favorite word count example from the previous chapter. When you call `dask.visualize` on `words_bag.frequencies()`, you should get a result that looks something like <<vis_ex>>.
+You should try this out now by visualizing everyone's favorite word count example from the previous chapter. When you call `dask.visualize` on pass:[<code>words_bag&#x200b;.frequen&#x2060;cies()</code>], you should get a result that looks something like <<vis_ex>>.
 
 [[vis_ex]]
 .Visualized word count task graph

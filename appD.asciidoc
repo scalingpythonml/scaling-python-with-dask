@@ -72,7 +72,7 @@ include::./examples/dask/Streamz.py[tags=make_kafka_stream]
 ----
 ====
 
-In both of these examples, Streamz will start reading from the most recent message. If you want Streamz to go back to the start of the messages stored, you would add ````.
+In both of these examples, Streamz will start reading from the most recent message. If you want Streamz to go back to the start of the messages stored, you would add pass:[<code>``</code>].
 
 [WARNING]
 ====

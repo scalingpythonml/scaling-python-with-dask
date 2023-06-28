@@ -1,5 +1,5 @@
 [[ch08]]
-== How to Evaluate Dask's Components and Libraries
+== How to Evaluate Dask's [.keep-together]#Components and Libraries#
 
 It's hard, although possible, to build reliable systems out of unreliable components.footnote:[Although in many ways, distributed systems have evolved to overcome their unreliable components. For example, fault tolerance is something a single machine cannot achieve but distributed systems can accomplish with replication.] Dask is a largely community-driven open source project, and its components evolve at different rates. Not all parts of Dask are equally mature; even the components we cover in this book have different levels of support and development. While Dask's core parts are well-maintained and tested, some parts lack the same level of maintenance.
 
