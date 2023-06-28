@@ -32,6 +32,11 @@ pre.example-cont {
   margin-bottom: 10pt;
 }
 
+/* Prevent specified unfurled URLs from breaking across lines */
+span.kturl span.print_url_in_parens {
+  white-space: nowrap;
+}
+
 
 /*----Uncomment to temporarily turn on code-eyballer highlighting (make sure to recomment after you build)---*/
 

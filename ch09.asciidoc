@@ -66,9 +66,7 @@ include::./examples/dask/Dask-Ch10_porting.py[tags=ex_slurm_deployment]
 ----
 ====
 
-You likely have a shared filesystem already set up by your organization’s admin. Enterprise users might be used to already robustly provisioned distributed data sources, running on HDFS or blob storage like S3, which Dask works with seamlessly. Dask also integrates well with networked filesystems (see <<ex_s3_minio_rw>>).
-
-We found that one of the surprisingly useful use cases is connecting directly to network storage like NFS or FTP. When working on an academic dataset that’s large and clunky to work with (like a neuroimaging dataset that’s directly hosted by another organization), we could connect directly to the source filesystem. When using Dask this way, you should test out and consider network timeout allowances. Also note that, as of this writing, Dask does not have a connector to data lakes such as Iceberg.
+You likely have a shared filesystem already set up by your organization’s admin. Enterprise users might be used to already robustly provisioned distributed data sources, running on HDFS or blob storage like S3, which Dask works with seamlessly (see <<ex_s3_minio_rw>>). Dask also integrates well with networked filesystems.
 
 [[ex_s3_minio_rw]]
 .Read and write to blob storage using MinIO
@@ -78,6 +76,8 @@ We found that one of the surprisingly useful use cases is connecting directly to
 include::./examples/dask/Dask-Ch10_porting.py[tags=ex_s3_minio_rw]
 ----
 ====
+
+We found that one of the surprisingly useful use cases is connecting directly to network storage like NFS or FTP. When working on an academic dataset that’s large and clunky to work with (like a neuroimaging dataset that’s directly hosted by another organization), we could connect directly to the source filesystem. When using Dask this way, you should test out and consider network timeout allowances. Also note that, as of this writing, Dask does not have a connector to data lakes such as Iceberg.
 
 ==== Development: Considerations
 

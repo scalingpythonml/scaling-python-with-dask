@@ -37,7 +37,7 @@ However, accessing the internals of a container can be easier said than done. In
 Dask's https://oreil.ly/I9wDw[+++official debugging guide+++] recommends removing failed futures manually. When loading data that can be processed in smaller chunks than entire partitions at a time, returning tuples with successful and failed data is better, since removing entire partitions is not conducive to determining the root cause. This technique is demonstrated in <<dask-debugging-handle_appC_1686051006707>>.
 
 [[dask-debugging-handle_appC_1686051006707]]
-.Alternative approach to bad data handling
+.Alternative approach for handling bad data
 ====
 [source, python]
 ----

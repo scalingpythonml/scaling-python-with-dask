@@ -46,11 +46,11 @@ Dependency management allows you to control, at runtime or in advance, what soft
 |coiled |yes |New cloud deployments |Yes, including magic "auto-sync" |No |Yes
 |===
 
-=== Building Dask on Kubernetes Deployment
+=== Building Dask on a Kubernetes Deployment
 
 There are two main ways to deploy Dask on Kubernetes:footnote:[PEP20 remain optimistic.] KubeCluster and HelmCluster. Helm is a popular tool for managing deployments on Kubernetes, with the deployments being specified in Helm charts. Since Helm is the newer recommended way of managing deployments on Kubernetes, we will cover that one here.
 
-The https://oreil.ly/EBzBm[+++Helm documentation+++] offers an excellent starting point on the different ways to install Helm, but for those in a hurry, `curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash` will do it for you.footnote:[Note this installs Helm 3.X:. As with Python3, Helm 3 has a https://oreil.ly/vR5BM[large number of breaking changes over Helm 2], so when you're reading documentation (or installing packages), make sure it's referencing the current major versions.]
+The https://oreil.ly/EBzBm[+++Helm documentation+++] offers an excellent starting point on the different ways to install Helm, but for those in a hurry, `curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash` will do it for you.footnote:[Note this installs Helm 3.X:. As with Python3, Helm 3 has a https://oreil.ly/vR5BM[large number of breaking changes over [.keep-together]#Helm 2#], so when you're reading documentation (or installing packages), make sure it's referencing the current major versions.]
 
 [NOTE]
 ====
@@ -60,7 +60,7 @@ The Dask on Kubernetes Helm chart deploys what is called an _operator_. Currentl
 Since GPU resources are costly, it is typical to want only to allocate as many of them as needed. Some cluster manager interfaces, including Dask's Kubernetes plug-in, allow you to configure multiple types of workers so that it will only allocate GPU workers when needed. On our Kubernetes cluster, we deploy the Dask operator as shown in <<deploy_dask_operator_helm>>.
 
 [[deploy_dask_operator_helm]]
-.Deploy Dask operator with Helm
+.Deploying the Dask operator with Helm
 ====
 [source, bash]
 ----
@@ -71,7 +71,7 @@ include::./examples/dask/kubernetes/install-dask-helm.sh[tags=install_operator]
 Now you can use the Dask operator either by creating YAML files (likely not your favorite) or with the `KubeCluster` API, as shown in <<helm_ex>>, where we create a cluster and then add additional worker types, allowing Dask to create two different kinds of workers.footnote:[Mixed worker types; see https://oreil.ly/O52ib["Worker Resources"] in the Dask documentation and the blog article https://oreil.ly/mJR6b["How to Run Different Worker Types with the Dask Helm Chart"].]
 
 [[helm_ex]]
-.Use Dask operator
+.Using the Dask operator
 ====
 [source, python]
 ----
@@ -136,7 +136,7 @@ You can turn your HPC account into a high-performance Dask environment that you 
 
 ==== Setting Up Dask in a Remote Cluster
 
-The first step to using Dask on your cluster is to set up your own Python and iPython environments in the cluster. The exact way to do that will vary by your cluster’s admin’s preferences. Generally, users often use https://oreil.ly/mLAOj[+++virtualenv+++] or https://oreil.ly/zXsTP[+++miniconda+++] to install related libraries on a user level. Miniconda makes it easier to use not just your own libraries, but your own version of Python. Once that is done, ensure your Python command points to the Python binary in your user space by running `which python` or installing and importing a library not available in system Python.
+The first step to using Dask on your cluster is to set up your own Python and iPython environments in the cluster. The exact way to do that will vary by your cluster’s admin’s preferences. Generally, users often use https://oreil.ly/mLAOj[+++virtualenv+++] or https://oreil.ly/zXsTP[+++miniconda+++] to install related libraries on a user level. Min&#x2060;i&shy;conda makes it easier to use not just your own libraries, but your own version of Python. Once that is done, ensure your Python command points to the Python binary in your user space by running `which python` or installing and importing a library not available in system Python.
 
 The Dask-jobqueue library converts your Dask settings and configurations into a job script that is submitted to the HPC cluster. The following example starts a cluster with Slurm workers, and the semantics are similar for other HPC API. Dask-MPI uses a slightly different pattern, so be sure to refer to its documentation for details. `job_directives_skip` is an optional parameter, used to ignore errors in cases where auto-generated job script inserts some commands that your particular cluster does not recognize. `job_script_prologue` is also an optional parameter that specifies shell commands to be run at each worker spawn. This is a good place to ensure proper Python environments are set up, or a cluster-specific setup script.
 
@@ -157,7 +157,7 @@ Some HPC systems use GB when they mean 1,024-based units. Dask-jobqueue sticks w
 Before running Dask in a new environment, you should check the job script that is auto-generated by Dask-jobqueue for unsupported commands. While Dask's jobqueue library tries to work with many HPC systems, it may not have all of the quirks of your institution's setup. If you are familiar with the cluster capabilities, you may find unsupported commands by calling `print(cluster.job_script())`. You can also try to run a small version of your job first with a limited number of workers and see where they fail. If you find any issues with the script, you should use the `job_directives_skip` parameter to skip the unsupported components, as outlined in <<ex_deploy_SLURM_by_hand>>.
 
 [[ex_deploy_SLURM_by_hand]]
-.Deploying on HPC cluster by hand
+.Deploying Dask on an HPC cluster by hand
 ====
 [source, python]
 ----
@@ -168,7 +168,7 @@ include::./examples/dask/Dask-Ch14-Tuning.py[tags=ex_deploy_SLURM_by_hand]
 We tie many of the concepts we’ve introduced together in <<ex_slurm_deployment_tuning>>. Here we run a delayed execution over some asynchronous task using Dask delayed, which is deployed on a Slurm cluster. The example also combines several logging strategies we’ve mentioned, such as revealing the underlying deployment HPC job script, as well as providing a progress bar for users to track in a notebook or their CLI of choice.
 
 [[ex_slurm_deployment_tuning]]
-.Deploying Dask on using job-queue over Slurm with Dask futures
+.Deploying Dask using job-queue over Slurm with Dask futures
 ====
 [source, python]
 ----
@@ -181,7 +181,7 @@ include::./examples/dask/Dask-Ch14-Tuning.py[tags=ex_slurm_deployment_tuning]
 Always ensure your walltime requests don't run afoul of HPC resource managers. For example, Slurm has a backfill scheduler that applies its own logic, and if you request too long a walltime, it can get stuck in the queue, unable to spin up on time. In such a case, the Dask client may error out with a non-descriptive message, such as “Failed to start worker process. Restarting.” At the time of writing, there aren’t many ways to surface specific deployment issues without some logging code from the user end.
 ====
 
-On the more advanced end, you can control your cluster configuration by updating the Dask-jobqueue YAML file, which is generated on first run and stored at _/.config/dask/jobqueue.yaml_. The jobqueue configuration file contains, commented out, default configurations for many different types of clusters. To get started editing it, uncomment the cluster type you are using (e.g., Slurm), and then you can change the values to meet your specific needs. The jobqueue configuration file allows you to configure additional parameters not available through the Python constructor.
+On the more advanced end, you can control your cluster configuration by updating the Dask-jobqueue YAML file, which is generated on first run and stored at [.keep-together]#_/.config/dask/jobqueue.yaml_.# The jobqueue configuration file contains, commented out, default configurations for many different types of clusters. To get started editing it, uncomment the cluster type you are using (e.g., Slurm), and then you can change the values to meet your specific needs. The jobqueue configuration file allows you to configure additional parameters not available through the Python constructor.
 
 If Dask starts to run out of memory, by default, it will write start to write data out to disk (called spill-to-disk). This is normally great, since we tend to have more disk than memory, and while it is slower, it's not that much slower. However, on HPC environments, the default location that Dask may write to could be a network storage drive, which will be as slow as transferring the data on the network. You should make sure Dask writes to local storage. You can ask your cluster administrator for the local scratch directory or use `df -h` to see where different storage devices are mapped. If you don't have local storage available, or it's too small, you can also turn off spill-to-disk. Both disabling and changing the location of spill-to-disk on clusters can be configured in the _~/.config/dask/distributed.yaml_ file (also created on first run).
 
@@ -194,7 +194,7 @@ Dask also uses files for locking, which can cause issues when using a shared net
 
 [TIP]
 ====
-Cluster parameters, such as memory allocation and number of jobs, workers, processes, and CPUs per task, are quite sensitive to user input and can be difficult to grasp at the beginning. For example, if you launch an HPC cluster with multiple processes, each process will take a fraction of total allocated memory. Ten processes with 30 GB of memory would mean each process gets 3 GB of memory. If your workflow at peak has more than 95% of the process memory (2.85 GB in our example), your process will be paused and even terminated early due to memory overflow risks, potentially resulting in an incomplete job. For more on memory management, refer to <<worker_memory_management_ch12_1687869893068>>.
+Cluster parameters, such as memory allocation and number of jobs, workers, processes, and CPUs per task, are quite sensitive to user input and can be difficult to grasp at the beginning. For example, if you launch an HPC cluster with multiple processes, each process will take a fraction of total allocated memory. Ten processes with 30 GB of memory would mean each process gets 3 GB of memory. If your workflow at peak has more than 95% of the process memory (2.85 GB in our example), your process will be paused and even terminated early due to memory overflow risks, potentially resulting in an incomplete job. For more on [.keep-together]#memory management,# refer to <<worker_memory_management_ch12_1687869893068>>.
 ====
 
 For HPC users, most processes you launch have a _walltime_, a limited amount of time that the job is allowed to stay on, and then gets ended. You can stagger the creation of workers in such a way that you will have at least one worker running at all times, creating an infinite worker loop. Alternatively, you can also stagger the creation and end of the workers, so that you avoid all of the workers ending simultaneously. <<ex_hpc_infinite_workers>> shows you how.
@@ -246,7 +246,7 @@ Dask's lab extensions package is available as `dask-labextension`.
 Once you've installed the lab extension, it will show up with the Dask logo on the left side, as shown in <<dask_instance_on_jupyterlab_ch12_1685474991278>>.
 
 [[dask_instance_on_jupyterlab_ch12_1685474991278]]
-.Screenshot of a successfully deployed Dask instance on JupyterLab
+.A successfully deployed Dask instance on JupyterLab
 image::images/spwd_1201.png[]
 
 ==== Launching Clusters
@@ -265,7 +265,7 @@ The JupyterLab extension links to the Dask web UI, and you can also get a link t
 
 ==== Watching Progress
 
-Dask jobs tend to take a long time to run, since otherwise we would not be putting in the effort to parallelize them. You can use Dask's `progress` function from `dask.distributed` to track your futures' progress inside your notebook itself (see <<dask_progress_monitoring_ch12_1685475108548>>).
+Dask jobs tend to take a long time to run, since otherwise we would not be putting in the effort to parallelize them. You can use Dask's `progress` function from pass:[<code>dask&#x200b;.dis&#x2060;tributed</code>] to track your futures' progress inside your notebook itself (see <<dask_progress_monitoring_ch12_1685475108548>>).
 
 [[dask_progress_monitoring_ch12_1685475108548]]
 .Real-time Dask progress monitoring in JupyterHub
@@ -294,13 +294,13 @@ Dask's dashboard contains many different pages, each of which can help with unde
 The Task Stream dashboard gives a high-level view of each worker and its behavior. Exact methods invoked are color-coded, and you can inspect them by zooming in and out. Each row represents one worker. The custom-colored bars are user-induced tasks, and there are three preset primary colors to indicate common worker tasks: data transfer between workers, disk read and writes, serialization and deserialization times, and failed tasks. <<task_stream_ch12_1685475169009>> shows a compute workload that is distributed over 10 workers and is well balanced, with no one worker finishing late, evenly distributed compute time, and minimal network IO overhead.
 
 [[task_stream_ch12_1685475169009]]
-.An example of a task stream with well-balanced workers
+.A task stream with well-balanced workers
 image::images/spwd_1204.png[]
 
 On the other hand, <<task_stream_with_too_many_ch12_1685475203241>> shows a situation where compute is uneven. You can see that there is a lot of whitespace between computation, meaning the workers are blocked and not actually computing during that time. Additionally, you see some workers start earlier and some finish later, hinting that there are some issues with distributing the job. This could be due to the inherent dependency of your code or suboptimal tuning. Changing the DataFrame or array chunk sizes might make these less fragmented. You do see that when the job starts on each worker, they take roughly the same amount of work, meaning the work itself is still balanced fairly well and distributing the workload is giving you good returns. This is a fairly contrived illustrative example, so this task only took a few seconds, but the same idea applies to longer and bulkier workloads as well.
 
 [[task_stream_with_too_many_ch12_1685475203241]]
-.An example of a task stream with too many small data chunks
+.A task stream with too many small data chunks
 image::images/spwd_1205.png[]
 
 ===== Memory
@@ -308,7 +308,7 @@ image::images/spwd_1205.png[]
 You can monitor the memory usage, sometimes referred to as _memory pressure_,footnote:[You can think of the memory as a balloon that we fill up, and as we get higher pressure it's more likely to have issues. It's a bit of a stretch as a metaphor, we admit.] of each worker on the Bytes Stored portion (see <<memory_usage_by_worker_ch12_1685475242277>>). These are by default color-coded to signify memory pressure within limits, approaching limit, and spilled to disk. Even if memory usage is within the limits, as it increases beyond 60% to 70%, you are likely to encounter performance slowdowns. Since memory usage is rising, internals of Python and Dask are going to run costlier garbage collection and memory optimization tasks in the background to keep it from rising.
 
 [[memory_usage_by_worker_ch12_1685475242277]]
-.Memory usage by worker in monitoring UI
+.Memory usage by worker in the monitoring UI
 image::images/spwd_1206.png[]
 
 ===== Task progress
@@ -316,7 +316,7 @@ image::images/spwd_1206.png[]
 You can see the aggregated view of task completion in the progress bar in <<progress_monitoring_by_tasks_ch12_1685475294066>>. The order of execution is from top to bottom, although that does not always mean it’s completely sequential. The colors of the bars are particularly information-rich for tuning. The solid gray on the far right for `sum()` and `random_sample()` in <<progress_monitoring_by_tasks_ch12_1685475294066>> means tasks that are ready to run, with dependent data ready but not yet assigned to a worker. The bold non-gray colors mean tasks are finished, with resulting data that is waiting for the next sequence of tasks to take it. The fainter non-gray color blocks signify tasks that are done, with result data handed off and purged from memory. Your goal is to keep the solid-color blocks within a manageable size, to make sure you utilize most of your allocated memory.
 
 [[progress_monitoring_by_tasks_ch12_1685475294066]]
-.Progress monitoring by tasks, summed over all workers
+.Progress monitoring by task, summed over all workers
 image::images/spwd_1207.png[]
 
 ===== Task graph
@@ -324,7 +324,7 @@ image::images/spwd_1207.png[]
 Similar information is available on Task Graph (see <<task_graph_ch12_1685475338667>>), from the view of individual tasks. You may be familiar with these types of MapReduce-like directed acyclic graphs. Order of computation is shown from left to right, with your tasks originating from many parallel workloads, distributed among your workers, and ending up with an outcome that is distributed among 10 workers, in this case. This graph is also an accurate low-level depiction of task dependencies. The color coding also highlights where in the computational life cycle each work and data is currently sitting in. By looking at this, you can get a sense of which tasks are bottlenecks and potentially a good place to start optimizing your code.
 
 [[task_graph_ch12_1685475338667]]
-.An example of a task graph, showing the color-coded status of each task and its preceding and succeeding tasks
+.A task graph showing the color-coded status of each task and its preceding and succeeding tasks
 image::images/spwd_1208.png[]
 
 The Workers tab allows you to see real-time CPU, memory, and disk IO, among other things (see <<worker_monitoring_tab_ch12_1685475400589>>). Monitoring this tab can be useful if you suspect that your worker is running out of memory or disk space. Some of the remedies for that can include allocating more memory to the workers or choosing a different chunking size or method for the data.
@@ -349,16 +349,12 @@ image::images/spwd_1211.png[]
 
 [TIP]
 ====
-You can change the logging intervals with the `distributed.client.scheduler-info-interval` argument within Dask client configurations.
+You can change the logging intervals with the pass:[<code>distributed&#x200b;.cli&#x2060;ent.scheduler-info-interval</code>] argument within Dask client [.keep-together]#configurations.#
 ====
 
 ==== Saving and Sharing Dask Metrics/Performance Logs
 
 You can monitor Dask in real time with the dashboard, but the dashboard will disappear once you close out your cluster. You can save the HTML page, as well as export the metrics as a DataFrame, and write out custom code for metrics (see <<ex_generate_performance_report>>).
-
-You can generate a performance report manually for any block of computation, without having to save the entire runtime report with the following code block. Any computation that you pass within `performance_report(“filename”)` will be saved under that file. Note that under the hood, this requires Bokeh to be installed.
-
-For much more heavy-duty usage, you can use Dask with Prometheus, the popular Python metrics and alerting tool. This requires you to have prometheus deployed. Then through Prometheus, you can hook up other tools, like Grafana for visualization or PagerDuty for alerts.
 
 [[ex_generate_performance_report]]
 .Generating and saving the Dask dashboard to file
@@ -369,10 +365,14 @@ include::./examples/dask/Dask-Ch14-Tuning.py[tags=ex_generate_performance_report
 ----
 ====
 
+You can generate a performance report manually for any block of computation, without having to save the entire runtime report with the following code block. Any computation that you pass within `performance_report(“filename”)` will be saved under that file. Note that under the hood, this requires Bokeh to be installed.
+
+For much more heavy-duty usage, you can use Dask with Prometheus, the popular Python metrics and alerting tool. This requires you to have prometheus deployed. Then through Prometheus, you can hook up other tools, like Grafana for visualization or PagerDuty for alerts.
+
 Dask's distributed scheduler provides the metrics info as a task stream object without using the UI itself. You can access the information in Task Stream UI tab from Dask directly, down to the level of lines of code that you want this to be profiled over. <<ex_get_task_stream>> demonstrates how to use a task stream and then extract some statistics out of it into a small pandas DataFrame for further analysis and sharing.
 
 [[ex_get_task_stream]]
-.Generating and computing Dask’s runtime statistics with taskstream
+.Generating and computing Dask’s runtime statistics with task stream
 ====
 [source, python]
 ----
@@ -382,10 +382,10 @@ include::./examples/dask/Dask-Ch14-Tuning.py[tags=ex_get_task_stream]
 
 ==== Advanced Diagnostics
 
-You can insert custom metrics using the `dask.distributed.diagnostics` class. One of the functions here is a MemorySampler context manager. When you run your Dask code within `ms.sample()`, it records a detailed memory usage on cluster. <<ex_memory_sampler>>, while contrived, shows how you would run the same compute over two different cluster configurations, then plot to compare the two different environment configurations.
+You can insert custom metrics using the `dask.distributed.diagnostics` class. One of the functions here is a `MemorySampler` context manager. When you run your Dask code within `ms.sample()`, it records a detailed memory usage on cluster. <<ex_memory_sampler>>, while contrived, shows how you would run the same compute over two different cluster configurations, then plot to compare the two different environment configurations.
 
 [[ex_memory_sampler]]
-.Inserting memory sampler for your code
+.Inserting a memory sampler for your code
 ====
 [source, python]
 ----
@@ -403,7 +403,7 @@ If your cluster manager supports it, you can scale up and down the number of wor
 
 ==== Adaptive/Auto-scaling
 
-We briefly touched on adaptive scaling in previous chapters. You can enable auto/adaptive scaling on your cluster by calling `adapt()` on the Dask client. The scheduler analyzes the computation and invokes the `scale` command to add or remove workers. The Dask cluster types&mdash;KubeCluster, PBSCluster, LocalClusters, etc.&mdash;are the cluster classes that handle actual requests and scaling up and down of the workers. If you see issues with adaptive scaling, ensure that your Dask is correctly asking for resources from the cluster manager. Of course, for auto-scaling in Dask to work, you have to be able to scale your own resource allocations within the cluster that you are running your job on, be it HPC, managed cloud, etc. We already introduced adaptive scaling in the previous MemorySampler example; refer to that example for code snippets.
+We briefly touched on adaptive scaling in previous chapters. You can enable auto/adaptive scaling on your cluster by calling `adapt()` on the Dask client. The scheduler analyzes the computation and invokes the `scale` command to add or remove workers. The Dask cluster types&mdash;KubeCluster, PBSCluster, LocalClusters, etc.&mdash;are the cluster classes that handle actual requests and scaling up and down of the workers. If you see issues with adaptive scaling, ensure that your Dask is correctly asking for resources from the cluster manager. Of course, for auto-scaling in Dask to work, you have to be able to scale your own resource allocations within the cluster that you are running your job on, be it HPC, managed cloud, etc. We already introduced adaptive scaling in the previous `MemorySampler` example; refer to that example for code snippets.
 
 ==== Persist and Delete Costly Data
 
@@ -413,7 +413,7 @@ Some intermediate results can be used further down in the code execution, but no
 
 Dask Nanny is a process that manages workers. Its job is to prevent workers from exceeding its resource limits, leading to an unrecoverable machine state. It constantly monitors CPU and memory usage for the worker, and triggers memory clean-up and compaction. If the worker reaches a bad state, it will automatically restart the worker and try to recover the previous state.
 
-Complications may arise if a worker that contains a computationally expensive and large chunk of data is lost for some reason. The nanny will restart the worker and try to redo the work that led to that point. During that, other workers will also hold on to other data that it was working on, leading to a spike in memory usage. The strategies to remedy this will vary, from disabling the nanny to modifying chunking sizes, worker size, and so on. If this happens often, you should consider persisting, or writing that data to disk.footnote:[There is a knob you can use to control how fast precedent tasks complete. Sometimes running all the easy tasks too fast might end up with a lot of intermediate data that is piled up for the later step to go through, leading to undesirable high memory saturation. Look documentation related to `distributed.scheduler.worker-saturation` for more information.]
+Complications may arise if a worker that contains a computationally expensive and large chunk of data is lost for some reason. The nanny will restart the worker and try to redo the work that led to that point. During that, other workers will also hold on to other data that it was working on, leading to a spike in memory usage. The strategies to remedy this will vary, from disabling the nanny to modifying chunking sizes, worker size, and so on. If this happens often, you should consider persisting, or writing that data to disk.footnote:[There is a knob you can use to control how fast precedent tasks complete. Sometimes running all the easy tasks too fast might end up with a lot of intermediate data that is piled up for the later step to go through, leading to undesirable high memory saturation. Look documentation related to pass:[<code>distributed&#x200b;.sched&#x2060;uler.worker-saturation</code>] for more information.]
 
 If you see error messages such as “Worker exceeded 95% memory budget. Restarting,” this is likely where it came from. It’s the class responsible for starting workers, monitoring, terminating, and restarting the workers. This memory fraction, as well as spillover location, can be set in the _distributed.yaml_ configuration file. HPC users can turn the nanny’s memory monitoring off if the system itself has its own memory management strategies. If the system also restarts killed jobs, you could turn off nanny with the `--no-nanny` option.
 

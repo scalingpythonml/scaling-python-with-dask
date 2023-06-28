@@ -26,13 +26,13 @@ Integration testing refers to testing how different parts of a system work toget
 
 Test-driven development involves taking the requirements or expectations of your code and writing tests and then writing the code after. For data science pipelines this can often be done by creating a sample input (sometimes called a golden set) and writing out what you expect the output to be. Test-driven development can be complicated, especially when integrating multiple data sources.
 
-While you don't need to use test-driven development, we believe it's important to make tests alongside the development of your data pipelines. Tests added after development are better than no tests, but in our experience the context you have during the development helps you create better tests (and validate your assumptions early on).
+While you don't need to use test-driven development, we believe it's important to make tests alongside the development of your data pipelines. Tests added after development are better than no tests, but in our experience the context you have during the development helps you create better tests (and validate your assumptions [.keep-together]#early on).#
 
 ==== Property Testing
 
 Property testing is a potentially great solution to the challenge of coming up with test data that covers all of the edge cases in terms of data that your code could trip up on. Instead of writing the traditional "for input A, result B is expected," you specify properties, like "if we have 0 customers, we should have 0 sales" or "all (valid) customers should have a fraud score after this pipeline."
 
-The most popular library for property testing in Python is https://oreil.ly/zQhnh[+++Hypothesis+++].
+https://oreil.ly/zQhnh[+++Hypothesis+++] is the most popular library for property testing in [.keep-together]#Python.#
 
 ==== Working with Notebooks
 
@@ -62,7 +62,7 @@ It is useful to think of what the implications could be of your pipeline failing
 
 Even inside of a distributed system, there are various levels of "distributed."footnote:[Note: An alternate title for this section might be "How Dask Is Different From BitTorrent."] Dask is a centralized distributed system, where there is a static leader node responsible for various tasks and coordination among the workers. In more distributed systems, there is no static leader node, and if the head node goes away, the remaining peers can elect a new head node, like with Zookeeper. In even more distributed systems, there is no head node distinction, and all of the nodes in the cluster are effectively equally capable (from a software point of view; the hardware may be different).
 
-Centralized distributed systems tend to be faster while encountering limitations earlier in terms of scaling and challenges around the failure of the centralized component.
+Centralized distributed systems tend to be faster while encountering limitations earlier in terms of scaling and challenges around the failure of the centralized [.keep-together]#component.#
 
 === Methods of Parallelism
 
@@ -70,7 +70,7 @@ There are many different ways to split up our work, and in this book we've mostl
 
 ==== Task Parallelism
 
-`dask.delayed` and Python's multi-processing both represent task parallelism. With task parallelism, you are not limited to executing the same code. Task parallelism offers the most flexibility, but requires more changes to your code to take advantage of.
+`dask.delayed` and Python's multi-processing both represent task parallelism. With task parallelism, you are not limited to executing the same code. Task parallelism offers the most flexibility, but requires more changes to your code to take advan&shy;tage&nbsp;of.
 
 ==== Data Parallelism
 
@@ -78,7 +78,7 @@ Data parallelism refers to taking the same operation and running it in parallel 
 
 ===== Shuffles and narrow versus wide transformations
 
-Narrow transformations (or data parallelism without any aggregation or shuffle) is often much faster than "wide" transformations, which involve shuffles or aggregations. While this terminology is borrowed from the Spark community, the distinction (and implications for fault tolerance) apply to Dask's data parallel operations as well.
+_Narrow_ transformations (or data parallelism without any aggregation or shuffle) are often much faster than _wide_ transformations, which involve shuffles or aggregations. While this terminology is borrowed from the Spark community, the distinction (and implications for fault tolerance) applies to Dask's data parallel operations as well.
 
 ===== Limitations
 
@@ -106,7 +106,7 @@ Recursion refers to functions that call themselves (either directly or indirectl
 
 Recursive functions are sometimes avoided in languages that cannot optimize them, since there is overhead to calling a function. Instead, users will try to express the recursive logic using loops.
 
-Excessive non-optimized recursion can result in a stack overflow error. In C, Java, [.keep-together]#C&#x2b;&#x2b;#, and more, stack memory is allocated separately from the main memory (also called heap memory). In Python, the amount of recursion is controlled by `setrecursionlimit`. Python provides a https://oreil.ly/QTHYz[+++tail-recursive annotation+++] that you can use to help optimize these recursive calls.
+Excessive non-optimized recursion can result in a stack overflow error. In C, Java, [.keep-together]#C&#x2b;&#x2b;#, and more, stack memory is allocated separately from the main memory (also called heap memory). In Python, the amount of recursion is controlled by pass:[<code>set&#x200b;recur&#x2060;sionlimit</code>]. Python provides a https://oreil.ly/QTHYz[+++tail-recursive annotation+++] that you can use to help optimize these recursive calls.
 
 In Dask, while recursive calls don’t have the exact same stack problem, excessive recursion can be one of the causes of load on the head node. This is because scheduling the recursive call must pass through the head node, and the excessive number of recursive functions will cause Dask's scheduler to slow down long before any stack size issues are countered.
 
@@ -155,7 +155,7 @@ Another important consideration is _auto_ versus _manual_ scaling. In automatic 
 In a way, Dask's task "stealing" can be viewed as a form of automatic vertical scaling. If a node is incapable of (or especially slow at) handling a task, then another Dask worker can "steal" the task. In practice, the auto-scaler does not allocate higher resource nodes unless you schedule a task that asks for those resources.
 ====
 
-=== Cache, Memory, Disk, and Networking: How the Performance Changes
+=== Cache, Memory, Disk, and Networking: [.keep-together]#How the Performance Changes#
 
 Dask jobs are frequently data-heavy, and the cost of transferring data to the CPU (or GPU) can have a large impact on performance. CPU cache is normally more than an order of magnitude faster than reading from memory. Reading data from an SSD is roughly 4x slower than memory, and sending data within a data center can be ~10 times slower.footnote:[Exact performance numbers depend on your hardware.] CPU caches can normally only contain a few elements.
 
@@ -171,7 +171,7 @@ Hashing is an important part of not only Dask, but also computer science in gene
 
 Data transfer costs can quickly overwhelm data compute costs for simple computation. When possible, scheduling tasks on nodes that already have the data is often much faster since the task has to be scheduled somewhere (e.g., you pay the network cost of copying the task regardless), but you can avoid moving the data if you put the task in the right place. Network copies are also generally slower than disk.
 
-Dask allows you to specify a desired worker in your client.submit with `workers=`. Also, if you have data that is going to be accessed everywhere, rather than doing a regular scatter, you can broadcast it by adding `broadcast=True` so that all workers have a full copy of the collection.
+Dask allows you to specify a desired worker in your `client.submit` with `workers=`. Also, if you have data that is going to be accessed everywhere, rather than doing a regular scatter, you can broadcast it by adding `broadcast=True` so that all workers have a full copy of the collection.
 
 === Exactly Once Versus At Least Once
 

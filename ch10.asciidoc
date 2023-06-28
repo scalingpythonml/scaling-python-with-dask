@@ -1,5 +1,5 @@
 [[ch10]]
-== Dask with GPUs and Other Special Resources
+== Dask with GPUs and Other [.keep-together]#Special Resources#
 
 Sometimes the answer to our scaling problem isn't throwing more computers at it; it's throwing different types of resources at it. One example of this might be ten thousand monkeys trying to reproduce the works of Shakespeare, versus one Shakespeare.footnote:[Assuming Shakespeare were still alive, which he is not.] While performance varies, some benchmarks have shown https://oreil.ly/Iw3Sv[up to an 85% improvement in model training times] when using GPUs over CPUs. Continuing its modular tradition, the GPU logic of Dask is found in the libraries and ecosystem surrounding it. The libraries can either run on a collection of GPU workers or parallelize work over different GPUs on one host.
 
@@ -42,7 +42,7 @@ If you have decided that your problem is well suited to a specialized resource, 
 For NVIDIA users, the `dask-cuda` package can launch one worker per GPU, pinning the GPU and thread together for performance. For example, on our Kubernetes cluster with GPU resources, we configure the workers to use the `dask-cuda-worker` launcher as shown in <<ex_dask_cuda_k8s>>.
 
 [[ex_dask_cuda_k8s]]
-.Use the dask-cuda-worker package in the Dask Kubernetes template
+.Using the `dask-cuda-worker` package in the Dask Kubernetes template
 ====
 [source, python]
 ----
@@ -55,7 +55,7 @@ Here you see we still add the `--resources` flag so that in a mixed environment 
 If you're using Dask to schedule work on multiple GPUs on a single computer (e.g., using Dask local mode with CUDA), the same `dask-cuda` package provides a `LocalCUDACluster`. As with `dask-cuda-worker`, you still need to add the resource tag manually, as shown in <<ex_dask_cuda_local>>, but it launches the correct workers and pins them to threads.
 
 [[ex_dask_cuda_local]]
-.Local CUDACluster with resource tagging
+.`LocalCUDACluster` with resource tagging
 ====
 [source, python]
 ----
@@ -79,10 +79,10 @@ Dask depends on well-behaved Python code, which does not use resources it has no
 
 Now that Dask is aware of the special resources on your cluster, it's time to make sure that your code can take advantage of them. Often, but not always, these accelerators will require some kind of special library to be installed, which may involve long compile times. When possible, installing the acceleration libraries from conda and pre-installing on the workers (in the container or on the host) when possible can help minimize this overhead.
 
-For Kubernetes (or other Docker container users) you can do this by making a custom container with the accelerator libraries pre-installed, as seen in <<preinstall_gpu_docker>>.
+For Kubernetes (or other Docker container users), you can do this by making a custom container with the accelerator libraries pre-installed, as seen in <<preinstall_gpu_docker>>.
 
 [[preinstall_gpu_docker]]
-.Pre-install cuDF
+.Pre-installing cuDF
 ====
 [source, python]
 ----
@@ -93,7 +93,7 @@ include::./examples/dask/preinstall_numba/Dockerfile[]
 Then, to build this, we run the script shown in <<build_custom_ch10_1686240447279>>.
 
 [[build_custom_ch10_1686240447279]]
-.Build custom
+.Building custom
 ====
 [source, bash]
 ----
@@ -106,7 +106,7 @@ include::./examples/dask/preinstall_numba/build.sh[]
 It is important that you make sure your tasks that need accelerators run on worker processes with the accelerator available. You can ask for special resources when scheduling tasks with Dask, either explicitly in `client.submit`, as seen in <<ex_submit_gpu>>, or by adding an annotation to your existing code, as seen in <<ex_annotate_gpu>>.
 
 [[ex_submit_gpu]]
-.Submit a task asking for a GPU
+.Submitting a task asking for a GPU
 ====
 [source, python]
 ----
@@ -115,7 +115,7 @@ include::./examples/dask/DaskGPUs.py[tags=ex_submit_gpu]
 ====
 
 [[ex_annotate_gpu]]
-.Annotate a group of operations as needing a GPU
+.Annotating a group of operations as needing a GPU
 ====
 [source, python]
 ----
@@ -193,7 +193,7 @@ Another GPU-accelerated library for streaming on GPUs is cuStreamz, which is bas
 
 === Freeing Accelerator Resources
 
-Allocating memory on GPUs tends to be slow, so many libraries hold on to these resources. In most situations, if the Python VM exits, the resources will be cleared up. An option of last resort is to bounce all of the workers using `client.restart`. When possible, you will be best served by manually managing resources&mdash;which is library-dependent. For example, cuPY users can free the blocks once used by calling `free_all_blocks()`, as per the https://oreil.ly/hpxkg[+++memory management documentation+++].
+Allocating memory on GPUs tends to be slow, so many libraries hold on to these resources. In most situations, if the Python VM exits, the resources will be cleared up. An option of last resort is to bounce all of the workers using `client.restart`. When possible, you will be best served by manually managing resources&mdash;which is library-dependent. For example, cuPY users can free the blocks once used by calling `free_all_blocks()`, as per the [.kturl]#https://oreil.ly/hpxkg[+++memory management documentation+++]#.
 
 === Design Patterns: CPU Fallback
 

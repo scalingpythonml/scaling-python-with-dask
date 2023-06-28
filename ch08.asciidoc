@@ -106,7 +106,7 @@ When it comes to Dask libraries, there are a number of Dask-specific best practi
 
 ==== Up-to-Date Dependencies
 
-If a project pins a dependency at a specific version, it is important that the version pinned does not have conflicts with the other packages you want to use, and, even more importantly, does not have pinned insecure dependencies. What constitutes "up to date" is a matter of opinion. If you are the kind of developer who likes using the latest version of everything, you'll probably be happiest with libraries that (mostly) provide minimum but not maximum versions. However, this can be misleading as, especially in the Python ecosystem, many libraries do not use https://oreil.ly/RVVI7[+++semantic versioning+++]&mdash;including Dask, which https://oreil.ly/fTTXZ[+++uses CalVer+++]&mdash;and just because a project does not exclude a new version does not mean it will actually work with it.
+If a project pins a dependency at a specific version, it is important that the version pinned does not have conflicts with the other packages you want to use, and, even more importantly, does not have pinned insecure dependencies. What constitutes "up to date" is a matter of opinion. If you are the kind of developer who likes using the latest version of everything, you'll probably be happiest with libraries that [.keep-together]#(mostly) provide minimum# but not maximum versions. However, this can be mis&shy;leading as, especially in the Python ecosystem, many libraries do not use https://oreil.ly/RVVI7[+++semantic ver&shy;sioning+++]&mdash;including Dask, which https://oreil.ly/fTTXZ[+++uses CalVer+++]&mdash;and just because a project does not exclude a new version does not mean it will actually work with it.
 
 [NOTE]
 ====

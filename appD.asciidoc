@@ -55,7 +55,7 @@ Some streaming data sources have the ability to replay or look back at messages 
 Streamz's https://oreil.ly/LOpPJ[+++API documentation+++] covers which sources are supported; for simplicity, we will focus here on Apache Kafka and the local iterable source. Streamz does all loading in the head process, and then you must scatter the result. Loading streaming data should look familiar, with loading a local collection shown in <<load_ex_local>> and Kafka in <<load_ex_kafka>>.
 
 [[load_ex_local]]
-.Load local iterator
+.Loading a local iterator
 ====
 [source, python]
 ----
@@ -64,7 +64,7 @@ include::./examples/dask/Streamz.py[tags=make_local_stream]
 ====
 
 [[load_ex_kafka]]
-.Load from Kafka
+.Loading from Kafka
 ====
 [source, python]
 ----
@@ -86,7 +86,7 @@ As with the rest of this book, we assume that you are using existing data source
 No streaming section would be complete without word count, but it's important to note that our streaming word count in <<streaming_wordcount_ex>>&mdash;in addition to the restriction with data loading&mdash;could not perform the aggregation in a distributed fashion.
 
 [[streaming_wordcount_ex]]
-.Streaming word count example
+.Streaming word count
 ====
 [source, python]
 ----
@@ -98,7 +98,7 @@ In the preceding example, you can see some of the current limitations of Streamz
 
 === GPU Pipelines on Dask Streaming
 
-If you are working with GPUs, the https://oreil.ly/QCk7O[+++cuStreamz project+++] simplifies the integration of cuDF with Streamz. cuStreamz uses a number of custom components for performance, like loading data from Kafka into the GPU instead of having to first land in a Dask DataFrame and then convert it. cuStreamz also implements a custom version of checkpointing with more flexibility than the default Streamz project. The developers behind the project, who are largely employed by people hoping to sell you more GPUs, https://oreil.ly/6wUpB[+++claim up to an 11x speed-up+++].
+If you are working with GPUs, the https://oreil.ly/QCk7O[+++cuStreamz project+++] simplifies the integration of cuDF with Streamz. cuStreamz uses a number of custom components for performance, like loading data from Kafka into the GPU instead of having to first land in a Dask DataFrame and then convert it. cuStreamz also implements a custom version of checkpointing with more flexibility than the default Streamz project. The developers behind the project, who are largely employed by people hoping to sell you more GPUs, [.kturl]#https://oreil.ly/6wUpB[+++claim up to an 11x speed-up+++]#.
 
 === Limitations, Challenges, and Workarounds
 

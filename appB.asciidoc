@@ -1,6 +1,6 @@
 [[appB]]
 [appendix]
-== Scalable Data Frames: A Comparison and Some History
+== Scalable DataFrames: A Comparison [.keep-together]#and Some History#
 
 Dask's distributed pandas-like DataFrame is, in our opinion, one of its key features. Various different approaches exist to provide scalable DataFrame-like functionality. One of the big things that made Dask's DataFrames stand out is the high level of support of the pandas APIs, which other projects are rapidly trying to catch up on. This appendix compares some of the different current and historical DataFrame libraries.
 
@@ -32,7 +32,7 @@ Polars is another single-machine scalable DataFrame, but it takes the approach o
 
 ==== Distributed
 
-The majority of tools for scaling DataFrames are distributed in nature since, at a certain point, all of the fancy tricks on a single machine can only get you so far.
+The majority of tools for scaling DataFrames are distributed in nature since all of the fancy tricks on a single machine can only get you so far.
 
 ===== ASF Spark DataFrame
 
@@ -42,7 +42,7 @@ PySpark errors are especially difficult to debug, since when anything goes wrong
 
 ===== SparklingPandas
 
-SparklingPandas is the one library we can confidently say not to use (since Holden co-wrote it) without having to worry about people being upset.footnote:[Besides ourselves, and if you’re reading this you've likely helped Holden buy a cup of coffee and that's enough :)] SparklingPandas is built on top of ASF Spark's RDD and DataFrame APIs to provide (some of) a more Python-like API, but as the logo is a panda eating bamboo on a sticky note, you can see that we didn't get all the way. SparklingPandas did show it was possible to provide a pandas-like experience by reusing parts of pandas itself.
+SparklingPandas is the one library we can confidently say not to use (since Holden co-wrote it) without having to worry about people being upset.footnote:[Besides ourselves, and if you’re reading this you've likely helped Holden buy a cup of coffee and that's enough. :)] SparklingPandas is built on top of ASF Spark's RDD and DataFrame APIs to provide (some of) a more Python-like API, but as the logo is a panda eating bamboo on a sticky note, you can see that we didn't get all the way. SparklingPandas did show it was possible to provide a pandas-like experience by reusing parts of pandas itself.
 
 For embarrassingly parallel type operations, adding each function from the pandas API was very fast by using `map` to delegate the Python code on each DataFrame. Some operations, like dtypes, were evaluated on just the first DataFrame. Grouped and window operations were more complicated.
 
@@ -64,7 +64,7 @@ The project follows several software engineering best practices, like having CI 
 
 ===== Ibis
 
-This Ibis project promises "the flexibility of Python analytics with the scale and performance of modern SQL." It compiles your somewhat pandas-like code (as much as possible) into SQL. This is convenient, as not only do many big data systems (like Hive, Spark, BigQuery, etc.) support SQL, it is the de facto query language for the majority of databases out there. Unfortunately, SQL is not uniformly implemented, so moving between backend engines may result in breakages, but Ibis does a great job of https://oreil.ly/3AXjg[+++tracking which APIs work with which backends+++]. Of course, this design limits you to the kinds of expressions that can be expressed in SQL.
+The Ibis project https://oreil.ly/9OL2f[promises] "the flexibility of Python analytics with the scale and performance of modern SQL." It compiles your somewhat pandas-like code (as much as possible) into SQL. This is convenient, as not only do many big data systems (like Hive, Spark, BigQuery, etc.) support SQL, it is the de facto query language for the majority of databases out there. Unfortunately, SQL is not uniformly implemented, so moving between backend engines may result in breakages, but Ibis does a great job of https://oreil.ly/3AXjg[+++tracking which APIs work with which backends+++]. Of course, this design limits you to the kinds of expressions that can be expressed in SQL.
 
 ===== Modin
 
