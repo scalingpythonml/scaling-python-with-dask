@@ -32,7 +32,7 @@ Polars is another single-machine scalable DataFrame, but it takes the approach o
 
 ==== Distributed
 
-The majority of tools for scaling DataFrames are distributed in nature since all of the fancy tricks on a single machine can only get you so far.
+The majority of tools for scaling DataFrames are distributed in nature, since all of the fancy tricks on a single machine can only get you so far.
 
 ===== ASF Spark DataFrame
 

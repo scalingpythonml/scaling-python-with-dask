@@ -156,7 +156,7 @@ On the flip side, the complete lack of recent commits can be a sign that a proje
 
 ==== Library Usage
 
-One of the simplest metrics to check is if people are using a package, which you can see by looking at the installs. You can check PyPI package installs stats on the https://oreil.ly/1HHL8[+++PyPI Stats website+++] (see <<dask-kubernetes-install-stats>>) or on https://oreil.ly/83RIO[+++Google's BigQuery+++], and conda installs using the https://oreil.ly/4STsP[+++condastats library+++].
+One of the simplest metrics to check is if people are using a package, which you can see by looking at the installs. You can check PyPI package installs stats on the https://oreil.ly/1HHL8[+++PyPI Stats website+++] (see <<dask-kubernetes-install-stats>>) or on https://oreil.ly/83RIO[+++Google's BigQuery+++], and conda installs using the [.kturl]#https://oreil.ly/4STsP[+++condastats library+++]#.
 
 [[dask-kubernetes-install-stats]]
 .Dask Kubernetes install stats from PyPI Stats

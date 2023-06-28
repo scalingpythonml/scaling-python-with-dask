@@ -259,7 +259,7 @@ You don't need to pass around real values. For example, if one function updates 
 
 Visualizing the task graph is an excellent tool for you to use while learning about task graphs and debugging in the future. The `visualize` function is defined both in the Dask library and on all Dask objects. Instead of calling `.visualize` separately on multiple objects, you should call `dask.visualize` with the list of objects you are planning to compute to see how Dask combines the task graph.
 
-You should try this out now by visualizing everyone's favorite word count example from the previous chapter. When you call `dask.visualize` on pass:[<code>words_bag&#x200b;.frequen&#x2060;cies()</code>], you should get a result that looks something like <<vis_ex>>.
+You should try this out now by visualizing everyone's favorite word count example from the previous chapter. When you call `dask.visualize` on pass:[<code>words_bag&#x200b;.fre&#x2060;quen&#x2060;cies()</code>], you should get a result that looks something like <<vis_ex>>.
 
 [[vis_ex]]
 .Visualized word count task graph

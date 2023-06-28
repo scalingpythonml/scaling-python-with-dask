@@ -379,7 +379,7 @@ Dask's `join` and `merge` functions take most of the standard pandas arguments a
 
 [TIP]
 ====
-Dask has special logic to speed up multi-DataFrame joins, so in most cases, rather than doing&nbsp;pass:[<code>a.join(b)&#x200b;.join(c).join(d).join(e)</code>], you will benefit from doing `a.join([b, c, d, e])`. However, if you are performing a left join with a a small dataset, then the first syntax may be more efficient.
+Dask has special logic to speed up multi-DataFrame joins, so in most cases, rather than doing&nbsp;pass:[<code>a.join(b).join(c).join(d)&#x200b;.join(e)</code>], you will benefit from doing `a.join([b, c, d, e])`. However, if you are performing a left join with a a small dataset, then the first syntax may be more efficient.
 ====
 
 When you combine or `concat` DataFrames by row (similar to a SQL UNION), the performance depends on if divisions of the DataFrames being combined are _well ordered_. We call the divisions of a series of DataFrames well ordered if all the divisions are known and the highest division of the previous DataFrame is below that of the lowest division of the next. If any input has an unknown division, Dask will produce an output without known partitioning. With all known partitions, Dask treats row-based concatenations as a metadata-only change and will not perform any shuffle. This requires that there is no overlap between the divisions. There is also an extra `interleave_partitions` parameter, which will change the join type for row-based combinations to one without the input partitioning restriction and result in a known partitioner. Dask DataFrames with known partitioners can support faster lookups and operations by key.
