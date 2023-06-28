@@ -11,12 +11,6 @@ tr.footnotes td {
   border-bottom: none !important;
 }
 
-/* no border on tds with rowspan in ch8 table */
-#libraries_used_with_dask_1687806941692 > tbody > tr:nth-child(2) > td:nth-child(1),
-#libraries_used_with_dask_1687806941692 > tbody > tr:nth-child(4) > td:nth-child(1) {
-  border-bottom: none !important;
-}
-
 /* fix spacing above table lists not preceded by a paragraph */
 td > div > ul:nth-child(1) {
   margin-top: 0pt !important;
