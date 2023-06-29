@@ -27,7 +27,7 @@ urls = ["https://gender-pay-gap.service.gov.uk/viewing/download-data/2021",
 
 
 # tag::handle[]
-# Handling some potentially bad data, this assume line-by-line
+# Handling some potentially bad data; this assumes line-by-line
 raw_chunks = bag.read_text(
     urls,
     files_per_partition=1,

@@ -127,7 +127,7 @@ def parallel_recursive_list(path: str, fs=None) -> List[str]:
     dirs = []
     for i in infos:
         if i["type"] == "directory":
-            # You can speed this up by using futures, covered in "Advanced
+            # You can speed this up by using futures; covered in "Advanced
             # Scheduling"
             dir_list = dask.delayed(parallel_recursive_list)(i["name"], fs=fs)
             dirs += dir_list
@@ -163,16 +163,16 @@ def parallel_list_directories_recursive(path: str, fs=None) -> List[str]:
     if fs is None:
         (fs, path) = fsspec.core.url_to_fs(path)
     info = []
-    # Ideally we could filter for directories here, but fsspec lacks that (for
+    # Ideally, we could filter for directories here, but fsspec lacks that (for
     # now)
     infos = fs.ls(path, detail=True)
-    # Above could throw PermissionError, but if we can't list the dir it's
-    # probably wrong so let it bubble up
+    # Above could throw PermissionError, but if we can't list the dir, it's
+    # probably wrong, so let it bubble up
     dirs = []
     result = []
     for i in infos:
         if i["type"] == "directory":
-            # You can speed this up by using futures, covered in "Advanced
+            # You can speed this up by using futures; covered in "Advanced
             # Scheduling"
             result.append(i["name"])
             dir_list = dask.delayed(
@@ -188,7 +188,7 @@ def list_files(path: str, fs=None) -> List[str]:
     if fs is None:
         (fs, path) = fsspec.core.url_to_fs(path)
     info = []
-    # Ideally we could filter for directories here, but fsspec lacks that (for
+    # Ideally, we could filter for directories here, but fsspec lacks that (for
     # now)
     return map(lambda i: i["name"], filter(
         lambda i: i["type"] == "directory", fs.ls(path, detail=True)))

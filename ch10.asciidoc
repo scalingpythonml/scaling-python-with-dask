@@ -37,7 +37,7 @@ GPUs are not well suited to branch-heavy non-vectorized workflows or workflows w
 
 === Making Dask Resource-Aware
 
-If you have decided that your problem is well suited to a specialized resource, the next step is to https://oreil.ly/EHFTr[make the scheduler aware of which machines and processes have the resource]. You can do this by adding either an environment variable or a command-line flag to the worker launch (e.g., `--resources "GPU=2"` or `DASK_DISTRIBUTED__WORKER__RESOURCES__GPU=2`).
+If you have decided that your problem is well suited to a specialized resource, the next step is to https://oreil.ly/EHFTr[make the scheduler aware of which machines and processes have the resource]. You can do this by adding either an environment variable or a command-line flag to the worker launch (e.g., `--resources "GPU=2"` or pass:[<code>DASK&#x200b;_DIS&#x2060;TRIBUTED__WORKER__RESOURCES__GPU=2</code>]).
 
 For NVIDIA users, the `dask-cuda` package can launch one worker per GPU, pinning the GPU and thread together for performance. For example, on our Kubernetes cluster with GPU resources, we configure the workers to use the `dask-cuda-worker` launcher as shown in <<ex_dask_cuda_k8s>>.
 

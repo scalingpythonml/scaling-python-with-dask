@@ -36,7 +36,7 @@ include::./examples/dask/Dask-Ch3-Concepts.py[tags=threads]
 ----
 ====
 
-The local multi-process backend, shown in <<configuring_dask_multiprocess_ch03_1686241509022>>, has some additional overhead over multi-threaded, although it can be decreased on Unix & Unix-like systems.footnote:[Including OS X and Linux.] The multi-process backend is able to avoid Python's global interpreter lock by launching separate processes. Launching a new process is more expensive than a new thread, and Dask needs to serialize data that moves between processes.footnote:[This also involves having to store a second copy of any object that is in the driver thread and then used in a worker. Since Dask shards its collections, this doesn't generally blow up as quickly as with normal multi-processing.]
+The local multi-process backend, shown in <<configuring_dask_multiprocess_ch03_1686241509022>>, has some additional overhead over multi-threaded, although it can be decreased on Unix and Unix-like systems.footnote:[Including OS X and Linux.] The multi-process backend is able to avoid Python's global interpreter lock by launching separate processes. Launching a new process is more expensive than a new thread, and Dask needs to serialize data that moves between processes.footnote:[This also involves having to store a second copy of any object that is in the driver thread and then used in a worker. Since Dask shards its collections, this doesn't generally blow up as quickly as with normal multi-processing.]
 
 [[configuring_dask_multiprocess_ch03_1686241509022]]
 .Configuring Dask to use the multi-process backend
@@ -94,7 +94,7 @@ It is very important to have the same versions of Python and libraries installed
 
 === Dask's Diagnostics User Interface
 
-One of your first stops in understanding what your program is doing should be Dask's Diagnostics UI. The UI allows you to see what Dask is executing, the number of worker threads/processes/computers, memory utilization information, and much more. If you are running Dask locally, you will likely find the UI at pass:[<em>http&#x200b;://local&#x200b;host:8787</em>].
+One of your first stops in understanding what your program is doing should be Dask's Diagnostics UI. The UI allows you to see what Dask is executing, the number of worker threads/processes/computers, memory utilization information, and much more. If you are running Dask locally, you will likely find the UI at [.keep-together]#_http:&#x200b;//localhost:8787_#.
 
 If you're using the Dask client to connect to a cluster, the UI will be running on the scheduler node. You can get the link to the dashboard from `client.dashboard_link`.
 
@@ -161,7 +161,7 @@ Dask uses slightly different terminology for partitioning in each of its collect
 
 The number and size of partitions are closely related and impact the maximum parallelism. Partitions that are too small, or too great in number, mean that Dask will spend more time scheduling the tasks than running them. A general sweet spot for partition size is around 100 MB to 1 GB, but if your computation per element is very expensive, smaller partition sizes can perform better.
 
-Ideally your partitions should be similar in size to avoid stragglers. When you've got partitions of different sizes, it is called _skewed_. There are many different sources of skew, ranging from input file sizes to key skew (when keyed). When your data gets too skewed, you will need to repartition the data.
+Ideally, your partitions should be similar in size to avoid stragglers. When you've got partitions of different sizes, it is called _skewed_. There are many different sources of skew, ranging from input file sizes to key skew (when keyed). When your data gets too skewed, you will need to repartition the data.
 
 [TIP]
 ====
@@ -240,7 +240,7 @@ Unlike the rest of Dask, futures are eagerly evaluated, which limits the optimiz
 In addition to nested tasks, as seen in <<nested_tasks>>, you can also use a `dask.delayed` object as input to another delayed computation (see <<task_dependencies_example_ch03_1686946028901>>), and Dask's `submit`/`compute` function will construct a task graph for you.
 
 [[task_dependencies_example_ch03_1686946028901]]
-.Task dependencies example
+.Task dependencies
 ====
 [source, python]
 ----
@@ -255,7 +255,7 @@ You don't need to pass around real values. For example, if one function updates 
 
 
 [[graph_visualize]]
-==== Visualize
+==== visualize
 
 Visualizing the task graph is an excellent tool for you to use while learning about task graphs and debugging in the future. The `visualize` function is defined both in the Dask library and on all Dask objects. Instead of calling `.visualize` separately on multiple objects, you should call `dask.visualize` with the list of objects you are planning to compute to see how Dask combines the task graph.
 
@@ -337,7 +337,7 @@ Machine failure is a fact of life with distributed systems. When a worker fails,
 
 Dask automatically retries software failures that exit or crash the worker. Much like machine failure, from Dask's point of view a worker exiting and a network failing look the same.
 
-IOErrors and OSErrors exceptions are the only two classes of exceptions Dask will retry. If your worker process raises one of these errors, they are pickled and transferred over to the scheduler. Dask's scheduler then retries the task. If your code encounters an IOError that should not be retried (e.g., a web page doesn't exist), you'll need to wrap it in another exception to keep Dask from retrying it.
+IOError and OSError exceptions are the only two classes of exceptions Dask will retry. If your worker process raises one of these errors, they are pickled and transferred over to the scheduler. Dask's scheduler then retries the task. If your code encounters an IOError that should not be retried (e.g., a web page doesn't exist), you'll need to wrap it in another exception to keep Dask from retrying it.
 
 Since Dask retries failed computation, it's important to be careful with side effects or changing values. For example, if you have a Dask bag of transactions and were to update a database as part of a `map`, Dask might re-execute some of the operations on that bag multiple times, resulting in the update to the database happening more than once. If we think of a withdrawal from an ATM, we can see how this would result in some unhappy customers, and incorrect data. Instead, if you need to mutate small bits of data, you can bring them back to a local collection.
 

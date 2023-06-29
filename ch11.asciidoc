@@ -88,7 +88,7 @@ include::./examples/dask/Dask-Ch13_ML.py[tags=ex_dummy_variables]
 ====
 
 [[ex_datetime_dummy_alt]]
-.Dask DataFrame pre-processing datetime as dummy variable using Dask DataFrame built-in
+.Dask DataFrame pre-processing datetime as dummy variable using the Dask DataFrame built-in
 ====
 [source, python]
 ----
@@ -96,7 +96,7 @@ include::./examples/dask/Dask-Ch13_ML.py[tags=ex_datetime_dummy_alt]
 ----
 ====
 
-Dask-ML's `train_test_split` method has more flexibility than the Dask DataFrames version. Both are partition-aware, and we using them instead of the scikit-learn equivalent. scikit-learn's `train_test_split` can be called here, but it is not partition-aware, and can result in a large data movement between workers, whereas the Dask implementations would split the train-test over each partition, avoiding the shuffle (<<ex_dask_random_split>>).
+Dask-ML's `train_test_split` method has more flexibility than the Dask DataFrames version. Both are partition-aware, and we using them instead of the scikit-learn equivalent. scikit-learn's `train_test_split` can be called here, but it is not partition-aware, and can result in a large data movement between workers, whereas the Dask implementations would split the train-test over each partition, avoiding the shuffle (see <<ex_dask_random_split>>).
 
 [[ex_dask_random_split]]
 .Dask DataFrame pseudorandom split
@@ -188,7 +188,7 @@ include::./examples/dask/Dask-Ch13_ML.py[tags=ex_xgb_train_plot_importance]
 ----
 ====
 
-Putting the previous examples together, you can now compose a function that can fit a model, provide early stopping arguments, and also define predictions using XGBoost for Dask (<<ex_xgb_early_stopping>>). These would be called in your main client code.
+Putting the previous examples together, you can now compose a function that can fit a model, provide early stopping arguments, and also define predictions using XGBoost for Dask (see <<ex_xgb_early_stopping>>). These would be called in your main client code.
 
 [[ex_xgb_early_stopping]]
 .Gradient-boosted tree training and inference using the Dask [.keep-together]#XGBoost library#

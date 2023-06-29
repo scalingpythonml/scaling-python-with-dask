@@ -6,7 +6,7 @@ We've covered a few distributed system concepts briefly as needed in this book, 
 
 === Testing
 
-Testing is an often overlooked part of data science and data engineering. Some of our tools, like SQL and Jupyter notebooks, do not encourage or make it easy to test&ndash;but this does not absolve us of the responsibility to test our code. Data privacy concerns can add another layer of challenge, where we don't want to store user data for testing, requiring us to put in the effort to create "fake" data for testing or break our code down into testable components where we don't need user data.
+Testing is an often overlooked part of data science and data engineering. Some of our tools, like SQL and Jupyter notebooks, do not encourage or make it easy to test&mdash;but this does not absolve us of the responsibility to test our code. Data privacy concerns can add another layer of challenge, where we don't want to store user data for testing, requiring us to put in the effort to create "fake" data for testing or break our code down into testable components where we don't need user data.
 
 ==== Manual Testing
 

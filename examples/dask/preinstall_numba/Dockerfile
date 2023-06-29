@@ -1,4 +1,4 @@
-# Use the Dask base image, for arm64 though we have to use custom built
+# Use the Dask base image; for arm64, though, we have to use custom built
 # FROM ghcr.io/dask/dask
 FROM holdenk/dask:latest
 

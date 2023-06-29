@@ -34,13 +34,13 @@ Still, there are already dozens of popular libraries specifically for Dask, and 
 |GPU a|
 * _dask-cuda_: Dask cluster optimized for GPUs
 |HPC a|
-* _dask-jobqueue_:pass:[<sup><a class="tablefootnote" href="#libraries_table_foonote">a</a></sup>] deployment for PBS, SLURM, MOAB, SGE, LSF, and HTCondor
+* _dask-jobqueue_:pass:[<sup><a class="tablefootnote" href="#libraries_table_foonote">a</a></sup>] deployment for PBS, Slurm, MOAB, SGE, LSF, and HTCondor
 * _dask-mpi_:pass:[<sup><a class="tablefootnote" href="#libraries_table_foonote">a</a></sup>] deployment for MPI
 |*ML and analytics*: Extend ML libraries and computation with Dask | a|
 * _dask-ml_:pass:[<sup><a class="tablefootnote" href="#libraries_table_foonote">a</a></sup>] Distributed implementation of scikit-learn and more
 * _xgboost_:pass:[<sup><a class="tablefootnote" href="#libraries_table_foonote">a</a></sup>] gradient boosting with native Dask support
 * _light-gbm_:pass:[<sup><a class="tablefootnote" href="#libraries_table_foonote">a</a></sup>] another tree-based learning algorithm with native Dask support
-* _dask-sql_:pass:[<sup><a class="tablefootnote" href="#libraries_table_foonote">a</a></sup>] CPU-based SQL engine for Dask (ETL/compute logic can be run on SQL context; similar to SparkSQL)
+* _Dask-SQL_:pass:[<sup><a class="tablefootnote" href="#libraries_table_foonote">a</a></sup>] CPU-based SQL engine for Dask (ETL/compute logic can be run on SQL context; similar to SparkSQL)
 * _BlazingSQL_:pass:[<sup><a class="tablefootnote" href="#libraries_table_foonote">a</a></sup>] SQL query on cuDF and Dask
 * _FugueSQL_:pass:[<sup><a class="tablefootnote" href="#libraries_table_foonote">a</a></sup>] portability between Pandas, Dask, and Spark, using the same SQL code (downside: requires ANTLR, a JVM-based tool)
 * _Dask-on-Ray_:pass:[<sup><a class="tablefootnote" href="#libraries_table_foonote">a</a></sup>] Dask's distributed data structures and task graphs, run on Ray scheduler
@@ -84,7 +84,7 @@ Finding the community associated with a particular project can be tricky. Take y
 
 There are multiple types of communities for open source software projects. The user community is the people who are using the software to build things. The developer community is the group working on improving the library. Some projects have large intersections between these communities, but often the user community is much larger than the developer community. We are biased toward evaluating the developer community, but it's important to ensure both are healthy. Software projects without enough developers will move slowly, and projects without users are frequently challenging to use by anyone except the developers.
 
-In many situations, a large community with enough jerks (or a lead jerk) can be a much less enjoyable environment than a small community of nice folks. You are less likely to be productive if you are not enjoying your work. Sadly, figuring out if someone is a jerk or if a community has jerks in it is a complex problem. If people are generally rude on the mailing list or in the issue tracker, this can be a sign that the community is not as welcoming to new members.footnote:[The Linux Kernel is a classic example of a somewhat https://oreil.ly/tXjhn[+++more challenging community+++].]
+In many situations, a large community with enough jerks (or a lead jerk) can be a much less enjoyable environment than a small community of nice folks. You are less likely to be productive if you are not enjoying your work. Sadly, figuring out if someone is a jerk or if a community has jerks in it is a complex problem. If people are generally rude on the mailing list or in the issue tracker, this can be a sign that the community is not as welcoming to new members.footnote:[The Linux kernel is a classic example of a somewhat https://oreil.ly/tXjhn[+++more challenging community+++].]
 
 [NOTE]
 ====
@@ -171,7 +171,7 @@ Looking for examples of people using a library has its limitations, especially w
 Another proxy for usage you can look at is the frequency of issues or mailing list posts. If a project is hosted on something like GitHub, stars can also be an interesting way of measuring usage&mdash;but since people can now buy GitHub stars just like Instagram likes (as shown in <<fig_ghstarsforsale>>), don't weigh this metric too heavily.footnote:[There are some tools that can help you dig deeper into the star data, including https://oreil.ly/eKBdi[+++ghrr+++], but we still think it's better to not spend too much time on or give too much weight to stars.]
 
 [[fig_ghstarsforsale]]
-.Sample of someone selling GitHub stars
+.Someone selling GitHub stars
 image::images/spwd_0802.png[]
 
 Even setting aside people purchasing stars, what constitutes a project worth starring varies from person to person. Some projects will, while not purchasing stars, ask many individuals to star their projects, which can quickly inflate this metric.footnote:[For example, we might ask you to star our https://oreil.ly/u6S0H[example repo], and by doing this, we (hopefully) increase the number of stars without actually needing to increase our quality.]

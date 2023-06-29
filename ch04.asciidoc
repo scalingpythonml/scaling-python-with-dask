@@ -3,7 +3,7 @@
 
 Pandas DataFrames, while popular, quickly run into memory constraints as data sizes grow, since they store the entire data in memory. Pandas DataFrames have a robust API for all kinds of data manipulation and are frequently the starting point for many analytics and machine learning projects. While pandas itself does not have machine learning built in, data scientists often use it as part of data and feature preparation during the exploratory phase of new projects. As such, scaling pandas DataFrames to be able to handle large datasets is of vital importance to many data scientists. Most data scientists are already familiar with the pandas libraries, and Dask's DataFrame implements much of the pandas API while adding the ability to scale.
 
-Dask is one of the first to implement a usable subset of the pandas APIs, but other projects like Spark have added their approaches. This chapter assumes you have a good understanding of the pandas DataFrame APIs; if not, you should check out _Python for Data Analysis: Data Wrangling with Pandas, NumPy, and IPython_ by Wes McKinney (O'Reilly).
+Dask is one of the first to implement a usable subset of the pandas APIs, but other projects like Spark have added their approaches. This chapter assumes you have a good understanding of the pandas DataFrame APIs; if not, you should check out _Python for Data Analysis: Data Wrangling with pandas, NumPy, and IPython_ by Wes McKinney (O'Reilly).
 
 You can often use Dask DataFrames as a replacement for pandas DataFrames with minor changes, thanks to duck-typing. However, this can have performance drawbacks, and some functions are not present. These drawbacks come from the distributed parallel nature of Dask, which adds communication costs for certain types of operations. In this chapter, you will learn how to minimize these performance drawbacks and work around any missing functionality.
 
@@ -118,7 +118,7 @@ While Dask has limited support for query push-down with partition reads, many ot
 
 On the flip side, if most of your downstream users consume all of the table or have unique columns they are filtering on, a partitioned write can decrease performance. Since listing files on a network filesystem is not free, discovering the files becomes more expensive when you have partitioned writes that you are not taking advan&shy;tage&nbsp;of.
 
-Other systems commonly use metastores for partitioned reads and writes when dealing with large data sizes. Dask does not presently have the built-in ability to talk to a metastore, like Iceberg, Hive, or DeltaLake. Metastores can be useful for loading subsets tables and time-traveling (looking at old versions) when needed. The https://oreil.ly/2i2Dd[Dask _deltatable_ library] integrates reading the DeltaLake table. Iceberg has a https://oreil.ly/tIP9S[built-in Python API] that you can use to get a list of files associated with a particular query, and then use Dask's existing file APIs on top of it. We expect the integrations with metastores will continue to improve rapidly.
+Other systems commonly use metastores for partitioned reads and writes when dealing with large data sizes. Dask does not presently have the built-in ability to talk to a metastore, like Iceberg, Hive, or DeltaLake. Metastores can be useful for loading subsets tables and time-traveling (looking at old versions) when needed. The https://oreil.ly/2i2Dd[Dask deltatable library] integrates reading the DeltaLake table. Iceberg has a https://oreil.ly/tIP9S[built-in Python API] that you can use to get a list of files associated with a particular query, and then use Dask's existing file APIs on top of it. We expect the integrations with metastores will continue to improve rapidly.
 ****
 
 ==== Filesystems
@@ -134,7 +134,7 @@ include::./examples/dask/Dask-Ch4-DataFrames.py[tags=fsspec]
 ----
 ====
 
-Many filesystems require some kind of configuration, be it endpoint or credentials. Often new filesystems, like MinIO, offer S3-compatible APIs but overload the endpoint and require some extra configuration to function. With Dask you specify the configuration parameters to the read/write function with `storage_options`. Everyone's configuration here will likely be a bit different.footnote:[https://oreil.ly/ZfcRv[FSSPEC documentation] includes the specifics for configuring each of the backends.] Dask will use your `storage_options` dict as the keyword arguments to the underlying FSSPEC implementation. For example, my `storage_options` for MinIO are shown in <<minio_storage_options>>.
+Many filesystems require some kind of configuration, be it endpoint or credentials. Often new filesystems, like MinIO, offer S3-compatible APIs but overload the endpoint and require some extra configuration to function. With Dask you specify the configuration parameters to the read/write function with pass:[<code>storage&#x200b;_options</code>]. Everyone's configuration here will likely be a bit different.footnote:[https://oreil.ly/ZfcRv[FSSPEC documentation] includes the specifics for configuring each of the backends.] Dask will use your [.keep-together]#`storage_options`# dict as the keyword arguments to the underlying FSSPEC implementation. For example, my `storage_options` for MinIO are shown in <<minio_storage_options>>.
 
 [[minio_storage_options]]
 .Dask configure MinIO
@@ -214,10 +214,10 @@ If you're aggregating by partition key, Dask can compute the aggregation without
 ====
 
 The first way to speed up your aggregations is to reduce the columns that you are aggregating on, since the fastest data to process is no data. Finally, when possible, doing multiple aggregations at the same time reduces the number of times the same data needs to be shuffled.
-Therefore, if you need to compute the average and the max, you should compute both at the same time (<<max_mean>>).
+Therefore, if you need to compute the average and the max, you should compute both at the same time (see <<max_mean>>).
 
 [[max_mean]]
-.Dask DataFrame max mean together
+.Dask DataFrame max and mean
 ====
 [source, python]
 ----
@@ -297,9 +297,9 @@ Dask has three primary methods for controlling the partitioning of a DataFrame: 
 [options="header"]
 |===
 |Method |Changes index key |Sets number of partitions |Results in a known partitioning scheme |Ideal use case
-|set_index |Yes |Yes |Yes |Changing the index key
-|repartition |No |Yes |Yes |Increasing/decreasing number of partitions
-|shuffle |No |Yes |No |Skewed distribution of keyfootnote:[Hashes the key for distribution, which can help randomly distribute skewed data _if_ the keys are unique (but clustered).]
+|`set_index` |Yes |Yes |Yes |Changing the index key
+|`repartition` |No |Yes |Yes |Increasing/decreasing number of partitions
+|`shuffle` |No |Yes |No |Skewed distribution of keyfootnote:[Hashes the key for distribution, which can help randomly distribute skewed data _if_ the keys are unique (but clustered).]
 |===
 
 The first step of getting the right partitioning for your DataFrame is deciding whether you want an index. Indexes are useful when filtering data by an indexed value, indexing, grouping, and almost any other by-key operation. One such by-key operation would be a `groupby`, in which the column being grouped on could be a good candidate for the key. If you use a rolling window over a column, that column must be the key, which makes choosing the key relatively easy. Once you've decided on an index, you can call `set_index` with the column name of the index (e.g., `set_index("PostCode")`). This will, under most circumstances, result in a shuffle, so it's a good time to size your partitions.

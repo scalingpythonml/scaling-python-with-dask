@@ -23,7 +23,7 @@
 from dask_yarn import YarnCluster
 from dask.distributed import Client
 
-# Create a cluster where each worker has two cores and eight GiB of memory
+# Create a cluster where each worker has two cores and 8 GiB of memory
 cluster = YarnCluster(
     environment='your_environment.tar.gz',
     worker_vcores=2,

@@ -202,7 +202,7 @@ from dask.distributed import get_client
 
 
 def nested(x):
-    client = get_client() # The client is serializable so we use get_client
+    client = get_client() # The client is serializable, so we use get_client
     futures = client.map(slow, range(0, x))
     r = 0
     for f in as_completed(futures):
@@ -228,8 +228,8 @@ futures = client.map(slow, range(0, 30))
 from dask.distributed import wait
 from dask.distributed.client import FIRST_COMPLETED
 
-# Will throw an exception if no future completes in time
-# If it does not throw the result has two lists:
+# Will throw an exception if no future completes in time.
+# If it does not throw, the result has two lists:
 # The done list may return between one and all futures.
 # The not_done list may contain zero or more futures.
 finished = wait(futures, 1, return_when=FIRST_COMPLETED)

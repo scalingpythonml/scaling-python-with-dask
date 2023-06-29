@@ -50,7 +50,7 @@ Dependency management allows you to control, at runtime or in advance, what soft
 
 There are two main ways to deploy Dask on Kubernetes:footnote:[PEP20 remain optimistic.] KubeCluster and HelmCluster. Helm is a popular tool for managing deployments on Kubernetes, with the deployments being specified in Helm charts. Since Helm is the newer recommended way of managing deployments on Kubernetes, we will cover that one here.
 
-The https://oreil.ly/EBzBm[+++Helm documentation+++] offers an excellent starting point on the different ways to install Helm, but for those in a hurry, `curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash` will do it for you.footnote:[Note this installs Helm 3.X:. As with Python3, Helm 3 has a https://oreil.ly/vR5BM[large number of breaking changes over [.keep-together]#Helm 2#], so when you're reading documentation (or installing packages), make [.keep-together]#sure it's referencing the current# major versions.]
+The https://oreil.ly/EBzBm[+++Helm documentation+++] offers an excellent starting point on the different ways to install Helm, but for those in a hurry, pass:[<code>curl https://raw.githubuser&#x200b;con&#x2060;tent.com/helm/helm/main/scripts/get-helm-3 | bash</code>] will do it for you.footnote:[Note this installs Helm 3.X:. As with Python3, Helm 3 has a https://oreil.ly/vR5BM[large number of breaking changes over [.keep-together]#Helm 2#], so when you're reading documentation (or installing packages), make [.keep-together]#sure it's referencing the current# major versions.]
 
 [NOTE]
 ====

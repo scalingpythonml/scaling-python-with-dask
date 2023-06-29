@@ -106,7 +106,7 @@ include::./examples/dask/Dask-Futures.py[tags=fire_and_forget2]
 More commonly, eventually, you'll want to know what the future has computed (or even just if it encountered an error). For futures that are not just side effects, you'll eventually want to get the return value (or error) from the futures. Futures have the blocking method `result`, as shown in <<get_result_ch06_1686239283618>>, which gives you back the value computed in the future or raises the exception from the future.
 
 [[get_result_ch06_1686239283618]]
-.Get result
+.Getting the result
 ====
 [source, python]
 ----
@@ -117,7 +117,7 @@ include::./examples/dask/Dask-Futures.py[tags=get_result]
 You can extend this to multiple futures, as in <<get_a_list_of_results_ch06_1686239329136>>, but there are ways to do it faster.
 
 [[get_a_list_of_results_ch06_1686239329136]]
-.Get a list of results
+.Getting a list of results
 ====
 [source, python]
 ----
@@ -125,10 +125,10 @@ include::./examples/dask/Dask-Futures.py[tags=get_seq]
 ----
 ====
 
-If you've got multiple futures together, say you created them with `map`, you can get the results back as they become available (<<get_list_results_as_avail_ch06_1686239357228>>). If you can process the results out of order, this can greatly improve your processing time.
+If you've got multiple futures together, say you created them with `map`, you can get the results back as they become available (see <<get_list_results_as_avail_ch06_1686239357228>>). If you can process the results out of order, this can greatly improve your processing time.
 
 [[get_list_results_as_avail_ch06_1686239357228]]
-.Get a list of results as they become available
+.Getting a list of results as they become available
 ====
 [source, python]
 ----
@@ -141,7 +141,7 @@ In the preceding example, by processing futures as they complete you can have th
 If you have a deadline, like scoring a model for ad servingfootnote:[We believe that this is one of the areas where Dask has more room for growth, and if you do want to implement a microservice for deadline-critical events, you may want to explore using Dask in conjunction with other systems like Ray.] or doing something funky with the stock market, you might not want to wait for all of your futures. Instead, the `wait` function allows you to fetch results with a timeout, as shown in <<get_the_first_future_ch06_1686239413080>>.
 
 [[get_the_first_future_ch06_1686239413080]]
-.Get the first future (within a time limit)
+.Getting the first future (within a time limit)
 ====
 [source, python]
 ----
@@ -152,7 +152,7 @@ include::./examples/dask/Dask-Futures.py[tags=time_limit_first]
 This time limit can apply either to the entire set or to one at a time. If you want all features finished by a given time, then you need a bit more work, as shown in <<get_any_futures_that_finish_ch06_1686239442955>>.
 
 [[get_any_futures_that_finish_ch06_1686239442955]]
-.Get any futures that finish within a time limit
+.Getting any futures that finish within a time limit
 ====
 [source, python]
 ----
@@ -163,7 +163,7 @@ include::./examples/dask/Dask-Futures.py[tags=time_limit_some]
 Now that you can get the results from futures, you can compare the execution time of `dask.delayed` versus Dask futures, as shown in <<how_futures_faster_ch06_1686239467057>>.
 
 [[how_futures_faster_ch06_1686239467057]]
-.A quick example of how futures can be faster
+.Seeing that futures can be faster
 ====
 [source, python]
 ----

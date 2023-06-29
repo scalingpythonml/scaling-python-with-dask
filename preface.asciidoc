@@ -37,7 +37,7 @@ This element indicates a warning or caution.
 
 === License
 
-Once published in print and excluding O’Reilly’s distinctive design elements (i.e. cover art, design format, “look and feel”) or O’Reilly’s trademarks, service marks, and trade names, this book is available under a Creative Commons Attribution-Noncommercial-No Derivatives 4.0 International Public License. We'd like to thank O'Reilly for allowing us to make this book available under a creative commons license and hope that you will choose to support this book (and us) by purchasing several copies of this book (it makes an excellent gift for whichever holiday season is coming up next).
+Once published in print and excluding O’Reilly’s distinctive design elements (i.e. cover art, design format, “look and feel”) or O’Reilly’s trademarks, service marks, and trade names, this book is available under a Creative Commons Attribution-Noncommercial-No Derivatives 4.0 International Public License. We'd like to thank O'Reilly for allowing us to make this book available under a creative commons license and hope that you will choose to support this book (and us) by purchasing several copies (it makes an excellent gift for whichever holiday season is coming up next).
 
 === Using Code Examples
 

@@ -19,7 +19,7 @@ Dask allows you to primarily use the existing interfaces that you are used to (s
 
 [NOTE]
 ====
-On the other hand, if all your data fits in memory on a laptop, and you can finish your analysis before you've had a chance to brew a cup of your favorite warm beverage, you probably don't need Dask yet.
+On the other hand, if all your data fits in memory on a laptop, and you can finish your analysis before you've had a chance to brew a cup of your favorite warm beverage, you probably don't need [.keep-together]#Dask yet.#
 ====
 
 
@@ -97,11 +97,11 @@ Dask itself is not a library for accelerated Python, but you can use it in conju
 
 ===== SQL engines
 
-Dask itself does not have a SQL engine; however, link:$$https://oreil.ly/sBLQM$$[FugueSQL], link:$$https://oreil.ly/ZMVD1$$[Dask-SQL], and link:$$https://oreil.ly/4gHru$$[BlazingSQL] use Dask to provide a distributed SQL engine.footnote:[Blazing SQL is no longer maintained, though its concepts are interesting and may find life in another project.] Dask-sql uses the popular Apache Calcite project, which powers many other SQL engines. BlazingSQL extends Dask DataFrames to support GPU operations. cuDF DataFrames have a slightly different representation. Apache Arrow makes it straightforward to convert a Dask DataFrame to cuDF and vice versa.
+Dask itself does not have a SQL engine; however, link:$$https://oreil.ly/sBLQM$$[FugueSQL], link:$$https://oreil.ly/ZMVD1$$[Dask-SQL], and link:$$https://oreil.ly/4gHru$$[BlazingSQL] use Dask to provide a distributed SQL engine.footnote:[BlazingSQL is no longer maintained, though its concepts are interesting and may find life in another project.] Dask-SQL uses the popular Apache Calcite project, which powers many other SQL engines. BlazingSQL extends Dask DataFrames to support GPU operations. cuDF DataFrames have a slightly different representation. Apache Arrow makes it straightforward to convert a Dask DataFrame to cuDF and vice versa.
 
 [TIP]
 ====
-Dask-sql can read data from parts of the Hadoop ecosystem that Dask cannot read from (e.g., Hive).
+Dask-SQL can read data from parts of the Hadoop ecosystem that Dask cannot read from (e.g., Hive).
 ====
 
 ===== Workflow scheduling

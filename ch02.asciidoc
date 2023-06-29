@@ -127,7 +127,7 @@ include::./examples/dask/Dask-Ch2-Hello-Worlds.py[tags=make_bag_of_crawler]
 ----
 ====
 
-Now that you have a Dask bag collection, you can build everyone's favorite word count example on top of it. The first step is turning your bag of text into a bag of words, which you do by using `map` (<<make_a_bag_of_words>>). Once you have the bag of words, you can either use Dask's built-in `frequency` method (<<wc_freq>>) or write your own `frequency` method using functional transformations (<<wc_func>>).
+Now that you have a Dask bag collection, you can build everyone's favorite word count example on top of it. The first step is turning your bag of text into a bag of words, which you do by using `map` (see <<make_a_bag_of_words>>). Once you have the bag of words, you can either use Dask's built-in `frequency` method (see <<wc_freq>>) or write your own `frequency` method using functional transformations (see <<wc_func>>).
 
 [[make_a_bag_of_words]]
 .Turning a bag of text into a bag of words
