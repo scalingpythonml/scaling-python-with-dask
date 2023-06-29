@@ -242,7 +242,7 @@ Regardless of the libraries chosen to train and validate your model (which could
 
 ==== Distributing Data and Models Manually
 
-When loading data and pre-trained models to Dask workers, `dask.delayed` is the main tool (see <<dask_delayed_load_model>>). When distributing data, you should choose to use Dask’s collections: array and DataFrame. As you recall from <<ch04>>, each Dask DataFrame is made up of a pandas DataFrame. This is useful since you can write a method that takes each smaller DataFrame and returns a computed output. Custom functions and tasks can also be given per partition using Dask DataFrame’s pass:[<code>map&#x200b;_par&#x2060;titions</code>] function.
+When loading data and pre-trained models to Dask workers, `dask.delayed` is the main tool (see <<dask_delayed_load>>). When distributing data, you should choose to use Dask’s collections: array and DataFrame. As you recall from <<ch04>>, each Dask DataFrame is made up of a pandas DataFrame. This is useful since you can write a method that takes each smaller DataFrame and returns a computed output. Custom functions and tasks can also be given per partition using Dask DataFrame’s pass:[<code>map&#x200b;_par&#x2060;titions</code>] function.
 
 Remember to use delayed notation if you are reading in a large dataset, to delay materialization and avoid reading in unnecessarily early.
 
@@ -251,12 +251,12 @@ Remember to use delayed notation if you are reading in a large dataset, to delay
 `map_partitions` passes in a row-wise operation that is meant to be fit into a serializable code that is marshaled to workers. You can define a custom class that handles inference to be called, but it needs to be a static method that is called, not an instance-dependent method. We covered more on this in <<ch04>>.
 ====
 
-[[dask_delayed_load_model]]
-.Loading models on Dask workers
+[[dask_delayed_load]]
+.Loading large files on Dask workers
 ====
 [source, python]
 ----
-include::./examples/dask/Dask-Ch13_ML.py[tags=dask_delayed_load_model]
+include::./examples/dask/Dask-Ch13_ML.py[tags=dask_delayed_load]
 ----
 ====
 
