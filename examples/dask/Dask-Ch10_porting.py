@@ -53,13 +53,13 @@ cluster = SLURMCluster(
     cores=24,
     memory="500 GB"
 )
-cluster.scale(jobs=SLURM_JOB_COUNT)  # ask for N jobs from SLURM
+cluster.scale(jobs=SLURM_JOB_COUNT)  # Ask for N jobs from Slurm
 
 client = Client(cluster)
 
-# auto-scale between 10 and 100 jobs
+# Auto-scale between 10 and 100 jobs
 cluster.adapt(minimum_jobs=10, maximum_jobs=100)
-cluster.adapt(maximum_memory="10 TB")  # or use core/memory limits
+cluster.adapt(maximum_memory="10 TB")  # Or use core/memory limits
 #end::ex_slurm_deployment[]
 
 
