@@ -70,7 +70,7 @@ df_x = dd.read_parquet(
     filename,
     split_row_groups=2
 )
-#end::ex_load_nyc_taxi
+#end::ex_load_nyc_taxi[]
 
 
 # In[13]:
@@ -105,7 +105,7 @@ df.head()
 import pandas as pd
 pd.set_option('display.float_format', lambda x: '%.5f' % x)
 df.describe(percentiles=[.25, .5, .75]).compute()
-#end::ex_describe_percentiles
+#end::ex_describe_percentiles[]
 
 
 # In[18]:
@@ -131,7 +131,7 @@ sns.distplot(
 plt.setp(axes, yticks=[])
 plt.tight_layout()
 plt.show()
-#end::ex_plot_distances
+#end::ex_plot_distances[]
 
 
 # In[19]:
@@ -217,7 +217,7 @@ sns.distplot(df["log_trip_duration"], bins=100)
 
 #tag::ex_dask_random_split[]
 train, test, validation = df.random_split([0.8, 0.1, 0.1], random_state=123)
-#end::ex_dask_random_split
+#end::ex_dask_random_split[]
 
 
 #
@@ -475,7 +475,7 @@ xgb.plot_importance(model, max_num_features=28, height=0.7)
 
 pred = model.predict(dtest)
 pred = np.exp(pred) - 1
-#end::ex_xgb_train_plot_importance
+#end::ex_xgb_train_plot_importance[]
 
 
 # In[61]:
@@ -511,7 +511,7 @@ dask_arrays = [
     da.from_delayed(delayed_reader, shape=(4608, 5200,), dtype=np.float32)
     for delayed_reader in lazy_arrays
 ]
-#end::dask_delayed_load
+#end::dask_delayed_load[]
 
 
 # In[63]:
@@ -536,7 +536,7 @@ def partition_operation(df):
 ddf = dd.read_csv(“metadata_of_files”)
 results = ddf.map_partitions(partition_operation)
 results.compute()
-#end::Dask_DataFrame_map_partition_inference
+#end::Dask_DataFrame_map_partition_inference[]
 
 
 #tag::batched_operations[]
@@ -570,4 +570,4 @@ def handle_partition(df):
 ddf = dd.read_csv("metadata.csv”)
 results = ddf.map_partitions(handle_partition)
 results.compute()
-#end::batched_operations
+#end::batched_operations[]
