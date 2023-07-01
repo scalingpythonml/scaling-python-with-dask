@@ -69,7 +69,7 @@ df_x = dd.read_parquet(
     filename,
     split_row_groups=2
 )
-#end::ex_load_nyc_taxi
+#end::ex_load_nyc_taxi[]
 
 
 df.dtypes
@@ -96,7 +96,6 @@ scaler = StandardScaler()
 scaler.fit(trip_dist_df)
 trip_dist_df_scaled = scaler.transform(trip_dist_df)
 trip_dist_df_scaled.head()
-
 #tag::ex_scaling_variables[]
 
 
@@ -164,7 +163,7 @@ XGBClassifier()
 with parallel_backend('dask'):
     gs.fit(X, y)
 print(gs.cv_results_)
-#end::ex_joblib
+#end::ex_joblib[]
 
 
 #tag::ex_describe_percentiles[]
@@ -172,7 +171,7 @@ import pandas as pd
 
 pd.set_option('display.float_format', lambda x: '%.5f' % x)
 df.describe(percentiles=[.25, .5, .75]).compute()
-#end::ex_describe_percentiles
+#end::ex_describe_percentiles[]
 
 
 # tag::ex_plot_distances[]
@@ -195,7 +194,7 @@ sns.distplot(
 plt.setp(axes, yticks=[])
 plt.tight_layout()
 plt.show()
-#end::ex_plot_distances
+#end::ex_plot_distances[]
 
 
 # Show that each col is a numpy ndarray. Note how array size is NaN until we call compute.
@@ -355,7 +354,6 @@ reg.fit(X_train, y_train)
 y_pred = reg.predict(X_test)
 
 r2_score(y_test, y_pred)
-
 #end::linear_regression[]
 
 
@@ -606,8 +604,7 @@ booster = xgb.dask.train(
     dtrain,
     num_boost_round=4,
     evals=[(dtrain, "train")])
-
-#end::ex_xgb_basic_usage
+#end::ex_xgb_basic_usage[]
 
 
 # Just like standard xgb Dmatrix, but note that we are explicitly passing
@@ -641,7 +638,7 @@ xgb.plot_importance(model, max_num_features=28, height=0.7)
 
 pred = model.predict(dtest)
 pred = np.exp(pred) - 1
-#end::ex_xgb_train_plot_importance
+#end::ex_xgb_train_plot_importance[]
 
 
 #tag::ex_xgb_early_stopping_and_inference[]
@@ -673,8 +670,7 @@ def predict(client, model, X):
     predictions = xgb.predict(client, model, X)
     assert isinstance(predictions, dd.Series)
     return predictions
-
-#end::ex_xgb_early_stopping_and_inference
+#end::ex_xgb_early_stopping_and_inference[]
 
 
 #tag::dask_delayed_load[]
@@ -704,7 +700,7 @@ dask_arrays = [
     da.from_delayed(delayed_reader, shape=(4608, 5200,), dtype=np.float32)
     for delayed_reader in lazy_arrays
 ]
-# end::dask_delayed_load
+# end::dask_delayed_load[]
 
 
 #tag::Dask_DataFrame_map_partition_inference[]
@@ -732,8 +728,7 @@ ddf.map_partitions(
     lambda partition: partition.apply(
         lambda row: rowwise_operation(row), axis=1), meta=(
             'ddf', object))
-
-# end::Dask_DataFrame_map_partition_inference
+# end::Dask_DataFrame_map_partition_inference[]
 
 
 # !pip install dask_sql
@@ -867,4 +862,4 @@ def handle_partition(df):
 ddf = dd.read_csv("metadata.csv”)
 results = ddf.map_partitions(handle_partition)
 results.compute()
-#end::batched_operations
+#end::batched_operations[]
