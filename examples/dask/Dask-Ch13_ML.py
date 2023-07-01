@@ -96,7 +96,7 @@ scaler = StandardScaler()
 scaler.fit(trip_dist_df)
 trip_dist_df_scaled = scaler.transform(trip_dist_df)
 trip_dist_df_scaled.head()
-#tag::ex_scaling_variables[]
+#end::ex_scaling_variables[]
 
 
 #tag::ex_categorical_variables[]
@@ -109,7 +109,7 @@ cat = Categorizer(categories={"payment_type": CategoricalDtype([1, 2, 3, 4])})
 categorized_df = cat.fit_transform(payment_type_amt_df)
 categorized_df.dtypes
 payment_type_amt_df.head()
-#tag::ex_categorical_variables[]
+#end::ex_categorical_variables[]
 
 
 #tag::ex_dummy_variables[]
@@ -119,7 +119,7 @@ dummy = DummyEncoder()
 dummified_df = dummy.fit_transform(categorized_df)
 dummified_df.dtypes
 dummified_df.head()
-#tag::ex_dummy_variables[]
+#end::ex_dummy_variables[]
 
 
 poly = PolynomialFeatures(2)
@@ -253,7 +253,7 @@ from dask_ml.model_selection import train_test_split
 
 X_train, X_test, y_train, y_test = train_test_split(
     df['trip_distance'], df['total_amount'])
-#end::ex_dask_random_split
+#end::ex_dask_random_split[]
 
 
 X_train, X_test, y_train, y_test = train_test_split(
