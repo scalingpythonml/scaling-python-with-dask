@@ -6,61 +6,62 @@ We've covered a few distributed system concepts briefly as needed in this book, 
 
 === Testing
 
-Testing is an often overlooked part of data science and data engineering. Some of our tools, like SQL and Jupyter notebooks, do not encourage or make it easy to test&mdash;but this does not absolve us of the responsibility to test our code. Data privacy concerns can add another layer of challenge, where we don't want to store user data for testing, requiring us to put in the effort to create "fake" data for testing or break our code down into testable components where we don't need user data.
+Testing is an often overlooked part ((("testing")))of data science and data engineering. Some of our tools, like SQL and Jupyter notebooks, do not encourage or make it easy to test&mdash;but this does not absolve us of the responsibility to test our code. Data privacy concerns can add another layer of challenge, where we don't want to store user data for testing, requiring us to put in the effort to create "fake" data for testing or break our code down into testable components where we don't need user data.
 
 ==== Manual Testing
 
-We often perform some kind of manual testing while writing software or data tools. This can include simply running the tool and eyeballing the results to see if they look reasonable. Manual testing is time-consuming and not automatically repeatable, so while it is great during development, it is insufficient for long-lived projects.
+We often perform some kind of manual ((("testing", "manual")))((("manual testing")))testing while writing software or data tools. This can include simply running the tool and eyeballing the results to see if they look reasonable. Manual testing is time-consuming and not automatically repeatable, so while it is great during development, it is insufficient for long-lived projects.
 
 ==== Unit Testing
 
-Unit testing refers to testing individual units of code rather than the whole system together. This requires having your code be composed in different units, like modules or functions. While this is less common with notebooks, we believe that structuring your code for testability is a good practice to follow.
+Unit testing refers to testing individual ((("testing", "unit testing")))((("unit testing")))units of code rather than the whole system together. This requires having your code be composed in different units, like modules or functions. While this is less common with notebooks, we believe that structuring your code for testability is a good practice to follow.
 
 Writing unit tests for notebooks can be challenging; doctests are slightly easier to inline within a notebook. If you want to use traditional unit test libraries, the https://oreil.ly/yUxXy[+++ipython-unittest magics+++] lets you inline your unit tests within your notebook.
 
 ==== Integration Testing
 
-Integration testing refers to testing how different parts of a system work together. It is often much closer to the real usage of your code, but can be more complicated as it involves setting up other systems to test against. You can (to an extent) use some of the same libraries for integration testing, but these tests tend to involve more setup and teardown work.footnote:[This can include creating a database, filling it with data, starting up cluster services, etc.] Integration testing is also more likely to be "flaky," since making sure all of the different components your software needs are present in your test environment before starting the tests can be challenging.
+Integration testing refers to ((("testing", "integration testing")))((("integration testing")))testing how different parts of a system work together. It is often much closer to the real usage of your code, but can be more complicated as it involves setting up other systems to test against. You can (to an extent) use some of the same libraries for integration testing, but these tests tend to involve more setup and teardown work.footnote:[This can include creating a database, filling it with data, starting up cluster services, etc.] Integration testing is also more likely to be "flaky," since making sure all of the different components your software needs are present in your test environment before starting the tests can be challenging.
 
 ==== Test-Driven Development
 
-Test-driven development involves taking the requirements or expectations of your code and writing tests and then writing the code after. For data science pipelines this can often be done by creating a sample input (sometimes called a golden set) and writing out what you expect the output to be. Test-driven development can be complicated, especially when integrating multiple data sources.
+Test-driven development involves ((("testing", "test-driven development")))((("test-driven development")))((("development", "test-driven")))taking the requirements or expectations of your code and writing tests and then writing the code after. For data science pipelines this can often be done by creating a sample input (sometimes called a golden set) and writing out what you expect the output to be. Test-driven development can be complicated, especially when integrating multiple data sources.
 
 While you don't need to use test-driven development, we believe it's important to make tests alongside the development of your data pipelines. Tests added after development are better than no tests, but in our experience the context you have during the development helps you create better tests (and validate your assumptions [.keep-together]#early on).#
 
 ==== Property Testing
 
-Property testing is a potentially great solution to the challenge of coming up with test data that covers all of the edge cases in terms of data that your code could trip up on. Instead of writing the traditional "for input A, result B is expected," you specify properties, like "if we have 0 customers, we should have 0 sales" or "all (valid) customers should have a fraud score after this pipeline."
+. Property testing is a potentially great ((("property testing")))((("testing", "property testing")))solution to the challenge of coming up with test data that covers all of the edge cases in terms of data that your code could trip up on. Instead of writing the traditional "for input A, result B is expected," you specify properties, like "if we have 0 customers, we should have 0 sales" or "all (valid) customers should have a fraud score after this pipeline."
 
 https://oreil.ly/zQhnh[+++Hypothesis+++] is the most popular library for property testing in [.keep-together]#Python.#
 
 ==== Working with Notebooks
 
-Testing notebooks is painful, which is unfortunate given their immense popularity. Generally, you can either have your testing outside of the notebook, which allows you the use of existing Python testing libraries, or try to put it inside the notebook.
+Testing notebooks is painful, which is ((("notebooks", "testing")))((("testing", "notebooks")))unfortunate given their immense popularity. Generally, you can either have your testing outside of the notebook, which allows you the use of existing Python testing libraries, or try to put it inside the notebook.
 
 ==== Out-of-Notebook Testing
 
-The traditional option (besides ignoring it) is to refactor the parts of your code you want to test into separate regular Python files and test those using normal testing libraries. While the partial refactoring can be painful, rewriting to more testable components can bring benefits to debugging as well.
+The traditional option (besides ignoring it) is ((("notebooks", "testing", "out-of-notebook testing")))((("testing", "notebooks", "out-of-notebook testing")))((("out-of-notebook testing")))to refactor the parts of your code you want to test into separate regular Python files and test those using normal testing libraries. While the partial refactoring can be painful, rewriting to more testable components can bring benefits to debugging as well.
 
 The https://oreil.ly/3_YsK[+++testbook project+++] is an alternative to refactoring that takes interesting approach, allowing you to write your tests outside of your notebook, and not requiring you to give up on notebooks. Instead, you use the libraries decorator to annotate tests&mdash;for example, `@testbook('untitled_7.ipynb', execute=True)` will import and execute the notebook before executing the test. You can also control which parts of the notebook are executed, but this partial execution can be brittle and prone to breakage on updates.
 
 ==== In-Notebook Testing: In-Line Assertions
 
-Some people like to use in-line assertions in their notebooks as a form of testing. In this case, if something fails (e.g., the assertion that there should be some customers), the rest of the notebook will not run. While we think that having in-line assertions is great, we don't believe it is a replacement for traditional testing.
+Some people like to use in-line ((("testing", "notebooks", "in-notebook testing")))((("notebooks", "testing", "in-notebook testing")))((("in-notebook testing")))
+assertions in their notebooks as a form of testing. In this case, if something fails (e.g., the assertion that there should be some customers), the rest of the notebook will not run. While we think that having in-line assertions is great, we don't believe it is a replacement for traditional testing.
 
 === Data and Output Validation
 
-While good testing can catch many problems, sometimes the real world is more creative than we can ever be, and our code will still fail. In many situations, the worst case is that our program fails and produces an incorrect output that we don't know is incorrect and then we (or others) take action based on its results. Validation attempts to notify us when our job has failed so that we can take action on it before someone else does. In many ways, it is like running spell-check on a term paper before submission&mdash;if there are a few errors, OK, but if everything is red, it's probably good to double-check. Depending on what your job does, validating it will be different.
+While good testing can catch many ((("validation", "output", id="vldoupu")))((("output", "validation", id="oupuvdt")))problems, sometimes the real world is more creative than we can ever be, and our code will still fail. In many situations, the worst case is that our program fails and produces an incorrect output that we don't know is incorrect and then we (or others) take action based on its results. Validation attempts to notify us when our job has failed so that we can take action on it before someone else does. In many ways, it is like running spell-check on a term paper before submission&mdash;if there are a few errors, OK, but if everything is red, it's probably good to double-check. Depending on what your job does, validating it will be different.
 
 There are a number of different tools you can use to validate the output of your Dask job, including of course Dask itself. Some tools, like https://oreil.ly/Vfb1Z[+++TFX's data validation+++], attempt to compare previous versions for statistical similarity and schema changes.footnote:[We do not recommend TFX for new environments, as it can be challenging to get running.] https://oreil.ly/RN8aI[+++Pydantic+++] is relatively new, but has Dask integration and does excellent type and schema validation. You can also do more complex statistical assertions using its Hypothesis component (which is different from Python's Hypothesis).
 
 ML models can be more difficult to validate without impacting users, but statistical techniques can still help (as well as incremental deployments). Since ML models are produced from data, a good (partial) step can be validating the data.
 
-It is useful to think of what the implications could be of your pipeline failing. For example, you might want to spend more time validating a pipeline that determines dosages of medicine in a clinical trial, compared to a job that predicts which version of your ad will be the most successful.footnote:[We acknowledge that society is often not structured this way.]
+It is useful to think of what the implications could be of your pipeline failing. For example, you might want to spend more time validating a pipeline that determines dosages of medicine in a clinical trial, compared to a job that predicts which version of your ad will ((("validation", "output", startref="vldoupu")))((("output", "validation", startref="oupuvdt")))be the most successful.footnote:[We acknowledge that society is often not structured this way.]
 
 === Peer-to-Peer Versus Centralized Distributed
 
-Even inside of a distributed system, there are various levels of "distributed."footnote:[Note: An alternate title for this section might be "How Dask Is Different From BitTorrent."] Dask is a centralized distributed system, where there is a static leader node responsible for various tasks and coordination among the workers. In more distributed systems, there is no static leader node, and if the head node goes away, the remaining peers can elect a new head node, like with Zookeeper. In even more distributed systems, there is no head node distinction, and all of the nodes in the cluster are effectively equally capable (from a software point of view; the hardware may be different).
+Even inside of a distributed system, there ((("centralized distributed systems")))((("distributed systems", "centralized")))are various levels of "distributed."footnote:[Note: An alternate title for this section might be "How Dask Is Different From BitTorrent."] Dask is a centralized distributed system, where there is a static leader node responsible for various tasks and coordination among the workers. In more distributed systems, there is no static leader node, and if the head node goes away, the remaining peers can elect a new head node, like with Zookeeper. In even more distributed systems, there is no head node distinction, and all of the nodes in the cluster are effectively equally capable (from a software point of view; the hardware may be different).
 
 Centralized distributed systems tend to be faster while encountering limitations earlier in terms of scaling and challenges around the failure of the centralized [.keep-together]#component.#
 
@@ -70,29 +71,29 @@ There are many different ways to split up our work, and in this book we've mostl
 
 ==== Task Parallelism
 
-`dask.delayed` and Python's multi-processing both represent task parallelism. With task parallelism, you are not limited to executing the same code. Task parallelism offers the most flexibility, but requires more changes to your code to take advan&shy;tage&nbsp;of.
+`dask.delayed` and Python's ((("parallelism", "task")))((("task parallelism")))multi-processing both represent task parallelism. With task parallelism, you are not limited to executing the same code. Task parallelism offers the most flexibility, but requires more changes to your code to take advan&shy;tage&nbsp;of.
 
 ==== Data Parallelism
 
-Data parallelism refers to taking the same operation and running it in parallel on different chunks (or partitions) of data. This is a wonderful technique for operations on DataFrames and arrays. Data parallelism depends on partitioning to split up the work. We cover partitioning in detail in <<ch04>>.
+Data parallelism ((("data parallelism")))((("parallelism", "data parallelism")))refers to taking the same operation and running it in parallel on different chunks (or partitions) of data. This is a wonderful technique for operations on DataFrames and arrays. Data parallelism depends on partitioning to split up the work. We cover partitioning in detail in <<ch04>>.
 
 ===== Shuffles and narrow versus wide transformations
 
-_Narrow_ transformations (or data parallelism without any aggregation or shuffle) are often much faster than _wide_ transformations, which involve shuffles or aggregations. While this terminology is borrowed from the Spark community, the distinction (and implications for fault tolerance) applies to Dask's data parallel operations as well.
+_Narrow_ transformations (or data parallelism without any ((("data parallelism", "narrow transformations")))((("parallelism", "data parallelism", "narrow transformations")))((("data parallelism", "wide transformations")))((("parallelism", "data parallelism", "wide transformations")))((("wide transformations")))((("narrow transformations")))((("transformations", "narrow")))((("transformations", "wide")))((("shuffles")))aggregation or shuffle) are often much faster than _wide_ transformations, which involve shuffles or aggregations. While this terminology is borrowed from the Spark community, the distinction (and implications for fault tolerance) applies to Dask's data parallel operations as well.
 
 ===== Limitations
 
-Data parallelism is not well suited to many different kinds of work. Even when working on data problems, it is not as well suited to doing many different things (non-uniform computation). Data parallelism is often poorly suited to computation on small amounts of data&mdash;for example, model serving where you may need to evaluate a single request at a time.
+Data parallelism is not well suited ((("data parallelism", "limitations")))((("parallelism", "data parallelism", "limitations")))to many different kinds of work. Even when working on data problems, it is not as well suited to doing many different things (non-uniform computation). Data parallelism is often poorly suited to computation on small amounts of data&mdash;for example, model serving where you may need to evaluate a single request at a time.
 
 ==== Load Balancing
 
-Load balancing is another way of looking at parallelism where a system (or systems) route the requests (or tasks) to different servers. Load balancing can range from basic, like round-robin, to "smart," taking advantage of information about the relative load, resources, and data on the workers/servers to schedule the task. The more complex the load balancing is, the more work the load balancer has to do. In Dask all of this load balancing is handled centrally, which requires that the head node has a relatively complete view of most workers' state to intelligently assign tasks.
+Load balancing is another ((("parallelism", "load balancing")))((("load balancing")))way of looking at parallelism where a system (or systems) route the requests (or tasks) to different servers. Load balancing can range from basic, like round-robin, to "smart," taking advantage of information about the relative load, resources, and data on the workers/servers to schedule the task. The more complex the load balancing is, the more work the load balancer has to do. In Dask all of this load balancing is handled centrally, which requires that the head node has a relatively complete view of most workers' state to intelligently assign tasks.
 
 The other extreme is "simple" load balancing, where some systems, like DNS round-robin-based load balancing (not used in Dask), do not have any information about the system loads and just pick the "next" node. When tasks (or requests) are roughly equal in complexity, round-robin-based load balancing can work well. This technique is most often used for handling web requests or external API requests where you don't have a lot of control over the client making the requests. You are most likely to see this in model serving, like translating text or predicting fraudulent transactions.
 
 === Network Fault Tolerance and CAP Theorem
 
-If you search for "distributed computing concepts," you will likely come across the CAP theorem. The CAP theorem is most relevant for distributed data stores, but it's useful to understand regardless. The theorem states that we cannot build a distributed system that is consistent, available, and partition-tolerant. Partitions can occur from hardware failure or, more commonly, overloaded network links.
+If you search for "distributed computing concepts," you will likely come across the CAP theorem. The CAP theorem ((("CAP theorem")))((("fault tolerance")))is most relevant for distributed data stores, but it's useful to understand regardless. The theorem states that we cannot build a distributed system that is consistent, available, and partition-tolerant. Partitions can occur from hardware failure or, more commonly, overloaded network links.
 
 Dask itself has already made the trade-off of not being partition-tolerant; whichever side of a network partition has the "leader" is the side that continues on, and the other side is unable to progress.
 
@@ -102,7 +103,7 @@ The https://jepsen.io[+++Jepsen project+++], by Kyle Kingsbury, is one of the be
 
 === Recursion (Tail and Otherwise)
 
-Recursion refers to functions that call themselves (either directly or indirectly). When it’s indirect, it’s called _co-recursion_, and recursive functions that return the final value are called _tail-recursive_.footnote:[_Indirect_ here means with another function in between; for example, A calls B, which calls A, is an example of co-recursion.] Tail-recursive functions are similar to loops, and sometimes the language can translate tail-recursive calls into loops or maps.
+Recursion refers to functions that ((("recursion")))call themselves (either directly or indirectly). When it’s indirect, it’s called _co-recursion_, and recursive functions that return the final value are called _tail-recursive_.footnote:[_Indirect_ here means with another function in between; for example, A calls B, which calls A, is an example of co-recursion.] Tail-recursive functions are similar to loops, and sometimes the language can translate tail-recursive calls into loops or maps.
 
 Recursive functions are sometimes avoided in languages that cannot optimize them, since there is overhead to calling a function. Instead, users will try to express the recursive logic using loops.
 
@@ -112,7 +113,7 @@ In Dask, while recursive calls don’t have the exact same stack problem, excess
 
 === Versioning and Branching: Code and Data
 
-Versioning is an important computer science concept, and it can be applied to both code and data. Ideally, versioning makes it easy to undo errors and go back to earlier versions or explore multiple directions simultaneously. Many of the items we produce are a combination of both our code and our data; to truly meet the goal of being able to quickly roll back and support experimentation, you will want to have versioning for both your code and your data.
+Versioning is an important computer ((("versioning")))((("branching")))science concept, and it can be applied to both code and data. Ideally, versioning makes it easy to undo errors and go back to earlier versions or explore multiple directions simultaneously. Many of the items we produce are a combination of both our code and our data; to truly meet the goal of being able to quickly roll back and support experimentation, you will want to have versioning for both your code and your data.
 
 Version control tools for source code have existed for a long time. For code, https://git-scm.com[+++Git+++] has become the most popular open source version control system in usage, overtaking tools like Subversion, Concurrent Version Systems, and many more.
 
@@ -126,13 +127,13 @@ Instead, tools like https://lakefs.io[+++LakeFS+++] add Git-like versioning sema
 
 === Isolation and Noisy Neighbors
 
-So far, we've talked about isolation in the context of being able to have your Python packages, but there are more kinds of isolation. Some other levels of isolation include CPU, GPU, memory, and network.footnote:[For example, two ML tasks on the same node may both try to use all of the CPU resources.] Many cluster managers do not provide full isolation&mdash;this means that if your tasks get scheduled on the wrong nodes, they might have bad performance. A common solution to this is requesting the amounts of resources in-line with the full node to avoid having other jobs scheduled alongside your own.
+So far, we've talked about isolation in the ((("isolation")))context of being able to have your Python packages, but there are more kinds of isolation. Some other levels of isolation include CPU, GPU, memory, and network.footnote:[For example, two ML tasks on the same node may both try to use all of the CPU resources.] Many cluster managers do not provide full isolation&mdash;this means that if your tasks get scheduled on the wrong nodes, they might have bad performance. A common solution to this is requesting the amounts of resources in-line with the full node to avoid having other jobs scheduled alongside your own.
 
 Strict isolation can also have downsides, especially if they don't support bursting. Strict isolation without bursting can result in resource waste, but for mission-critical workflows this is often the trade-off.
 
 === Machine Fault Tolerance
 
-Fault tolerance is a key concept in distributed computing because the more computers you add, the higher the probability of a fault on any given computer. In some smaller deployments of Dask, machine fault tolerance is not as important, so if you're running Dask exclusively in local mode or on around three computers you keep under your desk, you might be OK to skip this section.footnote:[We choose three here since the probability of the failure of a worker node that does not have the driver is only 2x that of the driver (which we can't recover from), and this scales linearly as you add more machines.]
+Fault tolerance is a key concept in ((("fault tolerance", "machine fault tolerance")))((("machine tolerance")))distributed computing because the more computers you add, the higher the probability of a fault on any given computer. In some smaller deployments of Dask, machine fault tolerance is not as important, so if you're running Dask exclusively in local mode or on around three computers you keep under your desk, you might be OK to skip this section.footnote:[We choose three here since the probability of the failure of a worker node that does not have the driver is only 2x that of the driver (which we can't recover from), and this scales linearly as you add more machines.]
 
 Dask's core fault tolerance approach is to re-compute lost data. This is the approach chosen by many modern data-parallel systems since failures are not super common, so making the situation with no failures fast is the priority.footnote:[You can cache intermediate steps to reduce the cost of recomputing, but this only works if the cached location has not failed and requires you to clean up any caching.]
 
@@ -146,9 +147,9 @@ Fault tolerance techniques are often also used when scaling down, since they bot
 
 === Scalability (Up and Down)
 
-Scalability refers to the ability of a distributed system to grow to handle larger problems and the sometimes overlooked ability to shrink when the needs are reduced (say after the grad students go to sleep). In computer science, we generally categorize scalability as either _horizontal_ or _vertical_. Horizontal scaling refers to adding more computers, whereas vertical scaling refers to using bigger computers.
+Scalability refers to the ability of a distributed system to grow to handle larger problems and the sometimes overlooked ability to shrink when the needs are reduced (say after the grad students go to sleep). In computer science, we generally categorize scalability ((("scalability", "horizontal")))((("scalability", "vertical")))((("horizontal scalability")))((("vertical scalability")))as either _horizontal_ or _vertical_. Horizontal scaling refers to adding more computers, whereas vertical scaling refers to using bigger computers.
 
-Another important consideration is _auto_ versus _manual_ scaling. In automatic scaling, the execution engine (in our case Dask) will scale the resources for us. Dask's auto-scaler will horizontally scale by adding your workers when needed (provided the deployment supports it). To scale up vertically, you can add larger instance types to Dask's auto-scaler and request those resources with your jobs.
+Another important ((("automatic scaling")))((("manual scaling")))((("scalability", "automatic")))((("scalability", "manual")))consideration is _auto_ versus _manual_ scaling. In automatic scaling, the execution engine (in our case Dask) will scale the resources for us. Dask's auto-scaler will horizontally scale by adding your workers when needed (provided the deployment supports it). To scale up vertically, you can add larger instance types to Dask's auto-scaler and request those resources with your jobs.
 
 [NOTE]
 ====
@@ -157,7 +158,7 @@ In a way, Dask's task "stealing" can be viewed as a form of automatic vertical s
 
 === Cache, Memory, Disk, and Networking: [.keep-together]#How the Performance Changes#
 
-Dask jobs are frequently data-heavy, and the cost of transferring data to the CPU (or GPU) can have a large impact on performance. CPU cache is normally more than an order of magnitude faster than reading from memory. Reading data from an SSD is roughly 4x slower than memory, and sending data within a data center can be ~10 times slower.footnote:[Exact performance numbers depend on your hardware.] CPU caches can normally only contain a few elements.
+Dask jobs are frequently data-heavy, ((("CPU cache")))((("memory")))and the cost of transferring data to the CPU (or GPU) can have a large impact on performance. CPU cache is normally more than an order of magnitude faster than reading from memory. Reading data from an SSD is roughly 4x slower than memory, and sending data within a data center can be ~10 times slower.footnote:[Exact performance numbers depend on your hardware.] CPU caches can normally only contain a few elements.
 
 Transferring data from RAM (or even worse, disk/network) can result in the CPU stalling or not being able to do any useful work. This makes chaining operations especially important.
 
@@ -165,17 +166,17 @@ The https://oreil.ly/Iyzds[+++Computers Are Fast website+++] does an excellent j
 
 === Hashing
 
-Hashing is an important part of not only Dask, but also computer science in general. Dask uses hashing to convert complex data types into integers to assign the data to the correct partition. Hashing is generally a "one-way" operation that embeds the larger key space into a smaller key space. For many operations, like assigning data to the correct partitions, you want hashing to be fast. However, for tasks like pseudonymization and passwords, you intentionally choose slower hashing algorithms and frequently add more iterations to make it more difficult to reverse. It's important to pick the right hashing algorithm to match your purposes, since the different behaviors could be a feature in one use case but a bug in the other.
+Hashing is an important part of ((("hashing")))not only Dask, but also computer science in general. Dask uses hashing to convert complex data types into integers to assign the data to the correct partition. Hashing is generally a "one-way" operation that embeds the larger key space into a smaller key space. For many operations, like assigning data to the correct partitions, you want hashing to be fast. However, for tasks like pseudonymization and passwords, you intentionally choose slower hashing algorithms and frequently add more iterations to make it more difficult to reverse. It's important to pick the right hashing algorithm to match your purposes, since the different behaviors could be a feature in one use case but a bug in the other.
 
 === Data Locality
 
-Data transfer costs can quickly overwhelm data compute costs for simple computation. When possible, scheduling tasks on nodes that already have the data is often much faster since the task has to be scheduled somewhere (e.g., you pay the network cost of copying the task regardless), but you can avoid moving the data if you put the task in the right place. Network copies are also generally slower than disk.
+Data transfer costs can quickly ((("locality")))overwhelm data compute costs for simple computation. When possible, scheduling tasks on nodes that already have the data is often much faster since the task has to be scheduled somewhere (e.g., you pay the network cost of copying the task regardless), but you can avoid moving the data if you put the task in the right place. Network copies are also generally slower than disk.
 
 Dask allows you to specify a desired worker in your `client.submit` with `workers=`. Also, if you have data that is going to be accessed everywhere, rather than doing a regular scatter, you can broadcast it by adding `broadcast=True` so that all workers have a full copy of the collection.
 
 === Exactly Once Versus At Least Once
 
-In most software development the concept of _exactly once_ is so much of a given that we don't even think of it as a requirement. For example, double applied debits or credits to a bank account could be catastrophic. Exactly-once execution in Dask requires the use of external systems because of Dask's approach to fault tolerance. A common approach is to use a database (distributed or non-distributed) along with transactions to ensure exactly-once execution.
+In most software development ((("exactly-once execution")))the concept of _exactly once_ is so much of a given that we don't even think of it as a requirement. For example, double applied debits or credits to a bank account could be catastrophic. Exactly-once execution in Dask requires the use of external systems because of Dask's approach to fault tolerance. A common approach is to use a database (distributed or non-distributed) along with transactions to ensure exactly-once execution.
 
 Not all distributed systems have this challenge. Systems where the inputs and outputs are controlled and fault tolerance is achieved by redundant writes have an easier time with exactly-once execution. Some systems that use recompute on failure are still able to offer exactly-once execution by integrating distributed locks.
 
