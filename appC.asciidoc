@@ -11,11 +11,11 @@ Some of this advice is common across distributed systems, including Ray and Apac
 
 === Using Debuggers
 
-There are a few different options for using debuggers in Dask. PyCharm and PDB both support connecting to remote debugger processes, but figuring out where your task is running and also setting up the remote debugger can be a challenge. For details on PyCharm remote debugging, see the JetBrains article https://oreil.ly/HGl90[+++"Remote Debugging with PyCharm"+++]. One option is to use epdb and run `import epdb; epdb.serve()` inside of an actor. The easiest option, which is not perfect, is to have Dask re-run failed tasks locally by running `client.recreate_error_locally` on the future that failed.
+There are a few different ((("debugging", "debuggers")))((("PyCharm")))((("PDB (Protein Data Bank) files")))options for using debuggers in Dask. PyCharm and PDB both support connecting to remote debugger processes, but figuring out where your task is running and also setting up the remote debugger can be a challenge. For details on PyCharm remote debugging, see the JetBrains article https://oreil.ly/HGl90[+++"Remote Debugging with PyCharm"+++]. One option is to use epdb and run `import epdb; epdb.serve()` inside of an actor. The easiest option, which is not perfect, is to have Dask re-run failed tasks locally by running `client.recreate_error_locally` on the future that failed.
 
 === General Debugging Tips with Dask
 
-You likely have your own standard debugging techniques for working with Python code, and this is not meant to replace it. Some general techniques that are helpful with Dask include:
+You likely have your own standard ((("debugging", "tips")))debugging techniques for working with Python code, and this is not meant to replace it. Some general techniques that are helpful with Dask include:
 
 * Break up failing functions into smaller functions; smaller functions make it easier to isolate the problem.
 * Be careful about referencing variables from outside of a function, which can result in unintended scope capture, serializing more data and objects than intended.
@@ -28,13 +28,13 @@ With these tips you will (often) be able to find yourself in a familiar enough e
 
 === Native Errors
 
-Native errors and core dumps can be challenging to debug for the same reasons as container errors. Since these types of errors often result in the container exiting, accessing the debugging information can become challenging. Depending on your deployment, there may be a centralized log aggregator that collects all of the logs from the containers, although sometimes these can miss the final few parts of the log (which you likely care about the most). A quick solution to this is to add a `sleep` to the launch script (on failure) so that you can connect to the container (e.g., `[dasklaunchcommand] || sleep 100000`) and use native debugging tools.
+Native errors and core dumps can ((("debugging", "native errors")))((("native errors")))((("errors", "native errors")))be challenging to debug for the same reasons as container errors. Since these types of errors often result in the container exiting, accessing the debugging information can become challenging. Depending on your deployment, there may be a centralized log aggregator that collects all of the logs from the containers, although sometimes these can miss the final few parts of the log (which you likely care about the most). A quick solution to this is to add a `sleep` to the launch script (on failure) so that you can connect to the container (e.g., `[dasklaunchcommand] || sleep 100000`) and use native debugging tools.
 
 However, accessing the internals of a container can be easier said than done. In many production environments, you may not be able to get remote access (e.g., `kubectly exec` on Kubernetes) for security reasons. If that is the case, you can (sometimes) add a shutdown script to your container specification that copies the core files to a location that persists after the container shuts down (e.g., `s3` or `HDFS` or `NFS`). Your cluster administrator may also have recommended tools to help debug (and if not, may be able to help you create a recommended path for your organization).
 
 === Some Notes on Official Advice for Handling Bad Records
 
-Dask's https://oreil.ly/I9wDw[+++official debugging guide+++] recommends removing failed futures manually. When loading data that can be processed in smaller chunks than entire partitions at a time, returning tuples with successful and failed data is better, since removing entire partitions is not conducive to determining the root cause. This technique is demonstrated in <<dask-debugging-handle_appC_1686051006707>>.
+Dask's https://oreil.ly/I9wDw[+++official debugging guide+++] recommends removing failed futures manually. When ((("bad records")))((("debugging", "bad records")))loading data that can be processed in smaller chunks than entire partitions at a time, returning tuples with successful and failed data is better, since removing entire partitions is not conducive to determining the root cause. This technique is demonstrated in <<dask-debugging-handle_appC_1686051006707>>.
 
 [[dask-debugging-handle_appC_1686051006707]]
 .Alternative approach for handling bad data
@@ -52,7 +52,7 @@ Bad records here does not mean exclusively records that fail to load or parse; t
 
 === Dask Diagnostics
 
-Dask has built-in diagnostic tools for both https://oreil.ly/Uin87[+++distributed+++] and https://oreil.ly/JO4qR[+++local+++] schedulers. The local diagnostics are more featureful with pretty much every part of debugging. These diagnostics can be especially great for debugging situations where you see a slow degradation of performance over time.
+Dask has built-in diagnostic tools for both https://oreil.ly/Uin87[+++distributed+++] and https://oreil.ly/JO4qR[+++local+++] schedulers. The ((("diagnostics")))((("debugging", "diagnostics")))local diagnostics are more featureful with pretty much every part of debugging. These diagnostics can be especially great for debugging situations where you see a slow degradation of performance over time.
 
 [NOTE]
 ====
