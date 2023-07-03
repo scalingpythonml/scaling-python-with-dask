@@ -5,9 +5,9 @@
 
 This book has been focused on using Dask to build batch applications, where data is collected or provided from the user and then used for calculations. Another important group of use cases are the situations requiring you to process data as it becomes available.footnote:[Albeit generally with some (hopefully small) delay.] Processing data as it becomes available is called streaming.
 
-Streaming data pipelines and analytics are becoming more popular as people have higher expectations from their data-powered products. Think about how you would feel if a bank transaction took weeks to settle; it would seem archaically slow. Or if you block someone on social media, you expect that block to take effect immediately. While Dask excels at interactive analytics, we believe it does not (currently) excel at interactive responses to user queries.footnote:[While these are both "interactive," the expectations of someone going to your website and placing an order versus a data scientist trying to come up with a new advertising campaign are very different.]
+Streaming data pipelines and ((("streaming")))analytics are becoming more popular as people have higher expectations from their data-powered products. Think about how you would feel if a bank transaction took weeks to settle; it would seem archaically slow. Or if you block someone on social media, you expect that block to take effect immediately. While Dask excels at interactive analytics, we believe it does not (currently) excel at interactive responses to user queries.footnote:[While these are both "interactive," the expectations of someone going to your website and placing an order versus a data scientist trying to come up with a new advertising campaign are very different.]
 
-Streaming jobs are different from batch jobs in a number of important ways. They tend to have faster processing time requirements, and the jobs themselves often have no defined endpoint (besides when the company or service is shut down). One situation where small batch jobs may not cut it includes dynamic advertising (tens to hundreds of milliseconds). Many other data problems may straddle the line, such as recommendations, where you want to update them based on user interactions but a delay of a few minutes is probably (mostly) OK.
+Streaming jobs are different ((("streaming", "versus batch jobs", secondary-sortas="batch jobs")))from batch jobs in a number of important ways. They tend to have faster processing time requirements, and the jobs themselves often have no defined endpoint (besides when the company or service is shut down). One situation where small batch jobs may not cut it includes dynamic advertising (tens to hundreds of milliseconds). Many other data problems may straddle the line, such as recommendations, where you want to update them based on user interactions but a delay of a few minutes is probably (mostly) OK.
 
 As discussed in <<ch_evaluating_components>>, Dask's streaming component appears to be less frequently used than other components. Streaming in Dask is, to an extent, added on after the fact,footnote:[The same is true for Spark streaming, but Dask's streaming is even less integrated than Spark's streaming.] and there are certain places and times when you may notice this. This is most apparent when loading and writing data—everything must move through the main client program and is then either scattered or collected.
 
@@ -25,7 +25,7 @@ As of this writing, Streamz does not implement `ipython_display` in many places,
 
 === Getting Started with Streamz on Dask
 
-Streamz is straightforward to install. It’s available from PyPI, and you can use `pip` to install it, although as with all libraries, you must make it available on all the workers. Once you have installed Streamz, you just need to create a Dask client (even in local mode) and import it, as shown in <<get_started_streamz>>.
+Streamz is straightforward ((("Streamz", "installation")))to install. It’s available from PyPI, and you can use `pip` to install it, although as with all libraries, you must make it available on all the workers. Once you have installed Streamz, you just need to create a Dask client (even in local mode) and import it, as shown in <<get_started_streamz>>.
 
 [[get_started_streamz]]
 .Getting started with Streamz
@@ -43,7 +43,7 @@ When there are multiple clients, Streamz uses the most recent Dask client create
 
 === Streaming Data Sources and Sinks
 
-So far in this book, we've loaded data from either local collections or distributed filesystems. While these can certainly serve as sources for streaming data (with some limitations), there are some additional data sources that exist in the streaming world. Streaming data sources are distinct, as they do not have a defined end, and therefore behave a bit more like a generator than a list. Streaming sinks are conceptually similar to consumers of generators.
+So far in this book, we've loaded ((("streaming", "data sources", id="strmgdrc")))((("Streamz", "sink", id="stzsnk")))data from either local collections or distributed filesystems. While these can certainly serve as sources for streaming data (with some limitations), there are some additional data sources that exist in the streaming world. Streaming data sources are distinct, as they do not have a defined end, and therefore behave a bit more like a generator than a list. Streaming sinks are conceptually similar to consumers of generators.
 
 [NOTE]
 ====
@@ -79,11 +79,11 @@ In both of these examples, Streamz will start reading from the most recent messa
 Streamz's reading exclusively on a single-head process is a likely place you may encounter bottlenecks as you scale.
 ====
 
-As with the rest of this book, we assume that you are using existing data sources. If that's not the case, we encourage you to check out the Apache Kafka or Apache Pulsar documentation (along with the Kafka adapter), as well as the cloud offerings from Confluent.
+As with the rest of this book, we assume that you are using existing data sources. If that's not the case, we ((("streaming", "data sources", startref="strmgdrc")))((("Streamz", "sink", startref="stzsnk")))encourage you to check out the Apache Kafka or Apache Pulsar documentation (along with the Kafka adapter), as well as the cloud offerings from Confluent.
 
 === Word Count
 
-No streaming section would be complete without word count, but it's important to note that our streaming word count in <<streaming_wordcount_ex>>&mdash;in addition to the restriction with data loading&mdash;could not perform the aggregation in a distributed fashion.
+No streaming section would be complete ((("streaming", "word count")))((("word count")))without word count, but it's important to note that our streaming word count in <<streaming_wordcount_ex>>&mdash;in addition to the restriction with data loading&mdash;could not perform the aggregation in a distributed fashion.
 
 [[streaming_wordcount_ex]]
 .Streaming word count
@@ -98,17 +98,17 @@ In the preceding example, you can see some of the current limitations of Streamz
 
 === GPU Pipelines on Dask Streaming
 
-If you are working with GPUs, the https://oreil.ly/QCk7O[+++cuStreamz project+++] simplifies the integration of cuDF with Streamz. cuStreamz uses a number of custom components for performance, like loading data from Kafka into the GPU instead of having to first land in a Dask DataFrame and then convert it. cuStreamz also implements a custom version of checkpointing with more flexibility than the default Streamz project. The developers behind the project, who are largely employed by people hoping to sell you more GPUs, [.kturl]#https://oreil.ly/6wUpB[+++claim up to an 11x speed-up+++]#.
+If you are working with GPUs, the https://oreil.ly/QCk7O[+++cuStreamz project+++] simplifies the ((("streaming", "GPU pipelines")))((("GPUs (graphics processing units)", "pipelines")))integration of cuDF with Streamz. cuStreamz uses a number of custom components for performance, like loading data from Kafka into the GPU instead of having to first land in a Dask DataFrame and then convert it. cuStreamz also implements a custom version of checkpointing with more flexibility than the default Streamz project. The developers behind the project, who are largely employed by people hoping to sell you more GPUs, [.kturl]#https://oreil.ly/6wUpB[+++claim up to an 11x speed-up+++]#.
 
 === Limitations, Challenges, and Workarounds
 
-Most streaming systems have some form of state checkpointing, allowing streaming applications to be restarted from the last checkpoint when the main control program fails. Streamz's checkpointing technique is limited to not losing any unprocessed records, but accumulated state can be lost. It is up to you to build your own state checkpointing/restoration if you are building up state over time. This is especially important as the probability of encountering a single point of failure over a long enough window is ~100%, and streaming applications are often intended to run indefinitely.
+Most streaming systems have some ((("streaming", "limitations")))((("streaming", "challenges")))((("streaming", "workarounds")))form of state checkpointing, allowing streaming applications to be restarted from the last checkpoint when the main control program fails. Streamz's checkpointing technique is limited to not losing any unprocessed records, but accumulated state can be lost. It is up to you to build your own state checkpointing/restoration if you are building up state over time. This is especially important as the probability of encountering a single point of failure over a long enough window is ~100%, and streaming applications are often intended to run indefinitely.
 
 This indefinite runtime leads to a number of other challenges. Small memory leaks can add up over time, but you can mitigate them by having the worker restart periodically.
 
 Streaming programs that perform aggregations often have problems with late-arriving data. This means that, while you can define your window however you want, you may have records that _should_ have been in that window, but did not arrive in time for the process. Streamz has no built-in solution for late-arriving data. Your choices are to manually track the state inside of your process (and persist it somewhere), ignore late-arriving data, or use another stream-processing system with support for late-arriving data (including kSQL, Spark, or Flink).
 
-In some streaming applications it is important that messages are processed exactly once (e.g., a bank account). Dask is generally not well suited to such situations due to recomputing on failure. This similarly applies to Streamz on Dask, where the only option is _at-least-once_ execution. You can work around this by keeping out-of-process state (like a database) on what messages have been processed and avoiding duplicate messages.
+In some streaming applications it is important that messages are processed exactly once (e.g., a bank account). Dask is generally not well suited to such situations due to recomputing on failure. This similarly ((("at-least-once execution")))applies to Streamz on Dask, where the only option is _at-least-once_ execution. You can work around this by keeping out-of-process state (like a database) on what messages have been processed and avoiding duplicate messages.
 
 === Conclusion
 
