@@ -1,7 +1,7 @@
 [[ch04]]
 == Dask DataFrame
 
-Pandas DataFrames, while popular, quickly run into memory constraints as data sizes grow, since they store the entire data in memory. Pandas DataFrames have a robust API for all kinds of data manipulation and are frequently the starting point for many analytics and machine learning projects. While pandas itself does not have machine learning built in, data scientists often use it as part of data and feature preparation during the exploratory phase of new projects. As such, scaling pandas DataFrames to be able to handle large datasets is of vital importance to many data scientists. Most data scientists are already familiar with the pandas libraries, and Dask's DataFrame implements much of the pandas API while adding the ability to scale.
+Pandas DataFrames, while popular, quickly run into memory constraints as data sizes grow, since they store the entire data in memory. Pandas DataFrames have a robust API for all kinds of ((("DataFrames", "pandas")))((("pandas DataFrames")))data manipulation and are frequently the starting point for many analytics and machine learning projects. While pandas itself does not have machine learning built in, data scientists often use it as part of data and feature preparation during the exploratory phase of new projects. As such, scaling pandas DataFrames to be able to handle large datasets is of vital importance to many data scientists. Most data scientists are already familiar with the pandas libraries, and Dask's DataFrame implements much of the pandas API while adding the ability to scale.
 
 Dask is one of the first to implement a usable subset of the pandas APIs, but other projects like Spark have added their approaches. This chapter assumes you have a good understanding of the pandas DataFrame APIs; if not, you should check out _Python for Data Analysis: Data Wrangling with pandas, NumPy, and IPython_ by Wes McKinney (O'Reilly).
 
@@ -11,7 +11,7 @@ Dask DataFrames requires that your data and your computation are well suited to 
 
 === How Dask DataFrames Are Built
 
-Dask DataFrames build on top of pandas DataFrames. Each partition is stored as a pandas DataFrame.footnote:[See <<basic_partitioning>> for a review of partitioning.] Using pandas DataFrames for the partitions simplifies the implementation of much of the APIs. This is especially true for row-based operations, where Dask passes the function call down to each pandas DataFrame.
+Dask DataFrames build on top ((("DataFrames", "building")))of pandas DataFrames. Each partition is stored as a pandas DataFrame.footnote:[See <<basic_partitioning>> for a review of partitioning.] Using pandas DataFrames for the partitions simplifies the implementation of much of the APIs. This is especially true for row-based operations, where Dask passes the function call down to each pandas DataFrame.
 
 Most of the distributed components of Dask DataFrames use the three core building blocks `map_partitions`, `reduction`, and `rolling`. You mostly won't need to call these functions directly; instead, you will use higher-level APIs, but understanding them and how they work is important to understanding how Dask works. `shuffle` is a critical building block of distributed DataFrames for reorganizing your data. Unlike the other building blocks, you may use it directly more frequently, as Dask is unable to abstract away partitioning.
 
