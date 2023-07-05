@@ -287,7 +287,7 @@ Dask's dashboard provides a lot of statistics and graphs to answer these questio
 
 ==== The Dask Dashboard
 
-Dask's dashboard contains many different pages, each of which can help with understanding different parts of ((("performance", "metrics", id="prfrmtr")))((("metrics", "distributed computing", id="mtdbcp")))((("distributed systems", "metrics", id="dsbym")))your program.
+Dask's dashboard contains many different pages, each of which can help with understanding different parts of your program.
 
 ===== Task stream
 
