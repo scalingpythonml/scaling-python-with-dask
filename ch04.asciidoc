@@ -147,7 +147,7 @@ include::./examples/dask/Dask-Explore-S3MinIO.py[tags=minio_storage_options]
 
 .Compression
 ****
-Compression reduces storage costs, making ((("filesystems", "compression")))((("compression", "filesystems")))it popular, and the same library used to abstract filesystem access in Dask also abstracts compression. Some compression algorithms support random reads, but many do not. For people coming from the Hadoop ecosystem this can be thought of as the impact on "splittable."
+Compression reduces storage costs, making ((("filesystems", "compression")))((("compression, filesystems")))it popular, and the same library used to abstract filesystem access in Dask also abstracts compression. Some compression algorithms support random reads, but many do not. For people coming from the Hadoop ecosystem this can be thought of as the impact on "splittable."
 
 Dask's reading and writing functions take the parameter `compression` to specify the compression algorithm used. One of the most popular options is `gzip`.
 
