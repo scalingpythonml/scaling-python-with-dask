@@ -10,11 +10,11 @@ It's important to understand partitioning to understand collections. If you skip
 
 === Dask Arrays
 
-Dask arrays implement a subset of ((("collections", "arrays")))((("arrays")))((("NumPy", "ndarray interface")))the NumPy ndarray interface, making them ideal for porting code that uses NumPy to run on Dask. Much of your understanding from the previous chapter with DataFrames carries over to Dask arrays, as well as much of your understanding of ndarrays.
+Dask arrays implement a subset of ((("collections, arrays")))((("arrays")))((("NumPy", "ndarray interface")))the NumPy ndarray interface, making them ideal for porting code that uses NumPy to run on Dask. Much of your understanding from the previous chapter with DataFrames carries over to Dask arrays, as well as much of your understanding of ndarrays.
 
 ==== Common Use Cases
 
-Some common use cases for Dask ((("collections", "arrays", "use cases")))((("arrays", "use cases")))arrays include:
+Some common use cases for Dask ((("collections, arrays", "use cases")))((("arrays", "use cases")))arrays include:
 
 * Large-scale imaging and astronomy data
 * Weather data
@@ -24,13 +24,13 @@ Similar to Dask DataFrames and pandas, if you wouldn't use an nparray for the pr
 
 ==== When Not to Use Dask Arrays
 
-If your data fits in memory on a ((("collections", "arrays", "not using")))((("arrays", "not using")))single computer, using Dask array's is unlikely to give you many benefits over nparrays, especially compared to local accelerators like Numba. Numba is ((("Numba")))well suited to vectorizing and parallelizing local tasks with and without Graphics Processing Units (GPUs). You can use Numba with and without Dask, and we'll look at how to further speed up Dask arrays using Numba in [.keep-together]#<<ch10>>.#
+If your data fits in memory on a ((("collections, arrays", "not using")))((("arrays", "not using")))single computer, using Dask array's is unlikely to give you many benefits over nparrays, especially compared to local accelerators like Numba. Numba is ((("Numba")))well suited to vectorizing and parallelizing local tasks with and without Graphics Processing Units (GPUs). You can use Numba with and without Dask, and we'll look at how to further speed up Dask arrays using Numba in [.keep-together]#<<ch10>>.#
 
 Dask arrays, like their local counterpart, require that data is all of the same type. This means that they cannot be used for semi-structured or mixed-type data (think strings and ints).
 
 ==== Loading/Saving
 
-As with Dask DataFrames, loading ((("collections", "arrays", "formats")))((("arrays", "formats")))((("formats", "arrays")))((("collections", "arrays", "loading/saving")))((("arrays", "loading/saving")))and writing functions start with `to_` or `read_` as the prefixes. Each format has its own configuration, but in general, the first positional argument is the location of the data to be read. The location can be a wildcard path of files (e.g., _s3://test-bucket/magic/*_), a list of files, or a regular file location.
+As with Dask DataFrames, loading ((("collections, arrays", "formats")))((("arrays", "formats")))((("formats", "arrays")))((("collections, arrays", "loading/saving")))((("arrays", "loading/saving")))and writing functions start with `to_` or `read_` as the prefixes. Each format has its own configuration, but in general, the first positional argument is the location of the data to be read. The location can be a wildcard path of files (e.g., _s3://test-bucket/magic/*_), a list of files, or a regular file location.
 
 Dask arrays support reading the following formats:
 
@@ -44,7 +44,7 @@ And reading from and writing to:
 * tiledb((("tiledb")))
 * npy stacks (local disk only)
 
-In addition, you can convert Dask ((("collections", "arrays", "converting to/from Dask bags")))((("arrays", "converting to/from Dask bags")))((("bags", "convert to/from arrays")))arrays to/from Dask bags and DataFrames (provided the types are compatible). As you may have noted, Dask does not support reading arrays from as many formats as you might expect, which can be an excellent use of bags (covered in the next section).
+In addition, you can convert Dask ((("collections, arrays", "converting to/from Dask bags")))((("arrays", "converting to/from Dask bags")))((("bags", "convert to/from arrays")))arrays to/from Dask bags and DataFrames (provided the types are compatible). As you may have noted, Dask does not support reading arrays from as many formats as you might expect, which can be an excellent use of bags (covered in the next section).
 
 ==== What's Missing
 
@@ -52,7 +52,7 @@ While Dask arrays implement a large amount of the ndarray APIs, it is not a comp
 
 ==== Special Dask Functions
 
-Since, as with distributed ((("collections", "arrays", "functions")))((("arrays", "functions")))((("functions", "arrays")))DataFrames, the partitioned nature of Dask arrays make performance a bit different, there are some unique Dask array functions not found in `numpy.linalg`:
+Since, as with distributed ((("collections, arrays", "functions")))((("arrays", "functions")))((("functions", "arrays")))DataFrames, the partitioned nature of Dask arrays make performance a bit different, there are some unique Dask array functions not found in `numpy.linalg`:
 
 `map_overlap`:: You can use this for ((("map_overlap function")))((("functions", "map_overlap")))any windowed view of the data, as with `map_overlap` on Dask DataFrames.
 `map_blocks`:: This is similar ((("map_blocks function")))((("functions", "map_blocks")))to Dask's DataFrames `map_partitions`, and you can use it for implementing embarrassingly parallel operations that the standard Dask library has not yet implemented, including new element-wise functions in NumPy.
