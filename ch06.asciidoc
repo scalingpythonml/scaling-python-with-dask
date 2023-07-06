@@ -70,7 +70,7 @@ While this `map` is somewhat similar to the `map` on Dask bags, each item result
 
 === Future Life Cycle
 
-Futures have a different life cycle ((("futures", "life cycle")))((("life cycle", "futures")))from `dask.delayed` beyond eager computation. With `dask.delayed`, intermediate computations are automatically cleaned up; however, Dask futures results are stored until the future is either explicitly canceled or the reference to it is garbage collected in Python. If you no longer need the value of a future, you can cancel it and free any storage space or cores used by calling `.cancel`. The future life cycle is illustrated in <<future_lifecycle_ch06_1686239207398>>.
+Futures have a different life cycle ((("futures", "life cycle")))((("life cycle, futures")))from `dask.delayed` beyond eager computation. With `dask.delayed`, intermediate computations are automatically cleaned up; however, Dask futures results are stored until the future is either explicitly canceled or the reference to it is garbage collected in Python. If you no longer need the value of a future, you can cancel it and free any storage space or cores used by calling `.cancel`. The future life cycle is illustrated in <<future_lifecycle_ch06_1686239207398>>.
 
 [[future_lifecycle_ch06_1686239207398]]
 .Future life cycle
