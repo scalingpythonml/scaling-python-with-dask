@@ -24,7 +24,7 @@ Integration testing refers to ((("testing", "integration testing")))((("integrat
 
 ==== Test-Driven Development
 
-Test-driven development involves ((("testing", "test-driven development")))((("test-driven development")))((("development", "test-driven")))taking the requirements or expectations of your code and writing tests and then writing the code after. For data science pipelines this can often be done by creating a sample input (sometimes called a golden set) and writing out what you expect the output to be. Test-driven development can be complicated, especially when integrating multiple data sources.
+Test-driven development involves ((("testing", "test-driven development")))((("test-driven development")))((("development, test-driven")))taking the requirements or expectations of your code and writing tests and then writing the code after. For data science pipelines this can often be done by creating a sample input (sometimes called a golden set) and writing out what you expect the output to be. Test-driven development can be complicated, especially when integrating multiple data sources.
 
 While you don't need to use test-driven development, we believe it's important to make tests alongside the development of your data pipelines. Tests added after development are better than no tests, but in our experience the context you have during the development helps you create better tests (and validate your assumptions [.keep-together]#early on).#
 
