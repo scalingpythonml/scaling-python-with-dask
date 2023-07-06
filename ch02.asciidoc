@@ -71,7 +71,7 @@ When we run this example, we get `In sequence 20.01662155520171, in parallel 6.2
 [[nested_tasks]]
 ===== Nested tasks
 
-One of the neat things about `dask.delayed` is that you ((("Hello Worlds", "task", "nested tasks", id="hwtksk")))((("task Hello World", "nested tasks", id="tkwdsks")))((("nested tasks", "Hello World", id="nskshw")))can launch tasks inside of other tasks.footnote:[If you are coming from Apache Spark, this is very different, as only the driver/head node can launch tasks.] A straightforward real-world example of this is a web crawler, with which, when you visit a web page, you want to fetch all of the links from that page:
+One of the neat things about `dask.delayed` is that you ((("Hello Worlds", "task", "nested tasks", id="hwtksk")))((("task Hello World", "nested tasks", id="tkwdsks")))((("nested tasks, Hello World", id="nskshw")))can launch tasks inside of other tasks.footnote:[If you are coming from Apache Spark, this is very different, as only the driver/head node can launch tasks.] A straightforward real-world example of this is a web crawler, with which, when you visit a web page, you want to fetch all of the links from that page:
 
 [source, python]
 ----
@@ -83,7 +83,7 @@ include::./examples/dask/Dask-Ch2-Hello-Worlds.py[tags=mini_crawl_task]
 In practice, behind the scenes there is still some central co-ordination involved (including the scheduler), but the freedom to write your code in this nested way is quite powerful.
 ====
 
-We cover other kinds of task ((("Hello Worlds", "task", "nested tasks", startref="hwtksk")))((("task Hello World", "nested tasks", startref="tkwdsks")))((("nested tasks", "Hello World", startref="nskshw")))dependencies in <<task_deps>>.
+We cover other kinds of task ((("Hello Worlds", "task", "nested tasks", startref="hwtksk")))((("task Hello World", "nested tasks", startref="tkwdsks")))((("nested tasks, Hello World", startref="nskshw")))dependencies in <<task_deps>>.
 
 
 ==== Distributed Collections
