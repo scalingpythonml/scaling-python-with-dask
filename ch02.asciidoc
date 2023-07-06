@@ -5,7 +5,7 @@ We are so happy that you've decided to explore whether Dask is the system for yo
 
 === Installing Dask Locally
 
-Installing Dask locally is reasonably ((("Dask", "installation", "local", id="dksllcl")))((("conda environment", "Dask installation", id="cdvdkt")))straightforward. If you want to start running on multiple machines, it's often easier when you start with a conda environment (or virtualenv). This lets you figure out what packages you depend on by running `pip freeze` to make ((("pip freeze")))sure they're on all of the workers when it's time to scale.
+Installing Dask locally is reasonably ((("Dask installation")))((("conda environment", "Dask installation", id="cdvdkt")))straightforward. If you want to start running on multiple machines, it's often easier when you start with a conda environment (or virtualenv). This lets you figure out what packages you depend on by running `pip freeze` to make ((("pip freeze")))sure they're on all of the workers when it's time to scale.
 
 While you can just run `pip install -U dask`, we prefer using a conda environment since it's easier to match the version of Python to that on my cluster, which allows me to connect my local machine to the cluster directly.footnote:[There are downsides to deploying your Dask application in this way, as discussed in <<ch12>>, but it can be an excellent debugging technique.] If you don't have conda on your machine, link:$$https://oreil.ly/qVDa7$$[Miniforge] is a good quick way to get conda installed across multiple platforms. Installing Dask into a new conda environment is shown in <<install_conda_env_with_dask>>.
 
@@ -27,7 +27,7 @@ You don't have to install Dask locally, although you probably will want to. Ther
 
 .Using Dask Docker Images
 ****
-Another way to get Dask running locally is to use link:$$https://oreil.ly/zCeHQ$$[example Docker images] maintained ((("Docker images")))((("images, Docker")))by the Dask project. The benefit of this approach is that the same image can then be used in a distributed cluster, each node running the same Docker image locally, thus ensuring the compatibility of all the packages. [.keep-together]#Advanced users can use# the Dask example Docker images as ((("Dask", "installation", "local", startref="dksllcl")))a base and add [.keep-together]#packages of their# choice before link:$$https://oreil.ly/S1ms1$$[committing changes and saving it as a new image].
+Another way to get Dask running locally is to use link:$$https://oreil.ly/zCeHQ$$[example Docker images] maintained ((("Docker images")))((("images, Docker")))by the Dask project. The benefit of this approach is that the same image can then be used in a distributed cluster, each node running the same Docker image locally, thus ensuring the compatibility of all the packages. [.keep-together]#Advanced users can use# the Dask example Docker images as ((("Dask installation", startref="dksllcl")))a base and add [.keep-together]#packages of their# choice before link:$$https://oreil.ly/S1ms1$$[committing changes and saving it as a new image].
 ****
 
 [[hello_worlds]]
