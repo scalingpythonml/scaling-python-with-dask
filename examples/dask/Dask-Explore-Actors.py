@@ -115,7 +115,7 @@ def inc(x):
     import time
     time.sleep(x)
     f = counter.add(x)
-    # Note: the actor (in this case `counter`) is serelizable; 
+    # Note: the actor (in this case `counter`) is serializable; 
     # however, the future we get back from it is not.
     # This is likely because the future contains a network connection 
     # to the actor, so need to get its concrete value here. If we don't
@@ -221,7 +221,7 @@ f.result()
 
 #tag::make_sketchy_bank[]
 class SketchyBank:
-    """ A sketchy bank (handles mutliple accounts in one actor)."""
+    """ A sketchy bank (handles multiple accounts in one actor)."""
 
     # 42 is a good start
     def __init__(self, accounts={}):
@@ -255,7 +255,7 @@ class SketchyBank:
 
 
 class HashActorPool:
-    """A basic determinstic actor pool."""
+    """A basic deterministic actor pool."""
 
     def __init__(self, actorClass, num):
         self._num = num
