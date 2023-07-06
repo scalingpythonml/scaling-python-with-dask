@@ -180,7 +180,7 @@ As mentioned in the previous ((("shuffles")))chapter, shuffles are expensive. Th
 
 ==== Rolling Windows and map_overlap
 
-One situation that can trigger the ((("shuffles", "rolling windows", id="sffrww")))((("rolling windows", "shuffles and", id="rwwsff")))((("shuffles", "map_overlap function", id="sffppf")))((("functions", "map_overlap", id="fctmvp")))((("map_overlap function", id="mpvpfc")))need for a shuffle is a rolling window, where at the edges of a partition your function needs some records from its neighbors.
+One situation that can trigger the ((("shuffles", "rolling windows")))((("rolling windows", "shuffles and")))((("shuffles", "map_overlap function")))((("functions", "map_overlap")))((("map_overlap function")))need for a shuffle is a rolling window, where at the edges of a partition your function needs some records from its neighbors.
 Dask DataFrame has a special `map_overlap` function in which you can specify a `look-after` window (also called a look-ahead window) and `look-before` window (also called a look-back window) of rows to transfer (either an integer or a time delta). The simplest example taking advantage of this is a rolling average, shown in <<rolling_date_ex>>.
 
 [[rolling_date_ex]]
@@ -199,7 +199,7 @@ Using `map_overlap` allows Dask to transfer only the data needed. For this imple
 Dask's rolling windows will not cross multiple partitions. If your DataFrame is partitioned so that the look-after or look-back is greater than the length of the neighbor's partition, the results will either fail or be incorrect. Dask validates this for time delta look-after, but no such checks are performed for look-backs or integer look-after.
 ====
 
-An effective, but expensive, technique to work ((("shuffles", "rolling windows", startref="sffrww")))((("rolling windows", "shuffles and", startref="rwwsff")))((("shuffles", "map_overlap function", startref="sffppf")))((("functions", "map_overlap", startref="fctmvp")))((("map_overlap function", startref="mpvpfc")))around the single-partition look-ahead/look-behind of Dask is to `repartition` your Dask DataFrames.
+An effective, but expensive, technique to work around the single-partition look-ahead/look-behind of Dask is to `repartition` your Dask DataFrames.
 
 ==== Aggregations
 
