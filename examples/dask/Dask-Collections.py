@@ -158,7 +158,7 @@ files
 #tag::parallel_list_large[]
 def parallel_list_directories_recursive(path: str, fs=None) -> List[str]:
     """
-    Recursively find all the sub directories.
+    Recursively find all the sub-directories.
     """
     if fs is None:
         (fs, path) = fsspec.core.url_to_fs(path)
