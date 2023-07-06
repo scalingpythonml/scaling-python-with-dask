@@ -227,13 +227,13 @@ include::./examples/dask/Dask-Ch4-DataFrames.py[tags=max_mean]
 
 For distributed systems like Dask, if an aggregation can be partially evaluated and then merged, you can potentially combine some records pre-shuffle. Not all partial aggregations are created equal. What matters with partial aggregations is that the amount of data is reduced when merging values with the same key compared to the original multiple values.
 
-The most efficient aggregations ((("aggregations", "sublinear")))take a sublinear amount of space regardless of the number of records. Some of these can take constant space, such as sum, count, first, minimum, maximum, mean, and standard deviation.
+The most efficient aggregations ((("aggregation", "sublinear")))take a sublinear amount of space regardless of the number of records. Some of these can take constant space, such as sum, count, first, minimum, maximum, mean, and standard deviation.
 More complicated tasks, like quantiles and distinct counts, also have sublinear approximation options. These approximation options can be great, as exact answers can require linear growth in storage.footnote:[This can lead to out-of-memory exceptions while executing the aggregation. The linear growth in storage requires that (within a constant factor) all the data must be able to fit on a single process, which limits how effective Dask can be.]
 
 
 Some aggregation functions are not sublinear in growth, but tend to or might not grow too quickly. Counting the distinct values is in this group, but if all your values are unique there is no space-saving.
 
-To take advantage of efficient ((("aggregations", "built-in")))aggregations, you need to use a built-in aggregation from Dask, or write your own using Dask's aggregation class. Whenever you can, use a built-in. Built-ins not only require less effort, but also are often faster. Not all of the pandas aggregates are directly supported in Dask, so sometimes your only choice is to write your own aggregate.
+To take advantage of efficient ((("aggregation", "built-in")))aggregations, you need to use a built-in aggregation from Dask, or write your own using Dask's aggregation class. Whenever you can, use a built-in. Built-ins not only require less effort, but also are often faster. Not all of the pandas aggregates are directly supported in Dask, so sometimes your only choice is to write your own aggregate.
 
 If you choose to write your own aggregate, you have three functions to define: `chunk` for handling each group-partition/chunk, `agg` to combine the results of `chunk` between partitions, and (optionally) `finalize` to take the result of `agg` and produce a final value.
 
@@ -274,7 +274,7 @@ include::./examples/dask/Dask-Ch4-DataFrames.py[tags=custom_agg_hyperloglog]
 ----
 ====
 
-Slow/inefficient aggregations (or those very likely to cause an out-of-memory exception) use storage ((("aggregations", "slow")))((("slow aggregations")))proportional to the records being aggregated. Examples from this slow group include making a list and naively computing exact quantiles.footnote:[Alternate algorithms for exact quantiles depend on more shuffles to reduce the space overhead.]
+Slow/inefficient aggregations (or those very likely to cause an out-of-memory exception) use storage ((("aggregation", "slow")))((("slow aggregations")))proportional to the records being aggregated. Examples from this slow group include making a list and naively computing exact quantiles.footnote:[Alternate algorithms for exact quantiles depend on more shuffles to reduce the space overhead.]
 With these slow aggregates, using Dask's aggregation class has no benefit over the `apply` API, which you may wish to use for simplicity. For example, if you just wanted a list of employer IDs by postal code, rather than having to write three functions you could use a one-liner like `df.groupby("PostCode")["EmployerId"].apply(lambda g: list(g))`. Dask implements the `apply` function as a full shuffle, which is covered in the next section.
 
 [WARNING]
