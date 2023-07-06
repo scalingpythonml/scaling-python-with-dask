@@ -88,7 +88,7 @@ Dask does not detect sorted data on load. Instead, if you have presorted data, a
 
 You can also connect Dask to databases or ((("databases", "relational")))((("relational databases")))((("microservices")))microservices. Relational databases are a fantastic tool and are often quite performant at both simple reads and writes. Often relational databases support distributed deployment whereby the data is split up on multiple nodes, and this is mostly used with large datasets. They tend to be great at handling transactions at scale, but running analytic capabilities on the same node can encounter issues. Dask can be used to efficiently read and compute over this SQL database.
 
-You can use Dask's built-in support for ((("databases", "SQL", "SQLAlchemy")))((("SQL databases", "SQLAlchemy")))((("SQLAlchemy")))loading SQL databases using SQLAlchemy. For Dask to split up the query on multiple machines, you need to give it an index key. Often SQL databases will have a primary key or numerical index key that you can use for this purpose (e.g., `read_sql_table("customers", index_col="customer_id")`). An example of this is shown in <<ex_read_SQL_Dataframe>>. 
+You can use Dask's built-in support for ((("databases", "SQLAlchemy")))((("SQLAlchemy")))loading SQL databases using SQLAlchemy. For Dask to split up the query on multiple machines, you need to give it an index key. Often SQL databases will have a primary key or numerical index key that you can use for this purpose (e.g., `read_sql_table("customers", index_col="customer_id")`). An example of this is shown in <<ex_read_SQL_Dataframe>>. 
 
 [[ex_read_SQL_Dataframe]]
 .Reading from and writing to SQL with Dask DataFrame
@@ -118,7 +118,7 @@ While Dask has limited support for query push-down with partition reads, many ot
 
 On the flip side, if most of your downstream users consume all of the table or have unique columns they are filtering on, a partitioned write can decrease performance. Since listing files on a network filesystem is not free, discovering the files becomes more expensive when you have partitioned writes that you are not taking advan&shy;tage&nbsp;of.
 
-Other systems commonly use metastores for partitioned reads and writes when dealing with large data sizes. Dask does not presently have the built-in ability to talk to a metastore, like Iceberg, Hive, or DeltaLake. Metastores can be useful for loading subsets tables and time-traveling (looking at old versions) when needed. The https://oreil.ly/2i2Dd[Dask deltatable library] integrates reading the DeltaLake table. Iceberg has a https://oreil.ly/tIP9S[built-in Python API] that you can use to get a list of files associated with a particular query, and then use Dask's existing file APIs on top of it. We expect the integrations ((("data", "loading", "formats", startref="dtldfts")))((("data", "writing", "formats", startref="dtwrrm")))((("writing data", "formats", startref="wdtfm")))((("loading data", "formats", startref="lddtfm")))with metastores will continue to improve rapidly.
+Other systems commonly use metastores for partitioned reads and writes when dealing with large data sizes. Dask does not presently have the built-in ability to talk to a metastore, like Iceberg, Hive, or DeltaLake. Metastores can be useful for loading subsets tables and time-traveling (looking at old versions) when needed. The https://oreil.ly/2i2Dd[Dask deltatable library] integrates reading the DeltaLake table. Iceberg has a https://oreil.ly/tIP9S[built-in Python API] that ((("Iceberg")))you can use to get a list of files associated with a particular query, and then use Dask's existing file APIs on top of it. We expect the integrations ((("data", "loading", "formats", startref="dtldfts")))((("data", "writing", "formats", startref="dtwrrm")))((("writing data", "formats", startref="wdtfm")))((("loading data", "formats", startref="lddtfm")))with metastores will continue to improve rapidly.
 ****
 
 ==== Filesystems
@@ -134,7 +134,7 @@ include::./examples/dask/Dask-Ch4-DataFrames.py[tags=fsspec]
 ----
 ====
 
-Many filesystems require some kind of ((("fileystems", "configuration")))((("configuration, filesystems")))configuration, be it endpoint or credentials. Often new filesystems, like MinIO, offer S3-compatible APIs but overload the endpoint and require some extra configuration to function. With Dask you specify the configuration parameters to the read/write function with pass:[<code>storage&#x200b;_options</code>]. Everyone's configuration here will likely be a bit different.footnote:[https://oreil.ly/ZfcRv[FSSPEC documentation] includes the specifics for configuring each of the backends.] Dask will use your [.keep-together]#`storage_options`# dict as the keyword arguments to the underlying FSSPEC implementation. For example, my `storage_options` for MinIO are shown in <<minio_storage_options>>.
+Many filesystems require some kind of ((("filesystems", "configuration")))((("configuration, filesystems")))configuration, be it endpoint or credentials. Often new filesystems, like MinIO, offer S3-compatible APIs but overload the endpoint and require some extra configuration to function. With Dask you specify the configuration parameters to the read/write function with pass:[<code>storage&#x200b;_options</code>]. Everyone's configuration here will likely be a bit different.footnote:[https://oreil.ly/ZfcRv[FSSPEC documentation] includes the specifics for configuring each of the backends.] Dask will use your [.keep-together]#`storage_options`# dict as the keyword arguments to the underlying FSSPEC implementation. For example, my `storage_options` for MinIO are shown in <<minio_storage_options>>.
 
 [[minio_storage_options]]
 .Dask configure MinIO
@@ -180,7 +180,7 @@ As mentioned in the previous ((("shuffles")))chapter, shuffles are expensive. Th
 
 ==== Rolling Windows and map_overlap
 
-One situation that can trigger the ((("shuffles", "rolling windows", id="sffrww")))((("rolling windows", "shuffles and", id="rwwsff")))((("shuffles", "map_overlap function", id="sffppf")))((("functions", "map_overlap", id="fctmvp")))((("map_overlap function", id="mpvpfc")))need for a shuffle is a rolling window, where at the edges of a partition your function needs some records from its neighbors.
+One situation that can trigger the ((("shuffles", "rolling windows")))((("rolling windows, shuffles and")))((("shuffles", "map_overlap function")))((("functions", "map_overlap")))((("map_overlap function")))need for a shuffle is a rolling window, where at the edges of a partition your function needs some records from its neighbors.
 Dask DataFrame has a special `map_overlap` function in which you can specify a `look-after` window (also called a look-ahead window) and `look-before` window (also called a look-back window) of rows to transfer (either an integer or a time delta). The simplest example taking advantage of this is a rolling average, shown in <<rolling_date_ex>>.
 
 [[rolling_date_ex]]
@@ -199,7 +199,7 @@ Using `map_overlap` allows Dask to transfer only the data needed. For this imple
 Dask's rolling windows will not cross multiple partitions. If your DataFrame is partitioned so that the look-after or look-back is greater than the length of the neighbor's partition, the results will either fail or be incorrect. Dask validates this for time delta look-after, but no such checks are performed for look-backs or integer look-after.
 ====
 
-An effective, but expensive, technique to work ((("shuffles", "rolling windows", startref="sffrww")))((("rolling windows", "shuffles and", startref="rwwsff")))((("shuffles", "map_overlap function", startref="sffppf")))((("functions", "map_overlap", startref="fctmvp")))((("map_overlap function", startref="mpvpfc")))around the single-partition look-ahead/look-behind of Dask is to `repartition` your Dask DataFrames.
+An effective, but expensive, technique to work around the single-partition look-ahead/look-behind of Dask is to `repartition` your Dask DataFrames.
 
 ==== Aggregations
 
@@ -498,7 +498,7 @@ include::./examples/dask/Dask-Ch13_ML.py[tags=ex_describe_percentiles]
 
 ==== Plotting Data
 
-Plotting data is often an ((("plotting data")))((("data", "plotting")))important step in getting to know your dataset. Plotting big data is a tricky subject. We as data engineers often get around that issue by first working with a smaller sampled dataset. For that, Dask would work alongside a Python plotting library like matplotlib and seaborn, just like pandas. The advantage of Dask DataFrame is that we are now able to plot the entire dataset, if desired. We can use plotting frameworks along with Dask to plot the entire dataset. Here, Dask does the filtering, the aggregation on the distributed workers, and only collects and gives to a client with libraries like matplotlib to render. Plotting a Dask DataFrame is shown in <<ex_plot_distances>>.
+Plotting data is often an ((("plotting data")))((("data", "plotting")))important step in getting to know your dataset. Plotting big data is a tricky subject. We as data engineers often get around that issue by first working with a smaller sampled dataset. For that, Dask would work alongside a Python plotting library ((("Python", "plotting libraries")))((("matplotlib")))((("seaborn")))like matplotlib and seaborn, just like pandas. The advantage of Dask DataFrame is that we are now able to plot the entire dataset, if desired. We can use plotting frameworks along with Dask to plot the entire dataset. Here, Dask does the filtering, the aggregation on the distributed workers, and only collects and gives to a client with libraries like matplotlib to render. Plotting a Dask DataFrame is shown in <<ex_plot_distances>>.
 
 [[ex_plot_distances]]
 .Dask DataFrame plotting trip distance

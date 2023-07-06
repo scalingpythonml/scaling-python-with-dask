@@ -15,7 +15,7 @@ Now we introduce more ways to control this flow with futures. So far, you have m
 You may already be familiar with futures from Python. Dask's futures are an extension of Python's concurrent.futures library, allowing you to use them in its place. Similar to using Dask DataFrames in place of pandas DataFrames, the behavior can be a bit different (although the differences here are smaller).
 ====
 
-Dask futures are a ((("futures")))((("distributed client", "futures and")))part of Dask's distributed client library, so you will get started by importing it with `from dask.distributed import Client`.
+Dask futures are a ((("futures")))part of Dask's distributed client library, so you will get started by importing it with `from dask.distributed import Client`.
 
 [TIP]
 ====
@@ -70,7 +70,7 @@ While this `map` is somewhat similar to the `map` on Dask bags, each item result
 
 === Future Life Cycle
 
-Futures have a different life cycle ((("futures", "life cycle")))((("life cycle", "futures")))from `dask.delayed` beyond eager computation. With `dask.delayed`, intermediate computations are automatically cleaned up; however, Dask futures results are stored until the future is either explicitly canceled or the reference to it is garbage collected in Python. If you no longer need the value of a future, you can cancel it and free any storage space or cores used by calling `.cancel`. The future life cycle is illustrated in <<future_lifecycle_ch06_1686239207398>>.
+Futures have a different life cycle ((("futures", "life cycle")))((("life cycle, futures")))from `dask.delayed` beyond eager computation. With `dask.delayed`, intermediate computations are automatically cleaned up; however, Dask futures results are stored until the future is either explicitly canceled or the reference to it is garbage collected in Python. If you no longer need the value of a future, you can cancel it and free any storage space or cores used by calling `.cancel`. The future life cycle is illustrated in <<future_lifecycle_ch06_1686239207398>>.
 
 [[future_lifecycle_ch06_1686239207398]]
 .Future life cycle
@@ -85,7 +85,7 @@ Canceling a future behaves ((("futures", "canceling")))differently than deleting
 
 [WARNING]
 ====
-When using Dask in a Jupyter notebook, ((("Jupyter Notebook", "futures")))the notebook may "hold on to" the result of any previous cell, so even if the future is unnamed, it will remain present in Dask. There is a https://oreil.ly/zyy2H[+++discussion on Discourse+++] with more context for those interested.
+When using Dask in a Jupyter notebook, ((("Jupyter", "notebooks, futures")))the notebook may "hold on to" the result of any previous cell, so even if the future is unnamed, it will remain present in Dask. There is a https://oreil.ly/zyy2H[+++discussion on Discourse+++] with more context for those interested.
 ====
 
 === Fire-and-Forget
@@ -103,7 +103,7 @@ include::./examples/dask/Dask-Futures.py[tags=fire_and_forget2]
 
 === Retrieving Results
 
-More commonly, eventually, you'll want to ((("futures", "return values", id="ftrrsl")))((("return values", "futures", id="rtvft")))know what the future has computed (or even just if it encountered an error). For futures that are not just side effects, you'll eventually want to get the return value (or error) from the futures. Futures have the blocking method `result`, as shown in <<get_result_ch06_1686239283618>>, which gives you back the value computed in the future or raises the exception from the future.
+More commonly, eventually, you'll want to ((("futures", "return values", id="ftrrsl")))((("return values, futures", id="rtvft")))know what the future has computed (or even just if it encountered an error). For futures that are not just side effects, you'll eventually want to get the return value (or error) from the futures. Futures have the blocking method `result`, as shown in <<get_result_ch06_1686239283618>>, which gives you back the value computed in the future or raises the exception from the future.
 
 [[get_result_ch06_1686239283618]]
 .Getting the result
@@ -171,7 +171,7 @@ include::./examples/dask/Dask-Futures.py[tags=delayed_vs_future_future_faster]
 ----
 ====
 
-In this (albeit contrived) example, you can see how, by starting the work as soon as possible, the future is completed by the time you get the result, whereas the `dask.delayed` only starts when ((("futures", "return values", startref="ftrrsl")))((("return values", "futures", startref="rtvft")))you get there.
+In this (albeit contrived) example, you can see how, by starting the work as soon as possible, the future is completed by the time you get the result, whereas the `dask.delayed` only starts when ((("futures", "return values", startref="ftrrsl")))((("return values, futures", startref="rtvft")))you get there.
 
 === Nested Futures
 
@@ -191,9 +191,9 @@ Note that since Dask uses a centralized scheduler, the client is communicating w
 [[dds_scheduling]]
 === Distributed Data Structures for Scheduling
 
-Dask also has a collection of data ((("data structures", "scheduling and")))((("distributed data structures")))structures to simplify task coordination. These data structures include queues, locks/semaphores, events, and publish/subscriber topics. These distributed data structures aim to behave similarly to their local counterparts, but it's important to remember that the distributed nature of Dask adds overhead for coordination and remote procedure calls.
+Dask also has a collection of data ((("data structures, scheduling and")))((("distributed data structures")))structures to simplify task coordination. These data structures include queues, locks/semaphores, events, and publish/subscriber topics. These distributed data structures aim to behave similarly to their local counterparts, but it's important to remember that the distributed nature of Dask adds overhead for coordination and remote procedure calls.
 
-For example, Dask's distributed ((("distributed variable")))((("variables", "distributed")))((("get function")))((("functions", "get")))((("set function")))((("functions", "set")))((("delete function")))((("functions", "delete")))variable is called `Variable`, which implements `get`, `set`, and `delete`. The `get` function takes a `timeout`, which should remind you that these operations are distributed in nature and therefore slower than updating a local variable. As with multi-threaded global variables, race conditions can occur when different workers update the same local variable.
+For example, Dask's distributed ((("distributed variable")))((("variables, distributed")))((("get function")))((("functions", "get")))((("set function")))((("functions", "set")))((("delete function")))((("functions", "delete")))variable is called `Variable`, which implements `get`, `set`, and `delete`. The `get` function takes a `timeout`, which should remind you that these operations are distributed in nature and therefore slower than updating a local variable. As with multi-threaded global variables, race conditions can occur when different workers update the same local variable.
 
 [TIP]
 ====

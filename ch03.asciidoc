@@ -47,7 +47,7 @@ include::./examples/dask/Dask-Ch3-Concepts.py[tags=process]
 ----
 ====
 
-If you are running on a Unix system, ((("Unix", "forkserver")))you can use the _forkserver_, shown in <<configuring_dask_forkserver_ch03_1686241608423>>, which will https://oreil.ly/U9voe[reduce the overhead of starting each Python interpreter]. Using the forkserver will not reduce the communication overhead.
+If you are running on a Unix system, ((("Unix forkserver")))you can use the _forkserver_, shown in <<configuring_dask_forkserver_ch03_1686241608423>>, which will https://oreil.ly/U9voe[reduce the overhead of starting each Python interpreter]. Using the forkserver will not reduce the communication overhead.
 
 [[configuring_dask_forkserver_ch03_1686241608423]]
 .Configuring Dask to use the multi-process forkserver
@@ -79,9 +79,9 @@ Dask's client is not fault tolerant, so while ((("Dask client", "limitations")))
 
 ===== Libraries and dependencies in distributed clusters
 
-Part of why Dask is so powerful ((("execution backends", "distributed", "libraries")))((("distributed scheduler", "libraries")))((("execution backends", "distributed", "dependencies")))((("distributed scheduler", "dependencies")))((("libraries", "distributed clusters")))((("dependencies", "distributed clusters")))is the Python ecosystem that it is in. While Dask will pickle, or serialize (see <<ser_pick_dtl>>), and send our code to the workers, this doesn't include the libraries we use.footnote:[Automatically picking up and shipping the libraries would be very hard and also slow, although it can be done under certain circumstances.] To take advantage of that ecosystem, you need to be able to use additional libraries. During the exploration phase, it is common to install packages at runtime as you discover that you need them.
+Part of why Dask is so powerful ((("execution backends", "distributed", "libraries")))((("distributed scheduler", "libraries")))((("execution backends", "distributed", "dependencies")))((("distributed scheduler", "dependencies")))((("libraries", "distributed clusters")))((("dependencies", "distributed clusters")))((("Python", "ecosystem, Dask and")))is the Python ecosystem that it is in. While Dask will pickle, or serialize (see <<ser_pick_dtl>>), and send our code to the workers, this doesn't include the libraries we use.footnote:[Automatically picking up and shipping the libraries would be very hard and also slow, although it can be done under certain circumstances.] To take advantage of that ecosystem, you need to be able to use additional libraries. During the exploration phase, it is common to install packages at runtime as you discover that you need them.
 
-The `PipInstall` worker plug-in takes a list ((("PipInstall plug-in")))((("plug-ins", "PipInstall")))of packages and installs them at runtime on all of the workers. Looking back at the web crawler in <<ch2_getting_started_with_dask>>, to install bs4 you would call `distributed.diagnostics.plugin.PipInstall(["bs4"])`. Any new workers that are launched by Dask then need to wait for the package to be installed. The `PipInstall` plug-in is ideal for quick prototyping when you are discovering which packages you need. You can think of `PipInstall` as the replacement for `!pip install` in a notebook over having a virtualenv.
+The `PipInstall` worker plug-in takes a list ((("PipInstall plug-in")))of packages and installs them at runtime on all of the workers. Looking back at the web crawler in <<ch2_getting_started_with_dask>>, to install bs4 you would call `distributed.diagnostics.plugin.PipInstall(["bs4"])`. Any new workers that are launched by Dask then need to wait for the package to be installed. The `PipInstall` plug-in is ideal for quick prototyping when you are discovering which packages you need. You can think of `PipInstall` as the replacement for `!pip install` in a notebook over having a virtualenv.
 
 To avoid the slowness of having ((("libraries", "pre-installing")))to install packages each time a new worker is launched, you should try to pre-install your libraries. Each cluster ((("dependencies", "cluster managers")))((("CMs (cluster managers)", "dependencies")))manager (e.g., YARN, Kubernetes, Coiled, Saturn, etc.) has its own methods for managing dependencies. This can happen at runtime or at setup where the packages are pre-installed. The specifics for the different cluster managers are covered in <<ch12>>.
 
@@ -114,7 +114,7 @@ The UI allows you to see what Dask is doing and what's being stored on the worke
 [[ser_pick_dtl]]
 === Serialization and Pickling
 
-Distributed and parallel systems ((("serialization")))((("pickling")))depend on serialization, sometimes called _pickling_ in Python, to share data and functions/code between processes. Dask uses a mixture of serialization techniques to match the use case and provides hooks to extend by class when the defaults don't meet your needs.
+Distributed and parallel systems ((("serialization")))((("pickling")))((("Python", "pickling")))depend on serialization, sometimes called _pickling_ in Python, to share data and functions/code between processes. Dask uses a mixture of serialization techniques to match the use case and provides hooks to extend by class when the defaults don't meet your needs.
 
 Cloudpickle serializes the functions ((("pickling", "Cloudpickle")))((("Cloudpickle")))((("serialization", "Cloudpickle")))and the generic Python types in Dask. Most Python code doesn't depend on serializing functions, but cluster computing often does. Cloudpickle is a project designed for cluster computing and is able to serialize and deserialize more functions than Python's built-in pickle.
 
@@ -123,7 +123,7 @@ Cloudpickle serializes the functions ((("pickling", "Cloudpickle")))((("Cloudpic
 Dask has its own ability to extend ((("serialization", "extending")))serialization, but the registry methods are not automatically sent to the workers, and it's not always used.footnote:[See Dask distributed GitHub issues https://oreil.ly/DmFxp[5561] and https://oreil.ly/RxzGS[2953].]
 ====
 
-Dask has built-in special ((("serialization", "NumPy arrays")))((("serialization", "sparse")))((("serialization", "cuPY")))((("NumPy arrays")))((("sparse")))((("cuPY")))handling for NumPy arrays, sparse, and cuPY. These serializations tend to be more space efficient than the default serializers. When you make a class that contains one of these types and does not require any special initialization, you should call `register_generic(YourClass)` from `dask.distributed.protocol` to take advantage of Dask's special handling.
+Dask has built-in special ((("serialization", "NumPy arrays")))((("serialization", "sparse")))((("serialization", "cuPY")))((("NumPy", "arrays")))((("sparse")))((("cuPY")))handling for NumPy arrays, sparse, and cuPY. These serializations tend to be more space efficient than the default serializers. When you make a class that contains one of these types and does not require any special initialization, you should call `register_generic(YourClass)` from `dask.distributed.protocol` to take advantage of Dask's special handling.
 
 If you have a class that is not serializable, as in <<fail_to_ser>>, you can wrap it to add serialization functions to it, as shown in <<custom_ser_with_pickle>>.
 
@@ -229,7 +229,7 @@ Tasks are the building blocks that Dask uses to implement `dask.delayed`, future
 [[lazy_eval]]
 ==== Lazy Evaluation
 
-Most of Dask is lazily evaluated, ((("lazy evaluation")))((("evaluation", "lazy evaluation")))with the exception of Dask futures. Lazy evaluation shifts the responsibility for combining computations from you to the scheduler. This means that Dask will, when it makes sense, combine multiple function calls. Not only that, but if only some parts of a structure are needed, Dask is sometimes able to optimize by evaluating just the relevant parts (like `head` or `tail` calls).footnote:[When Dask can optimize evaluation here is complicated, but remember that a task is the fundamental unit of computation and Dask cannot break down compute any further inside the task. So a DataFrame created from many individual tasks that you call `head` on is a great candidate for Dask to optimize, but for a single task making a large DataFrame, Dask is unable to break "inside."] Implementing lazy evaluation requires Dask to construct a task graph. This task graph is ((("task graphs")))((("graphs", "task graphs")))((("fault tolerance", "task graphs")))also reused for fault tolerance.
+Most of Dask is lazily evaluated, ((("lazy evaluation")))with the exception of Dask futures. Lazy evaluation shifts the responsibility for combining computations from you to the scheduler. This means that Dask will, when it makes sense, combine multiple function calls. Not only that, but if only some parts of a structure are needed, Dask is sometimes able to optimize by evaluating just the relevant parts (like `head` or `tail` calls).footnote:[When Dask can optimize evaluation here is complicated, but remember that a task is the fundamental unit of computation and Dask cannot break down compute any further inside the task. So a DataFrame created from many individual tasks that you call `head` on is a great candidate for Dask to optimize, but for a single task making a large DataFrame, Dask is unable to break "inside."] Implementing lazy evaluation requires Dask to construct a task graph. This task graph is ((("task graphs")))((("graphs", "task graphs")))((("fault tolerance", "task graphs")))also reused for fault tolerance.
 
 
 Unlike the rest of Dask, futures are eagerly evaluated, which limits the optimizations available when chaining them together, as the scheduler has a less complete view of the world when it starts executing the first future. Futures still create task graphs, and you can verify this by visualizing them, as we'll see in the next section.
@@ -237,7 +237,7 @@ Unlike the rest of Dask, futures are eagerly evaluated, which limits the optimiz
 [[task_deps]]
 ==== Task Dependencies
 
-In addition to nested tasks, as ((("tasks", "dependencies")))((("dependencies", "task dependencies")))((("dask.delayed object")))((("objects", "dask.delayed")))seen in <<nested_tasks>>, you can also use a `dask.delayed` object as input to another delayed computation (see <<task_dependencies_example_ch03_1686946028901>>), and Dask's `submit`/`compute` function will construct a task graph for you.
+In addition to nested tasks, as ((("tasks", "dependencies")))((("dependencies", "task dependencies")))((("dask.delayed object")))seen in <<nested_tasks>>, you can also use a `dask.delayed` object as input to another delayed computation (see <<task_dependencies_example_ch03_1686946028901>>), and Dask's `submit`/`compute` function will construct a task graph for you.
 
 [[task_dependencies_example_ch03_1686946028901]]
 .Task dependencies
@@ -257,7 +257,7 @@ You don't need to pass around real values. For example, if one function updates 
 [[graph_visualize]]
 ==== visualize
 
-Visualizing the task graph is an ((("task graphs", "visualizing")))((("visualization", "task graphs")))((("graphs", "task graphs", "visualizing")))excellent tool for you to use while learning about task graphs and debugging in the future. The `visualize` function ((("functions", "visualize")))((("visualize function")))is defined both in the Dask library and on all Dask objects. Instead of calling `.visualize` separately on multiple objects, you should call `dask.visualize` with the list of objects you are planning to compute to see how Dask combines the task graph.
+Visualizing the task graph is an ((("task graphs", "visualizing")))((("visualization, task graphs")))((("graphs", "task graphs", "visualizing")))excellent tool for you to use while learning about task graphs and debugging in the future. The `visualize` function ((("functions", "visualize")))((("visualize function")))is defined both in the Dask library and on all Dask objects. Instead of calling `.visualize` separately on multiple objects, you should call `dask.visualize` with the list of objects you are planning to compute to see how Dask combines the task graph.
 
 You should try this out now by visualizing everyone's favorite word count example from the previous chapter. When you call `dask.visualize` on pass:[<code>words_bag&#x200b;.fre&#x2060;quen&#x2060;cies()</code>], you should get a result that looks something like <<vis_ex>>.
 
@@ -272,7 +272,7 @@ The Dask UI also shows visualized representations of the task graph, without the
 
 ==== Intermediate Task Results
 
-Intermediate task results are generally ((("tasks", "dependencies", "intermediate results")))((("dependencies", "tasks", "intermediate results")))removed as soon as the dependent task has started to execute. This can be less than optimal when we need to perform multiple computations on the same piece of data. One solution to this is combining all our execution together into one call to `dask.compute`, so that Dask is able to keep the data around as needed. This breaks down in both the interactive case, where we don't know in advance what our computation is going to be, and iterative cases. In those cases, some form of caching or persistence can be beneficial. You will learn about how to apply caching later in this chapter.
+Intermediate task results are generally ((("tasks", "dependencies", "intermediate results")))((("dependencies", "tasks, intermediate results")))removed as soon as the dependent task has started to execute. This can be less than optimal when we need to perform multiple computations on the same piece of data. One solution to this is combining all our execution together into one call to `dask.compute`, so that Dask is able to keep the data around as needed. This breaks down in both the interactive case, where we don't know in advance what our computation is going to be, and iterative cases. In those cases, some form of caching or persistence can be beneficial. You will learn about how to apply caching later in this chapter.
 
 ==== Task Sizing
 

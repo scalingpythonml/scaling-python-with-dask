@@ -5,7 +5,7 @@ We are so happy that you've decided to explore whether Dask is the system for yo
 
 === Installing Dask Locally
 
-Installing Dask locally is reasonably ((("Dask", "installation", "local", id="dksllcl")))((("conda environment", "Dask installation", id="cdvdkt")))straightforward. If you want to begin running on multiple machines, doing so is often easier when you start with a conda environment (or virtualenv). This lets you figure out what packages you depend on by running `pip freeze` to make ((("pip freeze")))sure they're on all of the workers when it's time to scale.
+Installing Dask locally is reasonably ((("Dask installation")))((("conda environment", "Dask installation", id="cdvdkt")))straightforward. If you want to begin running on multiple machines, doing so is often easier when you start with a conda environment (or virtualenv). This lets you figure out what packages you depend on by running `pip freeze` to make ((("pip freeze")))sure they're on all of the workers when it's time to scale.
 
 While you can just run `pip install -U dask`, we prefer using a conda environment since it's easier to match the version of Python to that on a cluster, which allows us to connect a local machine to the cluster directly.footnote:[There are downsides to deploying your Dask application in this way, as discussed in <<ch12>>, but it can be an excellent debugging technique.] If you don't already have conda on your machine, link:$$https://oreil.ly/qVDa7$$[Miniforge] is a good and quick way to get conda installed across multiple platforms. The installation of Dask into a new conda environment is shown in <<install_conda_env_with_dask>>.
 
@@ -27,7 +27,7 @@ You don't have to install Dask locally. There is a link:$$https://oreil.ly/EK5n5
 
 .Using Dask Docker Images
 ****
-Another way to get Dask running locally is to use link:$$https://oreil.ly/zCeHQ$$[example Docker images] maintained ((("Docker images")))((("images", "Docker")))by the Dask project. The benefit of this approach is that the same image can then be used in a distributed cluster, each node running the same Docker image locally, thus ensuring the compatibility of all the packages. [.keep-together]#Advanced users can use# the Dask example Docker images as ((("Dask", "installation", "local", startref="dksllcl")))a base and add [.keep-together]#packages of their# choice before link:$$https://oreil.ly/S1ms1$$[committing changes and saving it as a new image].
+Another way to get Dask running locally is to use link:$$https://oreil.ly/zCeHQ$$[example Docker images] maintained ((("Docker images")))((("images, Docker")))by the Dask project. The benefit of this approach is that the same image can then be used in a distributed cluster, each node running the same Docker image locally, thus ensuring the compatibility of all the packages. [.keep-together]#Advanced users can use# the Dask example Docker images as ((("Dask installation", startref="dksllcl")))a base and add [.keep-together]#packages of their# choice before link:$$https://oreil.ly/S1ms1$$[committing changes and saving it as a new image].
 ****
 
 [[hello_worlds]]
@@ -55,7 +55,7 @@ You can use `dask.compute` both to start computing the delayed objects and futur
 [[sleepy_task]]
 ===== Sleepy task
 
-An easy way to see the ((("Hello Worlds", "task", "sleepy task")))((("task Hello World", "sleepy task")))((("sleepy task", "Hello World")))((("slow_task function")))((("functions", "slow_task")))performance difference is by writing an intentionally slow function, like `slow_task`, which calls `sleep`. Then you can compare the performance of Dask to "regular" Python by mapping the function over a few elements with and without `dask.delayed`, as shown in this example:
+An easy way to see the ((("Hello Worlds", "task", "sleepy task")))((("task Hello World", "sleepy task")))((("sleepy task, Hello World")))((("slow_task function")))((("functions", "slow_task")))performance difference is by writing an intentionally slow function, like `slow_task`, which calls `sleep`. Then you can compare the performance of Dask to "regular" Python by mapping the function over a few elements with and without `dask.delayed`, as shown in this example:
 
 
 
@@ -71,7 +71,7 @@ When we run this example, we get `In sequence 20.01662155520171, in parallel 6.2
 [[nested_tasks]]
 ===== Nested tasks
 
-One of the neat things about `dask.delayed` is that you ((("Hello Worlds", "task", "nested tasks", id="hwtksk")))((("task Hello World", "nested tasks", id="tkwdsks")))((("nested tasks", "Hello World", id="nskshw")))can launch tasks inside of other tasks.footnote:[This is very different from Apache Spark, where only the driver/head node can launch tasks.] A straightforward real-world example of this is a web crawler, with which, when you visit a web page, you want to fetch all of the links from that page:
+One of the neat things about `dask.delayed` is that you ((("Hello Worlds", "task", "nested tasks", id="hwtksk")))((("task Hello World", "nested tasks", id="tkwdsks")))((("nested tasks, Hello World", id="nskshw")))can launch tasks inside of other tasks.footnote:[This is very different from Apache Spark, where only the driver/head node can launch tasks.] A straightforward real-world example of this is a web crawler, with which, when you visit a web page, you want to fetch all of the links from that page:
 
 [source, python]
 ----
@@ -83,7 +83,7 @@ include::./examples/dask/Dask-Ch2-Hello-Worlds.py[tags=mini_crawl_task]
 In practice, some central co-ordination is still involved behind the scenes (including the scheduler), but the freedom to write your code in this nested way is quite powerful.
 ====
 
-We cover other kinds of task ((("Hello Worlds", "task", "nested tasks", startref="hwtksk")))((("task Hello World", "nested tasks", startref="tkwdsks")))((("nested tasks", "Hello World", startref="nskshw")))dependencies in <<task_deps>>.
+We cover other kinds of task ((("Hello Worlds", "task", "nested tasks", startref="hwtksk")))((("task Hello World", "nested tasks", startref="tkwdsks")))((("nested tasks, Hello World", startref="nskshw")))dependencies in <<task_deps>>.
 
 
 ==== Distributed Collections
@@ -163,7 +163,7 @@ On Dask bags, `foldby`, `frequency`, and many other reductions return a single p
 
 ==== Dask DataFrame (Pandas/What People Wish Big Data Was)
 
-Pandas is one of the most ((("Hello Worlds", "Dask DataFrame")))((("Dask DataFrames")))((("pandas DataFrames", seealso="Dask DataFrames")))((("DataFrames", see="panda DataFrames")))((("DataFrames", see="Dask DataFrames")))popular Python data libraries, and Dask has a DataFrame library that implements much of the pandas API.  Thanks to Python's duck-typing, you can often use Dask's distributed DataFrame library in place of pandas. Not all of the API will work exactly the same, and some parts are not implemented, so be sure you have good test coverage. 
+Pandas is one of the most ((("Hello Worlds", "Dask DataFrame")))((("Dask DataFrames")))((("pandas DataFrames", seealso="Dask DataFrames")))((("DataFrames", see="panda DataFrames")))((("DataFrames", see="Dask DataFrames")))popular Python data libraries, and Dask has a DataFrame library that implements much of the pandas API.  Thanks to Python's duck-typing, ((("Python", "duck-typing")))you can often use Dask's distributed DataFrame library in place of pandas. Not all of the API will work exactly the same, and some parts are not implemented, so be sure you have good test coverage. 
 
 [WARNING]
 ====

@@ -55,7 +55,7 @@ include::./examples/dask/Dask-Ch10_porting.py[tags=ex_yarn_deployment]
 ----
 ====
 
-For high-performance computing deployments using job queuing systems such as PBS, Slurm, MOAB, SGE, LSF, and HTCondor, you should ((("Dask-jobqueue")))((("job queues", "migration and")))use Dask-jobqueue, as shown in <<ex_slurm_deployment_ch09_1685536141262>>.
+For high-performance computing deployments using job queuing systems such as PBS, Slurm, MOAB, SGE, LSF, and HTCondor, you should ((("Dask-jobqueue")))((("job queues, migration and")))use Dask-jobqueue, as shown in <<ex_slurm_deployment_ch09_1685536141262>>.
 
 [[ex_slurm_deployment_ch09_1685536141262]]
 .Deploying Dask using job-queue over Slurm
@@ -85,7 +85,7 @@ Translating an existing logic to Dask is a fairly intuitive process. Here are so
 
 ==== DataFrame Performance
 
-If you have a job that you are ((("migration", "DataFrame performance and", id="mgdfpf")))((("DataFrames", "migration and", id="dfmgr")))already running on a different platform, it’s likely you are already using columnar storage format, like Parquet, and reading at runtime. The data type mapping from Parquet to Python is inherently imprecise. It’s a good idea to check data types when reading in any data at runtime, and the same applies to DataFrame. If type inference fails, a column would default to object. Once you inspect and determine the type inference is imprecise, specifying data types can speed up your job a lot. Additionally, it’s always a good idea to check strings, floating point numbers, datetime, and arrays. If type errors arise, keeping in mind the upstream data sources and their data type is a good start. For example, if the Parquet is generated from protocol buffers, depending on what encode and decode engine was used, there are differences in null checks, float, doubles, and mixed precision types that are introduced in that stack.
+If you have a job that you are ((("migration", "DataFrame performance and", id="mgdfpf")))((("Dask DataFrames", "migration and", id="dfmgr")))already running on a different platform, it’s likely you are already using columnar storage format, like Parquet, and reading at runtime. The data type mapping from Parquet to Python ((("Python", "data type mapping")))is inherently imprecise. It’s a good idea to check data types when reading in any data at runtime, and the same applies to DataFrame. If type inference fails, a column would default to object. Once you inspect and determine the type inference is imprecise, specifying data types can speed up your job a lot. Additionally, it’s always a good idea to check strings, floating point numbers, datetime, and arrays. If type errors arise, keeping in mind the upstream data sources and their data type is a good start. For example, if the Parquet is generated from protocol buffers, depending on what encode and decode engine was used, there are differences in null checks, float, doubles, and mixed precision types that are introduced in that stack.
 
 When reading a large file from cloud storage into DataFrame, it may be useful to select columns ahead of time at the DataFrame read stage. Users from other platforms like Spark would be familiar with predicate pushdown, where even if you don’t quite specify the columns desired, it would optimize and only read the required column for computation. Dask doesn’t quite provide that optimization yet.
 
@@ -95,12 +95,12 @@ During the transform stage, calling `.compute()` coalesces a large distributed D
 
 [TIP]
 ====
-Dask DataFrame is not value-mutable in the way that pandas DataFrame users might be familiar with. Since in-memory modification of a particular value is not possible, the only way to change a value would be a map operation over the whole column of the entire DataFrame. If an in-memory value change is something you have to do often, it is better to use an ((("migration", "DataFrame performance and", startref="mgdfpf")))((("DataFrames", "migration and", startref="dfmgr")))external database.
+Dask DataFrame is not value-mutable in the way that pandas DataFrame users might be familiar with. Since in-memory modification of a particular value is not possible, the only way to change a value would be a map operation over the whole column of the entire DataFrame. If an in-memory value change is something you have to do often, it is better to use an ((("migration", "DataFrame performance and", startref="mgdfpf")))((("Dask DataFrames", "migration and", startref="dfmgr")))external database.
 ====
 
 ==== Porting SQL to Dask
 
-Dask does not natively offer a SQL engine, although ((("migration", "DaskSQL and", id="mgdksq")))((("DaskSQL", "migration and", id="dsksql")))((("SQL (Structured Query Language)", "Dask-SQL")))it does natively offer options to read from a SQL database. There are a number of different libraries you can use to interact with an existing SQL database, and treat Dask DataFrame as a SQL table and run SQL queries directly (see <<ex_postgres_dataframe>>). Some allow you to even build and serve ML models directly using SQL ML syntax similar to that of Google's BigQuery ML. In Chapter 13, we will show the use of Dask's native `read_sql()` function, and running SQL ML using Dask-SQL.
+Dask does not natively offer a SQL engine, although ((("migration", "Dask-SQL and", id="mgdksq")))((("Dask-SQL", "migration and", id="dsksql")))((("SQL (Structured Query Language)", "Dask-SQL")))it does natively offer options to read from a SQL database. There are a number of different libraries you can use to interact with an existing SQL database, and treat Dask DataFrame as a SQL table and run SQL queries directly (see <<ex_postgres_dataframe>>). Some allow you to even build and serve ML models directly using SQL ML syntax similar to that of Google's BigQuery ML. In Chapter 13, we will show the use of Dask's native `read_sql()` function, and running SQL ML using Dask-SQL.
 
 [[ex_postgres_dataframe]]
 .Reading from a Postgres database
@@ -153,7 +153,7 @@ PRINT
 schema: VendorID:long, average_fare:double
 ----
 
-An alternate method is to use the Dask-SQL library. This package uses Apache Calcite to provide the SQL parsing frontend, and is used to query Dask DataFrames. With that library, you can pass most of the SQL-based operations to the Dask-SQL context, and it will be handled. The ((("migration", "DaskSQL and", startref="mgdksq")))((("DaskSQL", "migration and", startref="dsksql")))engine handles standard SQL inputs like `SELECT`, `CREATE TABLE`, but also ML model creation, with the `CREATE MODEL` syntax.
+An alternate method is to use the Dask-SQL library. This package uses Apache Calcite to provide the SQL parsing frontend, and is used to query Dask DataFrames. With that library, you can pass most of the SQL-based operations to the Dask-SQL context, and it will be handled. The ((("migration", "Dask-SQL and", startref="mgdksq")))((("Dask-SQL", "migration and", startref="dsksql")))engine handles standard SQL inputs like `SELECT`, `CREATE TABLE`, but also ML model creation, with the `CREATE MODEL` syntax.
 
 ==== Deployment Monitoring
 
