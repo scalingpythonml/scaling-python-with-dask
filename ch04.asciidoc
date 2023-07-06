@@ -430,7 +430,7 @@ Some problems are generally unsuitable for data-parallel computing. For example,
 
 === Handling Recursive Algorithms
 
-Dask's lazy evaluation, powered by ((("algorithms", "recursive")))((("recursion", "recursive algorithms")))((("lazy evaluation", "recursive algorithms")))its lineage graph, is normally beneficial, allowing it to combine steps automatically.
+Dask's lazy evaluation, powered by ((("algorithms, recursive")))((("recursion", "recursive algorithms")))((("lazy evaluation", "recursive algorithms")))its lineage graph, is normally beneficial, allowing it to combine steps automatically.
 However, when the graph gets too large Dask can struggle to manage it, which often shows up as a slow driver process or notebook, and sometimes an out-of-memory exception. Thankfully, you can work around this by writing out your DataFrame and reading it back in. Generally, Parquet is the best format for doing this as it is space-efficient and self-describing, so no schema inference is required.
 
 === Recomputed Data
