@@ -2,15 +2,15 @@
 [preface]
 == Preface
 
-We wrote this book for data scientists and data engineers familiar with Python and pandas looking to handle larger-scale problems than their current tooling allows. Current PySpark users will find some of this material to overlap with their existing knowledge of PySpark, but we hope they still find it helpful and not just for getting away from the Java Virtual Machine (JVM).
+We wrote this book for data scientists and data engineers familiar with Python and pandas who are looking to handle larger-scale problems than their current tooling allows. Current PySpark users will find that some of this material overlaps with their existing knowledge of PySpark, but we hope they still find it helpful, and not just for getting away from the Java Virtual Machine (JVM).
 
 If you are not familiar with Python, some excellent O'Reilly titles include pass:[<a href="https://learning.oreilly.com/library/view/learning-python-5th/9781449355722" class="orm:hideurl"><em>Learning Python</em></a>] and pass:[<a href="https://learning.oreilly.com/library/view/python-for-data/9781098104023" class="orm:hideurl"><em>Python for Data Analysis</em></a>]. If you and your team are more frequent users of JVM languages (such as Java or Scala), while we are a bit biased, we'd encourage you to check out Apache Spark along with pass:[<a href="https://learning.oreilly.com/library/view/learning-spark-2nd/9781492050032" class="orm:hideurl"><em>Learning Spark</em></a>] (O'Reilly) and pass:[<a href="https://learning.oreilly.com/library/view/high-performance-spark/9781098145842" class="orm:hideurl"><em>High Performance Spark</em></a> (O'Reilly)].
 
-This book is primarily focused on data science and related tasks because, in our opinion, that is where Dask excels the most. If you have a more general problem that Dask does not seem to be quite the right fit for, we'd (with a bit of bias again) encourage you to check out pass:[<a href="https://learning.oreilly.com/library/view/scaling-python-with/9781098118792" class="orm:hideurl"><em>Scaling Python with Ray</em></a>] (O'Reilly), which has less of a data science focus.
+This book is primarily focused on data science and related tasks because, in our opinion, that is where Dask excels the most. If you have a more general problem that Dask does not seem to be quite the right fit for, we would (with a bit of bias again) encourage you to check out pass:[<a href="https://learning.oreilly.com/library/view/scaling-python-with/9781098118792" class="orm:hideurl"><em>Scaling Python with Ray</em></a>] (O'Reilly), which has less of a data science focus.
 
 === A Note on Responsibility
 
-As the saying goes, with great power comes great responsibility. Dask, and tools like it, enables you to process more data and build more complex models. It's essential not to get carried away with collecting data simply for the sake of it, and stop to ask yourself if including a new field in your model might have some unintended real-world implications. You don't have to search very hard to find stories of well-meaning engineers and data scientists accidentally building models or tools that caused devastating impacts, like increased auditing of minorities, hiring algorithms discriminating based on gender, or subtler things like biases in https://oreil.ly/tqjth[word embeddings] (a way to represent the meanings of words as vectors). Please use your newfound powers with this in mind, for one never wants to end up in a textbook for the wrong reasons.
+As the saying goes, with great power comes great responsibility. Dask and tools like it enable you to process more data and build more complex models. It's essential not to get carried away with collecting data simply for the sake of it, and to stop to ask yourself if including a new field in your model might have some unintended real-world implications. You don't have to search very hard to find stories of well-meaning engineers and data scientists accidentally building models or tools that had devastating impacts, such as increased auditing of minorities, hiring algorithms discriminating based on gender, or subtler things like biases in https://oreil.ly/tqjth[word embeddings] (a way to represent the meanings of words as vectors). Please use your newfound powers with such potential consequences in mind, for one never wants to end up in a textbook for the wrong reasons.
 
 === Conventions Used in This Book
 
@@ -37,11 +37,11 @@ This element indicates a warning or caution.
 
 === License
 
-Once published in print and excluding O’Reilly’s distinctive design elements (i.e. cover art, design format, “look and feel”) or O’Reilly’s trademarks, service marks, and trade names, this book is available under a Creative Commons Attribution-Noncommercial-No Derivatives 4.0 International Public License. We'd like to thank O'Reilly for allowing us to make this book available under a creative commons license and hope that you will choose to support this book (and us) by purchasing several copies (it makes an excellent gift for whichever holiday season is coming up next).
+Once published in print and excluding O’Reilly’s distinctive design elements (i.e., cover art, design format, “look and feel”) or O’Reilly’s trademarks, service marks, and trade names, this book is available under a Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International Public License. We'd like to thank O'Reilly for allowing us to make this book available under a Creative Commons license and hope that you will choose to support this book (and us) by purchasing several copies (it makes an excellent gift for whichever holiday season is coming up next).
 
 === Using Code Examples
 
-The https://oreil.ly/scaling-python-dask-code[+++Scaling Python ML GitHub repo+++] contains the majority of the examples in this book. They are mainly under the _dask_ directory but with more esoteric parts (such as the cross-platform CUDA container) in separate top-level directories.
+The https://oreil.ly/scaling-python-dask-code[+++Scaling Python Machine Learning GitHub repo+++] contains the majority of the examples in this book. They are mainly under the _dask_ directory, with more esoteric parts (such as the cross-platform CUDA container) found in separate top-level directories.
 
 If you have a technical question or a problem using the code examples, please email pass:[<a class="email" href="mailto:support@oreilly.com"><em>support@oreilly.com</em></a>].
 
