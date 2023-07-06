@@ -134,7 +134,7 @@ include::./examples/dask/Dask-Ch4-DataFrames.py[tags=fsspec]
 ----
 ====
 
-Many filesystems require some kind of ((("fileystems", "configuration")))((("configuration, filesystems")))configuration, be it endpoint or credentials. Often new filesystems, like MinIO, offer S3-compatible APIs but overload the endpoint and require some extra configuration to function. With Dask you specify the configuration parameters to the read/write function with pass:[<code>storage&#x200b;_options</code>]. Everyone's configuration here will likely be a bit different.footnote:[https://oreil.ly/ZfcRv[FSSPEC documentation] includes the specifics for configuring each of the backends.] Dask will use your [.keep-together]#`storage_options`# dict as the keyword arguments to the underlying FSSPEC implementation. For example, my `storage_options` for MinIO are shown in <<minio_storage_options>>.
+Many filesystems require some kind of ((("filesystems", "configuration")))((("configuration, filesystems")))configuration, be it endpoint or credentials. Often new filesystems, like MinIO, offer S3-compatible APIs but overload the endpoint and require some extra configuration to function. With Dask you specify the configuration parameters to the read/write function with pass:[<code>storage&#x200b;_options</code>]. Everyone's configuration here will likely be a bit different.footnote:[https://oreil.ly/ZfcRv[FSSPEC documentation] includes the specifics for configuring each of the backends.] Dask will use your [.keep-together]#`storage_options`# dict as the keyword arguments to the underlying FSSPEC implementation. For example, my `storage_options` for MinIO are shown in <<minio_storage_options>>.
 
 [[minio_storage_options]]
 .Dask configure MinIO
