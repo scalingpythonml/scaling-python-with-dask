@@ -134,7 +134,7 @@ If you don't have time to make your ((("libraries", "evaluating", "contributions
 
 ==== Extensibility
 
-Not all changes to libraries necessarily ((("libraries", "evaluating", "extensibility")))((("projects", "library evaluation", "extensibility")))((("extensibility", "library evaluation and")))need to be able to go upstream. If a library is appropriately structured, you can add additional functionality without changing the underlying code. Part of what makes Dask so powerful is its extensibility. For example, adding user-defined functions and aggregations allows Dask to be useable by many.
+Not all changes to libraries necessarily ((("libraries", "evaluating", "extensibility")))((("projects", "library evaluation", "extensibility")))((("extensibility, library evaluation and")))need to be able to go upstream. If a library is appropriately structured, you can add additional functionality without changing the underlying code. Part of what makes Dask so powerful is its extensibility. For example, adding user-defined functions and aggregations allows Dask to be useable by many.
 
 === Quantitative Metrics for Open Source Project Evaluation
 
