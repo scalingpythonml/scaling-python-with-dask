@@ -180,7 +180,7 @@ As mentioned in the previous ((("shuffles")))chapter, shuffles are expensive. Th
 
 ==== Rolling Windows and map_overlap
 
-One situation that can trigger the ((("shuffles", "rolling windows")))((("rolling windows", "shuffles and")))((("shuffles", "map_overlap function")))((("functions", "map_overlap")))((("map_overlap function")))need for a shuffle is a rolling window, where at the edges of a partition your function needs some records from its neighbors.
+One situation that can trigger the ((("shuffles", "rolling windows")))((("rolling windows, shuffles and")))((("shuffles", "map_overlap function")))((("functions", "map_overlap")))((("map_overlap function")))need for a shuffle is a rolling window, where at the edges of a partition your function needs some records from its neighbors.
 Dask DataFrame has a special `map_overlap` function in which you can specify a `look-after` window (also called a look-ahead window) and `look-before` window (also called a look-back window) of rows to transfer (either an integer or a time delta). The simplest example taking advantage of this is a rolling average, shown in <<rolling_date_ex>>.
 
 [[rolling_date_ex]]
