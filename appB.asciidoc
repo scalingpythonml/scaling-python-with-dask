@@ -10,7 +10,7 @@ Scalable DataFrames does not have to mean distributed, although distributed scal
 
 === Tools
 
-One of the common dependencies ((("scalable DataFrames", "tools", id="sclbdftls")))you'll see in many of the tools is that they are built on top of ASF Arrow. While Arrow is a fantastic project, and we hope to see its continued adoption, it has some https://oreil.ly/VPyAL[+++type differences+++], especially with respect to nullability.footnote:[Arrow allows all data types to be null. Pandas does not allow integer columns to contain nulls. When reading Arrow files as pandas, if an Int column does not contain nulls, it will be read as Int in the pandas DataFrame, but if at runtime it encounters a null, the entire column will be read as a float.] These differences mean that most of the systems built using Arrow share some common restrictions.
+One of the common dependencies ((("scaling DataFrames", "tools", id="sclbdftls")))you'll see in many of the tools is that they are built on top of ASF Arrow. While Arrow is a fantastic project, and we hope to see its continued adoption, it has some https://oreil.ly/VPyAL[+++type differences+++], especially with respect to nullability.footnote:[Arrow allows all data types to be null. Pandas does not allow integer columns to contain nulls. When reading Arrow files as pandas, if an Int column does not contain nulls, it will be read as Int in the pandas DataFrame, but if at runtime it encounters a null, the entire column will be read as a float.] These differences mean that most of the systems built using Arrow share some common restrictions.
 
 Open Multi-Processing (OpenMP) and ((("OpenMP (Open Multi-Processing)")))((("OpenMPI (Open Message Passing Interface)")))Open Message Passing Interface (OpenMPI) are two other common dependencies many of these tools depend on. Despite similar acronyms, which you'll see them referred to by most commonly, they take fundamentally different approaches to parallelism. OpenMP is a single-machine tool focused on shared memory (with potentially non-uniform access). OpenMPI supports multiple machines and instead of shared memory uses message passing (conceptually similar to Dask's actor system) for parallelization.
 
@@ -83,7 +83,7 @@ We are biased here, but we think ((("scaling DataFrames", "vanila")))that Dask's
 
 cuDF extends Dask DataFrame ((("scaling DataFrames", "cuDF")))((("cuDF")))to add support for GPUs. It is, however, primarily a single-company project, from NVIDIA. This makes sense since NVIDIA wants to sell you more GPUs, but it also does mean it is unlikely to, say, add support for AMD GPUs anytime soon. This project is likely to be maintained if NVIDIA continues to see a future in selling more GPUs for data analytics as best served with pandas-like interfaces.
 
-cuDF not only has CI, it also has a strong ((("scalable DataFrames", "tools", startref="sclbdftls")))culture of code review with per-area responsibilities.
+cuDF not only has CI, it also has a strong ((("scaling DataFrames", "tools", startref="sclbdftls")))culture of code review with per-area responsibilities.
 
 === Conclusion
 
