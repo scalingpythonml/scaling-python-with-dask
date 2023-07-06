@@ -33,7 +33,7 @@ Dask-ML is the officially supported ML library for Dask. Here, we will walk thro
 
 ==== Feature Engineering
 
-As with any good data science ((("Dask-ML", "Dask-ML API", "feature engineering", id="dkmldkp")))((("feature engineering", "Dask-ML API", id="ftgdkmlp")))workflow, we start with clean-up, applying scalers, and transforms. Dask-ML has drop-in replacements for most of the pre-processing API from scikit-learn, including `StandardScaler`, `PolynomialFeatures`, pass:[<code>MinMax&#x200b;Scaler</code>],&nbsp;etc.
+As with any good data science ((("Dask-ML", "Dask-ML API", "feature engineering", id="dkmldkp")))((("feature engineering, Dask-ML API", id="ftgdkmlp")))workflow, we start with clean-up, applying scalers, and transforms. Dask-ML has drop-in replacements for most of the pre-processing API from scikit-learn, including `StandardScaler`, `PolynomialFeatures`, pass:[<code>MinMax&#x200b;Scaler</code>],&nbsp;etc.
 
 You can pass multiple columns to the transformers, and each will be normalized, resulting in a delayed Dask DataFrame that you should call `compute` on.
 
@@ -107,7 +107,7 @@ include::./examples/dask/Dask-Ch13_ML.py[tags=ex_dask_random_split]
 ----
 ====
 
-As a side effect of random splits happening by each partition block, the random behavior is not uniformly guaranteed over the whole of the DataFrame. If you suspect that some partition may have skews, you should ((("Dask-ML", "Dask-ML API", "feature engineering", startref="dkmldkp")))((("feature engineering", "Dask-ML API", startref="ftgdkmlp")))compute, redistribute, and then shuffle-split.
+As a side effect of random splits happening by each partition block, the random behavior is not uniformly guaranteed over the whole of the DataFrame. If you suspect that some partition may have skews, you should ((("Dask-ML", "Dask-ML API", "feature engineering", startref="dkmldkp")))((("feature engineering, Dask-ML API", startref="ftgdkmlp")))compute, redistribute, and then shuffle-split.
 
 ==== Model Selection and Training
 
