@@ -464,7 +464,7 @@ In <<appA>>, you will learn details about testing and validation, which are espe
 
 === Deployment Monitoring
 
-Like many other distributed ((("deployment", "monitoring", id="dpymtr")))((("monitoring", "deployment", id="mtrdpy")))libraries, Dask provides logs, and you can configure Dask logs to be sent to a storage system. The method will vary by the deployment environment and if you are using Jupyter.
+Like many other distributed ((("deployment", "monitoring", id="dpymtr")))libraries, Dask provides logs, and you can configure Dask logs to be sent to a storage system. The method will vary by the deployment environment and if you are using Jupyter.
 
 One generic way you can get the worker and scheduler logs is through `get_worker_logs()` and `get_scheduler_logs()` on the Dask client. You can specify specific topics and log to/read from just the relevant topics. Refer to <<ex_basic_logging_ch09_1685536244456>> for more information.
 
@@ -481,6 +481,6 @@ include::./examples/dask/Dask-Ch10_porting.py[tags=ex_distributed_logging]
 
 === Conclusion
 
-In this chapter, you've learned the various ((("deployment", "monitoring", startref="dpymtr")))((("monitoring", "deployment", startref="mtrdpy")))deployment options for Dask distributed, from commodity cloud to HPC infrastructures. You’ve also learned Jupyter magics to simplify getting access to information with remote deployments. In our experience, Dask on Kubernetes and Dask on Ray on Kubernetes offers the flexibility we need. Your own decision about how to deploy Dask here may be different, especially if you are working in a larger institution with existing cluster deployments. Most of the deployment options are covered in detail in the https://oreil.ly/j8ueU[+++"Deploy Dask Clusters" guide+++], with the notable exception of Dask on Ray, which is covered in the https://oreil.ly/Q18f2[+++Ray documentation+++].
+In this chapter, you've learned the various ((("deployment", "monitoring", startref="dpymtr")))deployment options for Dask distributed, from commodity cloud to HPC infrastructures. You’ve also learned Jupyter magics to simplify getting access to information with remote deployments. In our experience, Dask on Kubernetes and Dask on Ray on Kubernetes offers the flexibility we need. Your own decision about how to deploy Dask here may be different, especially if you are working in a larger institution with existing cluster deployments. Most of the deployment options are covered in detail in the https://oreil.ly/j8ueU[+++"Deploy Dask Clusters" guide+++], with the notable exception of Dask on Ray, which is covered in the https://oreil.ly/Q18f2[+++Ray documentation+++].
 
 You’ve also learned about runtime considerations and metrics to track when running a distributed work, and the various tools in Dask’s dashboard to accomplish that, expanded with more advanced user-defined metrics generation. Using these metrics, you’ve learned the conceptual basis for tuning your Dask Distributed clusters, troubleshooting, and how this relates to the fundamental design principle of Dask and distributed computing.
