@@ -123,7 +123,7 @@ Cloudpickle serializes the functions ((("pickling", "Cloudpickle")))((("Cloudpic
 Dask has its own ability to extend ((("serialization", "extending")))serialization, but the registry methods are not automatically sent to the workers, and it's not always used.footnote:[See Dask distributed GitHub issues https://oreil.ly/DmFxp[5561] and https://oreil.ly/RxzGS[2953].]
 ====
 
-Dask has built-in special ((("serialization", "NumPy arrays")))((("serialization", "sparse")))((("serialization", "cuPY")))((("NumPy arrays")))((("sparse")))((("cuPY")))handling for NumPy arrays, sparse, and cuPY. These serializations tend to be more space-efficient than the default serializers. When you make a class that contains one of these types and does not require any special initialization, you should call `register_generic(YourClass)` from `dask.distributed.protocol` to take advantage of Dask's special handling.
+Dask has built-in special ((("serialization", "NumPy arrays")))((("serialization", "sparse")))((("serialization", "cuPY")))((("NumPy", "arrays")))((("sparse")))((("cuPY")))handling for NumPy arrays, sparse, and cuPY. These serializations tend to be more space-efficient than the default serializers. When you make a class that contains one of these types and does not require any special initialization, you should call `register_generic(YourClass)` from `dask.distributed.protocol` to take advantage of Dask's special handling.
 
 If you have a class that is not serializable, like in <<fail_to_ser>>, you can wrap it to add serialization functions to it, as shown in <<custom_ser_with_pickle>>.
 
