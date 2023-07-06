@@ -88,7 +88,7 @@ Dask does not detect sorted data on load. Instead, if you have presorted data, a
 
 You can also connect Dask to databases or ((("databases", "relational")))((("relational databases")))((("microservices")))microservices. Relational databases are a fantastic tool and are often quite performant at both simple reads and writes. Often relational databases support distributed deployment whereby the data is split up on multiple nodes, and this is mostly used with large datasets. They tend to be great at handling transactions at scale, but running analytic capabilities on the same node can encounter issues. Dask can be used to efficiently read and compute over this SQL database.
 
-You can use Dask's built-in support for ((("databases", "SQLAlchemy")))((("SQL databases", "SQLAlchemy")))((("SQLAlchemy")))loading SQL databases using SQLAlchemy. For Dask to split up the query on multiple machines, you need to give it an index key. Often SQL databases will have a primary key or numerical index key that you can use for this purpose (e.g., `read_sql_table("customers", index_col="customer_id")`). An example of this is shown in <<ex_read_SQL_Dataframe>>. 
+You can use Dask's built-in support for ((("databases", "SQLAlchemy")))((("SQLAlchemy")))loading SQL databases using SQLAlchemy. For Dask to split up the query on multiple machines, you need to give it an index key. Often SQL databases will have a primary key or numerical index key that you can use for this purpose (e.g., `read_sql_table("customers", index_col="customer_id")`). An example of this is shown in <<ex_read_SQL_Dataframe>>. 
 
 [[ex_read_SQL_Dataframe]]
 .Reading from and writing to SQL with Dask DataFrame
