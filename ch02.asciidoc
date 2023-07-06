@@ -55,7 +55,7 @@ You can use `dask.compute` to both start computing the delayed objects and futur
 [[sleepy_task]]
 ===== Sleepy task
 
-An easy way to see the ((("Hello Worlds", "task", "sleepy task")))((("task Hello World", "sleepy task")))((("sleepy task", "Hello World")))((("slow_task function")))((("functions", "slow_task")))performance difference is by writing an intentionally slow function, like `slow_task`, which calls `sleep`. Then you can compare the performance of Dask to "regular" Python, by mapping the function over a few elements with and without `dask.delayed`, as shown in this example:
+An easy way to see the ((("Hello Worlds", "task", "sleepy task")))((("task Hello World", "sleepy task")))((("sleepy task, Hello World")))((("slow_task function")))((("functions", "slow_task")))performance difference is by writing an intentionally slow function, like `slow_task`, which calls `sleep`. Then you can compare the performance of Dask to "regular" Python, by mapping the function over a few elements with and without `dask.delayed`, as shown in this example:
 
 
 
