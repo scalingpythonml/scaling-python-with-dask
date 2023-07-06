@@ -272,7 +272,7 @@ The Dask UI also shows visualized representations of the task graph, without nee
 
 ==== Intermediate Task Results
 
-Intermediate task results are generally ((("tasks", "dependencies, intermediate results")))((("dependencies", "tasks", "intermediate results")))removed as soon as the dependent task has started to execute. This can be less than optimal when we need to perform multiple computations on the same piece of data. One solution to this is combining all of our execution together into one call to `dask.compute`, so that Dask is able to keep the data around as needed. This breaks down in both the interactive case, where we don't know in advance what our computation is going to be, and iterative cases. In those cases, some form of caching or persistence can be beneficial. You will learn about how to apply caching later in this chapter.
+Intermediate task results are generally ((("tasks", "dependencies", "intermediate results")))((("dependencies", "tasks, intermediate results")))removed as soon as the dependent task has started to execute. This can be less than optimal when we need to perform multiple computations on the same piece of data. One solution to this is combining all of our execution together into one call to `dask.compute`, so that Dask is able to keep the data around as needed. This breaks down in both the interactive case, where we don't know in advance what our computation is going to be, and iterative cases. In those cases, some form of caching or persistence can be beneficial. You will learn about how to apply caching later in this chapter.
 
 ==== Task Sizing
 
