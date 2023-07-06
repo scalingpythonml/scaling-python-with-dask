@@ -85,7 +85,7 @@ Dask bags have built-in readers for ((("bags", "loading")))((("bags", "saving"))
 
 ==== Loading Messy Data with a Dask Bag
 
-Normally, the goal with loading ((("bags", "loading", "messy data", id="bgldsyd")))((("messy data", "bags", id="mssydt")))((("loading data", "bags", id="lddbg")))messy data is to get it into a structured format for further processing, or at least extract the components that you are interested in. While your data formats will likely be a bit different, this section will look at loading some messy JSON and then extracting some relevant fields. Don't worry, we call out places where different formats or sources may require different techniques.
+Normally, the goal with loading ((("bags", "loading", "messy data", id="bgldsyd")))((("messy data, bags", id="mssydt")))((("loading data", "bags", id="lddbg")))messy data is to get it into a structured format for further processing, or at least extract the components that you are interested in. While your data formats will likely be a bit different, this section will look at loading some messy JSON and then extracting some relevant fields. Don't worry, we call out places where different formats or sources may require different techniques.
 
 For messy textual data, which ((("JSON (JavaScript Object Notation)", "messy data")))is a common occurrence with JSON, you can save yourself some time by loading the data using ((("read_text function")))((("functions", "read_text")))bag's `read_text` function. The `read_text` function defaults to splitting up the records by line; however, many formats cannot be processed by line. To get each whole file in a whole record, rather than split up, you can set the `linedelimiter` parameter to one not found. Often REST APIs will return the results as a subcomponent, so in <<preprocess_json>>, we load the https://oreil.ly/3Xmd_[+++Food and Drug Administration (FDA) recall dataset+++] and strip it down to the part we care about. The FDA recall dataset is a wonderful real-world example of nested datasets often found in JSON data, which can be hard to process directly in DataFrames.
 
@@ -152,7 +152,7 @@ include::./examples/dask/Dask-Collections.py[tags=parallel_list_large]
 ----
 ====
 
-A fully iterative algorithm with FSSPEC would not ((("bags", "loading", "messy data", startref="bgldsyd")))((("messy data", "bags", startref="mssydt")))((("loading data", "bags", startref="lddbg")))be any faster than the naive listing, since FSSPEC does not support querying for just directories.
+A fully iterative algorithm with FSSPEC would not ((("bags", "loading", "messy data", startref="bgldsyd")))((("messy data, bags", startref="mssydt")))((("loading data", "bags", startref="lddbg")))be any faster than the naive listing, since FSSPEC does not support querying for just directories.
 
 ==== Limitations
 
