@@ -30,7 +30,7 @@ Dask arrays, like their local counterpart, require that data is all of the same 
 
 ==== Loading/Saving
 
-As with Dask DataFrames, loading ((("collections, arrays", "formats")))((("arrays", "formats")))((("formats, arrays")))((("collections, arrays", "loading/saving")))((("arrays", "loading/saving")))and writing functions start with `to_` or `read_` as the prefixes. Each format has its own configuration, but in general, the first positional argument is the location of the data to be read. The location can be a wildcard path of files (e.g., _s3://test-bucket/magic/*_), a list of files, or a regular file location.
+As with Dask DataFrames, loading ((("collections, arrays", "formats")))((("arrays", "formats")))((("collections, arrays", "loading/saving")))((("arrays", "loading/saving")))and writing functions start with `to_` or `read_` as the prefixes. Each format has its own configuration, but in general, the first positional argument is the location of the data to be read. The location can be a wildcard path of files (e.g., _s3://test-bucket/magic/*_), a list of files, or a regular file location.
 
 Dask arrays support reading the following formats:
 
