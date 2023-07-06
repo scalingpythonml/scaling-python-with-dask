@@ -37,7 +37,7 @@ From an abstraction point of view, Dask sits above the machines and cluster mana
 
 Scalable data and ML tools:: Hadoop, Hive, Flink, ((("Hadoop")))((("Hive")))((("Flink")))((("Spark")))((("TensorFlow")))((("Koalas")))((("Ray")))Spark, TensorFlow, Koalas, Ray, Dask, etc.
 
-Compute resources:: Apache Hadoop YARN, ((("Apache Hadoop YARN")))((("Hadoop YARN")))((("Kubernetes")))((("Amazon Web Services (AWS)")))((("AWS (Amazon Web Services)")))((("Slurm Workload Manager")))Kubernetes, Amazon Web Services, Slurm Workload Manager, etc.
+Compute resources:: Apache Hadoop YARN, ((("Hadoop YARN")))((("Kubernetes")))((("Amazon Web Services (AWS)")))((("AWS (Amazon Web Services)")))((("Slurm Workload Manager")))Kubernetes, Amazon Web Services, Slurm Workload Manager, etc.
 
 We say a problem is _compute-bound_ if the limiting ((("compute-bound problems")))factor is not the amount of data, but rather the work we are doing on the data. Memory-bound problems are ((("memory-bound problems")))problems where the computation is not the limiting factor; rather the ability to store all of the data in memory is the limiting factor. Some problems can exhibit both compute- and memory-bound problems, as is often the case for large deep-learning problems.
 
@@ -55,7 +55,7 @@ Much of Dask's power comes from the tools and libraries built on top of it, whic
 
 ==== Big Data
 
-Dask has better Python library ((("big data")))((("Apache Spark")))((("PySpark")))integrations and lower overhead for tasks than many alternatives.
+Dask has better Python library ((("big data")))((("PySpark")))integrations and lower overhead for tasks than many alternatives.
 Apache Spark (and its Python companion, PySpark) is one of the most popular tools for big data.
 Existing big data tools, like PySpark, have more data sources and optimizers (like predicate push-down) but higher overhead per task. Dask's lower overhead is mainly because the rest of the Python big data ecosystem is built primarily on top of the JVM. These tools have advanced features like query optimizers, but with the cost of copying data between the JVM and Python.
 
