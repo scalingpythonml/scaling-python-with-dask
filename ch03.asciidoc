@@ -237,7 +237,7 @@ Unlike the rest of Dask, futures are eagerly evaluated, which limits the optimiz
 [[task_deps]]
 ==== Task Dependencies
 
-In addition to nested tasks, as ((("tasks", "dependencies")))((("dependencies", "task dependencies")))((("dask.delayed object")))((("objects", "dask.delayed")))seen in <<nested_tasks>>, you can also use a `dask.delayed` object as input to another delayed computation (see <<task_dependencies_example_ch03_1686946028901>>), and Dask's `submit`/`compute` function will construct a task graph for you.
+In addition to nested tasks, as ((("tasks", "dependencies")))((("dependencies", "task dependencies")))((("dask.delayed object")))seen in <<nested_tasks>>, you can also use a `dask.delayed` object as input to another delayed computation (see <<task_dependencies_example_ch03_1686946028901>>), and Dask's `submit`/`compute` function will construct a task graph for you.
 
 [[task_dependencies_example_ch03_1686946028901]]
 .Task dependencies
