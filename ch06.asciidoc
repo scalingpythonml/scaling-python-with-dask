@@ -85,7 +85,7 @@ Canceling a future behaves ((("futures", "canceling")))differently than deleting
 
 [WARNING]
 ====
-When using Dask in a Jupyter notebook, ((("Jupyter Notebook", "futures")))the notebook may "hold on to" the result of any previous cell, so even if the future is unnamed, it will remain present in Dask. There is a https://oreil.ly/zyy2H[+++discussion on Discourse+++] with more context for those interested.
+When using Dask in a Jupyter notebook, ((("Jupyter", "notebooks, futures")))the notebook may "hold on to" the result of any previous cell, so even if the future is unnamed, it will remain present in Dask. There is a https://oreil.ly/zyy2H[+++discussion on Discourse+++] with more context for those interested.
 ====
 
 === Fire-and-Forget
