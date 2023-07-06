@@ -15,7 +15,7 @@ Now we introduce more ways to control this flow with futures. So far, you have m
 You may already be familiar with futures from Python. Dask's futures are an extension of Python's concurrent.futures library, allowing you to use them in its place. Similar to using Dask DataFrames in place of pandas DataFrames, the behavior can be a bit different (although the differences here are smaller).
 ====
 
-Dask futures are a ((("futures")))((("distributed client", "futures and")))part of Dask's distributed client library, so you will get started by importing it with `from dask.distributed import Client`.
+Dask futures are a ((("futures")))part of Dask's distributed client library, so you will get started by importing it with `from dask.distributed import Client`.
 
 [TIP]
 ====
