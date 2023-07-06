@@ -156,7 +156,7 @@ include::./examples/dask/DaskGPUs.py[tags=ex_dask_submit_numba_correct]
 
 Like most tasks in Python, there are ((("tasks", "GPUs (graphics processing units)")))((("GPUs (graphics processing units)", "tasks")))many different libraries for working with GPUs. Many of these libraries support NVIDIA's Compute Unified Device Architecture (CUDA) with ((("CUDA (Compute Unified Device Architecture)")))((("Compute Unified Device Architecture)")))((("HIP/Radeon Open Compute module (ROCm)")))((("ROCm (Radeon Open Compute module)")))experimental support for AMD's new open HIP/Radeon Open Compute module (ROCm) interfaces. NVIDIA and CUDA was the first on the scene and has a much larger adoption than AMD's Radeon Open Compute module. So much so that ROCm has a large focus on supporting ports of CUDA software to the ROCm platform.
 
-We won't dive deep into the world of Python GPU libraries, but you may want to check out https://oreil.ly/i-FVO[+++Numba for GPUs+++], https://oreil.ly/vChSG[+++TensorFlow GPUs support+++], and https://oreil.ly/sdLjo[+++PyTorch's GPU support+++].
+We won't dive deep into the world of ((("Python", "GPU libraries")))Python GPU libraries, but you may want to check out https://oreil.ly/i-FVO[+++Numba for GPUs+++], https://oreil.ly/vChSG[+++TensorFlow GPUs support+++], and https://oreil.ly/sdLjo[+++PyTorch's GPU support+++].
 
 Most of the libraries that have some form of GPU support require compiling large amounts of non-Python code. As such, it's often best to install these libraries with conda, which frequently ((("tasks", "resources, custom", startref="tsksrc")))has more complete binary packaging, allowing you to skip the compile step.
 
