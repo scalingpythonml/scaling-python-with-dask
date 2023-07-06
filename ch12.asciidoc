@@ -354,7 +354,7 @@ You can change the logging intervals with the pass:[<code>distributed&#x200b;.cl
 
 ==== Saving and Sharing Dask Metrics/Performance Logs
 
-You can monitor Dask in real time with the ((("performance logs", id="pfrlg")))((("metrics", "performance logs", id="mtprg")))dashboard, but the dashboard will disappear once you close out your cluster. You can save the HTML page, as well as export the metrics as a DataFrame, and write out custom code for metrics (see <<ex_generate_performance_report>>).
+You can monitor Dask in real time with the ((("performance", "logs", id="pfrlg")))((("metrics", "performance logs", id="mtprg")))dashboard, but the dashboard will disappear once you close out your cluster. You can save the HTML page, as well as export the metrics as a DataFrame, and write out custom code for metrics (see <<ex_generate_performance_report>>).
 
 [[ex_generate_performance_report]]
 .Generating and saving the Dask dashboard to file
@@ -369,7 +369,7 @@ You can generate a performance report manually for any block of computation, wit
 
 For much more heavy-duty usage, you can use Dask with Prometheus, the popular Python metrics and alerting tool. This requires you to have prometheus deployed. Then through Prometheus, you can hook up other tools, like Grafana for visualization or PagerDuty for alerts.
 
-Dask's distributed scheduler provides the metrics info as a task stream object without using the UI itself. You can access the information in Task Stream UI tab from Dask directly, down to the level of lines of code that you want this to be profiled over. <<ex_get_task_stream>> demonstrates how to use a task stream and then extract some statistics out of it ((("performance logs", startref="pfrlg")))((("metrics", "performance logs", startref="mtprg")))into a small pandas DataFrame for further analysis and sharing.
+Dask's distributed scheduler provides the metrics info as a task stream object without using the UI itself. You can access the information in Task Stream UI tab from Dask directly, down to the level of lines of code that you want this to be profiled over. <<ex_get_task_stream>> demonstrates how to use a task stream and then extract some statistics out of it ((("performance", "logs", startref="pfrlg")))((("metrics", "performance logs", startref="mtprg")))into a small pandas DataFrame for further analysis and sharing.
 
 [[ex_get_task_stream]]
 .Generating and computing Dask’s runtime statistics with task stream
