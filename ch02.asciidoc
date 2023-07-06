@@ -163,7 +163,7 @@ On Dask bags, `foldby`, `frequency`, and many other reductions return a single p
 
 ==== Dask DataFrame (Pandas/What People Wish Big Data Was)
 
-Pandas is one of the most ((("Hello Worlds", "Dask DataFrame")))((("Dask DataFrames")))((("pandas DataFrames", seealso="Dask DataFrames")))((("DataFrames", see="panda DataFrames")))((("DataFrames", see="Dask DataFrames")))popular Python data libraries, and Dask has a DataFrame library that implements much of the pandas API.  Thanks to Python's duck-typing, you can often use Dask's distributed DataFrame library in place of pandas. Not all of the API will work exactly the same, and some parts are not implemented, so be sure you have good test coverage. 
+Pandas is one of the most ((("Hello Worlds", "Dask DataFrame")))((("Dask DataFrames")))((("pandas DataFrames", seealso="Dask DataFrames")))((("DataFrames", see="panda DataFrames")))((("DataFrames", see="Dask DataFrames")))popular Python data libraries, and Dask has a DataFrame library that implements much of the pandas API.  Thanks to Python's duck-typing, ((("Python", "duck-typing")))you can often use Dask's distributed DataFrame library in place of pandas. Not all of the API will work exactly the same, and some parts are not implemented, so be sure you have good test coverage. 
 
 [WARNING]
 ====
