@@ -47,7 +47,7 @@ include::./examples/dask/Dask-Ch3-Concepts.py[tags=process]
 ----
 ====
 
-If you are running on a Unix system, ((("Unix", "forkserver")))you can use the _forkserver_, shown in <<configuring_dask_forkserver_ch03_1686241608423>>, which will https://oreil.ly/U9voe[reduce the overhead of starting each Python interpreter]. Using the forkserver will not reduce the communication overhead.
+If you are running on a Unix system, ((("Unix forkserver")))you can use the _forkserver_, shown in <<configuring_dask_forkserver_ch03_1686241608423>>, which will https://oreil.ly/U9voe[reduce the overhead of starting each Python interpreter]. Using the forkserver will not reduce the communication overhead.
 
 [[configuring_dask_forkserver_ch03_1686241608423]]
 .Configuring Dask to use the multi-process forkserver
