@@ -103,7 +103,7 @@ include::./examples/dask/Dask-Futures.py[tags=fire_and_forget2]
 
 === Retrieving Results
 
-More commonly, eventually, you'll want to ((("futures", "return values", id="ftrrsl")))((("return values", "futures", id="rtvft")))know what the future has computed (or even just if it encountered an error). For futures that are not just side effects, you'll eventually want to get the return value (or error) from the futures. Futures have the blocking method `result`, as shown in <<get_result_ch06_1686239283618>>, which gives you back the value computed in the future or raises the exception from the future.
+More commonly, eventually, you'll want to ((("futures", "return values", id="ftrrsl")))((("return values, futures", id="rtvft")))know what the future has computed (or even just if it encountered an error). For futures that are not just side effects, you'll eventually want to get the return value (or error) from the futures. Futures have the blocking method `result`, as shown in <<get_result_ch06_1686239283618>>, which gives you back the value computed in the future or raises the exception from the future.
 
 [[get_result_ch06_1686239283618]]
 .Getting the result
@@ -171,7 +171,7 @@ include::./examples/dask/Dask-Futures.py[tags=delayed_vs_future_future_faster]
 ----
 ====
 
-In this (albeit contrived) example, you can see how, by starting the work as soon as possible, the future is completed by the time you get the result, whereas the `dask.delayed` only starts when ((("futures", "return values", startref="ftrrsl")))((("return values", "futures", startref="rtvft")))you get there.
+In this (albeit contrived) example, you can see how, by starting the work as soon as possible, the future is completed by the time you get the result, whereas the `dask.delayed` only starts when ((("futures", "return values", startref="ftrrsl")))((("return values, futures", startref="rtvft")))you get there.
 
 === Nested Futures
 
