@@ -149,7 +149,7 @@ Fault tolerance techniques are often also used when scaling down, since they bot
 
 Scalability refers to the ability of a distributed system to grow to handle larger problems and the sometimes overlooked ability to shrink when the needs are reduced (say after the grad students go to sleep). In computer science, we generally categorize scalability ((("scalability", "horizontal")))((("scalability", "vertical")))((("horizontal scalability")))((("vertical scalability")))as either _horizontal_ or _vertical_. Horizontal scaling refers to adding more computers, whereas vertical scaling refers to using bigger computers.
 
-Another important ((("automatic scaling")))((("manual scaling")))((("scalability", "automatic")))((("scalability", "manual")))consideration is _auto_ versus _manual_ scaling. In automatic scaling, the execution engine (in our case Dask) will scale the resources for us. Dask's auto-scaler will horizontally scale by adding your workers when needed (provided the deployment supports it). To scale up vertically, you can add larger instance types to Dask's auto-scaler and request those resources with your jobs.
+Another important ((("auto-scaling")))((("manual scaling")))((("scalability", "automatic")))((("scalability", "manual")))consideration is _auto_ versus _manual_ scaling. In automatic scaling, the execution engine (in our case Dask) will scale the resources for us. Dask's auto-scaler will horizontally scale by adding your workers when needed (provided the deployment supports it). To scale up vertically, you can add larger instance types to Dask's auto-scaler and request those resources with your jobs.
 
 [NOTE]
 ====
