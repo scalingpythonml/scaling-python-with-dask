@@ -3,22 +3,22 @@
 
 Sometimes the answer to our scaling problem isn't throwing more computers at it; it's throwing different types of resources at it. One example of this might be ten thousand monkeys trying to reproduce the works of Shakespeare, versus one Shakespeare.footnote:[Assuming Shakespeare were still alive, which he is not.] While performance varies, some benchmarks have shown https://oreil.ly/Iw3Sv[up to an 85% improvement in model training times] when using GPUs over CPUs. Continuing its modular tradition, the GPU logic of Dask is found in the libraries and ecosystem surrounding it. The libraries can either run on a collection of GPU workers or parallelize work over different GPUs on one host.
 
-Most work we do on the computer ((("TPUs (Tensor Processing Units)")))((("Tensor Processing Units (TPUs)")))((("GPUs (graphics processing units)")))is done on the CPU. GPUs were created for displaying video, but involve doing large amounts of vectorized floating point (e.g., non-integer) operations. With vectorized operations, the same operation is applied in parallel on large sets of data, like a `map`. Tensor Processing Units (TPUs) are similar to GPUs, except without also being used for graphics.
+Most work we do on the computer ((("TPUs (Tensor Processing Units)")))((("Tensor Processing Units (TPUs)")))((("GPUs (graphics processing units)")))is done on the CPU. GPUs were created for displaying video but involve doing large amounts of vectorized floating point (e.g., non-integer) operations. With vectorized operations, the same operation is applied in parallel on large sets of data, like a `map`. Tensor Processing Units (TPUs) are similar to GPUs, except without also being used for graphics.
 
-For our purposes, in Dask, we can think of GPUs and TPUs as specializing in offloading large vectorized computations, but there are many other kinds of accelerators that exist. While much of this chapter is focused on GPUs, the same general techniques, albeit with different libraries, generally apply to other accelerators. Other kinds of specialized resources include NVMe drives, faster (or larger) RAM, TCP/IP offload, Just-a-Bunch-of-Disks expansion ports, and Intel's OPTAIN memory. Special resources/accelerators can improve everything from network latency to writing large files to disk. What all these share is that Dask has no built-in understanding of these resources, and it's up to you to provide that information to the Dask scheduler and also take advantage of it.
+For our purposes, in Dask, we can think of GPUs and TPUs as specializing in offloading large vectorized computations, but there are many other kinds of accelerators. While much of this chapter is focused on GPUs, the same general techniques, albeit with different libraries, generally apply to other accelerators. Other kinds of specialized resources include NVMe drives, faster (or larger) RAM, TCP/IP offload, Just-a-Bunch-of-Disks expansion ports, and Intel's OPTAIN memory. Special resources/accelerators can improve everything from network latency to writing large files to disk. What all these share is that Dask has no built-in understanding of these resources, and it's up to you to provide that information to the Dask scheduler and also take advantage of it.
 
-This chapter will look at the current state of accelerated analytics in Python and how to use these tools together with Dask. You will learn what kinds of problems are well suited to GPU acceleration, a bit about other kinds of accelerators, and how to apply this to your problems.
+This chapter will look at the current state of accelerated analytics in Python and how to use these tools together with Dask. You will learn what kinds of problems are well suited to GPU acceleration, a bit about other kinds of accelerators, and how to apply this knowledge to your problems.
 
 [WARNING]
 ====
-Cloud accounts and machines with access to GPUs are especially of interest to less-than-savory folks on the internet due to the relative ease of mining cryptocurrency. For those used to working with only public data and lax security controls, take this as an opportunity to review your security process and restrict runtime access to only those who need it. Or be prepared for a really large cloud bill.
+Cloud accounts and machines with access to GPUs are especially of interest to less-than-savory folks on the internet due to the relative ease of mining cryptocurrency. If you are used to working with only public data and lax security controls, take this as an opportunity to review your security process and restrict runtime access to only those who need it. Or be prepared for a really large cloud bill.
 ====
 
 === Transparent Versus Non-transparent Accelerators
 
-Accelerators largely break down ((("accelerators", "transparent")))((("accelerators", "non-transparent")))into two categories: transparent (no code or change required), and non-transparent optimizers. If an accelerator is transparent or not largely depends on if someone below us in the stack has made it transparent to us.
+Accelerators largely break down ((("accelerators", "transparent")))((("accelerators", "non-transparent")))into two categories: transparent (no code or change required) and non-transparent optimizers. Whether an accelerator is transparent or not largely depends on whether someone below us in the stack has made it transparent to us.
 
-TCP/IP offloading is generally transparent at the user space level, which means the operating system takes care of it for us. NVMe drives are also generally transparent, generally appearing the same as spinning disks except faster. It is still important to make Dask aware of transparent optimizers; for example, a disk-intensive workload should be scheduled on the machines with faster disks.
+TCP/IP offloading is generally transparent at the user space level, which means the operating system takes care of it for us. NVMe drives are also generally transparent, generally appearing the same as spinning disks, except faster. It is still important to make Dask aware of transparent optimizers; for example, a disk-intensive workload should be scheduled on the machines with faster disks.
 
 The non-transparent accelerators include GPUs, Optane, QAT, and many more. Using these requires changing our code to be able to take advantage of them. Sometimes this can be as simple as swapping in a different library, but not always. Many non-transparent accelerators require either copying our data or special formatting to be able to operate. This means that if an operation is relatively fast, moving to an optimizer could make it slower.
 
@@ -33,13 +33,13 @@ Some common problems that benefit from GPU acceleration include:
 * Physics simulations
 * Graphics (no surprise here)
 
-GPUs are not well suited to branch-heavy non-vectorized workflows or workflows where the cost of copying the data is similar to or higher than the cost of the computation.
+GPUs are not well suited to branch-heavy non-vectorized workflows, or workflows where the cost of copying the data is similar to or higher than the cost of the computation.
 
 === Making Dask Resource-Aware
 
 If you have decided that your problem is well ((("resource-awareness", id="rsrwr")))suited to a specialized resource, the next step is to https://oreil.ly/EHFTr[make the scheduler aware of which machines and processes have the resource]. You can do this by adding either an environment variable or a command-line flag to the worker launch (e.g., `--resources "GPU=2"` or pass:[<code>DASK&#x200b;_DIS&#x2060;TRIBUTED__WORKER__RESOURCES__GPU=2</code>]).
 
-For NVIDIA users, the `dask-cuda` package ((("dask-cuda package")))can launch one worker per GPU, pinning the GPU and thread together for performance. For example, on our Kubernetes cluster with GPU resources, we configure the workers to use the `dask-cuda-worker` launcher as shown in <<ex_dask_cuda_k8s>>.
+For NVIDIA users, the `dask-cuda` package ((("dask-cuda package")))can launch one worker per GPU, pinning the GPU and thread together for performance. For example, on our Kubernetes cluster with GPU resources, we configure the workers to use the `dask-cuda-worker` launcher, as shown in <<ex_dask_cuda_k8s>>.
 
 [[ex_dask_cuda_k8s]]
 .Using the `dask-cuda-worker` package in the Dask Kubernetes template
@@ -68,16 +68,16 @@ include::./examples/dask/DaskGPUs.py[tags=dask_local_gpu]
 For homogenous clusters it may seem tempting to avoid labeling these resources, but unless you will always have a 1:1 mapping of worker process/thread to the accelerator (or the accelerator can be used by all workers at the same time), it is still beneficial to label these resources. This is important for non-shareable (or difficult-to-share) resources like GPUs/TPUs since Dask might schedule two tasks trying to access the GPU. But for shareable resources like NVMe drives, or TCP/IP offloading, if it's present on every node in the cluster and will always be, you can probably skip it.
 ====
 
-It's important to note that Dask does not manage custom resources (including GPUs). If another process uses all of the GPU cores without asking Dask, there is no protection for this. In some ways, this is reminiscent of early computing, where we had "cooperative" multi-tasking; we depend on our neighbors being well-behaved.
+It's important to note that Dask does not manage custom resources (including GPUs). If another process uses all of the GPU cores without asking Dask, there is no protection for this. In some ways, this is reminiscent of early computing, where we had "cooperative" multi-tasking; we depend on our neighbors being well behaved.
 
 [WARNING]
 ====
-Dask depends on well-behaved Python code, which does not use resources it has not asked for and releases the resources when finished. This most commonly happens with memory leaks (both accelerated and not), commonly with specialized libraries like CUDA that allocate memory ((("resource-awareness", startref="rsrwr")))outside of Python. These libraries often have special steps you need to call when you are done with the task you've asked to make the resources available for others.
+Dask depends on well-behaved Python code, which does not use resources it has not asked for and releases the resources when finished. This most commonly happens with memory leaks (both accelerated and not), often with specialized libraries like CUDA that allocate memory ((("resource-awareness", startref="rsrwr")))outside of Python. These libraries often have special steps you need to call when you are done with the task you've asked to make the resources available for others.
 ====
 
 === Installing the Libraries
 
-Now that Dask is aware of the special resources on your cluster, it's time to make sure that your code can take ((("libraries", "accelerator", id="lbrrcclr")))((("accelerator libraries", id="acclbrr")))advantage of them. Often, but not always, these accelerators will require some kind of special library to be installed, which may involve long compile times. When possible, installing the acceleration libraries from conda and pre-installing on the workers (in the container or on the host) when possible can help minimize this overhead.
+Now that Dask is aware of the special resources on your cluster, it's time to make sure that your code can take ((("libraries", "accelerator", id="lbrrcclr")))((("accelerator libraries", id="acclbrr")))advantage of them. Often, but not always, these accelerators will require some kind of special library to be installed, which may involve long compile times. When possible, installing the acceleration libraries from conda and pre-installing on the workers (in the container or on the host) can help minimize this overhead.
 
 For Kubernetes (or other Docker container users), you can do this by making a custom container with the accelerator libraries pre-installed, as seen in <<preinstall_gpu_docker>>.
 
@@ -127,7 +127,7 @@ If you move from a cluster with GPU resources to a cluster without, this code wi
 
 ==== Decorators (Including Numba)
 
-Numba is a popular high-performance JIT compilation ((("Numba")))((("decorators")))library for Python, which also has support for various accelerators. Most JIT code, and many decorator functions, are generally not directly serializable, so attempting to directly Numba it with `dask.submit`, as seen in <<ex_dask_submit_numba_incorrect>>, does not work. Instead, the correct way is to wrap the function, as shown in <<ex_dask_submit_numba_correct>>.
+Numba is a popular high-performance JIT compilation ((("Numba")))((("decorators")))library for Python, which also has support for various accelerators. Most JIT code, as well as many decorator functions, is generally not directly serializable, so attempting to directly Numba it with `dask.submit`, as seen in <<ex_dask_submit_numba_incorrect>>, does not work. Instead, the correct way is to wrap the function, as shown in <<ex_dask_submit_numba_correct>>.
 
 [[ex_dask_submit_numba_incorrect]]
 .Decorator difficulty
@@ -154,15 +154,15 @@ include::./examples/dask/DaskGPUs.py[tags=ex_dask_submit_numba_correct]
 
 ==== GPUs
 
-Like most tasks in Python, there are ((("tasks", "GPUs (graphics processing units)")))((("GPUs (graphics processing units)", "tasks")))many different libraries for working with GPUs. Many of these libraries support NVIDIA's Compute Unified Device Architecture (CUDA) with ((("CUDA (Compute Unified Device Architecture)")))((("Compute Unified Device Architecture)")))((("HIP/Radeon Open Compute module (ROCm)")))((("ROCm (Radeon Open Compute module)")))experimental support for AMD's new open HIP/Radeon Open Compute module (ROCm) interfaces. NVIDIA and CUDA was the first on the scene and has a much larger adoption than AMD's Radeon Open Compute module. So much so that ROCm has a large focus on supporting ports of CUDA software to the ROCm platform.
+Like most tasks in Python, there are ((("tasks", "GPUs (graphics processing units)")))((("GPUs (graphics processing units)", "tasks")))many different libraries for working with GPUs. Many of these libraries support NVIDIA's Compute Unified Device Architecture (CUDA) with ((("CUDA (Compute Unified Device Architecture)")))((("Compute Unified Device Architecture)")))((("HIP/Radeon Open Compute module (ROCm)")))((("ROCm (Radeon Open Compute module)")))experimental support for AMD's new open HIP/Radeon Open Compute module (ROCm) interfaces. NVIDIA and CUDA were the first on the scene and have a much larger adoption than AMD's Radeon Open Compute module&mdash;so much so that ROCm has a large focus on supporting ports of CUDA software to the ROCm platform.
 
-We won't dive deep into the world of ((("Python", "GPU libraries")))Python GPU libraries, but you may want to check out https://oreil.ly/i-FVO[+++Numba for GPUs+++], https://oreil.ly/vChSG[+++TensorFlow GPUs support+++], and https://oreil.ly/sdLjo[+++PyTorch's GPU support+++].
+We won't dive deep into the world of ((("Python", "GPU libraries")))Python GPU libraries, but you may want to check out https://oreil.ly/i-FVO[+++Numba for GPUs+++], https://oreil.ly/vChSG[+++TensorFlow GPU support+++], and https://oreil.ly/sdLjo[+++PyTorch's GPU support+++].
 
 Most of the libraries that have some form of GPU support require compiling large amounts of non-Python code. As such, it's often best to install these libraries with conda, which frequently ((("tasks", "resources, custom", startref="tsksrc")))has more complete binary packaging, allowing you to skip the compile step.
 
 === GPU Acceleration Built on Top of Dask
 
-The three main CUDA libraries extending Dask are cuDF (previously called dask-cudf), BlazingSQL, and cuML.footnote:[BlazingSQL may be at the end of its life; there has not been a commit for an extended period of time and the website is just a hard hat, like those 1990s Geocities websites.] Currently these libraries are focused on NVIDIA GPUs.
+The three main CUDA libraries extending Dask are cuDF (previously called dask-cudf), BlazingSQL, and cuML.footnote:[BlazingSQL may be at the end of its life; there has not been a commit for an extended period of time, and the website is just a hard hat, like those 1990s GeoCities websites.] Currently these libraries are focused on NVIDIA GPUs.
 
 [NOTE]
 ====
@@ -197,9 +197,9 @@ Allocating memory on GPUs tends to be slow, so ((("accelerators", "freeing resou
 
 === Design Patterns: CPU Fallback
 
-CPU Fallback refers to attempting to use ((("CPU Fallback")))an accelerator, like GPU or TPU, and falling back to the regular CPU code path if the accelerator is unavailable. In most cases, this is a good design pattern to follow, as accelerators (like GPUs) can be expensive and may not always be available. However, in some cases, the performance difference between CPU and GPU performance is so large that falling back to the CPU is unlikely to be able to succeed in a practical amount of time; this occurs most often with deep learning algorithms.
+CPU Fallback refers to attempting to use ((("CPU Fallback")))an accelerator, like GPU or TPU, and falling back to the regular CPU code path if the accelerator is unavailable. In most cases, this is a good design pattern to follow, as accelerators (like GPUs) can be expensive and may not always be available. However, in some cases, the difference between CPU and GPU performance is so large that falling back to the CPU is unlikely to be able to succeed in a practical amount of time; this occurs most often with deep learning algorithms.
 
-Object-oriented programming and duck-typing are somewhat well suited to this, since, provided that two classes implement the same parts of the interface you are using, you can swap them around. However, much like swapping in Dask DataFrames for pandas DataFrames, it is imperfect, especially when it comes to performance.
+Object-oriented programming and duck-typing are somewhat well suited to this design pattern, since, provided that two classes implement the same parts of the interface you are using, you can swap them around. However, much like swapping in Dask DataFrames for pandas DataFrames, it is imperfect, especially when it comes to performance.
 
 [WARNING]
 ====
