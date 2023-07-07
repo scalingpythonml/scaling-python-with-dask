@@ -37,9 +37,9 @@ Dependency management allows you to control, at runtime or in advance, what soft
 |===
 |Deployment method |Dynamic scale |Recommended use casefootnote:[This is largely based on our experiences and may be biased toward large companies and academic environments. Please feel free to make your own call.] |Dependency management |Notebook deployed insidefootnote:[There are https://oreil.ly/TqhBb[some workarounds].] |Mixed worker types
 |localhost |No |Testing, solo dev, GPU-only acceleration |Yes (runtime or pre-install) |Yes |No
-|ssh |No |Solo lab, testing, but generally no (k8s instead) |Runtime only |Yes |Yes (manual)
+|ssh |No |Solo lab, testing, but generally not recommended (k8s instead) |Runtime only |Yes |Yes (manual)
 |Slurm + GW |Yes |Existing high-performance computing/Slurm environments |Yes (runtime or pre-install) |Separate project |Varies
-|Dask "Cloud" |Yes |Not recommended; use Dask + K8s or YARN on cloud provider |Runtime only |Medium effortfootnote:[Some large commodity cloud providers were easier than others. Mika’s own experience ranks Google Cloud as easiest, Amazon as moderate, and Azure as hardest to work with. Google Cloud has a good working guide on using Dask with RAPIDS NVIDIA architecture and a well-documented workflow. Amazon Web Services similarly has good documentation on running Dask workers on multiple Amazon Elastic Container service (EC2) and a guide on attaching S3 buckets. Azure needed some work to make worker provisioning work well, mostly due to its environment and user provisioning workflow being a bit different from that of AWS or GCP.] |No*
+|Dask "Cloud" |Yes |Not recommended; use Dask + K8s or YARN on cloud provider |Runtime only |Medium effortfootnote:[Some large commodity cloud providers were easier than others. Mika’s own experience ranks Google Cloud as easiest, Amazon as moderate, and Azure as hardest to work with. Google Cloud has a good working guide on using Dask with RAPIDS NVIDIA architecture and a well-documented workflow. Amazon Web Services similarly has good documentation on running Dask workers on multiple Amazon Elastic Compute Cloud (EC2) instances and a guide on attaching S3 buckets. Azure needed some work to make worker provisioning work well, mostly due to its environment and user provisioning workflow being a bit different from that of AWS or GCP.] |No*
 |Dask + K8s |Yes |Cloud environments, existing K8s deployments |Runtime or pre-install (but more effort) |Separate project, medium effort |Yes
 |Dask + YARN |Yes |Existing big data deployments |Runtime or pre-install (but more effort) |Separate project that has not been updated since 2019 |Yes*
 |Dask + Ray + [CM] |Depends on CM |Existing Ray deployments, multi-tool (TF, etc.), or actor systems |Depends on CM (always at least runtime) |Depends on CM |Yes
@@ -48,7 +48,7 @@ Dependency management allows you to control, at runtime or in advance, what soft
 
 === Building Dask on a Kubernetes Deployment
 
-There are two main ways to deploy Dask on Kubernetes:footnote:[PEP20 remain optimistic.] KubeCluster and HelmCluster. Helm ((("deployment", "on Kubernetes", id="dpykbt")))((("Kubernetes", "Dask deployment", id="kbtdkpy")))((("deployment", "on Kubernetes", "HelmCluster")))((("Kubernetes", "HelmCluster")))((("deployment", "on Kubernetes", "KubeCluster")))((("Kubernetes", "KubeCluster")))((("HelmCluster")))((("KubeCluster")))is a popular tool for managing deployments on Kubernetes, with the deployments being specified in Helm charts. Since Helm is the newer recommended way of managing deployments on Kubernetes, we will cover that one here.
+There are two main ways to deploy Dask on Kubernetes:footnote:[PEP20's view on the obvious way to do things remains a suggestion more observed in the breach.] KubeCluster and HelmCluster. Helm ((("deployment", "on Kubernetes", id="dpykbt")))((("Kubernetes", "Dask deployment", id="kbtdkpy")))((("deployment", "on Kubernetes", "HelmCluster")))((("Kubernetes", "HelmCluster")))((("deployment", "on Kubernetes", "KubeCluster")))((("Kubernetes", "KubeCluster")))((("HelmCluster")))((("KubeCluster")))is a popular tool for managing deployments on Kubernetes, with the deployments being specified in Helm charts. Since Helm is the newer recommended way of managing deployments on Kubernetes, we will cover that one here.
 
 The https://oreil.ly/EBzBm[+++Helm documentation+++] offers an excellent starting point on the different ways to install Helm, but for those in a hurry, pass:[<code>curl https://raw.githubuser&#x200b;con&#x2060;tent.com/helm/helm/main/scripts/get-helm-3 | bash</code>] will do it for you.footnote:[Note this installs Helm 3.X. As with Python 3, Helm 3 has a https://oreil.ly/vR5BM[large number of breaking changes over [.keep-together]#Helm 2#], so when you're reading documentation (or installing packages), make [.keep-together]#sure it's referencing the current# major versions.]
 
@@ -115,10 +115,10 @@ include::./examples/dask/Dask-Ch14-Tuning.py[tags=ex_yarn_deployment_tuning]
 ----
 ====
 
-Alternatively, you can run the cluster with the CLI interface that Dask-Yarn exposes. You would first deploy YARN in the shell script of your choosing; it then invokes the Python file you want to run. Within the Python file, you reference the deployed YARN cluster, as shown in <<ex_yarn_deployment_CLI_tuning>>. This can be an easier way to chain your jobs and inspect and pull logs. Note that the CLI is ((("deployment", "on YARN", startref="dpyyrn")))((("YARN, Dask deployment", startref="YRNdkpy")))((("CMs (cluster managers)", "YARN", startref="cmyrn")))supported only in Python versions above 2.7.6.
+Alternatively, you can run the cluster with the CLI interface that Dask-Yarn exposes. You would first deploy YARN in the shell script of your choosing; the shell script then invokes the Python file you want to run. Within the Python file, you reference the deployed YARN cluster, as shown in <<ex_yarn_deployment_CLI_tuning>>. This can be an easier way to chain your jobs and inspect and pull logs. Note that the CLI is ((("deployment", "on YARN", startref="dpyyrn")))((("YARN, Dask deployment", startref="YRNdkpy")))((("CMs (cluster managers)", "YARN", startref="cmyrn")))supported only in Python versions above 2.7.6.
 
 [[ex_yarn_deployment_CLI_tuning]]
-.Deploying Dask on YARN with CLI interface through shell
+.Deploying Dask on YARN with CLI interface
 ====
 [source, python]
 ----
@@ -145,9 +145,9 @@ The Dask-jobqueue library ((("Dask-jobqueue", "library", id="dkjbqb")))((("libra
 Make sure HPC cluster specs for worker memory and cores are correctly matched in `resource_spec` arguments, which are given to your HPC system itself to request the workers. The former is used for the Dask scheduler to set its internals; the latter is for you to request the resource within the HPC.
 ====
 
-HPC systems often leverage high-performance network interface on top of a standard Ethernet network, and this has become a crucial way to speed up data movement. You can pass an optional interface parameter as shown to instruct Dask to use the higher-bandwidth network. If you are not sure which interfaces are available, type in `ifconfig` on your terminal, and it will show infiniband, often `ib0`, as one of the available network interfaces.
+HPC systems often leverage high-performance network interface on top of a standard Ethernet network, and this has become a crucial way to speed up data movement. You can pass an optional interface parameter, as shown in <<ex_deploy_SLURM_by_hand>>, to instruct Dask to use the higher-bandwidth network. If you are not sure which interfaces are available, type in `ifconfig` on your terminal, and it will show infiniband, often `ib0`, as one of the available network interfaces.
 
-Finally, the cores and memory description are per-worker resources, and `n_workers` specifies how many jobs you want to queue initially. You can scale and add more workers after the fact, as we do in the example, with the `cluster.scale()` command.
+Finally, the cores and memory description are per-worker resources, and `n_workers` specifies how many jobs you want to queue initially. You can scale and add more workers after the fact, as we do in <<ex_deploy_SLURM_by_hand>>, with the `cluster.scale()` command.
 
 [TIP]
 ====
@@ -178,7 +178,7 @@ include::./examples/dask/Dask-Ch14-Tuning.py[tags=ex_slurm_deployment_tuning]
 
 [TIP]
 ====
-Always ensure your walltime requests ((("walltime requests")))don't run afoul of HPC resource managers. For example, Slurm has a backfill scheduler that applies its own logic, and if you request too long a walltime, it can get stuck in the queue, unable to spin up on time. In such a case, the Dask client may error out with a non-descriptive message, such as “Failed to start worker process. Restarting.” At the time of writing, there aren’t many ways to surface specific deployment issues without some logging code from the user end.
+Always ensure your walltime requests ((("walltime requests")))don't run afoul of HPC resource managers. For example, Slurm has a backfill scheduler that applies its own logic, and if you request too long a walltime, your request for compute resources can get stuck in the queue, unable to spin up on time. In such a case, the Dask client may error out with a non-descriptive message, such as “Failed to start worker process. Restarting.” At the time of writing, there aren’t many ways to surface specific deployment issues without some logging code from the user end.
 ====
 
 On the more ((("Dask-jobqueue", "library", "YAML file")))((("libraries", "Dask-jobqueue", "YAML file")))advanced end, you can control your cluster configuration by updating the Dask-jobqueue YAML file, which is generated on first run and stored at [.keep-together]#_/.config/dask/jobqueue.yaml_.# The jobqueue configuration file contains, commented out, default configurations for many different types of clusters. To get started editing the file, uncomment the cluster type you are using (e.g., Slurm), and then you can change the values to meet your specific needs. The jobqueue configuration file allows you to configure additional parameters not available through the Python constructor.
@@ -330,13 +330,13 @@ image::images/spwd_1208.png[]
 The Workers tab allows you ((("Workers tab, dashboard")))to see real-time CPU, memory, and disk IO, among other things (see <<worker_monitoring_tab_ch12_1685475400589>>). Monitoring this tab can be useful if you suspect that your worker is running out of memory or disk space. Some of the remedies for that can include allocating more memory to the workers or choosing a different chunking size or method for the data.
 
 [[worker_monitoring_tab_ch12_1685475400589]]
-.Worker monitoring tab for a Dask cluster with 10 workers
+.Worker monitoring for a Dask cluster with 10 workers
 image::images/spwd_1209.png[]
 
 <<worker_event_monitoring_tab_ch12_1685475374935>> shows worker event monitoring. Dask’s distributed scheduler ((("distributed scheduler")))((("event loops")))((("loops, event loops")))runs on a loop called event loop, which manages all tasks that are to be scheduled and the workers, managing the execution, communication, and status of the computation. The `event_loop_interval` metric is a measure of average time between the iterations of this loop for each worker. A shorter time means it took less time for the scheduler to do its management tasks for this worker. If this goes higher, this could mean a number of things, including suboptimal network configuration, resource contention, or high communication overhead. If this remains high, you might want to look into whether you have enough resources for the compute, and either allocate larger resources per worker or rechunk the data into smaller portions.
 
 [[worker_event_monitoring_tab_ch12_1685475374935]]
-.Worker event monitoring tab for a Dask cluster
+.Worker event monitoring for a Dask cluster
 image::images/spwd_1210.png[]
 
 The System tab allows you ((("System tab, dashboard")))to track the CPU, memory, network bandwidth, and file descriptors. CPU and memory are easy to understand. An HPC user would be keen to track network bandwidth if their job requires heavy amounts of data to be moved around. File descriptors here track the number of input and output resources the system has open at the same time. This includes actual files open for read/write, but also network sockets that communicate between machines. There is a limit to how many of these descriptors a system can have open at the same time, so a very complicated job or a leaky workload that opens a lot of connections, gets stuck, and does not close can create trouble. Similar to leaky memory, this can lead to performance issues as time goes on.
@@ -403,7 +403,7 @@ If your cluster manager ((("scaling", "manual")))((("manual scaling")))supports 
 
 ==== Adaptive/Auto-scaling
 
-We briefly touched on adaptive ((("scaling", "adaptive")))((("auto-scaling")))((("scaling", "auto-scaling")))((("adaptive scaling")))((("Dask client", "auto-scaling")))scaling in previous chapters. You can enable auto/adaptive scaling on your cluster by calling `adapt()` on the Dask client. The scheduler analyzes the computation and invokes the `scale` command to add or remove workers. The Dask cluster types&mdash;KubeCluster, PBSCluster, LocalClusters, etc.&mdash;are the cluster classes that handle actual requests and scaling up and down of the workers. If you see issues with adaptive scaling, ensure that your Dask is correctly asking for resources from the cluster manager. Of course, for auto-scaling in Dask to work, you have to be able to scale your own resource allocations within the cluster that you are running your job on, be it HPC, managed cloud, etc. We already introduced adaptive scaling in the previous `MemorySampler` example; refer to that example for code snippets.
+We briefly touched on adaptive ((("scaling", "adaptive")))((("auto-scaling")))((("scaling", "auto-scaling")))((("adaptive scaling")))((("Dask client", "auto-scaling")))scaling in previous chapters. You can enable auto/adaptive scaling on your cluster by calling `adapt()` on the Dask client. The scheduler analyzes the computation and invokes the `scale` command to add or remove workers. The Dask cluster types&mdash;KubeCluster, PBSCluster, LocalClusters, etc.&mdash;are the cluster classes that handle actual requests and scaling up and down of the workers. If you see issues with adaptive scaling, ensure that your Dask is correctly asking for resources from the cluster manager. Of course, for auto-scaling in Dask to work, you have to be able to scale your own resource allocations within the cluster that you are running your job on, be it HPC, managed cloud, etc. We already introduced adaptive scaling in <<ex_memory_sampler>>; refer to that example for code snippets.
 
 ==== Persist and Delete Costly Data
 
@@ -481,6 +481,6 @@ include::./examples/dask/Dask-Ch10_porting.py[tags=ex_distributed_logging]
 
 === Conclusion
 
-In this chapter, you've learned the various ((("deployment", "monitoring", startref="dpymtr")))deployment options for Dask distributed, from commodity cloud to HPC infrastructures. You’ve also learned Jupyter magics to simplify getting access to information with remote deployments. In our experience, Dask on Kubernetes and Dask on Ray on Kubernetes offer the flexibility we need. Your own decision about how to deploy Dask may be different, especially if you are working in a larger institution with existing cluster deployments. Most of the deployment options are covered in detail in the https://oreil.ly/j8ueU[+++"Deploy Dask Clusters" guide+++], with the notable exception of Dask on Ray, which is covered in the https://oreil.ly/Q18f2[+++Ray documentation+++].
+In this chapter, you've learned the various ((("deployment", "monitoring", startref="dpymtr")))deployment options for Dask distributed, from commodity cloud to HPC infrastructures. You’ve also learned Jupyter magics to simplify getting access to information with remote deployments. In our experience, Dask on Kubernetes and Dask on Ray on Kubernetes offer the flexibility we need. Your own decision about how to deploy Dask may be different, especially if you are working in a larger institution with existing cluster deployments. Most of the deployment options are covered in detail in the https://oreil.ly/j8ueU[+++"Deploy Dask Clusters" guide+++], with the notable exception of Dask on Ray, which is covered in the https://oreil.ly/hN3Tk[+++Ray documentation+++].
 
 You’ve also learned about runtime considerations and metrics to track when running a distributed work, and the various tools in Dask’s dashboard to accomplish that, expanded with more advanced user-defined metrics generation. Using these metrics, you’ve learned the conceptual basis for tuning your Dask Distributed clusters, troubleshooting, and how this relates to the fundamental design principle of Dask and distributed computing.

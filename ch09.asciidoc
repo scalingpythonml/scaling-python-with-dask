@@ -7,7 +7,7 @@ Many users will already have analytic work that is currently deployed and that t
 
 Here are some reasons to consider ((("migration")))migrating to Dask from an existing job that is implemented in pandas, or distributed libraries like PySpark:
 
-Python and PyData stack:: The developers preferred using Python-native stack, and code style can remain consistently Pythonic.
+Python and PyData stack:: Many data scientists and developers prefer using a Python-native stack, where they don't have to switch between languages or styles.
 Richer ML integrations with Dask APIs:: Futures, delayed, and ML integrations require less glue code from the developer to maintain, and there are performance improvements from the more flexible task graph management Dask offers.
 Fine-grained task management:: Dask’s task graph is generated and maintained in real time during runtime, and users can access the task dictionary synchronously.
 Debugging overhead:: Some developer teams prefer the debugging experience in Python, as opposed to mixed Python and Java/Scala stacktrace.
@@ -81,9 +81,9 @@ We found that one of the surprisingly useful use cases is connecting directly to
 
 ==== Development: Considerations
 
-Translating an existing logic to Dask is a fairly intuitive process. Here are some considerations if you're coming from libraries such as R, pandas, and Spark, and how Dask might differ from them. Some of these differences result from moving from a different low-level implementation, such as Java, and others result from moving from single-machine code to a scaled implementation, as when you're coming from pandas.
+Translating an existing logic to Dask is a fairly intuitive process. The following sections present some considerations if you're coming from libraries such as R, pandas, and Spark, and how Dask might differ from them. Some of these differences result from moving from a different low-level implementation, such as Java, and others result from moving from single-machine code to a scaled implementation, as when you're coming from pandas.
 
-==== DataFrame Performance
+===== DataFrame Performance
 
 If you have a job that you are ((("migration", "DataFrame performance and", id="mgdfpf")))((("Dask DataFrames", "migration and", id="dfmgr")))already running on a different platform, it’s likely you are already using columnar storage format, like Parquet, and reading at runtime. The data type mapping from Parquet to Python ((("Python", "data type mapping")))is inherently imprecise. It’s a good idea to check data types when reading in any data at runtime, and the same applies to DataFrame. If type inference fails, a column would default to object. Once you inspect and determine the type inference is imprecise, specifying data types can speed up your job a lot. Additionally, it’s always a good idea to check strings, floating point numbers, datetime, and arrays. If type errors arise, keeping in mind the upstream data sources and their data type is a good start. For example, if the Parquet is generated from protocol buffers, depending on what encode and decode engine was used, there are differences in null checks, float, doubles, and mixed precision types that are introduced in that stack.
 
@@ -98,7 +98,7 @@ During the transform stage, calling `.compute()` coalesces a large distributed D
 Dask DataFrame is not value-mutable in the way that pandas DataFrame users might be familiar with. Since in-memory modification of a particular value is not possible, the only way to change a value would be a map operation over the whole column of the entire DataFrame. If an in-memory value change is something you have to do often, it is better to use an ((("migration", "DataFrame performance and", startref="mgdfpf")))((("Dask DataFrames", "migration and", startref="dfmgr")))external database.
 ====
 
-==== Porting SQL to Dask
+===== Porting SQL to Dask
 
 Dask does not natively offer a SQL engine, although ((("migration", "Dask-SQL and", id="mgdksq")))((("Dask-SQL", "migration and", id="dsksql")))((("Structured Query Language", see="SQL")))((("SQL (Structured Query Language)", "Dask-SQL")))it does natively offer options to read from a SQL database. There are a number of different libraries you can use to interact with an existing SQL database, and to treat Dask DataFrame as a SQL table and run SQL queries directly (see <<ex_postgres_dataframe>>). Some allow you to even build and serve ML models directly using SQL ML syntax similar to that of Google's BigQuery ML. In Chapter 13, we will show the use of Dask's native `read_sql()` function and running SQL ML using Dask-SQL.
 
@@ -111,7 +111,7 @@ include::./examples/dask/Dask-Ch10_porting.py[tags=ex_postgres_dataframe]
 ----
 ====
 
-FugueSQL provides SQL compatibility ((("FugueSQL")))((("SQL (Structured Query Language)", "FugueSQL")))to PyData stack, including Dask. The project is in its infancy but seems promising. The main advantage of FugueSQL is that the code is portable between pandas, Dask, and Spark, giving a lot more interoperability. Fugue can run its SQL queries using DaskExecutionEngine, or you can run fugue queries over a Dask DataFrame you already are using. Alternatively, you can run a quick SQL query on Dask DataFrame on your notebook as well. <<running_sql_over_dask_dataframe_ch09_1685553886459>> shows an example of using FugueSQL in a notebook. The downside of FugueSQL is that it requires the ANTLR library, which in turn requires a Java runtime.
+FugueSQL provides SQL compatibility ((("FugueSQL")))((("SQL (Structured Query Language)", "FugueSQL")))to PyData stack, including Dask. The project is in its infancy but seems promising. The main advantage of FugueSQL is that the code is portable between pandas, Dask, and Spark, giving a lot more interoperability. FugueSQL can run its SQL queries using `DaskExecutionEngine`, or you can run FugueSQL queries over a Dask DataFrame you already are using. Alternatively, you can run a quick SQL query on Dask DataFrame on your notebook as well. <<running_sql_over_dask_dataframe_ch09_1685553886459>> shows an example of using FugueSQL in a notebook. The downside of FugueSQL is that it requires the ANTLR library, which in turn requires a Java runtime.
 
 [[running_sql_over_dask_dataframe_ch09_1685553886459]]
 .Running SQL over Dask DataFrame with FugueSQL

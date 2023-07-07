@@ -93,7 +93,7 @@ include::./examples/dask/preinstall_numba/Dockerfile[]
 Then, to build this, we run the script ((("libraries", "accelerator", startref="lbrrcclr")))((("accelerator libraries", startref="acclbrr")))shown in <<build_custom_ch10_1686240447279>>.
 
 [[build_custom_ch10_1686240447279]]
-.Building custom
+.Building custom Dask Docker containers
 ====
 [source, bash]
 ----
@@ -187,7 +187,7 @@ BlazingSQL uses GPU acceleration to ((("BlazingSQL")))((("SQL (Structured Query 
 While BlazingSQL is a wonderful tool, much of its documentation is broken. For example, at the time of this writing, none of the examples linked in the main README resolve correctly, and the documentation site is entirely offline.
 ====
 
-==== cuML
+==== cuStreamz
 
 Another GPU-accelerated library for ((("libraries", "cuStreamz")))((("cuStreamz")))streaming on GPUs is cuStreamz, which is basically a combination of Dask streaming and cuDF; we cover it more in <<appD>>.
 

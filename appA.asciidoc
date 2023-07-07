@@ -61,7 +61,7 @@ It is useful to think of what the implications could be of your pipeline failing
 
 === Peer-to-Peer Versus Centralized Distributed
 
-Even inside of a distributed system, there ((("centralized distributed systems")))((("distributed systems", "centralized")))are various levels of "distributed."footnote:[Note: An alternate title for this section might be "How Dask Is Different from BitTorrent."] Dask is a centralized distributed system, where there is a static leader node responsible for various tasks and coordination among the workers. In more distributed systems, there is no static leader node, and if the head node goes away, the remaining peers can elect a new head node, like with Zookeeper. In even more distributed systems, there is no head node distinction, and all of the nodes in the cluster are effectively equally capable (from a software point of view; the hardware may be different).
+Even inside of a distributed system, there ((("centralized distributed systems")))((("distributed systems", "centralized")))are various levels of "distributed." Dask is a centralized distributed system, where there is a static leader node responsible for various tasks and coordination among the workers. In more distributed systems, there is no static leader node, and if the head node goes away, the remaining peers can elect a new head node, like with Zookeeper. In even more distributed systems, there is no head node distinction, and all of the nodes in the cluster are effectively equally capable (from a software point of view; the hardware may be different).
 
 Centralized distributed systems tend to be faster, while encountering limitations earlier in terms of scaling and challenges around the failure of the centralized [.keep-together]#component.#
 
@@ -123,7 +123,7 @@ Unfortunately, software version control tools don't currently have the best note
 
 Now, a natural question is, can you use the same tools for versioning your data as your software? Sometimes you can&mdash;provided that your data is small enough and does not contain any personal information, using source control on data can be OK. However, software tends to be stored in text and is normally relatively smaller than your data, and many of the source control tools do not work well when files start to exceed even a few dozen MBs.
 
-Instead, tools like https://lakefs.io[+++LakeFS+++] add Git-like versioning semantics on top of existing external data stores (e.g., S3, HDFS, Iceberg, Delta).footnote:[Conflict-of-interest disclosure: I like the LakeFS people, and I've received a T-shirt from them. Some alternatives include Project Nessie (focused on Iceberg tables).] Another option is to make copies of your tables manually, but we find this leads to the familiar "-final2-really-final" problem with naming notebooks and Word docs.
+Instead, tools like https://lakefs.io[+++LakeFS+++] add Git-like versioning semantics on top of existing external data stores (e.g., S3, HDFS, Iceberg, Delta).footnote:[Conflict-of-interest disclosure: Holden has received a T-shirt and stickers from the LakeFS project. Some alternatives include Project Nessie (focused on Iceberg tables).] Another option is to make copies of your tables manually, but we find this leads to the familiar "-final2-really-final" problem with naming notebooks and Word docs.
 
 === Isolation and Noisy Neighbors
 

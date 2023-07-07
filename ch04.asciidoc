@@ -7,7 +7,7 @@ Dask is one of the first to implement a usable subset of the pandas APIs, but ot
 
 You can often use Dask DataFrames ((("Dask DataFrames", "as pandas DataFrame replacement")))((("pandas DataFrames", "Dask DataFrames as replacement")))as a replacement for pandas DataFrames with minor changes, thanks to ((("duck-typing")))duck-typing. However, this approach can have performance drawbacks, and some functions are not present. These drawbacks come from the distributed parallel nature of Dask, which adds communication costs for certain types of operations. In this chapter, you will learn how to minimize these performance drawbacks and work around any missing functionality.
 
-Dask DataFrames require that your data and your computation are well suited to pandas DataFrames. Dask has bags for unstructured data, arrays for array-structured data, delayed for arbitrary functions, and actors for stateful operations. If even at a small scale you wouldn't consider using pandas for your problem, Dask DataFrames are probably not the right solution.
+Dask DataFrames require that your data and your computation are well suited to pandas DataFrames. Dask has bags for unstructured data, arrays for array-structured data, the Dask delayed interface for arbitrary functions, and actors for stateful operations. If even at a small scale you wouldn't consider using pandas for your problem, Dask DataFrames are probably not the right solution.
 
 === How Dask DataFrames Are Built
 
@@ -126,7 +126,7 @@ Other systems commonly use metastores for partitioned reads and writes when deal
 Loading data can be a ((("data", "loading", "filesystems", id="dtldfys")))((("data", "writing", "filesystems", id="dwfy")))((("writing data", "filesystems", id="wrdfys")))((("loading data", "filesystems", id="lddfsms")))substantial amount of work and a bottleneck, so Dask distributes this like most other tasks. If you are using Dask distributed, each worker must have access to the files to parallelize the loading. Rather than copying the file to each worker, network filesystems allow everyone to access the files. Dask’s file access layer ((("filesystems", "FSSPEC library")))((("FSSPEC library")))((("libraries", "FSSPEC")))uses the FSSPEC library (from the intake project) to access the different filesystems. Since FSSPEC supports a range of filesystems, it does not install the requirements for every supported filesystem. Use the code in <<ex_supported_fs>> to see which filesystems are supported and which ones need additional packages.
 
 [[ex_supported_fs]]
-.FSSPEC list supported filesystems
+.Getting a list of FSSPEC-supported filesystems
 ====
 [source, python]
 ----
@@ -137,7 +137,7 @@ include::./examples/dask/Dask-Ch4-DataFrames.py[tags=fsspec]
 Many filesystems require some kind of ((("filesystems", "configuration")))((("configuration, filesystems")))configuration, be it endpoint or credentials. Often new filesystems, like MinIO, offer S3-compatible APIs but overload the endpoint and require some extra configuration to function. With Dask you specify the configuration parameters to the read/write function with pass:[<code>storage&#x200b;_options</code>]. Everyone's configuration here will likely be a bit different.footnote:[https://oreil.ly/ZfcRv[FSSPEC documentation] includes the specifics for configuring each of the backends.] Dask will use your [.keep-together]#`storage_options`# dict as the keyword arguments to the underlying FSSPEC implementation. For example, my `storage_options` for MinIO are shown in <<minio_storage_options>>.
 
 [[minio_storage_options]]
-.Dask configure MinIO
+.Configuring Dask to talk to MinIO
 ====
 [source, python]
 ----

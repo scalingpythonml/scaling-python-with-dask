@@ -9,7 +9,7 @@ Streaming data pipelines and ((("streaming")))analytics are becoming more popula
 
 Streaming jobs are different ((("streaming", "versus batch jobs", secondary-sortas="batch jobs")))from batch jobs in a number of important ways. They tend to have faster processing time requirements, and the jobs themselves often have no defined endpoint (besides when the company or service is shut down). One situation in which small batch jobs may not cut it includes dynamic advertising (tens to hundreds of milliseconds). Many other data problems may straddle the line, such as recommendations, where you want to update them based on user interactions but a delay of a few minutes is probably (mostly) OK.
 
-As discussed in <<ch_evaluating_components>>, Dask's streaming component appears to be less frequently used than other components. Streaming in Dask is, to an extent, added on after the fact,footnote:[The same is true for Spark streaming, but Dask's streaming is even less integrated than Spark's streaming.] and there are certain places and times when you may notice this. This is most apparent when loading and writing data—everything must move through the main client program and is then either scattered or collected.
+As discussed in <<ch08>>, Dask's streaming component appears to be less frequently used than other components. Streaming in Dask is, to an extent, added on after the fact,footnote:[The same is true for Spark streaming, but Dask's streaming is even less integrated than Spark's streaming.] and there are certain places and times when you may notice this. This is most apparent when loading and writing data—everything must move through the main client program and is then either scattered or collected.
 
 [WARNING]
 ====
@@ -108,7 +108,7 @@ This indefinite runtime leads to a number of other challenges. Small memory leak
 
 Streaming programs that perform aggregations often have problems with late-arriving data. This means that, while you can define your window however you want, you may have records that _should_ have been in that window but did not arrive in time for the process. Streamz has no built-in solution for late-arriving data. Your choices are to manually track the state inside of your process (and persist it somewhere), ignore late-arriving data, or use another stream-processing system with support for late-arriving data (including kSQL, Spark, or Flink).
 
-In some streaming applications it is important that messages are processed exactly once (e.g., a bank account). Dask is generally not well suited to such situations due to re-computing on failure. This similarly ((("at-least-once execution")))applies to Streamz on Dask, where the only option is _at-least-once_ execution. You can work around this by keeping out-of-process state (like a database) on what messages have been processed and avoiding duplicate messages.
+In some streaming applications it is important that messages are processed exactly once (e.g., a bank account). Dask is generally not well suited to such situations due to re-computing on failure. This similarly ((("at-least-once execution")))applies to Streamz on Dask, where the only option is _at-least-once_ execution. You can work around this by using an external system, such as a database, to keep track of which messages have been processed.
 
 === Conclusion
 

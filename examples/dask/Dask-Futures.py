@@ -40,7 +40,9 @@ time.sleep(1)
 future_time = timeit.timeit(lambda: slow_future.result(), number=1)
 delayed_time = timeit.timeit(lambda: dask.compute(slow_delayed), number=1)
 print(
-    f"So as you can see by the future time {future_time} v.s. {delayed_time} the future starts running right away.")
+    f"""So as you can see by the future time {future_time} v.s. {delayed_time}
+    the future starts running right away."""
+)
 #end::delayed_vs_future_future_faster[]
 
 
