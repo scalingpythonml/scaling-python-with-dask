@@ -96,7 +96,6 @@ The string representation of a future will show you where it is in it's lifecycl
 
 
 === Fire-and-Forget
->>>>>>> atlas/main
 
 Sometimes you no longer need a future, but you also don't want it to be canceled. This pattern is ((("futures", "fire-and-forget")))((("fire-and-forget", "futures")))called fire-and-forget. This is most useful for things like writing data out, updating a database, or other side effects. If all reference to a future is lost, garbage collection can result in the future being canceled. To work around this, Dask has the aptly named `fire_and_forget` method, which allows you to take advantage of this pattern, as shown in <<fire_and_forget_ch06_1686239249531>>, without needing to keep references around.
 
