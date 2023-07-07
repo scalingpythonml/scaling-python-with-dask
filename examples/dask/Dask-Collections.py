@@ -71,7 +71,8 @@ def load_data(path: str):
 def make_url(idx):
     page_size = 100
     start = idx * page_size
-    return f"https://api.fda.gov/food/enforcement.json?limit={page_size}&skip={start}"
+    u = f"https://api.fda.gov/food/enforcement.json?limit={page_size}&skip={start}"
+    return u
 
 
 urls = list(map(make_url, range(0, 10)))
@@ -127,8 +128,7 @@ def parallel_recursive_list(path: str, fs=None) -> List[str]:
     dirs = []
     for i in infos:
         if i["type"] == "directory":
-            # You can speed this up by using futures; covered in "Advanced
-            # Scheduling"
+            # You can speed this up by using futures; covered in Chapter 6
             dir_list = dask.delayed(parallel_recursive_list)(i["name"], fs=fs)
             dirs += dir_list
         else:
@@ -172,8 +172,7 @@ def parallel_list_directories_recursive(path: str, fs=None) -> List[str]:
     result = []
     for i in infos:
         if i["type"] == "directory":
-            # You can speed this up by using futures; covered in "Advanced
-            # Scheduling"
+            # You can speed this up by using futures; covered in Chapter 6
             result.append(i["name"])
             dir_list = dask.delayed(
                 parallel_list_directories_recursive)(i["name"], fs=fs)

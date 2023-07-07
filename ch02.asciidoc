@@ -57,15 +57,16 @@ You can use `dask.compute` both to start computing the delayed objects and futur
 [[sleepy_task]]
 ===== Sleepy task
 
-An easy way to see the ((("Hello Worlds", "task", "sleepy task")))((("task Hello World", "sleepy task")))((("sleepy task, Hello World")))((("slow_task function")))((("functions", "slow_task")))performance difference is by writing an intentionally slow function, like `slow_task`, which calls `sleep`. Then you can compare the performance of Dask to "regular" Python by mapping the function over a few elements with and without `dask.delayed`, as shown in this example:
+An easy way to see the ((("Hello Worlds", "task", "sleepy task")))((("task Hello World", "sleepy task")))((("sleepy task, Hello World")))((("slow_task function")))((("functions", "slow_task")))performance difference is by writing an intentionally slow function, like `slow_task`, which calls `sleep`. Then you can compare the performance of Dask to "regular" Python by mapping the function over a few elements with and without `dask.delayed`, as shown in <<sleepy_task_ch02_1688747609671>>.
 
-
-
-
+[[sleepy_task_ch02_1688747609671]]
+.Sleepy task
+====
 [source, python]
 ----
 include::./examples/dask/Dask-Ch2-Hello-Worlds.py[tags=sleepy_task_hello_world]
 ----
+====
 
 When we run this example, we get `In sequence 20.01662155520171, in parallel 6.259156636893749`, which shows that Dask can run some of the tasks in parallel, but not all of them.footnote:[When we run this on a cluster, we get worse performance, as there is overhead to distributing a task to a remote computer compared to the small delay.]
 
@@ -73,12 +74,16 @@ When we run this example, we get `In sequence 20.01662155520171, in parallel 6.2
 [[nested_tasks]]
 ===== Nested tasks
 
-One of the neat things about `dask.delayed` is that you ((("Hello Worlds", "task", "nested tasks", id="hwtksk")))((("task Hello World", "nested tasks", id="tkwdsks")))((("nested tasks, Hello World", id="nskshw")))can launch tasks inside of other tasks.footnote:[This is very different from Apache Spark, where only the driver/head node can launch tasks.] A straightforward real-world example of this is a web crawler, with which, when you visit a web page, you want to fetch all of the links from that page:
+One of the neat things about `dask.delayed` is that you ((("Hello Worlds", "task", "nested tasks", id="hwtksk")))((("task Hello World", "nested tasks", id="tkwdsks")))((("nested tasks, Hello World", id="nskshw")))can launch tasks inside of other tasks.footnote:[This is very different from Apache Spark, where only the driver/head node can launch tasks.] A straightforward real-world example of this is a web crawler, with which, when you visit a web page, you want to fetch all of the links from that page, as shown in <<web_crawler_ch02_1688747981454>>.
 
+[[web_crawler_ch02_1688747981454]]
+.Web crawler
+====
 [source, python]
 ----
 include::./examples/dask/Dask-Ch2-Hello-Worlds.py[tags=mini_crawl_task]
 ----
+====
 
 [NOTE]
 ====
@@ -172,7 +177,7 @@ Pandas is one of the most ((("Hello Worlds", "Dask DataFrame")))((("Dask DataFra
 Your intuition around what's slow and fast with pandas does not carry over. We will explore this more in <<dask_df>>.
 ====
 
-To illustrate how you can use Dask DataFrame, we'll rework the word count example from the previous section to use it. As with Dask's other collections, you can create DataFrames from local collections, futures, or distributed files. Since you've already made a crawler function, you can turn its output into a Dask bag using the `from_delayed` function from <<make_bag_of_crawler>>. Instead of using `map` and `foldby`, you can use pandas APIs such as `explode` and `value_counts`, as shown in <<wc_dataframe>>.
+To illustrate how you can use Dask DataFrame, we'll rework pass:[Examples <a data-type="xref" data-xrefstyle="select:labelnumber" href="#make_bag_of_crawler">#make_bag_of_crawler</a> through <a data-type="xref" data-xrefstyle="select:labelnumber" href="#wc_freq">#wc_freq</a>] to use it. As with Dask's other collections, you can create DataFrames from local collections, futures, or distributed files. Since you've already made a crawler function, you can turn its output into a Dask bag using the `from_delayed` function from <<make_bag_of_crawler>>. Instead of using `map` and `foldby`, you can use pandas APIs such as `explode` and `value_counts`, as shown in <<wc_dataframe>>.
 
 [[wc_dataframe]]
 .DataFrame word count
