@@ -97,7 +97,6 @@ During the transform stage, calling `.compute()` coalesces a large distributed D
 [TIP]
 ====
 Dask DataFrame is not value-mutable in the way that pandas DataFrame users might be familiar with. Since in-memory modification of a particular value is not possible, the only way to change a value would be a map operation over the whole column of the entire DataFrame. If an in-memory value change is something you have to do often, it is better to use an ((("migration", "DataFrame performance and", startref="mgdfpf")))((("Dask DataFrames", "migration and", startref="dfmgr")))external database.
->>>>>>> atlas/main
 ====
 
 ===== Porting SQL to Dask
