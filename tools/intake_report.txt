@@ -1,0 +1,70 @@
+Title: Scaling Python with Dask
+ISBN: 9781098119874
+JIRA Ticket #: DCPSPROD-7627
+
+Stylesheet: animal_theme_sass
+Toolchain: Atlas 2
+
+Atlas URL: https://atlas.oreilly.com/oreillymedia/scaling-python-with-dask
+
+Incoming format: AsciiDoc
+Outgoing format: AsciiDoc
+
+Preliminary pagecount: 202
+
+Is this project in Early Release? Yes
+
+Resources
+=================
+* Figs: Illustrations is still working on the figs.
+** 17 total. (1 is informal; 0 are inline.)
+** I left the draft_images/ and figures/ folders in the repo for reference, but they are not used, all the images in the build are in the images/ folder.
+
+** Once the figs are processed on /work, you'll need to add them to the book's repo.
+** A report mapping original figure file names to their new names can be found in the tools folder for this project as figure_renaming_report.tsv.
+
+* Intake Report:(Atlas repo) tools/intakereport.txt
+
+* MS Snapshot: To view the submitted files, checkout the git tag named 'manuscript_to_prod' by running the following command:
+
+$ git checkout manuscript_to_prod
+
+This will temporarily switch the files in your repo to the state they were in when the manuscript_to_prod tag was created. To switch the files back to the current state, run: 
+
+$ git checkout main 
+
+ Notes from Tools:
+=================
+
+* PROD: Add any authors to the project that need to be added.
+
+* Syntax highlighting: applied to 105 out of 106 code listings.
+
+* In Ch.9 there is a hard-coded ref to 'Chapter 13' (which doesn't exist).
+
+* I was only able to find an obvious target id for a couple of the broken xrefs. The remaining ones are: 
+ch02.asciidoc - line 10:  appa_deploy
+ch02.asciidoc - line 190:  appa_deploy
+ch03.asciidoc - line 56:  ex_dask_k8s
+ch03.asciidoc - line 58:  appa_clusterrs
+ch03.asciidoc - line 75:  app_deploy
+ch03.asciidoc - line 284:  shared_data
+ch03.asciidoc - line 284:  shared_compute_node
+ch10.asciidoc - line 190:  appa_streaming
+appB.asciidoc - line 7:  choosing_oss_libraries
+appD.asciidoc - line 21:  ch_evaluating_components
+
+
+* Please let Tools know ASAP if there are any other global problems for which we can help automate a fix.
+
+Notes at arrival in production:
+=================
+
+* Some broken xrefs.
+
+=================
+
+Please let me know about any other issues.
+
+Thanks,
+Theresa

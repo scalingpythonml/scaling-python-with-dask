@@ -1,0 +1,20 @@
+
+/* fix spacing above table lists not preceded by a paragraph */
+td > div > ul:nth-child(1) {
+  margin-top: 0pt !important;
+  padding-top: 0pt !important;
+}
+td > div > ul:nth-child(1) > li:nth-child(1) {
+  margin-top: 0pt !important;
+  padding-top: 0pt !important;
+}
+
+/* duplicate anchor tags to table footnote should be black */
+a.tablefootnote {
+  color: #000000;
+}
+
+/* style for line of code following table in example with notebook-style output */
+pre.example-cont {
+  margin-left: 0;
+}

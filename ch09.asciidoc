@@ -1,97 +1,75 @@
-== Migrating Existing Analytic Engineering
+[[ch09]]
+== Migrating Existing Analytic Engineering 
 
-.A Note for Early Release Readers
-****
-With Early Release ebooks, you get books in their earliest form&mdash;the authors' raw and unedited content as they write—so you can take advantage of these technologies long before the official release of these titles.
+Many users will already have analytic work that is currently deployed that they want to migrate over to Dask. This chapter will discuss the considerations, challenges, and experiences of us9ers making the switch. The main migration pathway explored in the chapter is moving an existing big data engineering from another distributed framework, such as Spark, into Dask.
 
-This will be the ninth chapter of the final book. The GitHub repo is available at https://github.com/scalingpythonml/scalingpythonml.
+=== Why Dask?
 
-If you have comments about how we might improve the content and/or examples in this book, or if you notice missing material within this chapter, please reach out to the editor at vwilson@oreilly.com.
-****
+Here are some of reasons to consider ((("migration")))whether you should migrate to Dask from an existing job that is implemented in pandas, or distributed libraries like PySpark:
 
-You likely have existing analytic workloads, and you may want to migrate some of them over to Dask as the scale of the data sizes you are working on increases.
-This chapter will discuss the considerations, challenges, and experiences of users making the switch.
-You will learn how to migrate existing big data workflows, including ETL (extract, transform and load) on Spark, as well as local workflows into Dask.
+Python and PyData stack:: The developers preferred using Python-native stack, and code style can remain consistently Pythonic.
+Richer ML integrations with Dask APIs:: Futures, delayed, and ML integrations require less glue code from the developer to maintain, and there are performance improvements from the more flexible task graph management Dask offers.
+Fine-grained task management:: Dask’s task graph is generated and maintained in real time during runtime, and users can access the task dictionary synchronously.
+Debugging overhead:: Some developer teams prefer the debugging experience in Python, as opposed to mixed Python and Java/Scala stacktrace.
+Development overhead:: The development step in Dask can be done locally with ease with the developer’s laptop, as opposed to needing to connect to a powerful cloud machine in order to experiment.
+Management UX:: Dask visualization tools tend to be more visually pleasing and intuitive to reason, with native graphviz rendering for task graphs.
 
-=== Why Dask
 
-Here are some of the reasons to migrate into Dask.
-
-* Python and PyData stack: the developers preferred using Python-native stack, and code style can remain consistently Pythonic.
-* Infrastructure administration overhead: users who adopted Dask report less operations overhead.
-* Reduced data copying: Pyspark users often need to turn Pandas dataframe to PySpark dataframe, to convert back to Pandas. Dask eliminates the intermediate step.
-* Better ML integrations with Dask APIs: futures, delayed, and ML integrations require less glue code from the developer to maintain, as well as performance improvement from more flexible task graph management Dask offers.
-* Fine-grained task management: Dask’s task graph is generated and maintained real-time during runtime, and users can access the task dictionary synchronously.
-* Debugging overhead: Some developer teams prefer debugging experience in Python, as opposed to mixed python and java/scala stacktrace.
-* Development overhead: The development step in Dask can be done locally with ease with the developer’s laptop, as opposed to needing to connect to a powerful cloud machine in order to experiment.
-* Management UX: Dask visualization tools tend to be more visually pleasing and intuitive to reason, with native graphviz rendering for task graphs.
+It's important to remember that these benefits of Dask come with some important trade-offs, which we will discuss next.
 
 These are not all of the reasons, but if any of these speak to you, it's probably worth investing the time to consider moving the workload to Dask.
 There are always tradeoffs involved, so the next section will look at some of the limitations followed by a roadmap to give you an idea of the scale of work involved in moving to Dask.
 
-=== Limitations of Dask for ETL
-
-Dask is relatively new, and the use of Python Data stack has historically focused on smaller scale problems.
-At the time of writing, there are some limits to Dask for ETL.
-Many of these limitations are being worked on by the community so check and see if they are still an issue.
-Some of the scale limitations you should considered are as follows:
-
-* Parquet scale limits: If parquet data exceeds 10TB scale, there are issues at the fastparquet and pyarrow level that slows Dask down, and metadata management overhead overwhelms.
-* ETL workloads with Parquet files at 10TB scale and beyond that includes a mutation, such as append and update, runs into consistency issues.
-* Weak datalake integrations: PyData stack has not engaged as much in the big data world traditionally, and the integrations on data lake management, such as Apache Iceberg, is missing
-* High-level query optimization: Users of Spark would be familiar with the Catalyst optimizer that pushes down predicates for optimizing the physical work on the executors. This optimization layer is missing in Dask at the moment. Spark in its early years also did not have the Catalyst engine written yet, and there are work in progress to build this out for Dask.
-
-For large scale pure ETL Dask may not be the right choice and leaving an existing system in place is a lot less work. However, if your building new functionality on top of existing workloads, the ability to use the Dask and PyData ecosystem can be worth the trade-offs.
+Dask is relatively new, and the use ((("migration", "Dask limitations")))of Python data stack to perform large-scale extract, transform, load operations is also fairly new. There are limitations to Dask, which mainly arise from the fact that PyData stack has traditionally not been used to perform large-scale data workloads. At the time of writing, there are some limits to the system. However, they are being addressed by developers, and a lot of these deficiencies will be filled in. Some of the fine-grained considerations you should have are as follows:
 
 
-=== Migration Roadmap
+Parquet scale limits:: If Parquet ((("Parquet", "migration and")))data exceeds 10 TB in scale, there are issues at the fastparquet and PyArrow level that slow Dask down, and metadata management overhead can be overwhelming.
++
+ETL workloads with Parquet files at 10 TB in scale and beyond, and that include a mutation, such as append and update, run into consistency issues.
+Weak data lake integrations:: PyData stack has not engaged much in the big data world traditionally, and the integrations on data lake management, such as Apache Iceberg, are missing.
+High-level query optimization:: Users of Spark would be familiar with the Catalyst optimizer that pushes down predicates for optimizing the physical work on the executors. This optimization layer is missing in Dask at the moment. Spark in its early years also did not have the Catalyst engine written yet, and there is work in progress to build this out for Dask.
 
-You should also consider the amount of work involved in moving existing workloads onto Dask.
-For that, we’ve laid out an example of migration steps as a non-exhaustive list of items a team might want to think through when planning their move.
+Any list of limitations for a rapidly developing project like Dask may be out of date by the time you read it, so if any of these are blockers for your migration, make sure to check Dask's status tracker.
 
+=== Migration Road Map
 
-At the highest level, moving an existing workload to Dask involves both changing the code, as well as ensuring the correct environment is present.
-Since it's easier to be able to develop against the environment you will be running, we suggest starting your migration with the environment.
+While no engineering work is linear in process, it’s always a good idea to have a road map in mind. We’ve laid out an example of migration steps as a non-exhaustive list of items a team might want to think through when planning their move:
 
+* What kind of machines and containerization framework will we want to deploy Dask on, and what are their pros and cons?
+* Do we have tests to ensure our migration correctness and our desired goals?
+* What type of data is Dask able to ingest, and at what scale, and how does that differ from other platforms?
+* What is the computation framework of Dask, and how do we think in Dask and Pythonic ways to achieve the task?
+* How would we monitor and troubleshoot the code at runtime?
 
-==== Dask Deployment Environment
+We'll start by looking at the types of clusters, which goes with the deployment framework, as it is often one of the issues requiring collaboration with other teams or organizations.
 
-The deployment environment covers everything from the compute resources, to libraries, to access to the data your analytics depend on.
-While you can move your code before you have a production environment setup, we think you should start with making sure you can get access to the compute and data you need.
+==== Types of Clusters
 
+If you are considering moving ((("migration", "clusters and", id="mgcl")))((("clusters", "migration and", id="clmgr")))your analytic engineering job, you probably have a system that’s provisioned to you by your organization. Dask is supported in many commonly used deployment and development environments, with some allowing more flexibility in scaling, dependency management, and support of heterogeneous worker types. We have used Dask on academic environments, commodity cloud, and directly over VMs/containers; we've detailed the pros and cons, and some well-used and supported environments, in <<appA>>.
 
-===== Type of Clusters
+<<ex_yarn_deployment_ch09_1685536092648>> shows an example of a YARN deployment. More examples and in-depth discussion are detailed in <<ch12>>.
 
-Existing large scale ETL jobs will already have a cluster that they run on top of. Often these clusters are either cloud provisioned, or provided by an infrastructure group within your company.
-Dask can work on the vast majority of cluster environments, and we cover how to deploy Dask on some common ones in <<ch14>>.
-While it's tempting to pick the easiest to deploy environment it's often best to build on top of the ones which exist in your organization,
-as they can simplify access data.
-
-===== Libraries
-
-It is important that your Dask workers all have the same libraries installed on them. Most clusters take care of this in various fashions, but in some -- like YARN -- Python dependency management is more challenging. You may need to work with your systems administrator / operations to install the libraries you need.
-In our experience systems administrators / cluster operators are often very busy, so doing this early to give them time is beneficial.
-
-[TIP]
+[[ex_yarn_deployment_ch09_1685536092648]]
+.Deploying Dask on YARN with Dask-Yarn and skein
 ====
 If your organization has multiple clusters that are supported, choosing one where you can self-serve dependency management, like Kubernetes, is beneficial.
 ====
 
+For high-performance computing deployments using job queuing systems such as PBS, Slurm, MOAB, SGE, LSF, and HTCondor, you should ((("Dask-jobqueue")))((("job queues, migration and")))use Dask-jobqueue, as shown in <<ex_slurm_deployment_ch09_1685536141262>>.
 
-===== Data Sources
+[[ex_slurm_deployment_ch09_1685536141262]]
+.Deploying Dask using job-queue over Slurm
+====
+[source, python]
+----
+include::./examples/dask/Dask-Ch10_porting.py[tags=ex_slurm_deployment]
+----
+====
 
-You likely have a shared filesystem already set up by your organization’s admin. Enterprise users are likely already using distributed data sources, running on HDFS, or blob storage like S3, which Dask works seamlessly.
-Often there is some form of authentication required to access your organizations data, and this is also often managed by the cluster. If you have deployed your own cluster, you may need to set up special keys to be able to access your data.
-
-
-
-In HPC (high performance computing) and other research environments, network-file-system (NFS) is more common. Since NFS "looks" like a regular filesystem to Dask you can read from it just as easily. NFS home directories (that is network drives which contain the files in your home dir) can cause issues for Dask, see more in <<ch14>>.
-
-
-Dask can also read from less traditional file-like sources, including FTP and HTTP.  When working on an academic dataset that’s large and clunky to work with, like neuroimaging dataset that’s directly hosted by another organization, you may be able to directly read from their source filesystem. When using Dask this way, you should test out and consider network timeouts, load, and the expectations of the data provider. footnote:[While many academic institutions have fast connections, these can also be overwhelmed with very large datasets.]
+You likely have a shared filesystem already set up by your organization’s admin. Enterprise users might be used to already robustly provisioned distributed data sources, running on HDFS or blob storage like S3, which Dask works with seamlessly (see <<ex_s3_minio_rw>>). Dask also ((("migration", "networked filesystems and")))((("filesystems", "migration and")))integrates well with networked filesystems.
 
 [[ex_s3_minio_rw]]
-.Read and Write to blob storage using Minio
+.Reading and writing to blob storage using MinIO
 ====
 [source, python]
 ----
@@ -99,59 +77,31 @@ include::./examples/dask/Dask-Ch10_porting.py[tags=ex_s3_minio_rw]
 ----
 ====
 
-If your organization does not have a distributed filesystem in place, the link:$$https://landscape.cncf.io/card-mode?category=cloud-native-storage&grouping=category$$[CNCF has a non-exhaustive list of storage options].
-In our experience, S3 compatible filesystems work well with Dask and many other tools in the data space.
 
-
-As of this writing, Dask does not have integrated support for data lakes such as Iceberg or Deltalake. Instead you can use the Python libraries for link:$$https://iceberg.apache.org/docs/0.13.0/python-api-intro/$$[Iceberg] and link:$$https://mungingdata.com/dask/read-delta-lake/$$[Deltalake with Dask.].
+We found that one of the surprisingly useful use cases is connecting directly to network storage like NFS or FTP. When working on an academic dataset that’s large and clunky to work with (like a neuroimaging dataset that’s directly hosted by another organization), we could connect directly to the source filesystem. When using Dask this way, you should test out and consider network timeout allowances. Also note that, as of this ((("migration", "clusters and", startref="mgcl")))((("clusters", "migration and", startref="clmgr")))writing, Dask does not have a connector to data lakes such as Iceberg.
 
 ==== Development: Considerations
 
-Translating an existing logic to Dask is a fairly intuitive process once you've understood Dask's collections and execution model.
-Depending on what your existing logic is written in -- e.g. Spark, or pandas -- you'll need to make different changes to your logic.
-If your coming from a different programming language, like R, MATLAB, or Scala, you will need to rewrite all of your code even though logically the changes may be minimal.
-We'll start with looking at migrating DataFrame based code since Dask also has DataFrames.
+Translating an existing logic to Dask is a fairly intuitive process. Here are some considerations if you're coming from libraries such as R, pandas, and Spark, and how Dask might differ from them. Some of these differences result from moving from a different low-level implementation, such as Java, and others result from moving from single-machine code to a scaled implementation, such as coming from pandas.
 
+==== DataFrame Performance
 
-===== DataFrames
+If you have a job that you are ((("migration", "DataFrame performance and", id="mgdfpf")))((("Dask DataFrames", "migration and", id="dfmgr")))already running on a different platform, it’s likely you are already using columnar storage format, like Parquet, and reading at runtime. The data type mapping from Parquet to Python ((("Python", "data type mapping")))is inherently imprecise. It’s a good idea to check data types when reading in any data at runtime, and the same applies to DataFrame. If type inference fails, a column would default to object. Once you inspect and determine the type inference is imprecise, specifying data types can speed up your job a lot. Additionally, it’s always a good idea to check strings, floating point numbers, datetime, and arrays. If type errors arise, keeping in mind the upstream data sources and their data type is a good start. For example, if the Parquet is generated from protocol buffers, depending on what encode and decode engine was used, there are differences in null checks, float, doubles, and mixed precision types that are introduced in that stack.
 
-If you have a job that you are already running on a different platform, it’s likely you are already using columnar storage format, like parquet.
-Unfortunately there is not a 1:1 mapping from parquet to Dask (or pandas) DataFrame types which can cause incorrect types. footnote:[For example a job which reads in and writes out a parquet file but makes no changes to the data, may result in a different parquet file being written.]
-You should check the data types on read and write to catch potential correctness issues.
-Rather than write the validation manually, pydantic can help you with validating the data types/schema of your data.
-Once you inspect and determine type inference is imprecise, specifying dtypes can speed up your job a lot.
-Additionally, it’s always a good idea to sanity-check strings, floating point numbers, datetime, and arrays.
+When reading a large file from cloud storage into DataFrame, it may be useful to select columns ahead of time at the DataFrame read stage. Users from other platforms like Spark would be familiar with predicate pushdown, where even if you don’t quite specify the columns desired, it would optimize and only read the required column for computation. Dask doesn’t quite provide that optimization yet.
+
+Setting smart indices early ((("indexing", "migration and")))((("migration", "indexing and")))in the transformation of your DataFrame, prior to a complex query, can speed things up. Be aware that multi-indexing is not supported by Dask yet. A common workaround for a multi-indexed DataFrame from other platforms is mapping as a single concatenated column. For example, a simple workaround when coming from a non-Dask columnar dataset, like pandas `pd.MultiIndex` that has two columns as its index&mdash;say, `col1` and `col2`&mdash;would be to introduce a new column in Dask DataFrame  `col1_col2` as Dask.
+
+During the transform stage, calling `.compute()` coalesces a large distributed Dask DataFrame to a single partition that should fit in RAM. If it does not, you may encounter problems. On the other hand, if you have filtered an input data of size 100 GB down to 10 GB (say your RAM is 15 GB), it is probably a good idea to reduce the parallelism after the filter operation by invoking `.compute()`. You can check your DataFrame's memory usage by invoking `df.memory_usage(deep=True).sum()` to determine if this is the right call. Doing this can be particularly useful if, after the filter operation, you have a complex and expensive shuffle operation, such as `.join()` with a new larger dataset.
 
 [TIP]
 ====
-Many systems -- e.g. Spark, Hive, Dask, etc. -- have their own parquet readers and writers which can result in some quirks. footnote:[A bit like Word and Corel back in the day]
-If your having difficulty reading a dataset, finding out what tool created it and then searching for "pyarrow" + "toolname" type issue
-can help you find out what special settings you might need.
+Dask DataFrame is not value-mutable in the way that pandas DataFrame users might be familiar with. Since in-memory modification of a particular value is not possible, the only way to change a value would be a map operation over the whole column of the entire DataFrame. If an in-memory value change is something you have to do often, it is better to use an ((("migration", "DataFrame performance and", startref="mgdfpf")))((("Dask DataFrames", "migration and", startref="dfmgr")))external database.
+>>>>>>> atlas/main
 ====
 
 
-When reading a large file from cloud storage into DataFrame, it is often useful to select columns ahead of time at dataframe read stage as covered in <<partitioned_reads>>.
-This is especially important to take note of when porting code from platforms like Spark which have predicate pushdown, where even if you don’t quite specify columns desired, it would optimize and only read the required column for computation. Dask doesn’t quite provide that optimization yet.
-
-
-Setting smart indices early in transformation of your DataFrame, prior to complex query, can speed things up. Be aware that multi-indexing is not supported by Dask yet. A common workaround for a multi-indexed DataFrame from other platform is mapping as a single concatenated column.
-
-
-During transform stage, since Dask API gives users fine-grained control of how to distribute computation, it’s good to be mindful of when to introduce reduce operations on large data down to a single pandas dataframe. Methods such as repartition() and persist() are great way to introduce computations and reductions early on, before a shuffle operation such as a join().
-
-
-[WARNING]
-====
-If you do a lot of mutation with DataFrames, migrating to Dask can involve a substantial rewrite.
-====
-
-You can not update the values in a Dask DataFrame as you can with a Pandas Dataframe. Since in-memory modification of a particular value is not possible, the only way to change a value is a map operation over the an whole column. If an in-memory value change is something you have to do often, that is better achieved through either the actor system or an external database.
-
-
-===== Porting SQL to Dask
-
-Dask does not natively offer SQL engine, and developers can either re-implement the logic in pandas / Dask API or try a SQL library on top of Dask.
-The SQL engines built on top of Dask are focused on anlytic uses cases, if you need more than that (e.g. inserts, updates) consider using a separate database layer that is relational, such as Postgres, either before moving the data into Dask runtime, or after.
+Dask does not natively offer a SQL engine, although ((("migration", "Dask-SQL and", id="mgdksq")))((("Dask-SQL", "migration and", id="dsksql")))((("SQL (Structured Query Language)", "Dask-SQL")))it does natively offer options to read from a SQL database. There are a number of different libraries you can use to interact with an existing SQL database, and treat Dask DataFrame as a SQL table and run SQL queries directly (see <<ex_postgres_dataframe>>). Some allow you to even build and serve ML models directly using SQL ML syntax similar to that of Google's BigQuery ML. In Chapter 13, we will show the use of Dask's native `read_sql()` function, and running SQL ML using Dask-SQL.
 
 [[ex_postgres_dataframe]]
 .Reading from a Postgres database
@@ -162,13 +112,79 @@ include::./examples/dask/Dask-Ch10_porting.py[tags=ex_postgres_dataframe]
 ----
 ====
 
-Recently, fugue-sql project came on-line, which provides SQL compatibility to Pydata stack, including Dask. The project is in its infancy, but seems promising. Fugue can run its SQL queries using DaskExecutionEngine, or you can run fugue queries over Dask DataFrame you already are using. Alternatively, you can run a quick SQL query on dask dataframe on your notebook as well. Here’s an example of using fugue in notebook.
+FugueSQL provides SQL compatibility ((("FugueSQL")))((("SQL (Structured Query Language)", "FugueSQL")))to PyData stack, including Dask. The project is in its infancy, but seems promising. The main advantage of FugueSQL is that the code is portable between pandas, Dask, and Spark, giving a lot more interoperability. Fugue can run its SQL queries using DaskExecutionEngine, or you can run fugue queries over a Dask DataFrame you already are using. Alternatively, you can run a quick SQL query on Dask DataFrame on your notebook as well. <<running_sql_over_dask_dataframe_ch09_1685553886459>> shows an example of using FugueSQL in a notebook. The downside of FugueSQL is that it requires the ANTLR library, which requires a Java runtime.
 
-.Running SQL over dask dataframe with Fugue SQL
-image::images/ch09/spwd0901.png[]
+[[running_sql_over_dask_dataframe_ch09_1685553886459]]
+.Running SQL over Dask DataFrame with FugueSQL
+====
+[source, python]
+----
+from fugue_notebook import setup
+setup (is_lab=True)
+ur = ('https://d37ci6vzurychx.cloudfront.net/trip-data/'
+      'yellow_tripdata_2018-01.parquet')
+df = dd.read_parquet(url)
 
-An alternate method is to use Dask-SQL library. This package uses Apache Calcite to provide the SQL parsing frontend, and is used to query Dask Dataframes. With that library, you can pass most of the SQL based operations to dask_sql context, and it will be handled. The engine handles standard SQL inputs like SELECT, CREATE TABLE, but also ML model creation, with CREATE MODEL syntax.
+%%fsql dask
+tempdf = SELECT VendorID, AVG (total_amount) AS average_fare FROM df 
+GROUP BY VendorID
+
+SELECT *
+FROM tempdf
+ORDER BY average fare DESC
+LIMIT 5
+PRINT
+----
+====
+
+|===
+| |VendorID |average_fare
+
+|*0*
+|1
+|15.127384
+
+|*1*
+|2
+|15.775723
+|===
+
+[role="example-cont"]
+----
+schema: VendorID:long, average_fare:double
+----
+
+An alternate method is to use the Dask-SQL library. This package uses Apache Calcite to provide the SQL parsing frontend, and is used to query Dask DataFrames. With that library, you can pass most of the SQL-based operations to the Dask-SQL context, and it will be handled. The ((("migration", "Dask-SQL and", startref="mgdksq")))((("Dask-SQL", "migration and", startref="dsksql")))engine handles standard SQL inputs like `SELECT`, `CREATE TABLE`, but also ML model creation, with the `CREATE MODEL` syntax.
+
+==== Deployment Monitoring
+
+Like many other distributed ((("migration", "deployment monitoring")))libraries, Dask provides logs, and you can configure Dask logs to be sent to a storage system. The method will vary by the deployment environment, and whether Jupyter is involved.
+
+The Dask client exposes the `get_worker_logs()` and `get_scheduler_logs()` methods, which can be accessed at runtime if desired. Additionally, similar to other distributed system logging, you can log events by topic, making them easily accessible by event types.
+
+<<ex_basic_logging_ch09_1685536244456>> is a toy example of adding a custom log event to the client. 
+
+[[ex_basic_logging_ch09_1685536244456]]
+.Basic logging by topic
+====
+[source, python]
+----
+include::./examples/dask/Dask-Ch10_porting.py[tags=ex_basic_logging]
+----
+====
+
+<<structured-logging-on-workers_ch09_1685536283090>> builds on the previous one, but swaps in the execution context to a distributed cluster setup, for potentially more complex, custom structured events. The Dask client listens and accumulates these events, and we can inspect them. We start with a Dask DataFrame, then run some compute-heavy task. This example uses a `softmax` function, which is a common computation in many ML uses. A common ML dilemma is whether to use a more complex activation or loss function for accuracy, sacrificing performance (thereby running fewer training epochs but gaining a more stable gradient), or vice versa. To figure that out, we insert a code to log custom structured events to time the compute overhead of that specific function.
+
+
+[[structured-logging-on-workers_ch09_1685536283090]]
+.Structured logging on workers
+====
+[source, python]
+----
+include::./examples/dask/Dask-Ch10_porting.py[tags=ex_distributed_logging]
+----
+====
 
 === Conclusion
 
-In this chapter you have reviewed the large questions and considerations you might put in when migrating existing analytic engineering work. You’ve also learned some of the similarities and dissimilarities of Dask, and what to look out for. Since Data Engineering on large scale tends to have similarities across many libraries, it’s often easy to overlook minute differences that leads to larger performance or correctness issues. Keeping them in mind will help you as you take your first journeys in Dask.
+In this chapter you have reviewed the large questions and considerations of migrating existing analytic engineering work. You’ve also learned some of the feature differences of Dask compared to Spark, R, and pandas. Some features are not yet implemented by Dask, some are more robustly implemented by Dask, and others are inherent translational differences when moving a computation from a single machine to a distributed cluster. Since large-scale data engineering tends to use similar terms and names across many libraries, it’s often easy to overlook minute differences that lead to larger performance or correctness issues. Keeping them in mind will help you as you take your first journeys in Dask.

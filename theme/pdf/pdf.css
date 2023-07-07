@@ -3,19 +3,55 @@
 /*--------Put Your Custom CSS Rules Below--------*/
 /*--- This oneoff overrides the code in https://github.com/oreillymedia/<name_of_theme>/blob/master/pdf/pdf.css---*/
 
-/*----Uncomment to temporarily turn on code-eyballer highlighting (make sure to recomment after you build)
+/*--Table lines--*/
+table td { border-bottom: 0.25pt solid cmyk(0%,0%,0%,100%); }
+
+/* no border beneath footnote row in tables */
+tr.footnotes td {
+  border-bottom: none !important;
+}
+
+/* fix spacing above table lists not preceded by a paragraph */
+td > div > ul:nth-child(1) {
+  margin-top: 0pt !important;
+  padding-top: 0pt !important;
+}
+td > div > ul:nth-child(1) > li:nth-child(1) {
+  margin-top: 0pt !important;
+  padding-top: 0pt !important;
+}
+
+/* duplicate anchor tags to table footnote should be black */
+a.tablefootnote {
+  color: cmyk(0%, 0%, 0%, 100%);
+}
+
+/* style for line of code following table in example with notebook-style output */
+pre.example-cont {
+  margin-left: 0;
+  margin-bottom: 10pt;
+}
+
+/* Prevent specified unfurled URLs from breaking across lines */
+span.kturl span.print_url_in_parens {
+  white-space: nowrap;
+}
+
+
+/*----Uncomment to temporarily turn on code-eyballer highlighting (make sure to recomment after you build)---*/
 
 pre {
  background-color: yellow;
 }
----*/
 
-/*----Uncomment to turn on automatic code wrapping----*/
+
+/*----Uncomment to turn on automatic code wrapping
 
 pre {
   white-space: pre-wrap;
   word-wrap: break-word;
 }
+----*/
 
 
 /*----Uncomment to change the TOC start page (set 

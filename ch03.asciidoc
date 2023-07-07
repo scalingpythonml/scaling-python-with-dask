@@ -1,51 +1,34 @@
 [[ch_3]]
-== Understanding enough of how Dask works
+== How Dask Works: The Basics
 
-.A Note for Early Release Readers
-****
-With Early Release ebooks, you get books in their earliest form&mdash;the authors' raw and unedited content as they write—so you can take advantage of these technologies long before the official release of these titles.
+Now that you've run your first few tasks with Dask, it's time to learn a little bit about what's happening behind the scenes. Depending on if you are using Dask locally or in a distributed fashion, the behavior can be a little different. While Dask does a good job of abstracting away many of the details of running on multiple threads or servers, having a solid grasp of how Dask is working will help you better decide both how and when to use it.
 
-This will be the third chapter of the final book. The GitHub repo is available at https://github.com/scalingpythonml/scalingpythonml.
+To be familiar with Dask, you need to understand:
 
-If you have comments about how we might improve the content and/or examples in this book, or if you notice missing material within this chapter, please reach out to the editor at vwilson@oreilly.com.
-****
+* The deployment framework that Dask is able to run on, and its strengths and weaknesses
+* The types of data that Dask is able to read, and how you can interact with the data types in Dask
+* The computational pattern of Dask, and how to turn your ideas into Dask code
+* How to monitor and troubleshoot
 
-Now that you've run your first few tasks with Dask, it's time to learn a little bit about what's happening behind the scenes.
-In this chapter you will learn about Dask's different options for execution, delayed operations and futures, and how the core of how Dask's different collections are built.
-Having a solid grasp of how Dask is working will help you better decide both how and when to use it.
-
-
-Depending on if you are using Dask locally or in a distributed fashion the behavior can be a little different. While Dask does a good job of abstracting away many of the details of running on multiple threads on one computer or multiple servers.
-
-
-To be familiar with Dask, just as in any programming language or framework, you need to understand:
-
-* The deployment framework footnote:[You might not be used to thinking of deployment frameworks if your coming from a single machine background, but you can think of that as what software or hardware needs to be setup for your program to function, like a virtualenv or enough memory or a GPU.] that Dask is able to run on, and thei  strengths and weaknesses.
-* The types of data Dask is able to read, how you can interact with the data types in Dask.
-* The computational pattern of Dask, how to turn your ideas into Dask code.
-* How to monitor and troubleshoot Dask.
-
-You will learn how these concepts apply to Dask generally in this chapter while refining your understanding in the rest of the book.
+In this chapter, we will introduce each of these concepts, and we will expand upon them in the rest of the book.
 
 === Execution Backends
 
-Dask has many different execution backends, however, we find it easiest to think about them in two groups, local and distributed. With local backends, you are limited in scale to what a single computer can handle. Local backends also have advantages like avoiding network overhead, simpler library management, and dollar costfootnote:[Unless you work for a cloud provider and computers are close enough to free. If you do work for a cloud provider please send us cloud credits.]. Dask's Distributed backend has many options for deployment, including cluster managers (Kubernetes, etc.), found in both cloud enviornments and on-premise in many companies, to job queue like systems -- most commonly found in high performance computing (HPC) in research enviornments. link:$$https://www.coiled.io/$$[Coiled] also offers an easy way to get a distributed backend up and running on different cloud providers.
-
+Dask has many different execution ((("execution backends")))backends, but we find it easiest to think about them in two groups, local and distributed. With local backends, you are limited in scale to what a single computer can handle. Local backends also have advantages like avoiding network overhead, simpler library management, and dollar cost.footnote:[Unless you work for a cloud provider and computers are close to free. If you do work for a cloud provider, please send us cloud credits.] Dask's distributed backend has many options for deployment, from cluster managers like Kubernetes to job queue&ndash;like systems.
 
 ==== Local Backends
 
-Dask's three local backends are single-process, multithreaded, and multi-process. The single-process backend has no parallelism and is mostly useful for validating if a problem is caused by concurrency. footnote:[These kinds of problems are uncommon in Dask, but can be in the form of logic conditions where two separate processes try and change the same value, and by running only one thread at a time you can often rule this kind of bug out. It is also easier to attach debuggers and other tools to single threaded applications.]
-Multi-threaded and multi-process backends are ideal for problems where the data is small, or the cost of copying it would be higher than computation time.
-Local backends, generally, are only able to help for "compute" bound problems, so if your problem comes from the data being too big to load (memory bound), you will likely need a distributed backend.
+Dask's three local backends are ((("execution backends", "local backends", id="xcbkckd")))((("local backends", id="lclbck")))single-process, multi-threaded, and multi-process. The single-process backend has no parallelism and is mostly useful for validating that a problem is caused by concurrency. Multi-threaded and multi-process backends ((("multi-threaded backends", id="mlttdb")))((("execution backends", "multi-threaded backends", id="xckmck")))are ideal for problems where the data is small or the cost of copying it would be higher than computation time.
 
 [TIP]
 ====
 If you don't configure a specific local backend, Dask will pick the backend based on the library you are working with.
 ====
 
-A big expense in distributed systems is moving data between processes, and the local multi-threaded scheduler is able to avoid most of this expense. The multithreaded backend is suited for tasks where the majority of the computation is happening in native code, outside of Python. This is the case for many numeric libraries, such as pandas and numpy. If that is the case for you, you can configure Dask to use multithreading in the config:
+The local multi-threaded scheduler is able to avoid having to serialize data and interprocess communication costs. The multi-threaded backend is suited for tasks where the majority of the computation is happening in native code, outside of Python. This is the case for many numeric libraries, such as pandas and NumPy. If that is the case for you, you can configure Dask to use multi-threading, as shown in <<configure_dask_multithreading_ch03_1686241430957>>.
 
-.Dask Use Multithreading
+[[configure_dask_multithreading_ch03_1686241430957]]
+.Configuring Dask to use multi-threading
 ====
 [source, python]
 ----
@@ -53,9 +36,10 @@ include::./examples/dask/Dask-Ch3-Concepts.py[tags=threads]
 ----
 ====
 
-The local multi-process backend has some additional overhead over multi-threaded, although it can be decreased on Unix & Unix-like systemsfootnote:[Including OSX & Linux.]. The multi-process backend is able to avoid Python's global interpreter lock by launching separate processes. Launching a new process is more expensive than a new thread, and Dask needs to serialize data that moves between processes.footnote:[This also involves having to store a second copy of any object that is in the driver thread and then used in a worker. Since Dask shards it's collections this doesn't generally blow up as quickly as with "normal" multiprocessing.]
+The local multi-process backend, shown in <<configuring_dask_multiprocess_ch03_1686241509022>>, has some additional overhead over multi-threaded, although it can be decreased on Unix and Unix-like systems.footnote:[Including OS X and Linux.] The multi-process backend is able to avoid Python's global interpreter lock by launching separate processes. Launching a new process is more expensive than a new thread, and Dask needs to serialize data that moves between processes.footnote:[This also involves having to store a second copy of any object that is in the driver thread and then used in a worker. Since Dask shards its collections, this doesn't generally blow up as quickly as with normal multi-processing.]
 
-.Dask Use Multiprocess
+[[configuring_dask_multiprocess_ch03_1686241509022]]
+.Configuring Dask to use the multi-process backend
 ====
 [source, python]
 ----
@@ -63,9 +47,10 @@ include::./examples/dask/Dask-Ch3-Concepts.py[tags=process]
 ----
 ====
 
-If you are running on a Unix system you can use the "forkserver" which will reduce the overhead of starting each Python interpreterfootnote:[https://docs.python.org/3/library/multiprocessing.html#contexts-and-start-methods]. Using the forkserver will not reduce the communication overhead.
+If you are running on a Unix system, ((("Unix forkserver")))you can use the _forkserver_, shown in <<configuring_dask_forkserver_ch03_1686241608423>>, which will https://oreil.ly/U9voe[reduce the overhead of starting each Python interpreter]. Using the forkserver will not reduce the communication overhead.
 
-.Dask Use Multiprocess Forkserver
+[[configuring_dask_forkserver_ch03_1686241608423]]
+.Configuring Dask to use the multi-process forkserver
 ====
 [source, python]
 ----
@@ -75,95 +60,89 @@ include::./examples/dask/Dask-Ch3-Concepts.py[tags=dask_use_forkserver]
 
 This optimization is, generally, not available on Windows.
 
-[TIP]
-====
-Dask's local backends are designed for performance rather than testing that your code will work on a distributed scheduler. As such you can write code which will run locally, but fail when you switch to a distributed cluster. To test that your code will run remotely, you should use Dask's Distributed scheduler with a "LocalCluster" instead.
-====
+Dask's local backends are designed for performance ((("execution backends", "local backends", startref="xcbkckd")))((("local backends", startref="lclbck")))((("multi-threaded backends", startref="mlttdb")))((("execution backends", "multi-threaded backends", startref="xckmck")))rather than for testing that your code will work on a distributed scheduler. To test that your code will run remotely, you should use Dask's distributed scheduler with a LocalCluster instead.
 
+[[distributed_ch03_1687438078727]]
 ==== Distributed (Dask Client and Scheduler)
 
 While Dask can work well locally, it's true power comes with the distributed scheduler where you can scale your problem to multiple machines. Since there are both physical, and financial, limits to how much computing power, storage, and memory can be put into one machine using multiple machines often the most cost efficient and sometimes the only solution.
 Distributed computing is not without it's draw backs, as the famous quote by Leslie Lamport goes "A distributed system is one in which the failure of a computer you didn't even know existed can render your own computer unusable." While Dask does much to limit these failures (see the fault-tolerance section), there is an increase in complexity you are accepting when moving to a distributed system.
 
 
-Dask has one distributed scheduler backend, that talks to many different types of clusters, including a "LocalCluster". Each type of cluster is supported in its own library, which schedules the scheduler footnote:[Say that five times fast] that the Dask client then connects to. Dask distributed deployments are more similar than the different local backends.
+Dask has one distributed scheduler backend, and ((("execution backends", "distributed", id="xcbckd")))((("distributed scheduler", id="dstbscd")))((("Dask client")))it talks to many different types of clusters, including a LocalCluster. Each type of cluster is supported in its own library, which schedules the schedulerfootnote:[Say that five times fast.] that the Dask client then connects to. Using the distributed abstraction `dask.distributed` gives you portability ((("distributed function")))((("functions", "distributed")))between any type of cluster you may be using at the moment, including local. If you don't use pass:[<code>dask&#x200b;.dis&#x2060;tributed</code>], Dask can still run perfectly well on a local computer, in which case you are using a default single-machine scheduler provided in the Dask library.
 
 
+The Dask Client is your entry point into the Dask distributed scheduler. In this chapter, we will be using Dask with a Kubernetes cluster; if you have another type of cluster or want details, please see <<ch12>>.
 
-The Dask Client is your entry point into the Dask distributed scheduler. In <<ex_dask_k8s>>
-will be using Dask with a Kubernetes cluster,
-and if you have another type of cluster or want details please see <<appa_clusterrs>>.
-
-===== Auto-Scaling (also known as "Adaptive Deployments.")
-
+===== Auto-scaling
 
 In auto-scaling, Dask can increase and decrease the computers / resources being used based on the tasks you have asked it to run. footnote:[Like in many real world situations, -- it's easier to grow and harder to shrink the number of Dask nodes]. For example, if you have a program which computes some complex aggregations using many computers, but then mostly operates on the aggregated data -- the number of computers you need could decrease by a large amount post aggregation. Many workloads, including machine learning, do not need the same amount of resources/computers for the entire time.
 
 
-Some of Dask's cluster backends, including Kubernetes, support auto-scaling, which Dask calls "adaptive deployments." Auto-scaling is useful mostly in situations of shared cluster resources, or when running on cloud providers where the underlying resources are payed for by the hour.
+Some of Dask's cluster backends, including ((("execution backends", "cluster backends", "auto-scaling")))((("execution backends", "cluster backends", "adaptive deployments")))((("adaptive deployments")))((("auto-scaling", "cluster backends")))((("Dask client", "auto-scaling")))Kubernetes, support auto-scaling, which Dask calls _adaptive deployments_. Auto-scaling is useful mostly in situations of shared cluster resources, or when running on cloud providers where the underlying resources are payed for by the hour.
 
-===== Important Limitations with the Dask Client
+===== Important limitations with the Dask client
 
-Dask's client is not "fault-tolerant", so while Dask can handle the failures of it's workers, if the connection between the client and the scheduler is broken your application will fail. A common workaround for this is scheduling the client in the same environment as the scheduler, although this does somewhat reduce the usefuleness of having the client and scheduler as separate components.
+Dask's client is not fault tolerant, so while ((("Dask client", "limitations")))Dask can handle the failures of its workers, if the connection between the client and the scheduler is broken, your application will fail. A common workaround for this is scheduling the client in the same environment as the scheduler, although this does somewhat reduce the usefulness of having the client and scheduler as separate components.
 
 
-===== Libraries & Dependencies in Distributed Clusters
+===== Libraries and dependencies in distributed clusters
 
-Part of why Dask is so powerful is the Python ecosystem that it is in. While Dask will pickle footnote:[Sometimes also called "serialization", covered in detail in <<ser_pick_dtl>>] and send our code to the workers, this doesn't include the libraries we use.footnote:[Automatically picking up and shipping the libraries would be very hard and also slow, although it can be done under certain circumstances.] To be able to take advantage of that ecosystem you need to be able to use additional libraries. During the exploration phase it is common to install packages at run-time as you discover that you need them.
+Part of why Dask is so powerful ((("execution backends", "distributed", "libraries")))((("distributed scheduler", "libraries")))((("execution backends", "distributed", "dependencies")))((("distributed scheduler", "dependencies")))((("libraries", "distributed clusters")))((("dependencies", "distributed clusters")))((("Python", "ecosystem, Dask and")))is the Python ecosystem that it is in. While Dask will pickle, or serialize (see <<ser_pick_dtl>>), and send our code to the workers, this doesn't include the libraries we use.footnote:[Automatically picking up and shipping the libraries would be very hard and also slow, although it can be done under certain circumstances.] To take advantage of that ecosystem, you need to be able to use additional libraries. During the exploration phase, it is common to install packages at runtime as you discover that you need them.
 
-The `PipInstall` worker plugin takes a list of packages and installs them at run-time on all of the workers. Looking back at the scraping example, to install bs4 you would call `distributed.diagnostics.plugin.PipInstall(["bs4"])`. Any new workers which are launched by Dask then need to wait for the package to be installed. The `PipInstall` plugin is ideal for quick prototyping when you are discovering which packages you need. You can think of `PipInstall` as the replacement for `!pip install` in a notebook over having a virtualenv.
+The `PipInstall` worker plug-in takes a list ((("PipInstall plug-in")))of packages and installs them at run-time on all of the workers. Looking back at the web crawler in <<ch2_getting_started_with_dask>>, to install bs4 you would call `distributed.diagnostics.plugin.PipInstall(["bs4"])`. Any new workers that are launched by Dask then need to wait for the package to be installed. The `PipInstall` plug-in is ideal for quick prototyping when you are discovering which packages you need. You can think of `PipInstall` as the replacement for `!pip install` in a notebook over having a virtualenv.
 
-To avoid the slowness of having to install packages each time a new worker is launched you should try and pre-install your libraries. Each cluster manager (e.g. YARN, Kubernetes, Coiled, Saturn, etc.) has its own ways for managing dependencies. This can be both run-time or setup-time where the packages are pre-installed. The specifics for the different cluster managers are covered in <<app_deploy>>.
+To avoid the slowness of having ((("libraries", "preinstalling")))to install packages each time a new worker is launched, you should try to preinstall your libraries. Each cluster ((("dependencies", "cluster managers")))((("CMs (cluster managers)", "dependencies")))manager (e.g., YARN, Kubernetes, Coiled, Saturn, etc.) has its own methods for managing dependencies. This can happen at runtime or at setup where the packages are preinstalled. The specifics for the different cluster managers are covered in <<ch12>>.
 
-With, for example, Kubernetes, the default startup script checks for the presence of some key environment variables (`EXTRA_APT_PACKAGES`, `EXTRA_CONDA_PACKAGES`, and `EXTRA_PIP_PACKAGES`), which, in conjunction with customized worker specs can be used to add dependencies at runtime. Some of them, like Coiled & Kubernetes allow for adding dependencies when building an image for our workers. Others, like YARN, use pre-allocated conda/virtual environment packing.
+With Kubernetes, for example, the default startup script checks for the presence of some key environment variables (`EXTRA_APT_PACKAGES`, `EXTRA_CONDA_PACKAGES`, and `EXTRA_PIP_PACKAGES`), which, in conjunction with customized worker specs, can be used to add dependencies at runtime. Some of them, like Coiled and Kubernetes, allow for adding dependencies when building an image for our workers. Others, like YARN, use preallocated conda/virtual environment packing.
 
 [WARNING]
 ====
-It is very important to have the same version of Python and libraries installed on all of the workers and your client. Different versions of libraries can lead to outright failures or subtler data correctness issues.
+It is very important to have the same versions of Python and libraries installed on all of the workers and your client. Different versions of libraries can lead to outright failures or subtler ((("execution backends", "distributed", startref="xcbckd")))((("distributed scheduler", startref="dstbscd")))data correctness issues.
 ====
 
 === Dask's Diagnostics User Interface
 
-One of your first stops in understanding what your program is doing should be Dask's Diagnostics UI. The UI allows you to see what Dask is executing, number of worker threads/processes/computers, memory utilization information, and much more. If you are running Dask locally, you will likely find the UI at `http://localhost:8787`.
+One of your first stops in understanding what your ((("Diagnostics UI")))program is doing should be Dask's Diagnostics UI. The UI allows you to see what Dask is executing, the number of worker threads/processes/computers, memory utilization information, and much more. If you are running Dask locally, you will likely find the UI at [.keep-together]#_http:&#x200b;//localhost:8787_#.
 
-If you're using the Dask client to connect to a cluster the UI will be running on the scheduler node. You can get the link to the dashboard from `client.dashboard_link`.
+If you're using the Dask client to connect to a cluster, the UI will be running on the scheduler node. You can get the link to the dashboard from `client.dashboard_link`.
 
 [TIP]
 ====
-For remote notebook users, the hostname of the scheduler node may not be reachable directly from your computer. One option is to use the jupyter proxy, for example I go to `https://jupyter.pigscanfly.ca/user/holdenk/proxy/dask-jovyan-4c81d51e-3.jhub:8787/status` to access the endpoint `dask-jovyan-4c81d51e-3.jhub:8787/status`.
+For remote notebook users, the hostname of ((("Diagnostics UI", "notebook users")))the scheduler node may not be reachable directly from your computer. One option is to use the jupyter proxy; for example, I go to `https://jupyter.pigscanfly.ca/user/holdenk/proxy/dask-jovyan-4c81d51e-3.jhub:8787/status` to access the endpoint `dask-jovyan-4c81d51e-3.jhub:8787/status`.
 ====
 
-The Dask UI during the running of the examples of this chapter is shown in <<fig_dask_ui>>.
+The Dask UI during the running of the examples of this chapter is shown in [.keep-together]#<<fig_dask_ui>>.#
 
 [[fig_dask_ui]]
 .The Dask UI
-image::./figures/ch3-how-dask-works/DaskUI.png[]
+image::images/spwd_0301.png[]
 
-The UI allows you to see what Dask is doing, what's being stored on the workers, and explore the execution graph. We will revisit the execution graph more in the <<graph_visualize>>.
+The UI allows you to see what Dask is doing, what's being stored on the workers, and explore the execution graph. We will revisit the execution graph more in <<graph_visualize>>.
 
 [[ser_pick_dtl]]
 === Serialization and Pickling
 
-Distributed and parallel systems depend on serialization, sometimes called pickling in Python, to share data and functions/code between processes. Dask uses a mixture of serialization techniques to match the use case, and provides hooks to extend by class when the defaults don't meet your needs.
+Distributed and parallel systems ((("serialization")))((("pickling")))((("Python", "pickling")))depend on serialization, sometimes called _pickling_ in Python, to share data and functions/code between processes. Dask uses a mixture of serialization techniques to match the use case, and provides hooks to extend by class when the defaults don't meet your needs.
 
 [WARN]
 ====
 We most often think of serialization when it fails (with an error), but equally important can be situations where we end up serializing more data than we need -- or when the amount of data that needs to be transferred is so large distributing the work is no longer beneficial.
 ====
 
-Cloudpickle serializes the functions and the generic Python types in Dask. Most Python code doesn't depend on serializing functions, but cluster computing often does. Cloudpickle is a project designed for cluster computing and is able to serialize & de-serialize more functions than Python's built-in pickle.
+Cloudpickle serializes the functions ((("pickling", "Cloudpickle")))((("Cloudpickle")))((("serialization", "Cloudpickle")))and the generic Python types in Dask. Most Python code doesn't depend on serializing functions, but cluster computing often does. Cloudpickle is a project designed for cluster computing and is able to serialize and deserialize more functions than Python's built-in pickle.
 
 [WARNING]
 ====
-Dask has its own ability to extend serialization, but the registry methods are not automatically sent to the workers, and it's not always used.footnote:[See dask-distributed github issues 5561 and 2953]
+Dask has its own ability to extend ((("serialization", "extending")))serialization, but the registry methods are not automatically sent to the workers, and it's not always used.footnote:[See Dask distributed GitHub issues https://oreil.ly/DmFxp[5561] and https://oreil.ly/RxzGS[2953].]
 ====
 
-Dask has built-in special handling for numpy arrays, sparse, and cupy. These serializations tend to be more space-efficient than the default serializers. When you make a class that contains one of these types and does not require any special initialization, you should call `register_generic(YourClass)` from `dask.distributed.protocol` to take advantage of Dask's special handling.
+Dask has built-in special ((("serialization", "NumPy arrays")))((("serialization", "sparse")))((("serialization", "cuPY")))((("NumPy", "arrays")))((("sparse")))((("cuPY")))handling for NumPy arrays, sparse, and cuPY. These serializations tend to be more space-efficient than the default serializers. When you make a class that contains one of these types and does not require any special initialization, you should call `register_generic(YourClass)` from `dask.distributed.protocol` to take advantage of Dask's special handling.
 
-If you have a class that is not serializable, like in <<fail_to_ser>>, you can wrap it to add serialization functions to it as shown in <<custom_ser_with_pickle>>.
+If you have a class that is not serializable, like in <<fail_to_ser>>, you can wrap it to add serialization functions to it, as shown in <<custom_ser_with_pickle>>.
 
 [[fail_to_ser]]
-.Dask Fails to Serialize
+.Dask fails to serialize
 ====
 [source, python]
 ----
@@ -172,7 +151,7 @@ include::./examples/dask/Dask-Ch3-Concepts.py[tags=fail_to_ser]
 ====
 
 [[custom_ser_with_pickle]]
-.Custom Serialization
+.Custom serialization
 ====
 [source, python]
 ----
@@ -180,25 +159,23 @@ include::./examples/dask/Dask-Ch3-Concepts.py[tags=custom_serializer_not_own_cla
 ----
 ====
 
-If you control the original class, you can also directly add the getstate / setstate methods instead of wrapping it as above.
+If you control the original class, you can also directly add the `getstate`/`setstate` methods instead of wrapping it.
 
 [NOTE]
 ====
-Dask automatically attempts to compress serialized data which generally improves performance. You can disable this by setting `distributed.comm.compression` to None.
+Dask automatically attempts to compress serialized data, which generally improves performance. You can disable this by setting `distributed.comm.compression` to None.
 ====
 
 [[basic_partitioning]]
-=== Partitioning / Chunking Collections
+=== Partitioning/Chunking Collections
 
-Partitioning gives you the ability to control the number of tasks used to process your data. If you have billions of rows, using one task for each row would likely spend more time scheduling the tasks than the work itself.
-Often, but not always, an operation on a Dask collection will result in a Dask delayed operation for each partion.
-Understanding partitioning is key to being able to make the most efficient use of Dask. 
+Partitioning gives you the ability ((("partitioning", seealso="chunking")))((("chunking")))to control the number of tasks used to process your data. If you have billions of rows, using one task for each row would mean you spend more time scheduling the tasks than doing the work itself. Understanding partitioning is key to being able to make the most efficient use of Dask. 
 
-Dask uses slightly different terminology for partitioning in each of its collections. In Dask, partitioning impacts how data is located on your cluster, and the right partitioning for your problem can make order of magnitude level improvements. Partitioning has a few different aspects, like size of each partition, number of partitions, as well as optional properties like partition key, and sorted v.s. unsorted.
+Dask uses slightly different terminology for partitioning in each of its collections. In Dask, partitioning impacts how data is located on your cluster, and the right partitioning for your problem can make order-of-magnitude improvements. Partitioning has a few different aspects, like size of each partition, number of partitions, and optional properties like partition key and sorted versus unsorted.
 
-The number and size of partitions are closely related and impact the maximum parallelism. Partitions that are too small, or too many partitions, means that Dask will spend more time scheduling the tasks than running them. A general "sweet spot" for partition size is around 100mb~1Gb, but if your computation per element is very expensive smaller partition sizes can perform better.
+The number and size of partitions are closely related and impact the maximum parallelism. Partitions that are too small, or too great in number, mean that Dask will spend more time scheduling the tasks than running them. A general sweet spot for partition size is around 100 MB to 1 GB, but if your computation per element is very expensive, smaller partition sizes can perform better.
 
-Ideally your partitions should be similar in size to avoid stragglers. When you've got partitions of different sizes it is called "skewed." There are many different sources of skew, ranging from input file sizes to key skewfootnote:[When keyed (e.g. a tuple with data organized by the key of the key-value pair).]. When your data gets too skewed, you will need to re-partition the data.
+Ideally, your partitions should be similar ((("partitioning", "skewed partitions")))in size to avoid stragglers. When you've got partitions of different sizes, it is called _skewed_. There are many different sources of skew, ranging from input file sizes to key skew (when keyed). When your data gets too skewed, you will need to repartition the data.
 
 [TIP]
 ====
@@ -207,10 +184,10 @@ The Dask UI is a great place to see if you might have stragglers.
 
 ==== Dask Arrays
 
-Dask Array's partitions are called "chunks" representing the number of elements. Dask does not always know the size of each chunk, although it always knows the number of chunks, but when you apply a filter or load data Dask is unaware of the size of each chunk. Indexing or slicing a Dask array requires that Dask knows the size of each chunk so Dask can find the chunk(s) with the desired elements. Depending on how your Dask array was created, Dask may or may not know the size of each chunk. We talk about this more in the Dask collection chapter. If you want to index into an array where Dask does not know the chunk sizes you will need to first call `compute_chunk_sizes()` on the array.When creating a Dask array from a local collection, you can specify the target chunk size as shown in <<custom_array_chunk_size>>.
+Dask arrays' partitions are called _chunks_ and ((("arrays", "chunks")))((("chunking", "arrays")))represent the number of elements. Dask does not always know the size of each chunk, although it always knows the number of chunks, but when you apply a filter or load data, Dask is unaware of the size of each chunk. Indexing or slicing a Dask array requires that Dask knows the size of each chunk so it can find the chunk(s) with the desired elements. Depending on how your Dask array was created, Dask may or may not know the size of each chunk. We talk about this more in <<ch05>>. If you want to index into an array where Dask does not know the chunk sizes, you will need to first call `compute_chunk_sizes()` on the array. When creating a Dask array from a local collection, you can specify the target chunk size as shown in <<custom_array_chunk_size>>.
 
 [[custom_array_chunk_size]]
-.Custom Array Chunk Size
+.Custom array chunk size
 ====
 [source, python]
 ----
@@ -222,17 +199,18 @@ Partitions/chunking doesn't have to be static, and the `rechunk` function allows
 
 ==== Dask Bags
 
-Dask Bag's partitions are called partitions. Unlike with Dask Arrays, since Dask Bag's do not support indexing, Dask does not track the number of elements in each partition. When you use scatter, Dask will try to partition the data as well as possible, but subsequent iterations can change the number of elements inside of each partition. Similar to Dask Arrays, when creating from a local collection you can specify the number of partitions of a bag, except the parameter is called `npartitions` instead of `chunks`.
+Dask bags' partitions ((("bags", "partitions")))((("partitioning", "bags")))are called _partitions_. Unlike with Dask arrays, since Dask bags do not support indexing, Dask does not track the number of elements in each partition. When you use `scatter`, Dask will try to partition the data as well as possible, but subsequent iterations can change the number of elements inside of each partition. Similar to Dask arrays, when creating from a local collection, you can specify the number of partitions of a bag, except the parameter is called `npartitions` instead of `chunks`.
 
-You can change the number of partitions in a Bag by calling `repartition` with either `npartitions` (for a fixed number of partitions) or `partition_size` for a target size of each partition. Specifying `partition_size` is more expensive since Dask needs to do some extra computation to determine what the matching number of partitions would be.
+You can change the number of partitions in a bag by calling `repartition` with either `npartitions` (for a fixed number of partitions) or `partition_size` (for a target size of each partition). Specifying `partition_size` is more expensive since Dask needs to do some extra computation to determine what the matching number of partitions would be.
 
-You can think of data as keyed when there is an index, or the data can be looked up by a value – like in a hashtable. While Bag implements "keyed" operations like groupBy where values with the same key are combined, its partitioning does not have any idea of key and instead keyed operations always operate on all partitions. footnote:[Coming from databases you can think of this as a "full-scan" or "full-shuffle" for Spark folks with groupBy.]
+You can think of data as keyed when there is an index or the data can be looked up by a value, like in a hashtable. While bag implements keyed operations like `groupBy`, where values with the same key are combined, its partitioning does not have any idea of key and instead keyed operations always operate on all partitions.footnote:[Coming from databases, you can think of this as a "full-scan" or "full-shuffle" for Spark folks with `groupBy`.]
 
+[[dask_df]]
 ==== Dask DataFrames
 
-Dataframes have the most options for partitioning. Dataframes can have partitions of different sizes, as well as known or unknown partitioning. With unknown partitioning, the data is distributed but Dask is unable to determine which partition holds a particular key. Unknown partitioning happens often as any operation which could change the value of a key results in unknown partitioning. The `known_divisions` property on a Dataframe allows you to see if Dask knows the partitioning, and the `index` property shows the splits used and the column.
+DataFrames have the most options ((("partitioning", "Dask DataFrames")))((("Dask DataFrames", "partitioning")))for partitioning. DataFrames can have partitions of different sizes, as well as known or unknown partitioning. With unknown partitioning, the data is distributed but Dask is unable to determine which partition holds a particular key. Unknown partitioning happens often, as any operation that could change the value of a key results in unknown partitioning. The `known_divisions` property on a DataFrame allows you to see if Dask knows the partitioning, and the `index` property shows the splits used and the column.
 
-If a Dataframe has the right partitioning, operations like groupBy which would normally involve a lot of inter-node communication can be executed with less communication. Accessing rows by id requires that the DataFrame is partitioned on that key. If you want to change the column that your DataFrame is partitioned on you can call `set_index` to change the index. Setting index, like all of the repartitioning operations, involves copying the data between workers, known as a shuffle.
+If a DataFrame has the right partitioning, operations like `groupBy`, which would normally involve a lot of internode communication, can be executed with less communication. Accessing rows by ID requires that the DataFrame is partitioned on that key. If you want to change the column that your DataFrame is partitioned on, you can call `set_index` to change the index. Setting the index, like all the repartitioning operations, involves copying the data between workers, known as a _shuffle_.
 
 [TIP]
 ====
@@ -241,42 +219,43 @@ The "right" partitioner for a dataset depends on not only the data but also your
 
 ==== Shuffles
 
-Shuffling refers to transferring data between different workers to repartition the data. Shuffling can be the result of an explicit operation, like calling repartition, or implicit like grouping data together by key or performing an aggregation. Shuffles tend to be relatively expensive, so it's useful to minimize how often they are needed and also reduce the amount of data they move.
+Shuffling refers to transferring ((("partitioning", "shuffles")))((("shuffles")))data between different workers to repartition the data. Shuffling can be the result of an explicit operation, like calling `repartition`, or an implicit one, like grouping data together by key or performing an aggregation. Shuffles tend to be relatively expensive, so it's useful to minimize how often they are needed and also reduce the amount of data they move.
 
-The most straightforward case to understand shuffles are those when you explicitly ask Dask to repartition your data. In those cases you generally see many-to-many worker communication with the majority of the data needing to be moved over the network. This is naturally more expensive than situations where data is able to be processed locally as the network is much slower than RAM.
+The most straightforward case to understand shuffles is when you explicitly ask Dask to repartition your data. In those cases you generally see many-to-many worker communication with the majority of the data needing to be moved over the network. This is naturally more expensive than situations where data is able to be processed locally, as the network is much slower than RAM.
 
 Another important way that you can trigger shuffles is implicitly through a reduction/aggregation. In these cases, if parts of the reduction or aggregation can be applied prior to moving the data around, Dask is able to transfer less data over the network, making for a faster shuffle.
 
 [TIP]
 ====
-Sometimes you'll see things referred to as "map-side" and "reduce-side", this just really means before and after the shuffle.
+Sometimes you'll see things referred to as _map-side_ and _reduce-side_; this just really means before and ((("map-side shuffles")))((("reduce-side shuffles")))after the shuffle.
 ====
 
-We'll explore more about how to minimize the impact of shuffles in the next two chapters where we introduce aggregations.
+We'll explore more about how to minimize the impact of shuffles in the next two chapters, where we introduce aggregations.
 
 ==== Partitions During Load
 
-So far you've seen how to control partitions when creating from a local collection as well as how-to change the partitioning of an existing distributed collection. Partitioning during the creation of a collection from delayed tasks is generally speaking 1:1, with each delayed task being its own partition. When loading data from files partitioning becomes a bit more complicated, like file layout and compression. It is good practice to look at the partitioning of data you have loaded by calling `npartitions` for bags, `chunks` for arrays, or `index` for dataframes.
+So far you've seen how to control partitions ((("partitioning", "during load")))when creating from a local collection, as well as how to change the partitioning of an existing distributed collection. Partitioning during the creation of a collection from delayed tasks is generally 1:1, with each delayed task being its own partition. When loading data from files, partitioning becomes a bit more complicated, involving file layout and compression. Generally speaking, it is good practice to look at the partitioning of data you have loaded by calling `npartitions` for bags, `chunks` for arrays, or `index` for DataFrames.
 
 === Tasks, Graphs, and Lazy Evaluation
 
-Tasks are the building blocks that dask uses to implement dask.delayed, futures, and operations on dask's collections. Each task represents a small piece of computation that Dask can not break down any further. Tasks are often fine-grained, and when computing a result Dask will try and combine multiple tasks together into a single execution.
+Tasks are the building blocks that Dask uses to implement `dask.delayed`, futures, and operations on Dask's collections. Each task represents a small piece of computation that Dask cannot break down any further. Tasks are often fine-grained, and when computing a result Dask will try to combine multiple tasks together into a single execution.
 
 [[lazy_eval]]
 ==== Lazy Evaluation
 
-Most of Dask is lazily evaluated, with the exception of Dask futures. Lazy evaluation shifts the responsibility for combining computations together from you to the scheduler. This means that Dask will, when it makes sense, combine multiple function calls. Not only that, but sometimes if just parts of a structure are needed, Dask is sometimes able to optimize by evaluating only the relevant parts (like `head` or `tail` calls). footnote:[When Dask can optimize evaluation here is complicated, but remember that a task is the fundamental unit of computation and Dask can not break down compute any further inside of the task. So a DataFrame created from many indivdual tasks that you call head on is a great candidate for Dask to optimize, but a single task making a large DataFrame Dask is unable to break "inside."] Implementing lazy evaluation requires Dask to construct a task graph. This task graph is also re-used for fault-tolerance.
+Most of Dask is lazily evaluated, ((("lazy evaluation")))with the exception of Dask futures. Lazy evaluation shifts the responsibility for combining computations together from you to the scheduler. This means that Dask will, when it makes sense, combine multiple function calls. Not only that, but sometimes if just parts of a structure are needed, Dask is sometimes able to optimize by evaluating only the relevant parts (like `head` or `tail` calls).footnote:[When Dask can optimize evaluation here is complicated, but remember that a task is the fundamental unit of computation and Dask cannot break down compute any further inside of the task. So a DataFrame created from many individual tasks that you call `head` on is a great candidate for Dask to optimize, but for a single task making a large DataFrame, Dask is unable to break "inside."] Implementing lazy evaluation requires Dask to construct a task graph. This task graph is ((("task graphs")))((("graphs", "task graphs")))((("fault tolerance", "task graphs")))also reused for fault tolerance.
 
 Unlike most of Dask, futures are eagerly evaluated, which limits the optimizations available when chaining them together as the scheduler has a less complete view of the world when it starts executing the first future. Futures still create task graphs, and you can verify this by visualizing them in the next section.
 
+Unlike the rest of Dask, futures are eagerly evaluated, which limits the optimizations available when chaining them together, as the scheduler has a less complete view of the world when it starts executing the first future. Futures still create task graphs, and you can verify this by visualizing them, as we'll see in the next section.
 
 [[task_deps]]
 ==== Task Dependencies
 
-In addition to nested tasks as in <<nested_tasks>>, you can also use a Dask Delayed object as input to another delayed computation, and Dask's `submit`/`compute` function will construct a task graph for you.
+In addition to nested tasks, as ((("tasks", "dependencies")))((("dependencies", "task dependencies")))((("dask.delayed object")))seen in <<nested_tasks>>, you can also use a `dask.delayed` object as input to another delayed computation (see <<task_dependencies_example_ch03_1686946028901>>), and Dask's `submit`/`compute` function will construct a task graph for you.
 
-
-.Task Dependencies Example
+[[task_dependencies_example_ch03_1686946028901]]
+.Task dependencies
 ====
 [source, python]
 ----
@@ -290,22 +269,22 @@ Now when you go to compute the final combined value, Dask will compute all of th
 
 [NOTE]
 ====
-You don't need to pass around "real" values, for example if one function updates a database and you want to run another function after that, you can use it as a parameter even if you don't actually need it's Python return value.
+You don't need to pass around real values. For example, if one function updates a database and you want to run another function after that, you can use it as a parameter even if you don't actually need its Python return value.
 ====
 
 By passing delayed objects into other delayed function calls, you allow Dask to re-use shared nodes in the task graph and potentially reduce network overhead.
 
 
 [[graph_visualize]]
-==== Visualize
+==== visualize
 
-Visualizing the task graph is an excellent tool for you to use while learning about task graphs and debugging in the future. The visualize function is defined both in the dask library as well as on all Dask objects. Instead of calling `.visualize` separately on multiple objects, you should call `dask.visualize` with the list of objects you are planning to compute to see how Dask combines the task graph.
+Visualizing the task graph is an ((("task graphs", "visualizing")))((("visualization, task graphs")))((("graphs", "task graphs", "visualizing")))excellent tool for you to use while learning about task graphs and debugging in the future. The `visualize` function ((("functions", "visualize")))((("visualize function")))is defined both in the Dask library and on all Dask objects. Instead of calling `.visualize` separately on multiple objects, you should call `dask.visualize` with the list of objects you are planning to compute to see how Dask combines the task graph.
 
-You should try this out now by visualizing everyone's favourite wordcount example from the previous chapter. When you call `dask.visualize` on `words_bag.frequencies()` you should get a result that looks something like <<vis_ex>>.
+You should try this out now by visualizing everyone's favorite word count example from the previous chapter. When you call `dask.visualize` on pass:[<code>words_bag&#x200b;.fre&#x2060;quen&#x2060;cies()</code>], you should get a result that looks something like <<vis_ex>>.
 
 [[vis_ex]]
-.Visualized wordcount task graph
-image::./figures/ch3-how-dask-works/wordcount-visualized.png[scale=50]
+.Visualized word count task graph
+image::images/spwd_0302.png[]
 
 [TIP]
 ====
@@ -314,34 +293,34 @@ The Dask UI also shows visualized representations of the task graph, without nee
 
 ==== Intermediate Task Results
 
-Intermediate task results are generally removed as soon as the dependent task has started to execute. This can be less than optimal when we need to perform multiple computations on the same piece of data. One solution to this is combining all of our execution together into one call to `dask.compute`, so that Dask is able to keep the data around as needed. This breaks down in both the interactive case where we don't know in advance what our computation is going to be and iterative cases. In those cases, some form of caching or persistence can be beneficial. You will learn about how to apply caching later in this chapter.
+Intermediate task results are generally ((("tasks", "dependencies", "intermediate results")))((("dependencies", "tasks, intermediate results")))removed as soon as the dependent task has started to execute. This can be less than optimal when we need to perform multiple computations on the same piece of data. One solution to this is combining all of our execution together into one call to `dask.compute`, so that Dask is able to keep the data around as needed. This breaks down in both the interactive case, where we don't know in advance what our computation is going to be, and iterative cases. In those cases, some form of caching or persistence can be beneficial. You will learn about how to apply caching later in this chapter.
 
 ==== Task Sizing
 
-Dask uses a centralized scheduler, which is a common technique for many systems. It does mean however that while the general task scheduling overhead is 1ms, as the number of tasks in a system increases the scheduler can become a bottleneck, and the overhead can grow. Counter-intuitively this means as our system grows we may benefit from larger coarser-grained tasks.
+Dask uses a centralized scheduler, which ((("tasks", "sizing")))is a common technique for many systems. It does mean, however, that while the general task scheduling overhead is 1 ms, as the number of tasks in a system increases the scheduler can become a bottleneck, and the overhead can grow. Counterintuitively, this means as our system grows we may benefit from larger coarser-grained tasks.
 
-==== Too large Task Graphs
+==== Too-Large Task Graphs
 
-Sometimes the task graph itself can become too much for Dask to handle. This can show up as an out-of-memory exception on the client or scheduler or more commonly programs that slow down with iterations. Most frequently this occurs with recursive algorithms. One common example of a situation where the graph can become too expensive to keep is distributed alternating least squares.
+Sometimes the task graph itself can ((("task graphs", "large", id="tkgpg")))((("graphs", "task graphs", "large", id="gptkgp")))become too much for Dask to handle. This can show up as an out-of-memory exception on the client or scheduler or, more commonly, jobs that slow down with iterations. Most frequently this occurs with recursive algorithms. One common example of a situation where the graph can become too expensive to keep is distributed alternating least squares.
 
-The first step when encountering a situation with a too-large task graph is to see if you can reduce the parallelism by using larger chunks of work or switching the algorithm. For example, if we think of fibonacci numbers computed with recursion, a better option would be using a dynamic programming or memoized solution instead of trying to distribute the computation task with Dask.
+The first step when encountering a situation with a too-large task graph is to see if you can reduce the parallelism by using larger chunks of work or switching the algorithm. For example, if we think of Fibonacci numbers computed with recursion, a better option would be using a dynamic programming or memoized solution instead of trying to distribute the computation task with Dask.
 
-If you have an iterative algorithm, and there isn't a better way to accomplish what you want, you can help Dask out by periodically writing out the intermediate work and reloading it.footnote:[You could also collect and scatter if the dataset is small enough.] By doing this Dask does not have to keep track of all of the steps involved in creating the data, but instead just needs to remember where the data is. The next two chapters will look at how to write and load data efficiently for these and other purposes.
+If you have an iterative algorithm, and there isn't a better way to accomplish what you want, you can help Dask out by periodically writing out the intermediate work and re-loading it.footnote:[You could also collect and scatter if the dataset is small enough.] By doing this, Dask does not have to keep track of all of the steps involved in creating the data, but instead just needs to remember where the data is. The next two chapters will look at how to write and load data efficiently for these and other ((("task graphs", "large", startref="tkgpg")))((("graphs", "task graphs", "large", startref="gptkgp")))purposes.
 
 [TIP]
 ====
-In Spark the equivalent idea is expressed as "checkpointing."
+In Spark the equivalent idea is expressed as _checkpointing_.
 ====
 
 ==== Combining Computation
 
-To take the most advantage of Dask's graph optimization, it's important to submit your work in larger batches. First off, when you're blocking on the result with `dask.compute`, small batches can limit the parallelism. If you have a shared parent, say two results on the same data, submitting the computations together allows Dask to share the computation of the underlying data. You can verify if Dask is able to share a common node by calling visualize on your list of tasks, e.g. if you take example <<shared_data>> and visualize both the tasks together you'll see the shared node in <<shared_compute_node>>.
+To take the most advantage of Dask's graph ((("computation, combining")))((("graphs", "combining computation")))((("compute function")))((("functions", "compute")))optimization, it's important to submit your work in larger batches. First off, when you're blocking on the result with `dask.compute`, small batches can limit the parallelism. If you have a shared parent, say, two results on the same data, submitting the computations together allows Dask to share the computation of the underlying data. You can verify if Dask is able to share a common node by calling `visualize` on your list of tasks (e.g., if you take pass:[Examples <a data-type="xref" data-xrefstyle="select:labelnumber" href="#custom_array_chunk_size">#custom_array_chunk_size</a> and <a data-type="xref" data-xrefstyle="select:labelnumber" href="#task_dependencies_example_ch03_1686946028901">#task_dependencies_example_ch03_1686946028901</a>] and visualize both the tasks together, you'll see the shared node in <<vis_ex>>).
 
-Sometimes you can't submit the computation together, but you still know that you want to re-use some data. In those cases you should explore persistence.
+Sometimes you can't submit the computation together, but you still know that you want to reuse some data. In those cases you should explore persistence.
 
-==== Persist, Caching & Memoization
+==== Persist, Caching, and Memoization
 
-Persistence allows you to keep specified Dask collections in memory on the cluster. To persist a collection for future re-use just call `dask.persist` on the collection. If you choose persistence, you will be responsible for telling Dask when you are done with a distributed collection. Unlike Spark, Dask does not have an east `unpersist` equivalent, instead, you need to release the underlying futures for each partition as shown in <<manual_persist>>.
+Persistence allows you to keep specified Dask collections in memory on the cluster. To persist a collection ((("persistence")))((("persist function")))((("functions", "persist")))for future reuse, just call `dask.persist` on the collection. If you choose persistence, you will be responsible for telling Dask when you are done with a distributed collection. Unlike Spark, Dask does not have an easy `unpersist` equivalent; instead, you need to release the underlying futures for each partition as shown in <<manual_persist>>.
 
 [[manual_persist]]
 .Manual persistence and memory management with Dask
@@ -357,40 +336,37 @@ include::./examples/dask/Dask-Ch3-Concepts.py[tags=manual_persist]
 A common mistake is to persist and cache things that are not used more than once, or are inexpensive to compute.
 ====
 
-Dask's local mode has a best-effort caching system based on cachey. Since this only works in local mode I won't go into the details, but if you are running in local mode you can take a look at https://docs.dask.org/en/stable/caching.html[the local cache documentation].
+Dask's local mode has a best-effort caching ((("caching")))system based on cachey. Since this only works in local mode, we won't go into the details, but if you are running in local mode, you can take a look at https://oreil.ly/VFSVQ[the local cache documentation].
 
 [WARNING]
 ====
-Dask does not raise an error when you attempt to use Dask caching in a distributed fashion, it just won't work. So when migrating code from local to distributed make sure to check for usage of Dask's local caching.
+Dask does not raise an error when you attempt to use Dask caching in a distributed fashion; it just won't work. So when migrating code from local to distributed, make sure to check for usage of Dask's local caching.
 ====
 
 === Fault Tolerance
 
 In distributed systems, like Dask, fault tolerance generally means how a system handles computer, network, or program failures.
 Fault Tolerance becomes increasingly important the more computers you use. When you are using Dask on a single computer the concept of fault tolerance is less important since if your one computer fails there is nothing to recover. However, when you have 100s of machines, the odds of any one of those machines failing goes up.
-Dask's task graph is used to provide it's fault tolerance. footnote:[The same technique used in Spark.]
+Dask's task graph is used to ((("fault tolerance", id="flttlr")))provide it's fault tolerance. footnote:[The same technique used in Spark.]
 There are many different kinds of failures in a distributed system, but thankfully many of them can be handled in the same way.
 
-Dask automatically retries tasks where the scheduler loses connection to the worker. This retry is accomplished by using the same graph of computation Dask uses for lazy evaluation.
+Dask automatically retries tasks when the scheduler loses connection to the worker. This retry is accomplished by using the same graph of computation Dask uses for lazy evaluation.
 
 [WARNING]
 ====
-The dask client is *not* fault-tolerant to network issues connecting to the scheduler. One mitigation technique you can use is running your client in the same network as the scheduler.
+The Dask client is _not_ fault tolerant to network issues connecting to the scheduler. One mitigation technique you can use is running your client in the same network as the scheduler.
 ====
 
-Machine failure is a fact of life with distributed systems. When a worker fails, Dask will treat it in the same way as a network failure, retrying any necessary tasks. However, Dask can not recover from failures of the scheduler of your client code.footnote:[This is common for most systems like this. Spark does have limited ability to recover from head node failure, but has many restrictions and is not frequently used.] This makes it important that when you are running in a shared environment it is important to run your client and scheduler nodes at a high priority to avoid pre-emption.
+Machine failure is a fact of life with distributed systems. When a worker fails, Dask will treat it in the same way as a network failure, retrying any necessary tasks. However, Dask cannot recover from failures of the scheduler of your client code.footnote:[This is common for most systems like this. Spark does have limited ability to recover from head node failure, but has many restrictions and is not frequently used.] This makes it important that, when you are running in a shared environment, you run your client and scheduler nodes at a high priority to avoid preemption.
 
-Dask automatically retries software failures that exit or crash the worker. Much like machine failure, from Dask's point of view a worker exiting and a network failure look the same.
+Dask automatically retries software failures that exit or crash the worker. Much like machine failure, from Dask's point of view a worker exiting and a network failing look the same.
 
-IOErrors and OSErrors exceptions are the only two classes of exceptions Dask will retry. If your worker process raises one of these errors, they are pickled and transferred over to the scheduler. Dask's scheduler then retries the task. If your code encounters an IOError which should not be retried (e.g. say a webpage which doesn't exist), you'll need to wrap it in another exception to keep Dask from retrying it.
+IOError and OSError exceptions are ((("exceptions", "IOError")))((("exceptions", "OSError")))((("IOError exception")))((("OSError exception")))the only two classes of exceptions Dask will retry. If your worker process raises one of these errors, they are pickled and transferred over to the scheduler. Dask's scheduler then retries the task. If your code encounters an IOError that should not be retried (e.g., a web page doesn't exist), you'll need to wrap it in another exception to keep Dask from retrying it.
 
-Since Dask retries failed computation, it's important to be careful with side-effects or changing values. For example, if you have a Dask Bag of transactions and were to update a database as part of a `map`, Dask might re-execute some of the operations on that bag multiple times resulting in the update to the database happening more than once. If we think of a withdrawal from an ATM, we can see how this would result in some unhappy customers, and incorrect data. Instead if you need to mutate small bits of data you can bring it back to a local collection.
+Since Dask retries failed computation, it's important to be careful with side effects or changing values. For example, if you have a Dask bag of transactions and were to update a database as part of a `map`, Dask might re-execute some of the operations on that bag multiple times, resulting in the update to the database happening more than once. If we think of a withdrawal from an ATM, we can see how this would result in some unhappy customers, and incorrect data. Instead, if you need to mutate small bits of data, you can bring them back to a local collection.
 
-If your program encounters any other exceptions, Dask will return the exception to your main thread.footnote:[For those migrating from Spark, this retry behaviour is different. Spark will retry most exceptions, whereas Dask will only retry errors resulting in a worker exiting, or IOError or OSError.]
+If your program encounters any other exceptions, Dask will ((("fault tolerance", startref="flttlr")))return the exception to your main thread.footnote:[For those migrating from Spark, this retry behavior is different. Spark will retry most exceptions, whereas Dask will only retry errors resulting in a worker exiting, or IOError or OSError.]
 
 === Conclusion
 
-After this chapter you should have a good grasp of how Dask is able to scale your Python code.
-In this chapter we covered the core building blocks of Dask, from it's execution backends, tasks, delayed objects, and futures. 
-You should now understand the basics of how Dask uses these for partitioning, why this matters, task sizing, and Dask approach to fault tolerance.
-This will hopefully set you up well for deciding when to apply Dask and the next few chapters where we do a deeper dive on Dask's collection libraries. In the next chapter we'll focus on Dask's DataFrames as they are the most full-featured of Dask's distributed collections.
+After this chapter you should have a good grasp of how Dask is able to scale your Python code. You should now understand the basics of partitioning, why this matters, task sizing, and Dask's approach to fault tolerance. This will hopefully set you up well for deciding when to apply Dask and for the next few chapters, where we do a deeper dive on Dask's collection libraries. In the next chapter we'll focus on Dask's DataFrames, as they are the most full-featured of Dask's distributed collections.

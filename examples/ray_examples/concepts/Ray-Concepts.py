@@ -425,7 +425,7 @@ def has_spam(site_text: Tuple[str, str]) -> Tuple[str, bool]:
         if s in site_text[1]:
             return True
     return False
-#end::pg_ex[]        
+#end::pg_ex[]
 
 urls = ["http://www.holdenkarau.com", "http://www.google.com"]
 # Turn this into a list since we are consuming it twice downstream.

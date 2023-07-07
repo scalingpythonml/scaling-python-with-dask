@@ -1,10 +1,10 @@
 {
   "branch": "main",
   "files": [
-    "cover.html",
     "titlepage.html",
     "copyright.html",
     "toc.html",
+    "preface.asciidoc",
     "ch01.asciidoc",
     "ch02.asciidoc",
     "ch03.asciidoc",
@@ -15,22 +15,29 @@
     "ch08.asciidoc",
     "ch09.asciidoc",
     "ch10.asciidoc",
+    "ch11.asciidoc",
+    "ch12.asciidoc",
+    "appA.asciidoc",
+    "appB.asciidoc",
+    "appC.asciidoc",
     "appD.asciidoc",
-    "author_bio.html"
+    "ix.html",
+    "author_bio.html",
+    "colo.html"
   ],
   "formats": {
     "pdf": {
       "version": "web",
       "color_count": "1",
-      "index": false,
+      "index": true,
       "toc": true,
       "syntaxhighlighting": true,
       "show_comments": false,
       "trim_size": "7inx9.1875in",
-      "antennahouse_version": "AHFormatterV62_64-MR4"
+      "antennahouse_version": "AHFormatterV71_64-MR2"
     },
     "epub": {
-      "index": false,
+      "index": true,
       "toc": true,
       "epubcheck": true,
       "syntaxhighlighting": true,
@@ -39,13 +46,13 @@
       "mathmlreplacement": false
     },
     "mobi": {
-      "index": false,
+      "index": true,
       "toc": true,
       "syntaxhighlighting": true,
       "show_comments": false
     },
     "html": {
-      "index": false,
+      "index": true,
       "toc": true,
       "syntaxhighlighting": true,
       "show_comments": false,
@@ -57,5 +64,6 @@
   "print_isbn13": "9781098119874",
   "lang": "en",
   "accent_color": "",
-  "templating": false
+  "templating": false,
+  "preprocessing": "none"
 }
