@@ -36,7 +36,7 @@ The majority of tools for scaling ((("scaling DataFrames", "distributed")))DataF
 
 ===== ASF Spark DataFrame
 
-Spark started out with what they ((("scaling DataFrames", "Spark")))((("Spark DataFrames")))called a resilient distributed dataset (RDD) and then quickly added a more DataFrame-like API called DataFrames. This caused much excitement, but many folks interpreted it to mean "pandas-like," whereas Spark's (initial) DataFrames was more akin to "SQL-like" DataFrames. Spark is written primarily in Scala and Java, both of which run on the ((("JVM (Java Virtual Machine)")))Java Virtual Machine (JVM). While Spark has a Python API, it involves substantial data transfer between the JVM and Python, which can be slow and increase memory requirements. Spark DataFrames was created before ASF Arrow, and so it has its own in-memory storage format, but it has since added support for using Arrow for communication between the JVM and Python.
+Spark started out with what they ((("scaling DataFrames", "Spark")))((("Spark DataFrames")))called a resilient distributed dataset (RDD) and then quickly added a more DataFrame-like API called DataFrames. This caused much excitement, but many folks interpreted it to mean "pandas-like," whereas Spark's (initial) DataFrames was more akin to "SQL-like" DataFrames. Spark is written primarily in Scala and Java, both of which run on the ((("JVM (Java Virtual Machine)")))((("Java Virtual Machine (JVM)")))Java Virtual Machine (JVM). While Spark has a Python API, it involves substantial data transfer between the JVM and Python, which can be slow and increase memory requirements. Spark DataFrames was created before ASF Arrow, and so it has its own in-memory storage format, but it has since added support for using Arrow for communication between the JVM and Python.
 
 PySpark errors are especially difficult to debug, since when anything goes wrong you get a Java exception along with a Python exception.
 
@@ -77,7 +77,7 @@ Unlike the other systems, Modin is eagerly evaluated, meaning it can't take adva
 
 ===== Vanilla Dask DataFrame
 
-We are biased here, but we think ((("scaling DataFrames", "vanila")))that Dask's DataFrame library does an excellent job of striking a balance between being an easy on-ramp and being clear about its limitations. Dask's DataFrames have a large number of contributors from a variety of different companies. Dask DataFrames also have a relatively high level of parallelism, including for grouped operations, not found in many of the other systems.
+We are biased here, but we think ((("scaling DataFrames", "vanilla")))that Dask's DataFrame library does an excellent job of striking a balance between being an easy on-ramp and being clear about its limitations. Dask's DataFrames have a large number of contributors from a variety of different companies. Dask DataFrames also have a relatively high level of parallelism, including for grouped operations, not found in many of the other systems.
 
 ===== cuDF
 

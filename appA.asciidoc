@@ -36,17 +36,17 @@ https://oreil.ly/zQhnh[+++Hypothesis+++] is the most popular library for propert
 
 ==== Working with Notebooks
 
-Testing notebooks is painful, which is ((("notebooks", "testing")))((("testing", "notebooks")))unfortunate given their immense popularity. Generally, you can either have your testing outside of the notebook, which allows you the use of existing Python testing libraries, or try to put it inside the notebook.
+Testing notebooks is painful, which is ((("notebooks, testing")))((("testing", "notebooks")))unfortunate given their immense popularity. Generally, you can either have your testing outside of the notebook, which allows you the use of existing Python testing libraries, or try to put it inside the notebook.
 
 ==== Out-of-Notebook Testing
 
-The traditional option (besides ignoring it) is ((("notebooks", "testing", "out-of-notebook testing")))((("testing", "notebooks", "out-of-notebook testing")))((("out-of-notebook testing")))to refactor the parts of your code you want to test into separate regular Python files and test those using normal testing libraries. While the partial refactoring can be painful, rewriting to more testable components can bring benefits to debugging as well.
+The traditional option (besides ignoring it) is ((("notebooks, testing", "out-of-notebook testing")))((("testing", "notebooks", "out-of-notebook testing")))((("out-of-notebook testing")))to refactor the parts of your code you want to test into separate regular Python files and test those using normal testing libraries. While the partial refactoring can be painful, rewriting to more testable components can bring benefits to debugging as well.
 
 The https://oreil.ly/3_YsK[+++testbook project+++] is an alternative to refactoring that takes interesting approach, allowing you to write your tests outside of your notebook, and not requiring you to give up on notebooks. Instead, you use the libraries decorator to annotate tests&mdash;for example, `@testbook('untitled_7.ipynb', execute=True)` will import and execute the notebook before executing the test. You can also control which parts of the notebook are executed, but this partial execution can be brittle and prone to breakage on updates.
 
 ==== In-Notebook Testing: In-Line Assertions
 
-Some people like to use in-line ((("testing", "notebooks", "in-notebook testing")))((("notebooks", "testing", "in-notebook testing")))((("in-notebook testing")))
+Some people like to use in-line ((("testing", "notebooks", "in-notebook testing")))((("notebooks, testing", "in-notebook testing")))((("in-notebook testing")))
 assertions in their notebooks as a form of testing. In this case, if something fails (e.g., the assertion that there should be some customers), the rest of the notebook will not run. While we think that having in-line assertions is great, we don't believe it is a replacement for traditional testing.
 
 === Data and Output Validation
