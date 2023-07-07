@@ -100,7 +100,7 @@ Dask DataFrame is not value-mutable in the way that pandas DataFrame users might
 
 ==== Porting SQL to Dask
 
-Dask does not natively offer a SQL engine, although ((("migration", "Dask-SQL and", id="mgdksq")))((("Dask-SQL", "migration and", id="dsksql")))((("SQL (Structured Query Language)", "Dask-SQL")))it does natively offer options to read from a SQL database. There are a number of different libraries you can use to interact with an existing SQL database, and to treat Dask DataFrame as a SQL table and run SQL queries directly (see <<ex_postgres_dataframe>>). Some allow you to even build and serve ML models directly using SQL ML syntax similar to that of Google's BigQuery ML. In Chapter 13, we will show the use of Dask's native `read_sql()` function and running SQL ML using Dask-SQL.
+Dask does not natively offer a SQL engine, although ((("migration", "Dask-SQL and", id="mgdksq")))((("Dask-SQL", "migration and", id="dsksql")))((("Structured Query Language", see="SQL")))((("SQL (Structured Query Language)", "Dask-SQL")))it does natively offer options to read from a SQL database. There are a number of different libraries you can use to interact with an existing SQL database, and to treat Dask DataFrame as a SQL table and run SQL queries directly (see <<ex_postgres_dataframe>>). Some allow you to even build and serve ML models directly using SQL ML syntax similar to that of Google's BigQuery ML. In Chapter 13, we will show the use of Dask's native `read_sql()` function and running SQL ML using Dask-SQL.
 
 [[ex_postgres_dataframe]]
 .Reading from a Postgres database

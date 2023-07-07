@@ -11,7 +11,7 @@ Some of this advice is common across distributed systems, including Ray and Apac
 
 === Using Debuggers
 
-There are a few different ((("debugging", "debuggers")))((("PyCharm")))((("PDB (Protein Data Bank) files")))options for using debuggers in Dask. PyCharm and PDB both support connecting to remote debugger processes, but figuring out where your task is running and also setting up the remote debugger can be a challenge. For details on PyCharm remote debugging, see the JetBrains article https://oreil.ly/HGl90[+++"Remote Debugging with PyCharm"+++]. One option is to use epdb and run `import epdb; epdb.serve()` inside of an actor. The easiest option, which is not perfect, is to have Dask re-run failed tasks locally by running `client.recreate_error_locally` on the future that failed.
+There are a few different ((("debugging", "debuggers")))((("PyCharm")))((("Protein Data Bank (PDB) files")))((("PDB (Protein Data Bank) files")))options for using debuggers in Dask. PyCharm and PDB both support connecting to remote debugger processes, but figuring out where your task is running and also setting up the remote debugger can be a challenge. For details on PyCharm remote debugging, see the JetBrains article https://oreil.ly/HGl90[+++"Remote Debugging with PyCharm"+++]. One option is to use epdb and run `import epdb; epdb.serve()` inside of an actor. The easiest option, which is not perfect, is to have Dask re-run failed tasks locally by running `client.recreate_error_locally` on the future that failed.
 
 === General Debugging Tips with Dask
 
