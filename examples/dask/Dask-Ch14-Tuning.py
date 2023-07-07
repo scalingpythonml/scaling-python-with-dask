@@ -156,8 +156,8 @@ from dask import delayed
 from dask.distributed import Client
 
 #we give walltime of 4 hours to the cluster spawn
-#each Dask workers are told they have 5 min less than that for Dask to manage
-#we tell workers to stagger their start and close in a random interval of 5min
+#each Dask worker is told they have 5 min less than that for Dask to manage
+#we tell workers to stagger their start and close in a random interval of 5 min
 # some workers will die, but others will be staggered alive, avoiding loss
 # of job
 
@@ -201,10 +201,10 @@ logging.basicConfig(
     level=logging.DEBUG,
     format="%(asctime)s %(levelname)s %(name)s: %(message)s")
 
-logger.info("Initialising YarnCluster")
+logger.info("Initializing YarnCluster")
 cluster_start_time = time.time()
 
-# say your desired conda environment for workers are located at
+# say your desired conda environment for workers is located at
 # /home/mkimmins/anaconda/bin/python
 # similar syntax for venv and python executable
 cluster = YarnCluster(
@@ -213,14 +213,14 @@ cluster = YarnCluster(
     worker_memory="4GiB")
 
 logger.info(
-    "Initialising YarnCluster: done in %.4f",
+    "Initializing YarnCluster: done in %.4f",
     time.time() -
     cluster_start_time)
 
-logger.info("Initialising Client")
+logger.info("Initializing Client")
 client = Client(cluster)
 logger.info(
-    "Initialising Client: done in %.4f",
+    "Initializing Client: done in %.4f",
     time.time() -
     client_start_time)
 
@@ -322,7 +322,7 @@ def visit_url(i):
 @delayed
 def crawl(url, depth=0, maxdepth=1, maxlinks=4):
     # some complicated and async job
-    # refer to chapter 2 for full implementation of crawl
+    # refer to Chapter 2 for full implementation of crawl
     time.sleep(1)
     some_output = visit_url(url)
     return some_output
@@ -350,7 +350,7 @@ def cli():
 
 
 if __name__ == "__main__":
-    logger.info("Initialising SLURM Cluster")
+    logger.info("Initializing SLURM Cluster")
     cli()
 #end::ex_slurm_deployment_tuning[]
 

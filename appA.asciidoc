@@ -6,7 +6,7 @@ We've covered a few distributed system concepts briefly as needed in this book, 
 
 === Testing
 
-Testing is an often overlooked part ((("testing")))of data science and data engineering. Some of our tools, like SQL and Jupyter notebooks, do not encourage or make it easy to test&mdash;but this does not absolve us of the responsibility to test our code. Data privacy concerns can add another layer of challenge, where we don't want to store user data for testing, requiring us to put in the effort to create "fake" data for testing or break our code down into testable components where we don't need user data.
+Testing is an often overlooked part ((("testing")))of data science and data engineering. Some of our tools, like SQL and Jupyter notebooks, do not encourage testing or make it easy to test&mdash;but this does not absolve us of the responsibility to test our code. Data privacy concerns can add another layer of challenge, where we don't want to store user data for testing, requiring us to put in the effort to create "fake" data for testing or break our code down into testable components where we don't need user data.
 
 ==== Manual Testing
 
@@ -16,11 +16,11 @@ We often perform some kind of manual ((("testing", "manual")))((("manual testing
 
 Unit testing refers to testing individual ((("testing", "unit testing")))((("unit testing")))units of code rather than the whole system together. This requires having your code be composed in different units, like modules or functions. While this is less common with notebooks, we believe that structuring your code for testability is a good practice to follow.
 
-Writing unit tests for notebooks can be challenging; doctests are slightly easier to inline within a notebook. If you want to use traditional unit test libraries, the https://oreil.ly/yUxXy[+++ipython-unittest magics+++] lets you inline your unit tests within your notebook.
+Writing unit tests for notebooks can be challenging; doctests are slightly easier to inline within a notebook. If you want to use traditional unit test libraries, the https://oreil.ly/yUxXy[+++ipython-unittest magics+++] let you inline your unit tests within your notebook.
 
 ==== Integration Testing
 
-Integration testing refers to ((("testing", "integration testing")))((("integration testing")))testing how different parts of a system work together. It is often much closer to the real usage of your code, but can be more complicated as it involves setting up other systems to test against. You can (to an extent) use some of the same libraries for integration testing, but these tests tend to involve more setup and teardown work.footnote:[This can include creating a database, filling it with data, starting up cluster services, etc.] Integration testing is also more likely to be "flaky," since making sure all of the different components your software needs are present in your test environment before starting the tests can be challenging.
+Integration testing refers to ((("testing", "integration testing")))((("integration testing")))testing how different parts of a system work together. It is often much closer to the real usage of your code, but it can be more complicated, as it involves setting up other systems to test against. You can (to an extent) use some of the same libraries for integration testing, but these tests tend to involve more setup and teardown work.footnote:[This can include creating a database, filling it with data, starting up cluster services, etc.] Integration testing is also more likely to be "flaky," since making sure that all of the different components your software needs are present in your test environment before starting the tests can be challenging.
 
 ==== Test-Driven Development
 
@@ -40,9 +40,9 @@ Testing notebooks is painful, which is ((("notebooks, testing")))((("testing", "
 
 ==== Out-of-Notebook Testing
 
-The traditional option (besides ignoring it) is ((("notebooks, testing", "out-of-notebook testing")))((("testing", "notebooks", "out-of-notebook testing")))((("out-of-notebook testing")))to refactor the parts of your code you want to test into separate regular Python files and test those using normal testing libraries. While the partial refactoring can be painful, rewriting to more testable components can bring benefits to debugging as well.
+The traditional option (besides ignoring testing) is ((("notebooks, testing", "out-of-notebook testing")))((("testing", "notebooks", "out-of-notebook testing")))((("out-of-notebook testing")))to refactor the parts of your code you want to test into separate regular Python files and test those using normal testing libraries. While the partial refactoring can be painful, rewriting to more testable components can bring benefits to debugging as well.
 
-The https://oreil.ly/3_YsK[+++testbook project+++] is an alternative to refactoring that takes interesting approach, allowing you to write your tests outside of your notebook, and not requiring you to give up on notebooks. Instead, you use the libraries decorator to annotate tests&mdash;for example, `@testbook('untitled_7.ipynb', execute=True)` will import and execute the notebook before executing the test. You can also control which parts of the notebook are executed, but this partial execution can be brittle and prone to breakage on updates.
+The https://oreil.ly/3_YsK[+++testbook project+++] is an alternative to refactoring that takes an interesting approach, allowing you to write your tests outside of your notebook, and not requiring you to give up on notebooks. Instead, you use the libraries decorator to annotate tests&mdash;for example, `@testbook('untitled_7.ipynb', execute=True)` will import and execute the notebook before executing the test. You can also control which parts of the notebook are executed, but this partial execution can be brittle and prone to breakage on updates.
 
 ==== In-Notebook Testing: In-Line Assertions
 
@@ -51,19 +51,19 @@ assertions in their notebooks as a form of testing. In this case, if something f
 
 === Data and Output Validation
 
-While good testing can catch many ((("validation, output", id="vldoupu")))((("output, validation", id="oupuvdt")))problems, sometimes the real world is more creative than we can ever be, and our code will still fail. In many situations, the worst case is that our program fails and produces an incorrect output that we don't know is incorrect and then we (or others) take action based on its results. Validation attempts to notify us when our job has failed so that we can take action on it before someone else does. In many ways, it is like running spell-check on a term paper before submission&mdash;if there are a few errors, OK, but if everything is red, it's probably good to double-check. Depending on what your job does, validating it will be different.
+While good testing can catch many ((("validation, output", id="vldoupu")))((("output, validation", id="oupuvdt")))problems, sometimes the real world is more creative than we can ever be, and our code will still fail. In many situations, the worst case is that our program fails and produces an incorrect output that we don't know is incorrect, and then we (or others) take action based on its results. Validation attempts to notify us when our job has failed so that we can take action on it before someone else does. In many ways, it is like running spell-check on a term paper before submission&mdash;if there are a few errors, OK, but if everything is red, it's probably good to double-check. Depending on what your job does, validating it will be different.
 
-There are a number of different tools you can use to validate the output of your Dask job, including of course Dask itself. Some tools, like https://oreil.ly/Vfb1Z[+++TFX's data validation+++], attempt to compare previous versions for statistical similarity and schema changes.footnote:[We do not recommend TFX for new environments, as it can be challenging to get running.] https://oreil.ly/RN8aI[+++Pydantic+++] is relatively new, but has Dask integration and does excellent type and schema validation. You can also do more complex statistical assertions using its Hypothesis component (which is different from Python's Hypothesis).
+There are a number of different tools you can use to validate the output of your Dask job, including of course Dask itself. Some tools, like https://oreil.ly/Vfb1Z[+++TFX's data validation+++], attempt to compare previous versions for statistical similarity and schema changes.footnote:[We do not recommend TFX for new environments, as it can be challenging to get running.] https://oreil.ly/RN8aI[+++Pydantic+++] is relatively new, but it has Dask integration and does excellent type and schema validation. You can also do more complex statistical assertions using its Hypothesis component (which is different from Python's Hypothesis).
 
-ML models can be more difficult to validate without impacting users, but statistical techniques can still help (as well as incremental deployments). Since ML models are produced from data, a good (partial) step can be validating the data.
+ML models can be more difficult to validate without impacting users, but statistical techniques can still help (as can incremental deployments). Since ML models are produced from data, a good (partial) step can be validating the data.
 
 It is useful to think of what the implications could be of your pipeline failing. For example, you might want to spend more time validating a pipeline that determines dosages of medicine in a clinical trial, compared to a job that predicts which version of your ad will ((("validation, output", startref="vldoupu")))((("output, validation", startref="oupuvdt")))be the most successful.footnote:[We acknowledge that society is often not structured this way.]
 
 === Peer-to-Peer Versus Centralized Distributed
 
-Even inside of a distributed system, there ((("centralized distributed systems")))((("distributed systems", "centralized")))are various levels of "distributed."footnote:[Note: An alternate title for this section might be "How Dask Is Different From BitTorrent."] Dask is a centralized distributed system, where there is a static leader node responsible for various tasks and coordination among the workers. In more distributed systems, there is no static leader node, and if the head node goes away, the remaining peers can elect a new head node, like with Zookeeper. In even more distributed systems, there is no head node distinction, and all of the nodes in the cluster are effectively equally capable (from a software point of view; the hardware may be different).
+Even inside of a distributed system, there ((("centralized distributed systems")))((("distributed systems", "centralized")))are various levels of "distributed."footnote:[Note: An alternate title for this section might be "How Dask Is Different from BitTorrent."] Dask is a centralized distributed system, where there is a static leader node responsible for various tasks and coordination among the workers. In more distributed systems, there is no static leader node, and if the head node goes away, the remaining peers can elect a new head node, like with Zookeeper. In even more distributed systems, there is no head node distinction, and all of the nodes in the cluster are effectively equally capable (from a software point of view; the hardware may be different).
 
-Centralized distributed systems tend to be faster while encountering limitations earlier in terms of scaling and challenges around the failure of the centralized [.keep-together]#component.#
+Centralized distributed systems tend to be faster, while encountering limitations earlier in terms of scaling and challenges around the failure of the centralized [.keep-together]#component.#
 
 === Methods of Parallelism
 
@@ -71,7 +71,7 @@ There are many different ways to split up our work, and in this book we've mostl
 
 ==== Task Parallelism
 
-`dask.delayed` and Python's ((("parallelism", "task")))((("task parallelism")))multi-processing both represent task parallelism. With task parallelism, you are not limited to executing the same code. Task parallelism offers the most flexibility, but requires more changes to your code to take advan&shy;tage&nbsp;of.
+`dask.delayed` and Python's ((("parallelism", "task")))((("task parallelism")))multi-processing both represent task parallelism. With task parallelism, you are not limited to executing the same code. Task parallelism offers the most flexibility but requires more changes to your code to take advan&shy;tage&nbsp;of it.
 
 ==== Data Parallelism
 
@@ -79,7 +79,7 @@ Data parallelism ((("data parallelism")))((("parallelism", "data parallelism")))
 
 ===== Shuffles and narrow versus wide transformations
 
-_Narrow_ transformations (or data parallelism without any ((("data parallelism", "narrow transformations")))((("parallelism", "data parallelism", "narrow transformations")))((("data parallelism", "wide transformations")))((("parallelism", "data parallelism", "wide transformations")))((("wide transformations")))((("narrow transformations")))((("transformations", "narrow")))((("transformations", "wide")))((("shuffles")))aggregation or shuffle) are often much faster than _wide_ transformations, which involve shuffles or aggregations. While this terminology is borrowed from the Spark community, the distinction (and implications for fault tolerance) applies to Dask's data parallel operations as well.
+_Narrow_ transformations (or data parallelism without any ((("data parallelism", "narrow transformations")))((("parallelism", "data parallelism", "narrow transformations")))((("data parallelism", "wide transformations")))((("parallelism", "data parallelism", "wide transformations")))((("wide transformations")))((("narrow transformations")))((("transformations", "narrow")))((("transformations", "wide")))((("shuffles")))aggregation or shuffle) are often much faster than _wide_ transformations, which involve shuffles or aggregations. While this terminology is borrowed from the Spark community, the distinction (and implications for fault tolerance) applies to Dask's data-parallel operations as well.
 
 ===== Limitations
 
@@ -87,7 +87,7 @@ Data parallelism is not well suited ((("data parallelism", "limitations")))((("p
 
 ==== Load Balancing
 
-Load balancing is another ((("parallelism", "load balancing")))((("load balancing")))way of looking at parallelism where a system (or systems) route the requests (or tasks) to different servers. Load balancing can range from basic, like round-robin, to "smart," taking advantage of information about the relative load, resources, and data on the workers/servers to schedule the task. The more complex the load balancing is, the more work the load balancer has to do. In Dask all of this load balancing is handled centrally, which requires that the head node has a relatively complete view of most workers' state to intelligently assign tasks.
+Load balancing is another ((("parallelism", "load balancing")))((("load balancing")))way of looking at parallelism where a system (or systems) routes the requests (or tasks) to different servers. Load balancing can range from basic, like round-robin, to "smart," taking advantage of information about the relative load, resources, and data on the workers/servers to schedule the task. The more complex the load balancing is, the more work the load balancer has to do. In Dask all of this load balancing is handled centrally, which requires that the head node has a relatively complete view of most workers' state to intelligently assign tasks.
 
 The other extreme is "simple" load balancing, where some systems, like DNS round-robin-based load balancing (not used in Dask), do not have any information about the system loads and just pick the "next" node. When tasks (or requests) are roughly equal in complexity, round-robin-based load balancing can work well. This technique is most often used for handling web requests or external API requests where you don't have a lot of control over the client making the requests. You are most likely to see this in model serving, like translating text or predicting fraudulent transactions.
 
