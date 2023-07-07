@@ -30,7 +30,7 @@ While you don't need to use test-driven development, we believe it's important t
 
 ==== Property Testing
 
-. Property testing is a potentially great ((("property testing")))((("testing", "property testing")))solution to the challenge of coming up with test data that covers all of the edge cases in terms of data that your code could trip up on. Instead of writing the traditional "for input A, result B is expected," you specify properties, like "if we have 0 customers, we should have 0 sales" or "all (valid) customers should have a fraud score after this pipeline."
+Property testing is a potentially great ((("property testing")))((("testing", "property testing")))solution to the challenge of coming up with test data that covers all of the edge cases in terms of data that your code could trip up on. Instead of writing the traditional "for input A, result B is expected," you specify properties, like "if we have 0 customers, we should have 0 sales" or "all (valid) customers should have a fraud score after this pipeline."
 
 https://oreil.ly/zQhnh[+++Hypothesis+++] is the most popular library for property testing in [.keep-together]#Python.#
 

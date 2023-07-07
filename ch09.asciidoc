@@ -1,7 +1,7 @@
 [[ch09]]
 == Migrating Existing Analytic Engineering 
 
-Many users will already have analytic work that is currently deployed that they want to migrate over to Dask. This chapter will discuss the considerations, challenges, and experiences of us9ers making the switch. The main migration pathway explored in the chapter is moving an existing big data engineering from another distributed framework, such as Spark, into Dask.
+Many users will already have analytic work that is currently deployed that they want to migrate over to Dask. This chapter will discuss the considerations, challenges, and experiences of users making the switch. The main migration pathway explored in the chapter is moving an existing big data engineering from another distributed framework, such as Spark, into Dask.
 
 === Why Dask?
 
