@@ -58,7 +58,7 @@ include::./examples/dask/Dask-Ch3-Concepts.py[tags=dask_use_forkserver]
 ----
 ====
 
-This optimization is, generally, not available on Windows.
+This optimization is generally not available on Windows.
 
 Dask's local backends are designed for performance ((("execution backends", "local backends", startref="xcbkckd")))((("local backends", startref="lclbck")))((("multi-threaded backends", startref="mlttdb")))((("execution backends", "multi-threaded backends", startref="xckmck")))rather than for testing that your code will work on a distributed scheduler. To test that your code will run remotely, you should use Dask's distributed scheduler with a LocalCluster instead.
 
@@ -125,9 +125,9 @@ The UI allows you to see what Dask is doing and what's being stored on the worke
 
 Distributed and parallel systems ((("serialization")))((("pickling")))((("Python", "pickling")))depend on serialization, sometimes called _pickling_ in Python, to share data and functions/code between processes. Dask uses a mixture of serialization techniques to match the use case and provides hooks to extend by class when the defaults don't meet your needs.
 
-[WARN]
+[WARNING]
 ====
-We most often think of serialization when it fails (with an error), but equally important can be situations where we end up serializing more data than we need -- or when the amount of data that needs to be transferred is so large distributing the work is no longer beneficial.
+We most often think of serialization when it fails (with an error), but equally important can be situations where we end up serializing more data than we need&mdash;or when the amount of data that needs to be transferred is so large that distributing the work is no longer beneficial.
 ====
 
 Cloudpickle serializes the functions ((("pickling", "Cloudpickle")))((("Cloudpickle")))((("serialization", "Cloudpickle")))and the generic Python types in Dask. Most Python code doesn't depend on serializing functions, but cluster computing often does. Cloudpickle is a project designed for cluster computing and is able to serialize and deserialize more functions than Python's built-in pickle.
@@ -245,7 +245,7 @@ Tasks are the building blocks that Dask uses to implement `dask.delayed`, future
 
 Most of Dask is lazily evaluated, ((("lazy evaluation")))with the exception of Dask futures. Lazy evaluation shifts the responsibility for combining computations from you to the scheduler. This means that Dask will, when it makes sense, combine multiple function calls. Not only that, but if only some parts of a structure are needed, Dask is sometimes able to optimize by evaluating just the relevant parts (like `head` or `tail` calls).footnote:[When Dask can optimize evaluation here is complicated, but remember that a task is the fundamental unit of computation and Dask cannot break down compute any further inside the task. So a DataFrame created from many individual tasks that you call `head` on is a great candidate for Dask to optimize, but for a single task making a large DataFrame, Dask is unable to break "inside."] Implementing lazy evaluation requires Dask to construct a task graph. This task graph is ((("task graphs")))((("graphs", "task graphs")))((("fault tolerance", "task graphs")))also reused for fault tolerance.
 
-Unlike most of Dask, futures are eagerly evaluated, which limits the optimizations available when chaining them together as the scheduler has a less complete view of the world when it starts executing the first future. Futures still create task graphs, and you can verify this by visualizing them in the next section.
+Unlike most of Dask, futures are eagerly evaluated, which limits the optimizations available when chaining them together, as the scheduler has a less complete view of the world when it starts executing the first future. Futures still create task graphs, and you can verify this by visualizing them in the next section.
 
 Unlike the rest of Dask, futures are eagerly evaluated, which limits the optimizations available when chaining them together, as the scheduler has a less complete view of the world when it starts executing the first future. Futures still create task graphs, and you can verify this by visualizing them, as we'll see in the next section.
 
@@ -264,7 +264,7 @@ include::./examples/dask/Dask-Ch3-Concepts.py[tags=dask_task_dependencies]
 ====
 
 
-Now when you go to compute the final combined value, Dask will compute all of the other values that are needed for the final function using it's implicit task graph.
+Now when you go to compute the final combined value, Dask will compute all of the other values that are needed for the final function using its implicit task graph.
 
 
 [NOTE]
@@ -346,7 +346,7 @@ Dask does not raise an error when you attempt to use Dask caching in a distribut
 [fault_tolerance_ch03_1688739701115]
 === Fault Tolerance
 
-In distributed systems like Dask, fault tolerance generally refers to how a system handles computer, network, or program failures.
+In distributed systems like Dask, _fault tolerance_ generally refers to how a system handles computer, network, or program failures.
 Fault tolerance becomes increasingly important the more computers you use. When you are using Dask on a single computer, the concept of fault tolerance is less important, since if your one computer fails, there is nothing to recover. However, when you have hundreds of machines, the odds of a machine failing go up.
 Dask's task graph is used to ((("fault tolerance", id="flttlr")))provide its fault tolerance.footnote:[The same technique used in Spark.]
 There are many different kinds of failures in a distributed system, but thankfully many of them can be handled in the same way.

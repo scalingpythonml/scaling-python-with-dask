@@ -97,7 +97,7 @@ Dask itself is not a library for accelerated Python, but you can use it in conju
 
 [NOTE]
 ====
-Accelerated Python libraries tend to use more "native" memory structures which are not as easily handled by pickle.
+Accelerated Python libraries tend to use more "native" memory structures, which are not as easily handled by pickle.
 ====
 
 
@@ -105,7 +105,7 @@ Accelerated Python libraries tend to use more "native" memory structures which a
 
 Dask itself does not have a SQL engine; however, link:$$https://oreil.ly/sBLQM$$[FugueSQL], link:$$https://oreil.ly/ZMVD1$$[Dask-SQL], and link:$$https://oreil.ly/4gHru$$[BlazingSQL] use Dask to ((("libraries", "community libraries", "SQL engines")))((("community libraries", SQL engines)))provide a distributed SQL engine.footnote:[BlazingSQL is no longer maintained, though its concepts are interesting and may find life in another project.] Dask-SQL uses the popular Apache Calcite project, which powers many other SQL engines. BlazingSQL extends Dask DataFrames to support GPU operations. cuDF DataFrames have a slightly different representation. Apache Arrow makes it straightforward to convert a Dask DataFrame to cuDF and vice versa.
 
-Dask allows these different SQL engines to scale both memory and compute wise, handling larger data sizes than fit in memory on a single computer and processing rows on multiple computers. Dask also powers the important "aggregation" step of combinding the results from the different machines into a coehisieve view of the data.
+Dask allows these different SQL engines to scale both memory- and compute-wise, handling larger data sizes than fit in memory on a single computer and processing rows on multiple computers. Dask also powers the important aggregation step of combining the results from the different machines into a cohesive view of the data.
 
 [TIP]
 ====
@@ -114,7 +114,7 @@ Dask-SQL can read data from parts of the Hadoop ecosystem that Dask cannot read 
 
 ===== Workflow scheduling
 
-Most organizations have the need for some kind of scheduled work, from programs that run at specific times (like end of day or end of month financials) or in response to events. These events can be things like data becoming available (like after the daily financials are run), or when a new e-mail comes in, to user triggered. In the simplest case the scheduled work can be a single program, but can often be more complex than that.
+Most organizations have the need for some kind of scheduled work, from programs that run at specific times (such as those that calculate end-of-day or end-of-month financials) to programs that run in response to events. These events can be things like data becoming available (such as after the daily financials are run) or a new email coming in, or they can be user triggered. In the simplest case the scheduled work can be a single program, but it is often more complex than that.
 
 // TODO: Holden - double check if this is too spicy.
 

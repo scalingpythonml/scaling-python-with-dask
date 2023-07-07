@@ -48,7 +48,7 @@ Timeouts:: Sometimes you care about a result only if you can get it within a cer
 Fire-and-forget:: Sometimes you might not care about the result of a function call, but you do want to ensure it is called. Futures allow you to ensure a computation occurs without having to block on the result.
 Actors:: The results from calling actors are futures. We cover actors in the next chapter.
 
-Launching futures in Dask is non-blocking, whereas computing tasks in Dask is blocking. This means that when you submit a future to Dask, while it begins work right away, it does not stop (or "block") your program from continuing.
+Launching futures in Dask is non-blocking, whereas computing tasks in Dask is blocking. This means that when you submit a future to Dask, while it begins work right away, it does not stop (or block) your program from continuing.
 
 === Launching Futures
 
@@ -70,7 +70,7 @@ Unlike with `dask.delayed`, as soon as the future is launched, Dask begins to co
 While this `map` is somewhat similar to the `map` on Dask bags, each item results in a separate task, whereas bags are able to group together tasks into partitions to reduce the overhead (although they are ((("futures", "launching", startref="ftrlch")))lazily evaluated).
 ====
 
-Some actions in Dask, like `persist()` on Dask collections, use futures under the hood. You can get the futures of the persisted collection by calling `futures_of`. These futures follow the same lifecycle as the futures that you launch yourself.
+Some actions in Dask, like `persist()` on Dask collections, use futures under the hood. You can get the futures of the persisted collection by calling `futures_of`. These futures follow the same life cycle as the futures that you launch yourself.
 
 === Future Life Cycle
 
@@ -92,7 +92,7 @@ Canceling a future behaves ((("futures", "canceling")))differently than deleting
 When using Dask in a Jupyter notebook, ((("Jupyter", "notebooks, futures")))the notebook may "hold on to" the result of any previous cell, so even if the future is unnamed, it will remain present in Dask. There is a https://oreil.ly/zyy2H[+++discussion on Discourse+++] with more context for those interested.
 ====
 
-The string representation of a future will show you where it is in it's lifecycle (e.g. `Future: slow status: cancelled,`). 
+The string representation of a future will show you where it is in its life cycle (e.g., `Future: slow status: cancelled,`). 
 
 
 === Fire-and-Forget
@@ -195,10 +195,9 @@ include::./examples/dask/Dask-Futures.py[tags=nested]
 
 Note that since Dask uses a centralized scheduler, the client is communicating with that centralized scheduler to determine where to place the future.
 
-// PRODUCTION NOTE: Make Distributed Data Structures for Scheduling a call-out box.
 [[dds_scheduling]]
-=== Distributed Data Structures for Scheduling
-
+.Distributed Data Structures for Scheduling
+****
 Dask also has a collection of data ((("data structures, scheduling and")))((("distributed data structures")))structures to simplify task coordination. These data structures include queues, locks/semaphores, events, and publish/subscriber topics. These distributed data structures aim to behave similarly to their local counterparts, but it's important to remember that the distributed nature of Dask adds overhead for coordination and remote procedure calls.
 
 For example, Dask's distributed ((("distributed variable")))((("variables, distributed")))((("get function")))((("functions", "get")))((("set function")))((("functions", "set")))((("delete function")))((("functions", "delete")))variable is called `Variable`, which implements `get`, `set`, and `delete`. The `get` function takes a `timeout`, which should remind you that these operations are distributed in nature and therefore are slower than updating a local variable. As with multi-threaded global variables, race conditions can occur when different workers update the same local variable.
@@ -207,6 +206,7 @@ For example, Dask's distributed ((("distributed variable")))((("variables, distr
 ====
 You can name Dask's distributed data structures when constructing them, and two resources with the same name will be resolved to the same object even if they are constructed separately.
 ====
+****
 
 === Conclusion
 

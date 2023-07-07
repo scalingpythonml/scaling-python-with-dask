@@ -22,10 +22,10 @@ Data analytics is only as valuable ((("data", "loading")))((("data", "writing"))
 Dask supports reading and writing many standard file formats and filesystems. These formats include CSV, HDF, fixed-width, Parquet, and ORC. Dask supports many of the standard distributed filesystems, from HDFS to S3, and reading from regular filesystems.
 
 
-Most importantly, for Dask, distributed file systems allow for multiple computers to read and write to the same set of files.
-Distributed file systems often store data on multiple computers -- which allows for storing more data than a single computer can hold.
-Often, but not always, distributed file systems are also "fault tolerant" (which they achieve though replication).
-Distributed file systems can have important performance differences than what you are used to working with, so it's important to skim the user documentation for the filesystems you are using. Some things to look for are "block sizes" (you often don't want to write files smaller than these as the rest is wasted space), latency, and consistency gaurantees.
+Most important for Dask, distributed filesystems allow multiple computers to read and write to the same set of files.
+Distributed filesystems often store data on multiple computers, which allows for storing more data than a single computer can hold.
+Often, but not always, distributed filesystems are also fault tolerant (which they achieve through replication).
+Distributed filesystems can have important performance differences from what you are used to working with, so it's important to skim the user documentation for the filesystems you are using. Some things to look for are block sizes (you often don't want to write files smaller than these, as the rest is wasted space), latency, and consistency guarantees.
 
 [TIP]
 ====

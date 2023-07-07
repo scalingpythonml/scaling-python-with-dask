@@ -60,7 +60,7 @@ Since, as with distributed ((("collections, arrays", "functions")))((("arrays", 
 `compute_chunk_sizes`:: Dask needs to know the ((("compute_chunk_sizes function")))((("functions", "compute_chunk_sizes")))chunk sizes to support indexing; if an array has unknown chunk sizes, you can call this function.
 
 
-These special functions are not present on the underlying "regular" collections as they do not offer the same performance savings in a non-parallel / non-distributed enviornments.
+These special functions are not present on the underlying regular collections, as they do not offer the same performance savings in non-parallel/non-distributed environments.
 
 === Dask Bags
 

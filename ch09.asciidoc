@@ -14,11 +14,10 @@ Debugging overhead:: Some developer teams prefer the debugging experience in Pyt
 Development overhead:: The development step in Dask can be done locally with ease with the developer’s laptop, as opposed to needing to connect to a powerful cloud machine in order to experiment.
 Management UX:: Dask visualization tools tend to be more visually pleasing and intuitive to reason, with native graphviz rendering for task graphs.
 
+These are not all of the benefits, but if any of them speak to you, it's probably worth investing the time to consider moving the workload to Dask.
+There are always trade-offs involved, so the next section will look at some of the limitations, followed by a road map to give you an idea of the scale of work involved in moving to Dask.
 
-It's important to remember that these benefits of Dask come with some important trade-offs, which we will discuss next.
-
-These are not all of the reasons, but if any of these speak to you, it's probably worth investing the time to consider moving the workload to Dask.
-There are always tradeoffs involved, so the next section will look at some of the limitations followed by a roadmap to give you an idea of the scale of work involved in moving to Dask.
+=== Limitations of Dask
 
 Dask is relatively new, and the use ((("migration", "Dask limitations")))of Python data stack to perform large-scale extract, transform, load operations is also fairly new. There are limitations to Dask, which mainly arise from the fact that PyData stack has traditionally not been used to perform large-scale data workloads. At the time of writing, there are some limits to the system. However, they are being addressed by developers, and a lot of these deficiencies will be filled in. Some of the fine-grained considerations you should have are as follows:
 

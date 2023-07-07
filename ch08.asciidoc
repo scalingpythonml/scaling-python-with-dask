@@ -120,7 +120,7 @@ A good check, when considering adding a new library to an existing environment, 
 While not every tool needs a book (although ((("libraries", "evaluating", "documentation")))((("projects", "library evaluation", "documentation")))((("documentation, library evaluation and")))we do hope you find books useful), very few libraries are truly self-explanatory. On the low end, for simple libraries, a few examples or well-written tests can serve as a stand-in for proper documentation. Complete documentation is a good sign of overall project maturity. Not all documentation is created equal, and as the saying goes, documentation is normally out of date as soon as it is finished (if not before). A good exercise to do, before you dive all the way into a new library, is to open up the documentation and try to run the examples. If the getting-started examples don't work (and you can't figure out how to fix them), you will likely be in for a rough ride.
 
 
-Sometimes good documentation exists, but is "separate" from the project (e.g. like books) and some research may be required. If you find a project has good, but not self-evident, documentation consider trying to improve the visibility of the documentation.
+Sometimes good documentation exists but is separate from the project (e.g., in books), and some research may be required. If you find a project has good but not self-evident documentation, consider trying to improve the visibility of the documentation.
 
 
 ==== Openness to Contributions

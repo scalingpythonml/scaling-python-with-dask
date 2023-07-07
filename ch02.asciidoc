@@ -1,7 +1,7 @@
 [[ch2_getting_started_with_dask]]
 == Getting Started with Dask
 
-We are so happy that you've decided to explore whether Dask is the system for you by trying it out. In this chapter, we will focus on getting started with Dask in its local mode. Using this, we'll explore a few more straightforward parallel computing tasks (including everyone's favorite, word count footnote:[Wordcount may be somewhat of a tired example, but it is an important example since it covers both work which can be done with minimal co-ordination (splitting up the text into words) and work requiring co-ordination between computers (summing the words).]).
+We are so happy that you've decided to explore whether Dask is the system for you by trying it out. In this chapter, we will focus on getting started with Dask in its local mode. Using this, we'll explore a few more straightforward parallel computing tasks (including everyone's favorite, word count footnote:[Word count may be a somewhat tired example, but it is an important example, since it covers both work that can be done with minimal co-ordination (splitting up the text into words) and work requiring co-ordination between computers (summing the words).]).
 
 === Installing Dask Locally
 
