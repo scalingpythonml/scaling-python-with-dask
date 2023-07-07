@@ -55,7 +55,7 @@ myfuture = client.submit(slow, 5) # Starts running
 del myfuture # future may be GCd and then stop since there are no other references
 
 myfuture = client.submit(slow, 5) # Starts running
-# Future stops running, any other references point to cancelled future
+# Future stops running, any other references point to canceled future
 myfuture.cancel()
 #end::understanding_futures_lifecycle[]
 
@@ -109,7 +109,7 @@ def process_something(x):
     """
     myfuture = client.submit(slow, x)
     fire_and_forget(myfuture)
-    # If we didn't use fire and forget the future would be cancelled on return
+    # If we didn't use fire and forget the future would be canceled on return
     return True
 
 
@@ -133,7 +133,7 @@ def do_some_io(data):
 
 
 def business_logic():
-    # Make a future, but we don't really care about it's result, just that it
+    # Make a future, but we don't really care about its result, just that it
     # happens
     future = client.submit(do_some_io, {"timbit": "awesome"})
     fire_and_forget(future)

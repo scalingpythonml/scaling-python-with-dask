@@ -5,9 +5,9 @@ We are so happy that you've decided to explore whether Dask is the system for yo
 
 === Installing Dask Locally
 
-Installing Dask locally is reasonably ((("Dask installation")))((("conda environment", "Dask installation", id="cdvdkt")))straightforward. If you want to start running on multiple machines, it's often easier when you start with a conda environment (or virtualenv). This lets you figure out what packages you depend on by running `pip freeze` to make ((("pip freeze")))sure they're on all of the workers when it's time to scale.
+Installing Dask locally is reasonably ((("Dask installation")))((("conda environment", "Dask installation", id="cdvdkt")))straightforward. If you want to begin running on multiple machines, doing so is often easier when you start with a conda environment (or virtualenv). This lets you figure out what packages you depend on by running `pip freeze` to make ((("pip freeze")))sure they're on all of the workers when it's time to scale.
 
-While you can just run `pip install -U dask`, we prefer using a conda environment since it's easier to match the version of Python to that on my cluster, which allows me to connect my local machine to the cluster directly.footnote:[There are downsides to deploying your Dask application in this way, as discussed in <<ch12>>, but it can be an excellent debugging technique.] If you don't have conda on your machine, link:$$https://oreil.ly/qVDa7$$[Miniforge] is a good quick way to get conda installed across multiple platforms. Installing Dask into a new conda environment is shown in <<install_conda_env_with_dask>>.
+While you can just run `pip install -U dask`, we prefer using a conda environment since it's easier to match the version of Python to that on a cluster, which allows us to connect a local machine to the cluster directly.footnote:[There are downsides to deploying your Dask application in this way, as discussed in <<ch12>>, but it can be an excellent debugging technique.] If you don't already have conda on your machine, link:$$https://oreil.ly/qVDa7$$[Miniforge] is a good and quick way to get conda installed across multiple platforms. The installation of Dask into a new conda environment is shown in <<install_conda_env_with_dask>>.
 
 [[install_conda_env_with_dask]]
 .Installing Dask into a new conda environment
@@ -18,11 +18,11 @@ include::./examples/dask/setup-dask-user.sh[tags=install]
 ----
 ====
 
-Here we install a specific version of Dask rather than just the latest. If you're planning to connect to a cluster later on, it will be useful to pick the same version of Dask as is installed on the cluster.
+Here we install a specific version of Dask rather than just the latest version. If you're planning to connect to a cluster later on, it will be useful to pick the same version of Dask as is installed on the cluster.
 
 [NOTE]
 ====
-You don't have to install Dask locally, although you probably will want to. There is a link:$$https://oreil.ly/EK5n5$$[binderhub example with Dask] and distributed options, including link:$$https://oreil.ly/3UEq-$$[one from the creators of Dask], that you can use to run Dask, as well as other providers like link:$$https://oreil.ly/_6SyV$$[SaturnCloud]. That being said, we recommend having Dask installed locally even if ((("conda environment", "Dask installation", startref="cdvdkt")))you end up using these services.
+You don't have to install Dask locally. There is a link:$$https://oreil.ly/EK5n5$$[BinderHub example with Dask] and distributed options, including link:$$https://oreil.ly/3UEq-$$[one from the creators of Dask], that you can use to run Dask, as well as other providers such as link:$$https://oreil.ly/_6SyV$$[SaturnCloud]. That being said, we recommend having Dask installed locally even if ((("conda environment", "Dask installation", startref="cdvdkt")))you end up using one of these services.
 ====
 
 .Using Dask Docker Images
@@ -33,7 +33,7 @@ Another way to get Dask running locally is to use link:$$https://oreil.ly/zCeHQ$
 [[hello_worlds]]
 === Hello Worlds
 
-Now that you have Dask installed ((("Hello Worlds")))locally, it's time to try the versions of "Hello World" available through its various APIs. There are many different options for starting Dask. For now, you should use LocalCluster as shown in <<make_dask_client>>.
+Now that you have Dask installed ((("Hello Worlds")))locally, it's time to try the versions of "Hello World" available through its various APIs. There are many different options for starting Dask. For now, you should use LocalCluster, as shown in <<make_dask_client>>.
 
 [[make_dask_client]]
 .Using LocalCluster to start Dask
@@ -49,15 +49,15 @@ include::./examples/dask/Dask-Ch2-Hello-Worlds.py[tags=make_dask_client]
 One of the core building blocks ((("Hello Worlds", "task")))((("task Hello World")))((("delayed function")))((("functions", "delayed")))of Dask is `dask.delayed`, which allows you to run functions in parallel.
 If you are running Dask on multiple machines, these functions can also be distributed (or spread out) on the different machines.
 When you wrap a function with `dask.delayed` and call it, you get back a "delayed" object representing the desired computation.
-When you created a delayed object, Dask is just making a note of what you might want it to do. Like with a lazy teenager, you need to be explicit. You can force Dask to start computing the value with `dask.submit`, which produces a "future."
-You can use `dask.compute` to both start computing the delayed objects and futures and return their values.footnote:[Provided they fit in memory.]
+When you created a delayed object, Dask is just making a note of what you might want it to do. As with a lazy teenager, you need to be explicit. You can force Dask to start computing the value with `dask.submit`, which produces a "future."
+You can use `dask.compute` both to start computing the delayed objects and futures and to return their values.footnote:[Provided they fit in memory.]
 
 
 
 [[sleepy_task]]
 ===== Sleepy task
 
-An easy way to see the ((("Hello Worlds", "task", "sleepy task")))((("task Hello World", "sleepy task")))((("sleepy task, Hello World")))((("slow_task function")))((("functions", "slow_task")))performance difference is by writing an intentionally slow function, like `slow_task`, which calls `sleep`. Then you can compare the performance of Dask to "regular" Python, by mapping the function over a few elements with and without `dask.delayed`, as shown in this example:
+An easy way to see the ((("Hello Worlds", "task", "sleepy task")))((("task Hello World", "sleepy task")))((("sleepy task, Hello World")))((("slow_task function")))((("functions", "slow_task")))performance difference is by writing an intentionally slow function, like `slow_task`, which calls `sleep`. Then you can compare the performance of Dask to "regular" Python by mapping the function over a few elements with and without `dask.delayed`, as shown in this example:
 
 
 
@@ -73,7 +73,7 @@ When we run this example, we get `In sequence 20.01662155520171, in parallel 6.2
 [[nested_tasks]]
 ===== Nested tasks
 
-One of the neat things about `dask.delayed` is that you ((("Hello Worlds", "task", "nested tasks", id="hwtksk")))((("task Hello World", "nested tasks", id="tkwdsks")))((("nested tasks, Hello World", id="nskshw")))can launch tasks inside of other tasks.footnote:[If you are coming from Apache Spark, this is very different, as only the driver/head node can launch tasks.] A straightforward real-world example of this is a web crawler, with which, when you visit a web page, you want to fetch all of the links from that page:
+One of the neat things about `dask.delayed` is that you ((("Hello Worlds", "task", "nested tasks", id="hwtksk")))((("task Hello World", "nested tasks", id="tkwdsks")))((("nested tasks, Hello World", id="nskshw")))can launch tasks inside of other tasks.footnote:[This is very different from Apache Spark, where only the driver/head node can launch tasks.] A straightforward real-world example of this is a web crawler, with which, when you visit a web page, you want to fetch all of the links from that page:
 
 [source, python]
 ----
@@ -82,7 +82,7 @@ include::./examples/dask/Dask-Ch2-Hello-Worlds.py[tags=mini_crawl_task]
 
 [NOTE]
 ====
-In practice, behind the scenes there is still some central co-ordination involved (including the scheduler), but the freedom to write your code in this nested way is quite powerful.
+In practice, some central co-ordination is still involved behind the scenes (including the scheduler), but the freedom to write your code in this nested way is quite powerful.
 ====
 
 We cover other kinds of task ((("Hello Worlds", "task", "nested tasks", startref="hwtksk")))((("task Hello World", "nested tasks", startref="tkwdsks")))((("nested tasks, Hello World", startref="nskshw")))dependencies in <<task_deps>>.
@@ -90,14 +90,14 @@ We cover other kinds of task ((("Hello Worlds", "task", "nested tasks", startref
 
 ==== Distributed Collections
 
-In addition to the low-level task APIs, Dask also has distributed collections. These collections enable you to work with data that would be too large to fit on a single machine and naturally distribute work on it, which ((("data parallelism")))((("Hello Worlds", "distributed collections")))((("distributed collections", "data parallelism")))((("distributed collections", "bag")))((("data parallelism", "arrays")))is called _data parallelism_. Dask has both an unordered collection called a _bag_, and an ordered collection called an _array_. Dask arrays aim to implement some of the ndarray interface, whereas bags focus more on functional programming (e.g., things like `map` and `filter`). You can load Dask collections from files, take local collections and distribute them, or take the results of `dask.delayed` tasks and turn them into a collection.
+In addition to the low-level task APIs, Dask also has distributed collections. These collections enable you to work with data that would be too large to fit on a single machine and to naturally distribute work on it, which ((("data parallelism")))((("Hello Worlds", "distributed collections")))((("distributed collections", "data parallelism")))((("distributed collections", "bag")))((("data parallelism", "arrays")))is called _data parallelism_. Dask has both an unordered collection called a _bag_, and an ordered collection called an _array_. Dask arrays aim to implement some of the ndarray interface, whereas bags focus more on functional programming (e.g., things like `map` and `filter`). You can load Dask collections from files, take local collections and distribute them, or take the results of `dask.delayed` tasks and turn them into a collection.
 
 
 In distributed collections, Dask splits the data up using partitions. Partitions are used to decrease the scheduling cost compared to operating on individual rows, which is covered in more detail in <<basic_partitioning>>.
 
 ===== Dask arrays
 
-Dask arrays allow you to go ((("Hello Worlds", "distributed collections", "arrays")))((("distributed collections", "arrays")))((("arrays")))beyond what can fit in memory, or even on disk, of a single computer. Many of the standard NumPy operations are supported out of the box, including aggregates like average and standard deviation. The `from_array` function in Dask arrays converts a local array-like collection into a distributed collection. <<ex_dask_array>> shows how to create a distributed array from a local one and then compute the average.
+Dask arrays allow you to go ((("Hello Worlds", "distributed collections", "arrays")))((("distributed collections", "arrays")))((("arrays")))beyond what can fit in memory, or even on disk, on a single computer. Many of the standard NumPy operations are supported out of the box, including aggregates such as average and standard deviation. The `from_array` function in Dask arrays converts a local array-like collection into a distributed collection. <<ex_dask_array>> shows how to create a distributed array from a local one and then compute the average.
 
 [[ex_dask_array]]
 .Creating a distributed array and computing the average
@@ -111,14 +111,14 @@ include::./examples/dask/Dask-Ch2-Hello-Worlds.py[tags=dask_array]
 
 
 
-As with all distributed collections, what is expensive on a Dask array is not the same as what is expensive on a local array. In the next chapter you'll learn a bit more about how Dask arrays are implemented, and hopefully gain a better intuition around their performance.
+As with all distributed collections, what is expensive on a Dask array is not the same as what is expensive on a local array. In the next chapter you'll learn a bit more about how Dask arrays are implemented and hopefully gain a better intuition around their performance.
 
-Creating a distributed collection from a local collection uses the two fundamental building blocks of ((("distributed collections", "scatter-gather pattern")))((("scatter-gather pattern")))((("Hello Worlds", "distributed collections", "scatter-gather pattern")))distributed computing, called the _scatter-gather pattern_. While the originating dataset must be from a local computer, fitting into a single machine, this already expands the number of processors you have at your disposal, as well as intermediate memory you can utilize, enabling you to better exploit modern cloud infrastructure and scale. 
+Creating a distributed collection from a local collection uses the two fundamental building blocks of ((("distributed collections", "scatter-gather pattern")))((("scatter-gather pattern")))((("Hello Worlds", "distributed collections", "scatter-gather pattern")))distributed computing, called the _scatter-gather pattern_. While the originating dataset must be from a local computer, fitting into a single machine, this already expands the number of processors you have at your disposal, as well as the intermediate memory you can utilize, enabling you to better exploit modern cloud infrastructure and scale. 
 A practical use case would be a distributed web crawler, where the list of seed URLs to crawl might be a small dataset, but the memory you need to hold while crawling might be an order of magnitude larger, requiring distributed computing. 
 
 ===== Dask bags and a word count
 
-Dask bags implement more of the ((("Hello Worlds", "distributed collections", "bag collection")))((("Hello Worlds", "distributed collections", "word count")))functional programming interfaces than Dask arrays. The "hello world" of big data is word count, which is easier to implement with functional programming interfaces. Since you've already made a crawler function, you can turn its output into a Dask bag using the `from_delayed` function in [.keep-together]#<<make_bag_of_crawler>>.#
+Dask bags implement more of the ((("Hello Worlds", "distributed collections", "bag collection")))((("Hello Worlds", "distributed collections", "word count")))functional programming interfaces than Dask arrays. The "Hello World" of big data is word count, which is easier to implement with functional programming interfaces. Since you've already made a crawler function, you can turn its output into a Dask bag using the `from_delayed` function in [.keep-together]#<<make_bag_of_crawler>>.#
 
 [[make_bag_of_crawler]]
 .Turning the crawler function's output into a Dask bag
@@ -129,7 +129,7 @@ include::./examples/dask/Dask-Ch2-Hello-Worlds.py[tags=make_bag_of_crawler]
 ----
 ====
 
-Now that you have a Dask bag collection, you can build everyone's favorite word count example on top of it. The first step is turning your bag of text into a bag of words, which you do by using `map` (see <<make_a_bag_of_words>>). Once you have the bag of words, you can either use Dask's built-in `frequency` method (see <<wc_freq>>) or write your own `frequency` method using functional transformations (see <<wc_func>>).
+Now that you have a Dask bag collection, you can build everyone's favorite word count example on top of it. The first step is to turn your bag of text into a bag of words, which you do by using `map` (see <<make_a_bag_of_words>>). Once you have the bag of words, you can either use Dask's built-in `frequency` method (see <<wc_freq>>) or write your own `frequency` method using functional transformations (see <<wc_func>>).
 
 [[make_a_bag_of_words]]
 .Turning a bag of text into a bag of words
@@ -141,7 +141,7 @@ include::./examples/dask/Dask-Ch2-Hello-Worlds.py[tags=make_a_bag_of_words]
 ====
 
 [[wc_freq]]
-.Dask's built-in `frequency` method
+.Using Dask's built-in `frequency` method
 ====
 [source, python]
 ----
@@ -165,14 +165,14 @@ On Dask bags, `foldby`, `frequency`, and many other reductions return a single p
 
 ==== Dask DataFrame (Pandas/What People Wish Big Data Was)
 
-Pandas is one of the most ((("Hello Worlds", "Dask DataFrame")))((("Dask DataFrames")))((("pandas DataFrames", seealso="Dask DataFrames")))((("DataFrames", see="panda DataFrames")))((("DataFrames", see="Dask DataFrames")))popular Python data libraries, and Dask has a DataFrame library that implements much of the pandas API.  Thanks to Python's duck-typing, ((("Python", "duck-typing")))you can often use Dask's distributed DataFrame library in place of pandas. Not all of the API will work exactly the same, and some parts are not implemented, so be sure you have good test coverage. 
+Pandas is one of the most ((("Hello Worlds", "Dask DataFrame")))((("Dask DataFrames")))((("pandas DataFrames", seealso="Dask DataFrames")))((("DataFrames", see="Dask DataFrames; pandas DataFrames")))popular Python data libraries, and Dask has a DataFrame library that implements much of the pandas API.  Thanks to Python's duck-typing, ((("Python", "duck-typing")))you can often use Dask's distributed DataFrame library in place of pandas. Not all of the API will work exactly the same, and some parts are not implemented, so be sure you have good test coverage. 
 
 [WARNING]
 ====
 Your intuition around what's slow and fast with pandas does not carry over. We will explore this more in <<dask_df>>.
 ====
 
-To illustrate how you can use Dask DataFrame, we'll rework the word count example from the previous section to use it. As with Dask's other collections, you can create DataFrames from local collections, futures, or distributed files. Since you already made a crawler function, you can turn its output into a Dask bag using the `from_delayed` function from <<make_bag_of_crawler>>. Instead of using `map` and `foldby`, you can use pandas APIs like `explode` and `value_counts`, as shown in <<wc_dataframe>>.
+To illustrate how you can use Dask DataFrame, we'll rework the word count example from the previous section to use it. As with Dask's other collections, you can create DataFrames from local collections, futures, or distributed files. Since you've already made a crawler function, you can turn its output into a Dask bag using the `from_delayed` function from <<make_bag_of_crawler>>. Instead of using `map` and `foldby`, you can use pandas APIs such as `explode` and `value_counts`, as shown in <<wc_dataframe>>.
 
 [[wc_dataframe]]
 .DataFrame word count
@@ -186,7 +186,7 @@ include::./examples/dask/Dask-Ch2-Hello-Worlds.py[tags=wc_dataframe]
 === Conclusion
 
 
-In this chapter you got Dask working on your local machine, as well as had a tour of the different "hello world" (or getting started) examples with most of Dask's different built-in libraries. Subsequent chapters will dive into these different tools in more detail.
+In this chapter you got Dask working on your local machine, as well as had a tour of the different "Hello World" (or getting started) examples with most of Dask's different built-in libraries. Subsequent chapters will dive into these different tools in more detail.
 
 
-Now that you've got Dask working on your local machine, if you want, you can jump on over to <<ch12>> and look at the different deployment mechanisms. For the most part, you can run the examples in local mode, albeit sometimes a little slower or at a smaller scale. However, the next chapter will look at the core concepts of Dask, and one of the upcoming examples both emphasizes the benefits of having Dask running on multiple machines and is generally easier to explore on a cluster. If you don't have a cluster available, you may wish to set up a simulated one using something like link:$$https://microk8s.io$$[MicroK8s].
+Now that you've got Dask working on your local machine, you might want to jump on over to <<ch12>> and look at the different deployment mechanisms. For the most part, you can run the examples in local mode, albeit sometimes a little slower or at a smaller scale. However, the next chapter will look at the core concepts of Dask, and one of the upcoming examples emphasizes the benefits of having Dask running on multiple machines and is also generally easier to explore on a cluster. If you don't have a cluster available, you may wish to set up a simulated one using something like link:$$https://microk8s.io$$[MicroK8s].

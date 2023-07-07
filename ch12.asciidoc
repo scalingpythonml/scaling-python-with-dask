@@ -19,7 +19,7 @@ This chapter covers Dask's distributed deployments, but if your Dask program is 
 
 === Factors to Consider in a Deployment Option
 
-When you are choosing how to deploy Dask, there are many different factors to consider, but often the biggest one is what tools your organization is already using. Most of the deployment ((("deployment", "CMs (cluster managers)")))((("CMs (cluster managers)")))((("cluster managers", see="CMs (cluster managers)")))((("isolation", "CMs (cluster managers)")))((("CMs (cluster managers)", "isolation")))options map to different types of cluster managers (CMs). CMs manage sets of computers and provide some isolation between users and jobs. Isolation can be incredibly important&mdash;for example, if one user eats all of the candy (or CPU), then another user won't have any candy. Most cluster managers provide CPU and memory isolation, and some also isolate other resources (like disks and GPUs). Most clouds (AWS, GCP, etc.) offer both Kubernetes and YARN cluster managers, which can dynamically scale up and down the number of nodes. Dask does not need a CM to run, but without one, auto-scaling and other important features are not available.
+When you are choosing how to deploy Dask, there are many different factors to consider, but often the biggest one is what tools your organization is already using. Most of the deployment ((("deployment", "CMs (cluster managers)")))((("CMs (cluster managers)")))((("cluster managers", see="CMs")))((("isolation", "CMs (cluster managers)")))((("CMs (cluster managers)", "isolation")))options map to different types of cluster managers (CMs). CMs manage sets of computers and provide some isolation between users and jobs. Isolation can be incredibly important&mdash;for example, if one user eats all of the candy (or CPU), then another user won't have any candy. Most cluster managers provide CPU and memory isolation, and some also isolate other resources (like disks and GPUs). Most clouds (AWS, GCP, etc.) offer both Kubernetes and YARN cluster managers, which can dynamically scale up and down the number of nodes. Dask does not need a CM to run, but without one, auto-scaling and other important features are not available.
 
 When choosing a deployment mechanism, with or without a CM, some important factors to consider are the ability ((("deployment", "scaling and")))((("scaling", "deployment and")))to scale up and down, multi-tenancy, dependency management, or if it supports heterogeneous workers.
 
@@ -100,7 +100,7 @@ However, if you don't have an existing Ray cluster, you will still need to deplo
 
 === Dask on YARN
 
-YARN is a popular cluster manager from ((("deployment", "on YARN", id="dpyyrn")))((("YARN", "Dask deployment", id="YRNdkpy")))((("CMs (cluster managers)", "YARN", id="cmyrn")))the big data world that is available in open source as well as commercial on-premises (e.g., Cloudera) and cloud (e.g., Elastic Map Reduce). There are several ways to run Dask on a YARN cluster: one is with Dask-Yarn and ((("Dask-Yarn")))((("Dask-Gateway")))the other is with Dask-Gateway. While the two methods are similar, Dask-Gateway is potentially a bit more involved, as it adds a centrally managed server that runs to manage Dask clusters, but it has more fine-grained security and administrative controls. 
+YARN is a popular cluster manager from ((("deployment", "on YARN", id="dpyyrn")))((("YARN, Dask deployment", id="YRNdkpy")))((("CMs (cluster managers)", "YARN", id="cmyrn")))the big data world that is available in open source as well as commercial on-premises (e.g., Cloudera) and cloud (e.g., Elastic Map Reduce). There are several ways to run Dask on a YARN cluster: one is with Dask-Yarn and ((("Dask-Yarn")))((("Dask-Gateway")))the other is with Dask-Gateway. While the two methods are similar, Dask-Gateway is potentially a bit more involved, as it adds a centrally managed server that runs to manage Dask clusters, but it has more fine-grained security and administrative controls. 
 
 Depending on the cluster, your workers might be more transient than other types, and their IP address might not be static when they get spun up again. You should ensure worker/scheduler service discovery methods are put in place for your own cluster setup. It could be as simple as a shared file that they read from, or a more resilient broker. If no additional arguments are given, Dask workers would use the `DASK_SCHEDULER_ADDRESS` environment ((("conda environment", "deployment on YARN")))variable to connect.
 
@@ -115,7 +115,7 @@ include::./examples/dask/Dask-Ch14-Tuning.py[tags=ex_yarn_deployment_tuning]
 ----
 ====
 
-Alternatively, you can run the cluster with the CLI interface that Dask-Yarn exposes. You would first deploy YARN in the shell script of your choosing; it then invokes the Python file you want to run. Within the Python file, you reference the deployed YARN cluster, as shown in <<ex_yarn_deployment_CLI_tuning>>. This can be an easier way to chain your jobs and inspect and pull logs. Note that the CLI is ((("deployment", "on YARN", startref="dpyyrn")))((("YARN", "Dask deployment", startref="YRNdkpy")))((("CMs (cluster managers)", "YARN", startref="cmyrn")))supported only in Python versions above 2.7.6.
+Alternatively, you can run the cluster with the CLI interface that Dask-Yarn exposes. You would first deploy YARN in the shell script of your choosing; it then invokes the Python file you want to run. Within the Python file, you reference the deployed YARN cluster, as shown in <<ex_yarn_deployment_CLI_tuning>>. This can be an easier way to chain your jobs and inspect and pull logs. Note that the CLI is ((("deployment", "on YARN", startref="dpyyrn")))((("YARN, Dask deployment", startref="YRNdkpy")))((("CMs (cluster managers)", "YARN", startref="cmyrn")))supported only in Python versions above 2.7.6.
 
 [[ex_yarn_deployment_CLI_tuning]]
 .Deploying Dask on YARN with CLI interface through shell
@@ -129,7 +129,7 @@ include::./examples/dask/Dask-Ch14-Tuning.py[tags=ex_yarn_deployment_CLI_tuning]
 
 === Dask on High-Performance Computing
 
-Dask has gained a big academic and scientific ((("deployment", "on HPC (high-performance computing)")))((("high-performance computing", see="HPC (high-performance computing)")))user base. Part of this comes from how you can use existing high-performance computing (HPC) clusters with Dask to make readily available scalable scientific computing without rewriting all of your code.footnote:[In some ways, HPC and cluster managers are different names for the same thing, with cluster managers coming out of industry and HPC out of research. HPC clusters tend to have and use a shared network storage that is not as common in industry.]
+Dask has gained a big academic and scientific ((("deployment", "on HPC (high-performance computing)")))((("high-performance computing", see="HPC")))user base. Part of this comes from how you can use existing high-performance computing (HPC) clusters with Dask to make readily available scalable scientific computing without rewriting all of your code.footnote:[In some ways, HPC and cluster managers are different names for the same thing, with cluster managers coming out of industry and HPC out of research. HPC clusters tend to have and use a shared network storage that is not as common in industry.]
 
 You can turn your HPC account into a high-performance Dask environment that you can connect to from Jupyter on your local machine. Dask uses its Dask-jobqueue library to support many HPC cluster types, including HTCondor, LSF, Moab, OAR, PBS, SGE, TORQUE, DRMAA, and Slurm. A separate library, Dask-MPI, supports MPI clusters. In <<ex_slurm_deployment_ch09_1685536141262>>, we showed a sample of how to use Dask on Slurm, and in the following section, we'll build on that example.
 
@@ -217,7 +217,7 @@ While Dask has good tools to monitor its own behavior, sometimes the integration
 
 ==== Connecting a Local Machine to an HPC Cluster
 
-Part of running Dask remotely is being ((("deployment", "on HPC (high-performance computing)", "local machines", id="dyhgpf")))((("HPC (high-performance computing)", "local machines", id="hpclmc")))able to connect to the server to run your tasks. If you want to connect your client to a remote cluster, run Jupyter remotely, or just access the UI on a cluster, you'll need to be able to connect to some ports on the remote machine.
+Part of running Dask remotely is being ((("deployment", "on HPC (high-performance computing)", "local machines")))((("HPC (high-performance computing)", "local machines")))able to connect to the server to run your tasks. If you want to connect your client to a remote cluster, run Jupyter remotely, or just access the UI on a cluster, you'll need to be able to connect to some ports on the remote machine.
 
 [WARNING]
 ====
@@ -231,7 +231,7 @@ In HPC environments you often already connect using SSH, so using SSH port forwa
 If you want to leave a process running remotely (like JupyterLab), the screen command can be a great way of having a process last beyond a single session.
 ====
 
-With the immense popularity of notebooks, some HPC clusters have special tools to make it even easier to launch Jupyter notebooks. We recommend looking for your cluster administrator's documentation on how to launch Jupyter notebooks, as it is possible to accidentally create ((("deployment", "on HPC (high-performance computing)", "local machines", startref="dyhgpf")))((("HPC (high-performance computing)", "local machines", startref="hpclmc")))security issues when not done correctly.
+With the immense popularity of notebooks, some HPC clusters have special tools to make it even easier to launch Jupyter notebooks. We recommend looking for your cluster administrator's documentation on how to launch Jupyter notebooks, as it is possible to accidentally create security issues when not done correctly.
 
 === Dask JupyterLab Extension and Magics
 
@@ -255,7 +255,7 @@ From there you can launch ((("deployment", "Jupyter", "clusters, launching")))((
 
 ==== UI
 
-If you are using Dask's JupyterLab extension (see <<jupyter-lab-extension_ch12_1685475054811>>), it provides ((("deployment", "Jupyter", "UI")))((("Jupyter", "deployment on", "UI")))((("UI (user interface)", "deployment on Jupyter")))((("user interface", see="UI (user interface)")))a link to the cluster UI as well as the ability to drag in individual components to the Jupyter interface.
+If you are using Dask's JupyterLab extension (see <<jupyter-lab-extension_ch12_1685475054811>>), it provides ((("deployment", "Jupyter", "UI")))((("Jupyter", "deployment on", "UI")))((("UI (user interface), deployment on Jupyter")))((("user interface", see="UI, deployment on Jupyter")))a link to the cluster UI as well as the ability to drag in individual components to the Jupyter interface.
 
 [[jupyter-lab-extension_ch12_1685475054811]]
 .Dask web UI inside JupyterHub using the JupyterLab extension

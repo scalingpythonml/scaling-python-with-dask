@@ -14,10 +14,10 @@ import dask
 #tag::dask_local_gpu[]
 from dask_cuda import LocalCUDACluster
 from dask.distributed import Client
-#NOTE: The resources= flag is important, by default the 
-# LocalCUDACluster *does not* label any resources which can make
+#NOTE: The resources= flag is important; by default the 
+# LocalCUDACluster *does not* label any resources, which can make
 # porting your code to a cluster where some workers have GPUs and 
-# some don't is painful.
+# some don't painful.
 cluster = LocalCUDACluster(resources={"GPU": 1})
 client = Client(cluster)
 #end::dask_local_gpu[]
