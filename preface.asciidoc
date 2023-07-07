@@ -35,6 +35,11 @@ This element signifies a general note.
 This element indicates a warning or caution.
 ====
 
+=== Online Figures
+
+Print readers can find larger, color versions of some figures at https://oreil.ly/SPWD-figures.
+Links to each figure also appear in their captions.
+
 === License
 
 Once published in print and excluding O’Reilly’s distinctive design elements (i.e., cover art, design format, “look and feel”) or O’Reilly’s trademarks, service marks, and trade names, this book is available under a Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International Public License. We'd like to thank O'Reilly for allowing us to make this book available under a Creative Commons license and hope that you will choose to support this book (and us) by purchasing several copies (it makes an excellent gift for whichever holiday season is coming up next).

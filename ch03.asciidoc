@@ -115,7 +115,7 @@ For remote notebook users, the hostname of ((("Diagnostics UI", "notebook users"
 <<fig_dask_ui>> shows the Dask UI during the running of the examples in this chapter.
 
 [[fig_dask_ui]]
-.The Dask UI
+.The Dask UI [.figlink]#(https://oreil.ly/PuWRN[digital, color version])#
 image::images/spwd_0301.png[]
 
 The UI allows you to see what Dask is doing and what's being stored on the workers and to explore the execution graph. We will revisit the execution graph in <<graph_visualize>>.

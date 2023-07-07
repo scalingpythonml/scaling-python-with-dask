@@ -37,6 +37,17 @@ span.kturl span.print_url_in_parens {
   white-space: nowrap;
 }
 
+/*--customize links to digital versions of figure images--*/
+span.figlink span.print_url_in_parens {
+  font-size: 0;
+}
+span.figlink span.print_url {
+  font-size: 10.5pt;
+}
+span.figlink span.print_url:before {
+  content: ": "
+}
+
 
 /*----Uncomment to temporarily turn on code-eyballer highlighting (make sure to recomment after you build)---*/
 

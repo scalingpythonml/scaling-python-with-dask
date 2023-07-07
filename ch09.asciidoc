@@ -88,7 +88,7 @@ We found that one of the surprisingly useful use cases is connecting directly to
 
 Translating an existing logic to Dask is a fairly intuitive process. The following sections present some considerations if you're coming from libraries such as R, pandas, and Spark, and how Dask might differ from them. Some of these differences result from moving from a different low-level implementation, such as Java, and others result from moving from single-machine code to a scaled implementation, as when you're coming from pandas.
 
-===== DataFrame Performance
+===== DataFrame performance
 
 If you have a job that you are ((("migration", "DataFrame performance and", id="mgdfpf")))((("Dask DataFrames", "migration and", id="dfmgr")))already running on a different platform, it’s likely you are already using columnar storage format, like Parquet, and reading at runtime. The data type mapping from Parquet to Python ((("Python", "data type mapping")))is inherently imprecise. It’s a good idea to check data types when reading in any data at runtime, and the same applies to DataFrame. If type inference fails, a column would default to object. Once you inspect and determine the type inference is imprecise, specifying data types can speed up your job a lot. Additionally, it’s always a good idea to check strings, floating point numbers, datetime, and arrays. If type errors arise, keeping in mind the upstream data sources and their data type is a good start. For example, if the Parquet is generated from protocol buffers, depending on what encode and decode engine was used, there are differences in null checks, float, doubles, and mixed precision types that are introduced in that stack.
 

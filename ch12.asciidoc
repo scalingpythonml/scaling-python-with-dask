@@ -246,7 +246,7 @@ Dask's lab extensions package is available as `dask-labextension`.
 Once you've installed the lab extension, it will show up with the Dask logo on the left side, as shown in <<dask_instance_on_jupyterlab_ch12_1685474991278>>.
 
 [[dask_instance_on_jupyterlab_ch12_1685474991278]]
-.A successfully deployed Dask instance on JupyterLab
+.A successfully deployed Dask instance on JupyterLab [.figlink]#(https://oreil.ly/TlOSc[digital, color version])#
 image::images/spwd_1201.png[]
 
 ==== Launching Clusters
@@ -258,7 +258,7 @@ From there you can launch ((("deployment", "Jupyter", "clusters, launching")))((
 If you are using Dask's JupyterLab extension (see <<jupyter-lab-extension_ch12_1685475054811>>), it provides ((("deployment", "Jupyter", "UI")))((("Jupyter", "deployment on", "UI")))((("UI (user interface), deployment on Jupyter")))((("user interface", see="UI, deployment on Jupyter")))a link to the cluster UI as well as the ability to drag individual components into the Jupyter interface.
 
 [[jupyter-lab-extension_ch12_1685475054811]]
-.Dask web UI inside JupyterHub using the JupyterLab extension
+.Dask web UI inside JupyterHub using the JupyterLab extension [.figlink]#(https://oreil.ly/5UOHI[digital, color version])#
 image::images/spwd_1202.png[]
 
 The JupyterLab extension links to the Dask web UI, and you can also get a link through the cluster's `repr`. If the cluster link does not work/is not accessible, you can try installing the `jupyter-server-proxy` extension so you can use the notebook host as a https://oreil.ly/0eIhP[+++jump host+++].
@@ -268,7 +268,7 @@ The JupyterLab extension links to the Dask web UI, and you can also get a link t
 Dask jobs tend to take a long time to run; ((("deployment", "Jupyter", "progress tracking")))((("Jupyter", "deployment on", "progress tracking")))otherwise we would not be putting in the effort to parallelize them. You can use Dask's `progress` function from pass:[<code>dask&#x200b;.dis&#x2060;tributed</code>] to track your futures' progress inside your notebook itself (see [.keep-together]#<<dask_progress_monitoring_ch12_1685475108548>>).#
 
 [[dask_progress_monitoring_ch12_1685475108548]]
-.Real-time Dask progress monitoring in JupyterHub
+.Real-time Dask progress monitoring in JupyterHub [.figlink]#(https://oreil.ly/amaBq[digital, color version])#
 image::images/spwd_1203.png[]
 
 === Understanding Dask Performance
@@ -294,13 +294,13 @@ Dask's dashboard contains many different pages, each of which can help with unde
 The Task Stream dashboard gives a high-level view ((("performance", "dashboard", "Task Stream dashboard")))((("dashboard", "Task Stream")))((("Task Stream dashboard")))of each worker and its behavior. Exact methods invoked are color-coded, and you can inspect them by zooming in and out. Each row represents one worker. The custom-colored bars are user-induced tasks, and there are four preset colors to indicate common worker tasks: data transfer between workers, disk read and writes, serialization and deserialization times, and failed tasks. <<task_stream_ch12_1685475169009>> shows a compute workload that is distributed over 10 workers and is well balanced, with no one worker finishing late, evenly distributed compute time, and minimal network IO overhead.
 
 [[task_stream_ch12_1685475169009]]
-.A task stream with well-balanced workers
+.A task stream with well-balanced workers [.figlink]#(https://oreil.ly/VbpGF[digital, color version])#
 image::images/spwd_1204.png[]
 
 On the other hand, <<task_stream_with_too_many_ch12_1685475203241>> shows a situation in which compute is uneven. You can see that there is a lot of whitespace between computation, meaning the workers are blocked and are not actually computing during that time. Additionally, you see some workers start earlier and others finish later, hinting that there are some issues with distributing the job. This could be due to the inherent dependency of your code or suboptimal tuning. Changing the DataFrame or array chunk sizes might make these less fragmented. You do see that when the job starts on each worker, they take roughly the same amount of work, meaning the work itself is still balanced fairly well and distributing the workload is giving you good returns. This is a fairly contrived illustrative example, so this task only took a few seconds, but the same idea applies to longer and bulkier workloads as well.
 
 [[task_stream_with_too_many_ch12_1685475203241]]
-.A task stream with too many small data chunks
+.A task stream with too many small data chunks [.figlink]#(https://oreil.ly/oI2ab[digital, color version])#
 image::images/spwd_1205.png[]
 
 ===== Memory
@@ -308,7 +308,7 @@ image::images/spwd_1205.png[]
 You can monitor the memory usage, ((("performance", "dashboard", "memory usage")))((("dashboard", "memory usage")))((("memory pressure, dashboard")))sometimes referred to as _memory pressure_,footnote:[You can think of the memory as a balloon that we fill up, and as we get higher pressure it's more likely to have issues. It's a bit of a stretch as a metaphor, we admit.] of each worker on the Bytes Stored portion (see <<memory_usage_by_worker_ch12_1685475242277>>). These are by default color-coded to signify memory pressure within limits, approaching limit, and spilled to disk. Even if memory usage is within the limits, as it increases beyond 60% to 70%, you are likely to encounter performance slowdowns. Since memory usage is rising, internals of Python and Dask are going to run costlier garbage collection and memory optimization tasks in the background to keep it from rising.
 
 [[memory_usage_by_worker_ch12_1685475242277]]
-.Memory usage by worker in the monitoring UI
+.Memory usage by worker in the monitoring UI [.figlink]#(https://oreil.ly/9GfNp[digital, color version])#
 image::images/spwd_1206.png[]
 
 ===== Task progress
@@ -316,7 +316,7 @@ image::images/spwd_1206.png[]
 You can see the aggregated ((("performance", "dashboard", "task progress")))((("dashboard", "task progress")))((("tasks", "progress, dashboard metrics")))view of task completion in the progress bar in <<progress_monitoring_by_tasks_ch12_1685475294066>>. The order of execution is from top to bottom, although that does not always mean it’s completely sequential. The colors of the bars are particularly information-rich for tuning. The solid gray on the far right for `sum()` and `random_sample()` in <<progress_monitoring_by_tasks_ch12_1685475294066>> means tasks that are ready to run, with dependent data ready but not yet assigned to a worker. The bold non-gray colors mean tasks are finished, with result data that is waiting for the next sequence of tasks to take it. The fainter non-gray color blocks signify tasks that are done, with result data handed off and purged from memory. Your goal is to keep the solid-color blocks within a manageable size, to make sure you utilize most of your allocated memory.
 
 [[progress_monitoring_by_tasks_ch12_1685475294066]]
-.Progress monitoring by task, summed over all workers
+.Progress monitoring by task, summed over all workers [.figlink]#(https://oreil.ly/v8XoP[digital, color version])#
 image::images/spwd_1207.png[]
 
 ===== Task graph
@@ -324,19 +324,19 @@ image::images/spwd_1207.png[]
 Similar information is available on ((("performance", "dashboard", "Task Graph")))((("dashboard", "Task Graph")))((("Task Graph")))((("graphs", "Task Graph")))Task Graph (see <<task_graph_ch12_1685475338667>>), from the view of individual tasks. You may be familiar with these types of MapReduce-like directed acyclic graphs. Order of computation is shown from left to right, with your tasks originating from many parallel workloads, distributed among your workers, and ending up with an outcome that is distributed among 10 workers, in this case. This graph is also an accurate low-level depiction of task dependencies. The color coding also highlights where in the computational life cycle each work and data is currently sitting in. By looking at this, you can get a sense of which tasks are bottlenecks and thus are potentially good places to start optimizing your code.
 
 [[task_graph_ch12_1685475338667]]
-.A task graph showing the color-coded status of each task and its preceding and succeeding tasks
+.A task graph showing the color-coded status of each task and its preceding and succeeding tasks [.figlink]#(https://oreil.ly/RSBiv[digital, color version])#
 image::images/spwd_1208.png[]
 
 The Workers tab allows you ((("Workers tab, dashboard")))to see real-time CPU, memory, and disk IO, among other things (see <<worker_monitoring_tab_ch12_1685475400589>>). Monitoring this tab can be useful if you suspect that your worker is running out of memory or disk space. Some of the remedies for that can include allocating more memory to the workers or choosing a different chunking size or method for the data.
 
 [[worker_monitoring_tab_ch12_1685475400589]]
-.Worker monitoring for a Dask cluster with 10 workers
+.Worker monitoring for a Dask cluster with 10 workers [.figlink]#(https://oreil.ly/QlDQE[digital, color version])#
 image::images/spwd_1209.png[]
 
 <<worker_event_monitoring_tab_ch12_1685475374935>> shows worker event monitoring. Dask’s distributed scheduler ((("distributed scheduler")))((("event loops")))((("loops, event loops")))runs on a loop called event loop, which manages all tasks that are to be scheduled and the workers, managing the execution, communication, and status of the computation. The `event_loop_interval` metric is a measure of average time between the iterations of this loop for each worker. A shorter time means it took less time for the scheduler to do its management tasks for this worker. If this goes higher, this could mean a number of things, including suboptimal network configuration, resource contention, or high communication overhead. If this remains high, you might want to look into whether you have enough resources for the compute, and either allocate larger resources per worker or rechunk the data into smaller portions.
 
 [[worker_event_monitoring_tab_ch12_1685475374935]]
-.Worker event monitoring for a Dask cluster
+.Worker event monitoring for a Dask cluster [.figlink]#(https://oreil.ly/vU6lG[digital, color version])#
 image::images/spwd_1210.png[]
 
 The System tab allows you ((("System tab, dashboard")))to track the CPU, memory, network bandwidth, and file descriptors. CPU and memory are easy to understand. An HPC user would be keen to track network bandwidth if their job requires heavy amounts of data to be moved around. File descriptors here track the number of input and output resources the system has open at the same time. This includes actual files open for read/write, but also network sockets that communicate between machines. There is a limit to how many of these descriptors a system can have open at the same time, so a very complicated job or a leaky workload that opens a lot of connections, gets stuck, and does not close can create trouble. Similar to leaky memory, this can lead to performance issues as time goes on.
@@ -344,7 +344,7 @@ The System tab allows you ((("System tab, dashboard")))to track the CPU, memory,
 The Profile tab allows you ((("Profile tab, dashboard")))to see the amount of time spent on executing code, down to the exact function call, on an aggregate level. This can be helpful in identifying tasks that create a bottleneck. <<task_duration_histogram_ch12_1685475458634>> shows a task duration histogram, which shows a fine-grained view of each task and all the subroutines needed to call for that task, and their runtime. This can help quickly identify a task that is consistently longer than others.
 
 [[task_duration_histogram_ch12_1685475458634]]
-.Task duration histogram for a Dask job
+.Task duration histogram for a Dask job [.figlink]#(https://oreil.ly/dIq2o[digital, color version])#
 image::images/spwd_1211.png[]
 
 [TIP]
