@@ -52,8 +52,13 @@ If you are considering moving ((("migration", "clusters and", id="mgcl")))((("cl
 [[ex_yarn_deployment_ch09_1685536092648]]
 .Deploying Dask on YARN with Dask-Yarn and skein
 ====
-If your organization has multiple clusters that are supported, choosing one where you can self-serve dependency management, like Kubernetes, is beneficial.
+[source, python]
+----
+include::./examples/dask/Dask-Ch10_porting.py[tags=ex_yarn_deployment]
+----
 ====
+
+If your organization has multiple clusters that are supported, choosing one where you can self-serve dependency management, like Kubernetes, is beneficial.
 
 For high-performance computing deployments using job queuing systems such as PBS, Slurm, MOAB, SGE, LSF, and HTCondor, you should ((("Dask-jobqueue")))((("job queues, migration and")))use Dask-jobqueue, as shown in <<ex_slurm_deployment_ch09_1685536141262>>.
 
