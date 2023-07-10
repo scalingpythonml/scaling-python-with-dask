@@ -151,6 +151,7 @@ Here we cover a few common metrics that folks commonly attempt to use, and there
 
 Frequent releases can be a ((("open source projects, evaluating", "release history")))sign of a healthy library. If a project has not been released for a long time, you are more likely to run into conflicts with other libraries. For libraries built on top of tools like Dask, one detail to check is how many months (or days) it takes for a new version of the library to be released on top of the latest version of Dask. Some libraries do not do traditional releases, but rather suggest installing directly from the source repo. This is often a sign of a project earlier in the development phase, which can be more challenging to take on as a dependency.footnote:[In these cases it's good to pick a tag or a commit to install from so you don't end up with mismatched versions.]
 
+[role="pagebreak-before"]
 Release history is one of the easiest metrics to game, as all it requires is the developers making a release. Some development styles will automatically create releases after every successful check-in, which in our opinion is an anti-pattern,footnote:[Snapshot artifacts are OK.] as you often want some additional level of human testing or checking before a full release.
 
 ==== Commit Frequency (and Volume)
@@ -175,6 +176,7 @@ Looking for examples of people using a library has its limitations, especially w
 
 Another proxy for usage you can look at is the frequency of issues or mailing list posts. If a project is hosted on something like GitHub, stars can also be an interesting way of measuring usage&mdash;but since people can now buy GitHub stars just like Instagram likes (as shown in <<fig_ghstarsforsale>>), you shouldn't weigh this metric too heavily.footnote:[There are some tools that can help you dig deeper into the star data, including https://oreil.ly/eKBdi[+++ghrr+++], but we still think it's better to not spend too much time on or give too much weight to stars.]
 
+[role="pagebreak-after"]
 [[fig_ghstarsforsale]]
 .Someone selling GitHub stars
 image::images/spwd_0802.png[]

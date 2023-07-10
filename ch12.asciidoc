@@ -46,6 +46,7 @@ Dependency management allows you to control, at runtime or in advance, what soft
 |Coiled |yes |New cloud deployments |Yes, including magic "auto-sync" |No |Yes
 |===
 
+[role="pagebreak-before less_space"]
 === Building Dask on a Kubernetes Deployment
 
 There are two main ways to deploy Dask on Kubernetes:footnote:[PEP20's view on the obvious way to do things remains a suggestion more observed in the breach.] KubeCluster and HelmCluster. Helm ((("deployment", "on Kubernetes", id="dpykbt")))((("Kubernetes", "Dask deployment", id="kbtdkpy")))((("deployment", "on Kubernetes", "HelmCluster")))((("Kubernetes", "HelmCluster")))((("deployment", "on Kubernetes", "KubeCluster")))((("Kubernetes", "KubeCluster")))((("HelmCluster")))((("KubeCluster")))is a popular tool for managing deployments on Kubernetes, with the deployments being specified in Helm charts. Since Helm is the newer recommended way of managing deployments on Kubernetes, we will cover that one here.
@@ -59,6 +60,7 @@ The Dask on Kubernetes Helm chart deploys what is called an _operator_. Currentl
 
 Since GPU resources are costly, it is typical to want to allocate only as many of them as needed. Some cluster manager interfaces, including Dask's Kubernetes plug-in, allow you to configure multiple types of workers so that it will allocate GPU workers only when needed. On our Kubernetes cluster, we deploy the Dask operator as shown in <<deploy_dask_operator_helm>>.
 
+[role="pagebreak-after"]
 [[deploy_dask_operator_helm]]
 .Deploying the Dask operator with Helm
 ====
@@ -79,8 +81,10 @@ include::./examples/dask/kubernetes/connect.py[]
 ----
 ====
 
+[role="pagebreak-after"]
 In 2020 Dask added a https://oreil.ly/otOQX[+++DaskHub Helm chart+++], which combines the deployment of JupyterHub with the Dask ((("deployment", "on Kubernetes", startref="dpykbt")))((("Kubernetes", "Dask deployment", startref="kbtdkpy")))Gateway.
 
+[role="less_space"]
 === Dask on Ray
 
 Deploying Dask on Ray is a little ((("deployment", "on Ray", id="dpyry")))((("Ray", "Dask deployment", id="rydkpy")))((("CMs (cluster managers)", "Ray", id="cmsry")))bit different than all of the other options, in that it changes not only how Dask workers and tasks are scheduled but also https://oreil.ly/PIwuX[+++how Dask objects are stored+++]. This can reduce the number of copies of the same object that need to be stored, allowing you to use your cluster memory more efficiently.

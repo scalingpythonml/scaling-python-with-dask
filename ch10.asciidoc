@@ -26,6 +26,7 @@ The non-transparent accelerators include GPUs, Optane, QAT, and many more. Using
 
 Not every problem is a ((("GPUs (graphics processing units)", "benefits")))((("TPUs (Tensor Processing Units)", "benefits")))good fit for GPU acceleration. GPUs are especially good at performing the same calculation on a large number of data points at the same time. If a problem is well suited to vectorized computation, then there is a good chance that GPUs may be well suited to it.
 
+[role="pagebreak-before"]
 Some common problems that benefit from GPU acceleration include:
 
 * Machine learning
@@ -187,6 +188,7 @@ BlazingSQL uses GPU acceleration to ((("BlazingSQL")))((("SQL (Structured Query 
 While BlazingSQL is a wonderful tool, much of its documentation is broken. For example, at the time of this writing, none of the examples linked in the main README resolve correctly, and the documentation site is entirely offline.
 ====
 
+[role="pagebreak-before less_space"]
 ==== cuStreamz
 
 Another GPU-accelerated library for ((("libraries", "cuStreamz")))((("cuStreamz")))streaming on GPUs is cuStreamz, which is basically a combination of Dask streaming and cuDF; we cover it more in <<appD>>.
@@ -201,11 +203,13 @@ CPU Fallback refers to attempting to use ((("CPU Fallback")))an accelerator, lik
 
 Object-oriented programming and duck-typing are somewhat well suited to this design pattern, since, provided that two classes implement the same parts of the interface you are using, you can swap them around. However, much like swapping in Dask DataFrames for pandas DataFrames, it is imperfect, especially when it comes to performance.
 
+[role="pagebreak-after"]
 [WARNING]
 ====
 In a better world, we could submit a task requesting GPU resources, and if that does not get scheduled, we could switch back to CPU-only resources. Unfortunately, Dask's resources scheduling is closer to "best effort,"footnote:[This is not as https://oreil.ly/p1Ldf[documented], and so may change in the future.] so we may be scheduled on nodes without the resources we request.
 ====
 
+[role="less_space"]
 === Conclusion
 
 Specialized accelerators, like GPUs, can make large differences in your workflows. Picking the right accelerator for your workflow is important, and some workflows are not well suited to acceleration. Dask does not automate the usage of any accelerators, but there are various libraries that you can use for GPU computation. Many of these libraries were not created with the idea of shared computation in mind, so it's important to be on the lookout for accidental resource leaks, especially since GPU resources tend to be more expensive.
