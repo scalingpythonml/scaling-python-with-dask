@@ -332,7 +332,7 @@ You can see the aggregated ((("performance", "dashboard", "task progress")))((("
 ++++
 <figure id="progress_monitoring_by_tasks_ch12_1685475294066">
 <img src="images/spwd_1207.png" alt="spwd 1207">
-<figcaption><span class="label">Figure 12-7. </span>Progress monitoring by task, summed over all workers 
+<figcaption class="loosen_tracking"><span class="label">Figure 12-7. </span>Progress monitoring by task, summed over all workers 
 <span class="figlink">(<a href="https://oreil.ly/v8XoP">digital, color version</a>)</span></figcaption>
 </figure>
 ++++
