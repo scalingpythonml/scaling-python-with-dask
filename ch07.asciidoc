@@ -74,6 +74,7 @@ include::./examples/dask/Dask-Explore-Actors.py[tags=use_account]
 ----
 ====
 
+[role="pagebreak-before"]
 The ActorFuture _is not serializable_, so if you need ((("ActorFuture", "serializability")))to transfer the result of calling an actor, you need to block and get its value, as shown in <<actorfutures_not_serializable_ch07_1686239609453>>.
 
 [[actorfutures_not_serializable_ch07_1686239609453]]
