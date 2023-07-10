@@ -32,6 +32,7 @@ It can be helpful to think of each actor as a person holding a note about their 
 
 Conceptually, this is very similar to classes in object-oriented programming. However, unlike with generic classes, actors process one request at a time to ensure an actor’s state consistency. To improve the throughput, people often create a pool of actors (assuming they can shard or replicate the actor's state). We'll cover an example in the next section.
 
+[role="pagebreak-after"]
 The actor model is a good fit for many distributed systems scenarios. Here are some typical use cases in which the actor model can be advantageous:
 
 * You need to deal with a large distributed state that is hard to synchronize between invocations (e.g., ML model weights, counters, etc).
@@ -52,6 +53,7 @@ Creating an actor in Dask is ((("actors", "creating")))relatively simple. To sta
 Note this is effectively an object-oriented bank account implementation, except we don't have any locks since we only ever have a single thread changing the values.
 ====
 
+[role="pagebreak-after"]
 Let's take a look at how you can implement a ((("actors", "implementing")))common example actor for a bank account. In <<making_bank_acct_actor_ch07_1686239522527>>, we define three methods&mdash;pass:[<code>balance</code>], `deposit`, and [.keep-together]#`withdrawal`#&mdash;that can be used to interact with the actor. Once the actor is defined, we ask Dask to schedule the actor so that we can call it.
 
 [[making_bank_acct_actor_ch07_1686239522527]]

@@ -35,6 +35,7 @@ Another way to get Dask running locally is to use link:$$https://oreil.ly/zCeHQ$
 
 Now that you have Dask installed ((("Hello Worlds")))locally, it's time to try the versions of "Hello World" available through its various APIs. There are many different options for starting Dask. For now, you should use LocalCluster, as shown in <<make_dask_client>>.
 
+[role="pagebreak-after"]
 [[make_dask_client]]
 .Using LocalCluster to start Dask
 ====
@@ -44,6 +45,7 @@ include::./examples/dask/Dask-Ch2-Hello-Worlds.py[tags=make_dask_client]
 ----
 ====
 
+[role="less_space"]
 ==== Task Hello World
 
 One of the core building blocks ((("Hello Worlds", "task")))((("task Hello World")))((("delayed function")))((("functions", "delayed")))of Dask is `dask.delayed`, which allows you to run functions in parallel.
@@ -59,6 +61,7 @@ You can use `dask.compute` both to start computing the delayed objects and futur
 
 An easy way to see the ((("Hello Worlds", "task", "sleepy task")))((("task Hello World", "sleepy task")))((("sleepy task, Hello World")))((("slow_task function")))((("functions", "slow_task")))performance difference is by writing an intentionally slow function, like `slow_task`, which calls `sleep`. Then you can compare the performance of Dask to "regular" Python by mapping the function over a few elements with and without `dask.delayed`, as shown in <<sleepy_task_ch02_1688747609671>>.
 
+[role="pagebreak-after"]
 [[sleepy_task_ch02_1688747609671]]
 .Sleepy task
 ====

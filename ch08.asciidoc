@@ -99,8 +99,10 @@ Even with the nicest people, it can matter which institutions the contributors a
 If you are concerned a project does not meet your current level of maturity and you have a budget, this can be an excellent opportunity to support critical open source projects. Reach out to maintainers and see what they need; sometimes, it's as simple as writing them a check for new hardware or hiring them to provide training for your company.
 ====
 
+[role="pagebreak-after"]
 Beyond whether people are nice in a community, it can be a positive sign if folks are using the project similarly to how you are considering using it. If, for example, you are the first person to apply Dask DataFrames to a new domain, even though Dask DataFrames themselves are very mature, you are more likely to find missing components than if other folks in the ((("libraries", "evaluating", "community", startref="lbvlcm")))((("community, library evaluation and", startref="cmmbyv")))((("projects", "library evaluation", "community", startref="pjlyvcy")))same area of application are already using Dask.
 
+[role="less_space"]
 ==== Dask-Specific Best Practices
 
 When it comes to Dask libraries, there ((("libraries", "evaluating", "best practices")))((("projects", "library evaluation", "best practices")))((("best practices", "library evaluation and")))are a number of Dask-specific best practices to look for. In general, libraries should not have too much work on the client node, and as much work as possible should be delegated to the workers. Sometimes the documentation will gloss over which parts happen where, and the fastest way to tell in our experience is to simply run the example code and look to see which tasks are getting scheduled on the workers. Relatedly, libraries should bring back only the smallest bits of data when possible. These best practices are slightly different from those for when you are writing your own Dask code, since you can know what your data size is beforehand and determine when local compute is the best path forward.

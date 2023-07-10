@@ -420,6 +420,7 @@ Not all multi-DataFrame operations are ((("Dask DataFrames", "combining", startr
 
 Dask's DataFrame implements most, but not all, of the pandas DataFrame API. Some of the pandas API is not implemented in Dask because of the development time involved. Other parts are not used to avoid exposing an API that would be unexpectedly slow.
 
+[role="pagebreak-after"]
 Sometimes the API is just missing ((("pandas DataFrames", "split function")))((("split function")))((("functions", "split ")))small parts, as both pandas and Dask are under active development.
 An example is the `split` function from <<wc_dataframe>>. In local pandas, instead of doing `split().explode()`, you could have called `split(expand=true)`. Some of these missing parts can be excellent places for you to get involved and https://oreil.ly/Txd_R[+++contribute to the Dask project+++] if you are interested.
 
