@@ -3,6 +3,27 @@
 /*--------Put Your Custom CSS Rules Below--------*/
 /*--- This oneoff overrides the code in https://github.com/oreillymedia/<name_of_theme>/blob/master/pdf/pdf.css---*/
 
+/*----less space for pagebreaks----*/
+.less_space {margin-top: 0 !important;}
+ 
+ul.less_space > li:first-child { margin-top: 0 !important; }
+dl.less_space > dt:first-child { margin-top: 0 !important; }
+div.less_space > h5:first-child { margin-top: 0 !important; }
+ 
+section.less_space > h3:first-child,
+section.less_space > h2:first-child,
+section.less_space > h1:first-child
+{ margin-top: 0 !important; }
+
+/*--Adjusting padding in TOC to avoid bad break--*/
+@page toc { /* first page */
+   padding-bottom: 0.3in;
+}
+
+@page toc: { 
+   padding-bottom: 0.4in;
+}
+
 /*--Table lines--*/
 table td { border-bottom: 0.25pt solid cmyk(0%,0%,0%,100%); }
 

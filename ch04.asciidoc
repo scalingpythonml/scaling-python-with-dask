@@ -535,4 +535,5 @@ Be aware that calling methods like `.reset_index()` can reset indices in each of
 
 In this chapter, you've learned how to understand what kinds of operations are slower than you might expect with Dask. You've also gained a number of techniques to deal with the performance differences between pandas DataFrames and Dask DataFrames. By understanding the situations in which Dask DataFrames performance may not meet your needs, you've also gained an understanding of what problems are not well suited to Dask. So that you can put this all together, you've also learned about Dask DataFrame IO options. From here you will go on to learn more about Dask's other collections and then how to move beyond collections.
 
+[role="pagebreak-before"]
 In this chapter, you have learned what may cause your Dask DataFrames to behave differently or more slowly than you might expect. This same understanding of how Dask DataFrames are implemented can help you decide whether distributed DataFrames are well suited to your problem. You've also seen how to get datasets larger than a single machine can handle into and out of Dask's DataFrames.

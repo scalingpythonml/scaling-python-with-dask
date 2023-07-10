@@ -37,6 +37,7 @@ Non-blocking eager evaluation still ((("eager evaluation", "non-blocking")))((("
 
 Not all Python code is eagerly evaluated. In Python 3 some built-in functions use lazy evaluation, with operators like `map` returning iterators and evaluating elements only on request.
 
+[role="pagebreak-before less_space"]
 === Use Cases for Futures
 
 Many common use cases can be made ((("futures", "use cases")))faster with careful application of futures:
@@ -52,8 +53,10 @@ Launching futures in Dask is non-blocking, whereas computing tasks in Dask is bl
 
 === Launching Futures
 
+[role="pagebreak-after"]
 The syntax for launching Dask ((("futures", "launching", id="ftrlch")))futures is a little different than that for `dask.delayed`. Dask futures are launched from the Dask distributed client with either `submit` for single futures or `map` for multiple futures, as shown in <<launching_futures_ch06_1686239180753>>.
 
+[role="less_space"]
 [[launching_futures_ch06_1686239180753]]
 .Launching futures
 ====

@@ -166,6 +166,7 @@ Dask bags are not well suited to ((("bags", "limitations")))most reduction or sh
 All three Dask data types (bag, array, and DataFrame) have methods for being converted to other data types. However, some conversions require special attention. For example, when converting a Dask DataFrame to a Dask array, the resulting array will have `NaN` if you look at the shape it generates. This is because Dask DataFrame does not keep track of the number of rows in each DataFrame chunk.
 ====
 
+[role="pagebreak-before less_space"]
 === Conclusion
 
 While Dask DataFrames get the most use, Dask arrays and bags have their place. You can use Dask arrays to speed up and parallelize large multi-dimensional array processes. Dask bags allow you to work with data that doesn't fit nicely into a DataFrame, like PDFs or multi-dimensional nested data. These collections get much less focus and active development than Dask DataFrames but may still have their place in your workflows. In the next chapter, you will see how you can add state to your Dask programs, including with operations on Dask's collections.

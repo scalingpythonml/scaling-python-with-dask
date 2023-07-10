@@ -1,7 +1,7 @@
 [[ch2_getting_started_with_dask]]
 == Getting Started with Dask
 
-We are so happy that you've decided to explore whether Dask is the system for you by trying it out. In this chapter, we will focus on getting started with Dask in its local mode. Using this, we'll explore a few more straightforward parallel computing tasks (including everyone's favorite, word count footnote:[Word count may be a somewhat tired example, but it is an important example, since it covers both work that can be done with minimal co-ordination (splitting up the text into words) and work requiring co-ordination between computers (summing the words).]).
+We are so happy that you've decided to explore whether Dask is the system for you by trying it out. In this chapter, we will focus on getting started with Dask in its local mode. Using this, we'll explore a few more straightforward parallel computing tasks (including everyone's favorite, word count).footnote:[Word count may be a somewhat tired example, but it is an important example, since it covers both work that can be done with minimal co-ordination (splitting up the text into words) and work requiring co-ordination between computers (summing the words).]
 
 === Installing Dask Locally
 
@@ -118,6 +118,7 @@ include::./examples/dask/Dask-Ch2-Hello-Worlds.py[tags=dask_array]
 
 As with all distributed collections, what is expensive on a Dask array is not the same as what is expensive on a local array. In the next chapter you'll learn a bit more about how Dask arrays are implemented and hopefully gain a better intuition around their performance.
 
+[role="pagebreak-before"]
 Creating a distributed collection from a local collection uses the two fundamental building blocks of ((("distributed collections", "scatter-gather pattern")))((("scatter-gather pattern")))((("Hello Worlds", "distributed collections", "scatter-gather pattern")))distributed computing, called the _scatter-gather pattern_. While the originating dataset must be from a local computer, fitting into a single machine, this already expands the number of processors you have at your disposal, as well as the intermediate memory you can utilize, enabling you to better exploit modern cloud infrastructure and scale. 
 A practical use case would be a distributed web crawler, where the list of seed URLs to crawl might be a small dataset, but the memory you need to hold while crawling might be an order of magnitude larger, requiring distributed computing. 
 
@@ -145,6 +146,7 @@ include::./examples/dask/Dask-Ch2-Hello-Worlds.py[tags=make_a_bag_of_words]
 ----
 ====
 
+[role="pagebreak-after"]
 [[wc_freq]]
 .Using Dask's built-in `frequency` method
 ====
@@ -154,6 +156,7 @@ include::./examples/dask/Dask-Ch2-Hello-Worlds.py[tags=wc_freq]
 ----
 ====
 
+[role="less_space"]
 [[wc_func]]
 .Using functional transformations to write a custom `frequency` method
 ====
@@ -177,8 +180,10 @@ Pandas is one of the most ((("Hello Worlds", "Dask DataFrame")))((("Dask DataFra
 Your intuition around what's slow and fast with pandas does not carry over. We will explore this more in <<dask_df>>.
 ====
 
+[role="pagebreak-after"]
 To illustrate how you can use Dask DataFrame, we'll rework pass:[Examples <a data-type="xref" data-xrefstyle="select:labelnumber" href="#make_bag_of_crawler">#make_bag_of_crawler</a> through <a data-type="xref" data-xrefstyle="select:labelnumber" href="#wc_freq">#wc_freq</a>] to use it. As with Dask's other collections, you can create DataFrames from local collections, futures, or distributed files. Since you've already made a crawler function, you can turn its output into a Dask bag using the `from_delayed` function from <<make_bag_of_crawler>>. Instead of using `map` and `foldby`, you can use pandas APIs such as `explode` and `value_counts`, as shown in <<wc_dataframe>>.
 
+[role="less_space"]
 [[wc_dataframe]]
 .DataFrame word count
 ====

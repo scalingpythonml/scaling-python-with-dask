@@ -66,6 +66,7 @@ For more than 40 years, pass:[<a href="https://oreilly.com" class="orm:hideurl">
 
 Our unique network of experts and innovators share their knowledge and expertise through books, articles, and our online learning platform. O’Reilly’s online learning platform gives you on-demand access to live training courses, in-depth learning paths, interactive coding environments, and a vast collection of text and video from O'Reilly and 200+ other publishers. For more information, visit pass:[<a href="https://oreilly.com" class="orm:hideurl"><em>https://oreilly.com</em></a>].
 
+[role="pagebreak-before less_space"]
 === How to Contact Us
 
 Please address comments and questions concerning this book to the publisher:
@@ -97,6 +98,7 @@ Watch us on YouTube: link:$$https://youtube.com/oreillymedia$$[]
 
 This is a book written by two trans immigrants living in America at a time when the walls can feel like they’re closing in. We choose to dedicate this book to those fighting for a more just world in whichever way, however small&mdash;thank you. To all those we lost or didn’t get to meet, we miss you. To those we have yet to meet, we are excited to meet you.
 
+[role="pagebreak-after"]
 This book would not exist if not for the communities it is built on. From the Dask community to the PyData community, thank you. Thank you to all the early readers and reviewers for your contributions and guidance. These reviewers include Ruben Berenguel, Tom Drabas, Adam Breindel, Kevin Kho, John Iannone, Joseph Gnanaprakasam, Jess Males, and many more. A special thanks to Ann Spencer for reviewing the early proposals of what eventually became this and _Scaling Python with Ray_. Any remaining mistakes are entirely our fault, sometimes going against reviewers' advice.footnote:[We are sometimes stubborn to a fault.]
 
 Holden would also like to thank her wife and partners for putting up with her long in-the-bathtub writing sessions. A special thank you to Timbit for guarding the house and generally giving Holden a reason to get out of bed (albeit often a bit too early for her taste).
