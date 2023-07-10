@@ -224,7 +224,7 @@ logger.info(
     time.time() -
     client_start_time)
 
-# Important and common misconfig is to not have node's versions match
+# Important and common misconfig is mismatched versions on nodes
 versions = dask_client.get_versions(check=True)
 
 #end::ex_yarn_deployment_tuning[]

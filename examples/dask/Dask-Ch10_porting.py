@@ -280,7 +280,7 @@ def compute_softmax(partition, axis=0):
     e = np.exp(x - np.max(x))
     ret = e / np.sum(e, axis=axis)
     stop = timeit.default_timer()
-    # partition.log_event("softmax", {"start": start, "x": x, "stop": stop})
+    partition.log_event("softmax", {"start": start, "x": x, "stop": stop})
     dask.distributed.get_worker().log_event(
         "softmax", {"start": start, "input": x, "stop": stop})
     return ret

@@ -166,7 +166,7 @@ XGBoost is a popular Python gradient boosting library, used for parallel tree bo
 
 Dask-ML has built-in support for XGBoost to work with Dask arrays and DataFrames. By using XGBClassifiers within Dask-ML, you will be setting up XGBoost in distributed mode, which works with your Dask cluster. When you do so, XGBoost’s master process lives in Dask scheduler, and XGBoost’s worker processes will be on Dask’s worker processes. The data distribution is handled using Dask DataFrame, split into pandas DataFrame, and is talking between Dask worker and XGBoost worker on the same machine.
 
-XGBoost uses a DMatrix (data matrix) as the ((("DMatrix, XGBoost")))standard data format it works with. XGBoost has a built-in Dask-compatible DMatrix, which takes in Dask array and Dask DataFrame. Once the Dask environment is set up, the use of gradient booster is as you would expect. Specify the learning rate, threads, and objective functions, as usual. <<ex_xgb_basic_usage>> works with a Dask CUDA cluster and runs a standard gradient booster training.
+XGBoost uses a `DMatrix` (data matrix) as the ((("DMatrix, XGBoost")))standard data format it works with. XGBoost has a built-in Dask-compatible `DMatrix`, which takes in Dask array and Dask DataFrame. Once the Dask environment is set up, the use of gradient booster is as you would expect. Specify the learning rate, threads, and objective functions, as usual. <<ex_xgb_basic_usage>> works with a Dask CUDA cluster and runs a standard gradient booster training.
 
 [[ex_xgb_basic_usage]]
 .Gradient-boosted trees with Dask-ML
@@ -177,7 +177,7 @@ include::./examples/dask/Dask-Ch13_ML.py[tags=ex_xgb_basic_usage]
 ----
 ====
 
-In <<ex_xgb_train_plot_importance>>, we run a simple training run and plot feature importance. Note when we define DMatrix, we explicitly specify the labels, and the label names are taken from Dask DataFrame into DMatrix.
+In <<ex_xgb_train_plot_importance>>, we run a simple training run and plot feature importance. Note when we define `DMatrix`, we explicitly specify the labels, and the label names are taken from Dask DataFrame into `DMatrix`.
 
 [[ex_xgb_train_plot_importance]]
 .Dask-ML using the XGBoost library

@@ -109,7 +109,7 @@ If you're using the Dask client to connect to a cluster, the UI will be running 
 
 [TIP]
 ====
-For remote notebook users, the hostname of ((("Diagnostics UI", "notebook users")))the scheduler node may not be reachable directly from your computer. One option is to use the Jupyter proxy; for example, one might go to `http://jupyter.example.com/user/my_username/proxy/dask-head-4c81d51e-3.jhub:8787/status` to access the endpoint `dask-head-4c81d51e-3.jhub:8787/status`.
+For remote notebook users, the hostname of ((("Diagnostics UI", "notebook users")))the scheduler node may not be reachable directly from your computer. One option is to use the Jupyter proxy; for example, one might go to `http://jupyter.example.com/user/username/proxy/dask-head-4c81d51e-3.jhub:8787/status` to access the endpoint `dask-head-4c81d51e-3.jhub:8787/status`.
 ====
 
 <<fig_dask_ui>> shows the Dask UI during the running of the examples in this chapter.
