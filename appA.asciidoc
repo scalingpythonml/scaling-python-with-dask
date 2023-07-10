@@ -127,6 +127,7 @@ Instead, tools like https://lakefs.io[+++LakeFS+++] add Git-like versioning sema
 
 === Isolation and Noisy Neighbors
 
+[role="widows5"]
 So far, we've talked about isolation in the ((("isolation")))context of being able to have your Python packages, but there are more kinds of isolation. Some other levels of isolation include CPU, GPU, memory, and network.footnote:[For example, two ML tasks on the same node may both try to use all of the CPU resources.] Many cluster managers do not provide full isolation&mdash;this means that if your tasks get scheduled on the wrong nodes, they might have bad performance. A common solution to this is to request the amounts of resources in-line with the full node to avoid having other jobs scheduled alongside your own.
 
 Strict isolation can also have downsides, especially if they don't support bursting. Strict isolation without bursting can result in resource waste, but for mission-critical workflows this is often the trade-off.
