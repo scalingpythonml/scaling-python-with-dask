@@ -325,17 +325,10 @@ image::images/spwd_1206.png[]
 
 You can see the aggregated ((("performance", "dashboard", "task progress")))((("dashboard", "task progress")))((("tasks", "progress, dashboard metrics")))view of task completion in the progress bar in <<progress_monitoring_by_tasks_ch12_1685475294066>>. The order of execution is from top to bottom, although that does not always mean it’s completely sequential. The colors of the bars are particularly information-rich for tuning. The solid gray on the far right for `sum()` and `random_sample()` in <<progress_monitoring_by_tasks_ch12_1685475294066>> means tasks that are ready to run, with dependent data ready but not yet assigned to a worker. The bold non-gray colors mean tasks are finished, with result data that is waiting for the next sequence of tasks to take it. The fainter non-gray color blocks signify tasks that are done, with result data handed off and purged from memory. Your goal is to keep the solid-color blocks within a manageable size, to make sure you utilize most of your allocated memory.
 
-// [[progress_monitoring_by_tasks_ch12_1685475294066]]
-// .Progress monitoring by task, summed over all workers [.figlink]#(https://oreil.ly/v8XoP[digital, color version])#
-// image::images/spwd_1207.png[]
-
-++++
-<figure id="progress_monitoring_by_tasks_ch12_1685475294066">
-<img src="images/spwd_1207.png" alt="spwd 1207">
-<figcaption class="loosen_tracking"><span class="label">Figure 12-7. </span>Progress monitoring by task, summed over all workers 
-<span class="figlink">(<a href="https://oreil.ly/v8XoP">digital, color version</a>)</span></figcaption>
-</figure>
-++++
+[role="loosen_tracking"]
+[[progress_monitoring_by_tasks_ch12_1685475294066]]
+.Progress monitoring by task, summed over all workers [.figlink]#(https://oreil.ly/v8XoP[digital, color version])#
+image::images/spwd_1207.png[]
 
 ===== Task graph
 

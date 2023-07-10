@@ -21,7 +21,7 @@ section.less_space > h1:first-child
 .widows5 {widows: 5 !important;}
 
 /* adjust tracking for paragraphs */
-.loosen_tracking { letter-spacing: 0.1pt; }
+figure.loosen_tracking figcaption { letter-spacing: 0.1pt; }
 
 /*--Adjusting padding in TOC to avoid bad break--*/
 @page toc { /* first page */
