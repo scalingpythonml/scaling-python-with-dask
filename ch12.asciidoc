@@ -203,6 +203,7 @@ Cluster parameters, such as memory allocation ((("clusters", "parameters")))and 
 
 For HPC users, most processes you ((("walltime requests")))launch will have a limited amount of walltime that the job is allowed to stay on. You can stagger the creation of workers in such a way that you will have at least one worker running at all times, creating an infinite worker loop. Alternatively, you can also stagger the creation and end of the workers, so that you avoid all of the workers ending simultaneously. <<ex_hpc_infinite_workers>> shows you how.
 
+[role="widows5"]
 [[ex_hpc_infinite_workers]]
 .Dask worker management through adaptive scaling
 ====
@@ -267,6 +268,7 @@ image::images/spwd_1202.png[]
 
 The JupyterLab extension links to the Dask web UI, and you can also get a link through the cluster's `repr`. If the cluster link does not work/is not accessible, you can try installing the `jupyter-server-proxy` extension so you can use the notebook host as a https://oreil.ly/0eIhP[+++jump host+++].
 
+[role="pagebreak-before less_space"]
 ==== Watching Progress
 
 Dask jobs tend to take a long time to run; ((("deployment", "Jupyter", "progress tracking")))((("Jupyter", "deployment on", "progress tracking")))otherwise we would not be putting in the effort to parallelize them. You can use Dask's `progress` function from pass:[<code>dask&#x200b;.dis&#x2060;tributed</code>] to track your futures' progress inside your notebook itself (see [.keep-together]#<<dask_progress_monitoring_ch12_1685475108548>>).#
@@ -279,6 +281,7 @@ image::images/spwd_1203.png[]
 
 Tuning your Dask program involves understanding the intersection of many components. You will need to understand your code’s behavior and how it interacts with the data given and the machines. You can use Dask metrics to gain insight on much of this, but, especially if you did not create it, it's important to look at the program as well.
 
+[role="pagebreak-before less_space"]
 ==== Metrics in Distributed Computing
 
 Distributed computing requires ((("performance", "metrics", id="prfrmtr")))((("metrics", "distributed computing", id="mtdbcp")))((("distributed systems", "metrics", id="dsbym")))constantly making decisions and weighing the optimization of the cost and benefits of distributing workload against locally running the work. Most of that low-level decison making is delegated to the internals of Dask. The user should still monitor the runtime characteristics and make modifications to the code and configurations if needed.
@@ -287,8 +290,10 @@ Dask automatically tracks relevant compute and runtime metrics. You can use this
 
 Of course, the cost of computation is more than just the compute time. Users should also consider the time spent transferring data over network, the memory footprint within the workers, GPU/CPU utilization rate, and disk I/O costs. These in turn let you understand the higher-level insights of data movement and computation flow, such as how much of the memory in a worker is used up in storing previous computation that hasn’t been passed on to the next computation, or what particular function is taking up the most amount of time. Monitoring these can help tune your cluster and code, but it also can help identify emergent computation patterns or logical bottlenecks that you can change.
 
+[role="pagebreak-after"]
 Dask's dashboard provides a lot of statistics and graphs to answer these questions. The dashboard is a web page tied to your Dask cluster at runtime. You can access it through your local machine or on the remote machine that it is running in, through methods we discussed earlier in this chapter. Here, we will cover a few of the ways you can ((("performance", "metrics", startref="prfrmtr")))((("metrics", "distributed computing", startref="mtdbcp")))((("distributed systems", "metrics", startref="dsbym")))get insights from the performance metrics and tune Dask accordingly to achieve better results. 
 
+[role="less_space"]
 ==== The Dask Dashboard
 
 Dask's dashboard contains many different pages, each of which can help with understanding different parts of your program.
@@ -297,6 +302,7 @@ Dask's dashboard contains many different pages, each of which can help with unde
 
 The Task Stream dashboard gives a high-level view ((("performance", "dashboard", "Task Stream dashboard")))((("dashboard", "Task Stream")))((("Task Stream dashboard")))of each worker and its behavior. Exact methods invoked are color-coded, and you can inspect them by zooming in and out. Each row represents one worker. The custom-colored bars are user-induced tasks, and there are four preset colors to indicate common worker tasks: data transfer between workers, disk read and writes, serialization and deserialization times, and failed tasks. <<task_stream_ch12_1685475169009>> shows a compute workload that is distributed over 10 workers and is well balanced, with no one worker finishing late, evenly distributed compute time, and minimal network IO overhead.
 
+[role="pagebreak-after"]
 [[task_stream_ch12_1685475169009]]
 .A task stream with well-balanced workers [.figlink]#(https://oreil.ly/VbpGF[digital, color version])#
 image::images/spwd_1204.png[]
@@ -319,9 +325,17 @@ image::images/spwd_1206.png[]
 
 You can see the aggregated ((("performance", "dashboard", "task progress")))((("dashboard", "task progress")))((("tasks", "progress, dashboard metrics")))view of task completion in the progress bar in <<progress_monitoring_by_tasks_ch12_1685475294066>>. The order of execution is from top to bottom, although that does not always mean it’s completely sequential. The colors of the bars are particularly information-rich for tuning. The solid gray on the far right for `sum()` and `random_sample()` in <<progress_monitoring_by_tasks_ch12_1685475294066>> means tasks that are ready to run, with dependent data ready but not yet assigned to a worker. The bold non-gray colors mean tasks are finished, with result data that is waiting for the next sequence of tasks to take it. The fainter non-gray color blocks signify tasks that are done, with result data handed off and purged from memory. Your goal is to keep the solid-color blocks within a manageable size, to make sure you utilize most of your allocated memory.
 
-[[progress_monitoring_by_tasks_ch12_1685475294066]]
-.Progress monitoring by task, summed over all workers [.figlink]#(https://oreil.ly/v8XoP[digital, color version])#
-image::images/spwd_1207.png[]
+// [[progress_monitoring_by_tasks_ch12_1685475294066]]
+// .Progress monitoring by task, summed over all workers [.figlink]#(https://oreil.ly/v8XoP[digital, color version])#
+// image::images/spwd_1207.png[]
+
+++++
+<figure id="progress_monitoring_by_tasks_ch12_1685475294066">
+<img src="images/spwd_1207.png" alt="spwd 1207">
+<figcaption><span class="label">Figure 12-7. </span>Progress monitoring by task, summed over all workers 
+<span class="figlink">(<a href="https://oreil.ly/v8XoP">digital, color version</a>)</span></figcaption>
+</figure>
+++++
 
 ===== Task graph
 
@@ -333,11 +347,11 @@ image::images/spwd_1208.png[]
 
 The Workers tab allows you ((("Workers tab, dashboard")))to see real-time CPU, memory, and disk IO, among other things (see <<worker_monitoring_tab_ch12_1685475400589>>). Monitoring this tab can be useful if you suspect that your worker is running out of memory or disk space. Some of the remedies for that can include allocating more memory to the workers or choosing a different chunking size or method for the data.
 
+<<worker_event_monitoring_tab_ch12_1685475374935>> shows worker event monitoring. Dask’s distributed scheduler ((("distributed scheduler")))((("event loops")))((("loops, event loops")))runs on a loop called event loop, which manages all tasks that are to be scheduled and the workers, managing the execution, communication, and status of the computation. The `event_loop_interval` metric is a measure of average time between the iterations of this loop for each worker. A shorter time means it took less time for the scheduler to do its management tasks for this worker. If this goes higher, this could mean a number of things, including suboptimal network configuration, resource contention, or high communication overhead. If this remains high, you might want to look into whether you have enough resources for the compute, and either allocate larger resources per worker or rechunk the data into smaller portions.
+
 [[worker_monitoring_tab_ch12_1685475400589]]
 .Worker monitoring for a Dask cluster with 10 workers [.figlink]#(https://oreil.ly/QlDQE[digital, color version])#
 image::images/spwd_1209.png[]
-
-<<worker_event_monitoring_tab_ch12_1685475374935>> shows worker event monitoring. Dask’s distributed scheduler ((("distributed scheduler")))((("event loops")))((("loops, event loops")))runs on a loop called event loop, which manages all tasks that are to be scheduled and the workers, managing the execution, communication, and status of the computation. The `event_loop_interval` metric is a measure of average time between the iterations of this loop for each worker. A shorter time means it took less time for the scheduler to do its management tasks for this worker. If this goes higher, this could mean a number of things, including suboptimal network configuration, resource contention, or high communication overhead. If this remains high, you might want to look into whether you have enough resources for the compute, and either allocate larger resources per worker or rechunk the data into smaller portions.
 
 [[worker_event_monitoring_tab_ch12_1685475374935]]
 .Worker event monitoring for a Dask cluster [.figlink]#(https://oreil.ly/vU6lG[digital, color version])#

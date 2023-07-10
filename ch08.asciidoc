@@ -194,6 +194,7 @@ Test coverage numbers can be especially informative, but unfortunately, for proj
 
 We believe that most good libraries will have some form of continuous integration (CI) or ((("libraries", "CI (continuous integration)")))((("libraries", "automated testing")))automated testing, including proposed changes (or when a pull request is created). You can check if a GitHub project has continuous integration by looking at the pull-requests tab. CI can be very helpful for reducing bugs overall, especially regressions.footnote:[Where something that used to work stops working in a newer release.] Historically, use of CI was somewhat a matter of project preference, but with the creation of free tools, including GitHub actions, many multi-person software projects now have some form of CI. This is a common software engineering practice, and we consider it essential for libraries that we depend on.
 
+[role="pagebreak-before"]
 Static typing is frequently ((("static typing")))considered a programming best practice, though there are some detractors. While the arguments for and against static types inside data pipelines are complex, we believe _some_ typing at the ((("projects", "open source", "evaluating", startref="pjpsvl")))((("open source projects, evaluating", "code practices", startref="opspjcp")))((("open source projects, evaluating", "best practices", startref="opspjbp")))library level is something one should expect.
 
 === Conclusion
