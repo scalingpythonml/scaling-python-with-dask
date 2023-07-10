@@ -169,8 +169,10 @@ include::./examples/dask/Dask-Ch14-Tuning.py[tags=ex_deploy_SLURM_by_hand]
 ----
 ====
 
+[role="pagebreak-after"]
 In <<ex_slurm_deployment_tuning>> we tie together many of the concepts we’ve introduced. Here we run a delayed execution over some asynchronous task using Dask delayed, which is deployed on a Slurm cluster. The example also combines several logging strategies we’ve mentioned, such as revealing the underlying deployment HPC job script, as well as providing a progress bar for users to track in a notebook or in their CLI of choice.
 
+[role="less_space"]
 [[ex_slurm_deployment_tuning]]
 .Deploying Dask using job-queue over Slurm with Dask futures
 ====

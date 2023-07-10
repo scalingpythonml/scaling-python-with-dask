@@ -56,6 +56,7 @@ Note this is effectively an object-oriented bank account implementation, except 
 [role="pagebreak-after"]
 Let's take a look at how you can implement a ((("actors", "implementing")))common example actor for a bank account. In <<making_bank_acct_actor_ch07_1686239522527>>, we define three methods&mdash;pass:[<code>balance</code>], `deposit`, and [.keep-together]#`withdrawal`#&mdash;that can be used to interact with the actor. Once the actor is defined, we ask Dask to schedule the actor so that we can call it.
 
+[role="less_space"]
 [[making_bank_acct_actor_ch07_1686239522527]]
 .Making a bank account actor
 ====
