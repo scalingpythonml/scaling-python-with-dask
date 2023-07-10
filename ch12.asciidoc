@@ -266,9 +266,9 @@ If you are using Dask's JupyterLab extension (see <<jupyter-lab-extension_ch12_1
 .Dask web UI inside JupyterHub using the JupyterLab extension [.figlink]#(https://oreil.ly/5UOHI[digital, color version])#
 image::images/spwd_1202.png[]
 
+[role="pagebreak-before"]
 The JupyterLab extension links to the Dask web UI, and you can also get a link through the cluster's `repr`. If the cluster link does not work/is not accessible, you can try installing the `jupyter-server-proxy` extension so you can use the notebook host as a https://oreil.ly/0eIhP[+++jump host+++].
 
-[role="pagebreak-before less_space"]
 ==== Watching Progress
 
 Dask jobs tend to take a long time to run; ((("deployment", "Jupyter", "progress tracking")))((("Jupyter", "deployment on", "progress tracking")))otherwise we would not be putting in the effort to parallelize them. You can use Dask's `progress` function from pass:[<code>dask&#x200b;.dis&#x2060;tributed</code>] to track your futures' progress inside your notebook itself (see [.keep-together]#<<dask_progress_monitoring_ch12_1685475108548>>).#
@@ -277,11 +277,11 @@ Dask jobs tend to take a long time to run; ((("deployment", "Jupyter", "progress
 .Real-time Dask progress monitoring in JupyterHub [.figlink]#(https://oreil.ly/amaBq[digital, color version])#
 image::images/spwd_1203.png[]
 
+[role="pagebreak-before less_space"]
 === Understanding Dask Performance
 
 Tuning your Dask program involves understanding the intersection of many components. You will need to understand your code’s behavior and how it interacts with the data given and the machines. You can use Dask metrics to gain insight on much of this, but, especially if you did not create it, it's important to look at the program as well.
 
-[role="pagebreak-before less_space"]
 ==== Metrics in Distributed Computing
 
 Distributed computing requires ((("performance", "metrics", id="prfrmtr")))((("metrics", "distributed computing", id="mtdbcp")))((("distributed systems", "metrics", id="dsbym")))constantly making decisions and weighing the optimization of the cost and benefits of distributing workload against locally running the work. Most of that low-level decison making is delegated to the internals of Dask. The user should still monitor the runtime characteristics and make modifications to the code and configurations if needed.
@@ -382,6 +382,7 @@ For much more heavy-duty usage, you can use Dask with Prometheus, the popular Py
 
 Dask's distributed scheduler provides the metrics info as a task stream object without using the UI itself. You can access the information in the Task Stream UI tab from Dask directly, down to the level of lines of code that you want this to be profiled over. <<ex_get_task_stream>> demonstrates how to use a task stream and then extract some statistics out of it ((("performance", "logs", startref="pfrlg")))((("metrics", "performance logs", startref="mtprg")))into a small pandas DataFrame for further analysis and sharing.
 
+[role="widows9"]
 [[ex_get_task_stream]]
 .Generating and computing Dask’s runtime statistics with task stream
 ====
@@ -395,6 +396,7 @@ include::./examples/dask/Dask-Ch14-Tuning.py[tags=ex_get_task_stream]
 
 You can insert custom metrics using the `dask.distributed.diagnostics` class. One of the functions here is a `MemorySampler` context ((("MemorySample context manager")))((("metrics", "custom")))manager. When you run your Dask code within `ms.sample()`, it records a detailed memory usage on cluster. <<ex_memory_sampler>>, while contrived, shows how you would run the same compute over two different cluster configurations and then plot to compare the two different environment configurations.
 
+[role="pagebreak-after"]
 [[ex_memory_sampler]]
 .Inserting a memory sampler for your code
 ====
@@ -404,6 +406,7 @@ include::./examples/dask/Dask-Ch14-Tuning.py[tags=ex_memory_sampler]
 ----
 ====
 
+[role="less_space"]
 === Scaling and Debugging Best Practices
 
 Here, we discuss some of the commonly identified issues and overlooked considerations when running your code in ((("scaling", "best practices", id="sclbpr")))((("debugging", "best practices", id="dbggpr")))((("best practices", "debugging", id="bpdbg")))((("best practices", "manual scaling", id="bprmsc")))distributed cluster settings.
@@ -422,6 +425,7 @@ Some intermediate results can ((("persistence")))be used further down in the cod
 
 ==== Dask Nanny
 
+[role="pagebreak-after"]
 Dask Nanny is a process that ((("Dask Nanny")))manages workers. Its job is to prevent workers from exceeding its resource limits, leading to an unrecoverable machine state. It constantly monitors CPU and memory usage for the worker and triggers memory clean-up and compaction. If the worker reaches a bad state, it will automatically restart the worker and try to recover the previous state.
 
 Complications may arise if a worker that contains a computationally expensive and large chunk of data is lost for some reason. The nanny will restart the worker and try to redo the work that led to that point. During that, other workers will also hold on to data that they were working on, leading to a spike in memory usage. The strategies to remedy this will vary, from disabling the nanny to modifying chunking sizes, worker size, and so on. If this happens often, you should consider persisting, or writing that data to disk.footnote:[There is a knob you can use to control how fast precedent tasks complete. Sometimes running all the easy tasks too fast might cause you to end up with a lot of intermediate data that is piled up for the later step to go through, leading to undesirable high memory saturation. Look at the documentation related to pass:[<code>distributed&#x200b;.sched&#x2060;uler.worker-saturation</code>] for more information.]
@@ -433,8 +437,10 @@ If you see error messages such as “Worker exceeded 95% memory budget. Restarti
 
 By default, when the worker’s memory ((("worker memory management")))((("memory", "worker memory management")))((("Active Memory Manager")))((("memory", "Active Memory Manager")))is around 60% full, it starts sending some data to disk. At over 80%, it stops allocating new data. At 95%, the worker is terminated preemptively, in order to avoid running out of memory. This means after your worker’s memory is more than 60% full, there will be performance degradations, and it’s usually best practice to keep memory pressure lower.
 
+[role="pagebreak-after"]
 Advanced users can use Active Memory Manager, a daemon that optimizes memory usage of workers on a holistic view of the cluster. You give this manager a particular goal to optimize for, such as reducing replication of the same data within the cluster, or `retire_workers`, a special advanced use case where you do memory transfer from one worker to another when the worker is being retired, or other custom policies. In some cases, Active Memory Manager has been shown to decrease memory usage up to 20% for the same task.footnote:[You can find out more about it in Dask’s https://oreil.ly/MhMHf[documentation].]
 
+[role="less_space"]
 ==== Cluster Sizing
 
 Auto/adaptive scaling takes ((("clusters", "sizing")))care of the question of "how many" workers but not of "how big" each worker should be. That said, here are some general rules of thumb:

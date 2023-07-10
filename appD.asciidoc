@@ -96,6 +96,7 @@ include::./examples/dask/Streamz.py[tags=wc]
 
 In the preceding example, you can see some of the current limitations of Streamz, as well as some familiar concepts (like `map`). If you're interested in learning more, refer to the https://oreil.ly/VpkEz[+++Streamz API documentation+++]; note, however, that in our experience, some components will randomly not work on non-local streams.
 
+[role="pagebreak-before less_space"]
 === GPU Pipelines on Dask Streaming
 
 If you are working with GPUs, the https://oreil.ly/QCk7O[+++cuStreamz project+++] simplifies the ((("streaming", "GPU pipelines")))((("GPUs (graphics processing units)", "pipelines")))integration of cuDF with Streamz. cuStreamz uses a number of custom components for performance, like loading data from Kafka into the GPU instead of having to first land in a Dask DataFrame and then convert it. cuStreamz also implements a custom version of checkpointing with more flexibility than the default Streamz project. The developers behind the project, who are largely employed by people hoping to sell you more GPUs, [.kturl]#https://oreil.ly/6wUpB[+++claim up to an 11x speed-up+++]#.
@@ -108,8 +109,10 @@ This indefinite runtime leads to a number of other challenges. Small memory leak
 
 Streaming programs that perform aggregations often have problems with late-arriving data. This means that, while you can define your window however you want, you may have records that _should_ have been in that window but did not arrive in time for the process. Streamz has no built-in solution for late-arriving data. Your choices are to manually track the state inside of your process (and persist it somewhere), ignore late-arriving data, or use another stream-processing system with support for late-arriving data (including kSQL, Spark, or Flink).
 
+[role="pagebreak-after"]
 In some streaming applications it is important that messages are processed exactly once (e.g., a bank account). Dask is generally not well suited to such situations due to re-computing on failure. This similarly ((("at-least-once execution")))applies to Streamz on Dask, where the only option is _at-least-once_ execution. You can work around this by using an external system, such as a database, to keep track of which messages have been processed.
 
+[role="less_space"]
 === Conclusion
 
 In our opinion, Streamz with Dask is off to an interesting start in support of streaming data inside of Dask. Its current limitations make it best suited to situations in which there is a small amount of streaming data coming in. That being said, in many situations the amount of streaming data is much smaller than the amount of batch-oriented data, and being able to stay within one system for both allows you to avoid duplicated code or logic. If Streamz does not meet your needs, there are many other Python streaming systems available. Some Python streaming systems you may want to check out include Ray streaming, Faust, or PySpark. In our experience, Apache Beam's Python API has even more room to grow than Streamz.
