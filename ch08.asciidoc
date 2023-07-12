@@ -166,19 +166,18 @@ On the flip side, the complete lack of recent commits can be a sign that a proje
 
 One of the simplest metrics ((("open source projects, evaluating", "library usage", id="opspjvb")))to check is if people are using a package, which you can see by looking at the installs. You can check PyPI package install stats on the https://oreil.ly/1HHL8[+++PyPI Stats website+++] (see <<dask-kubernetes-install-stats>>) or on https://oreil.ly/83RIO[+++Google's BigQuery+++], and conda installs using the [.kturl]#https://oreil.ly/4STsP[+++condastats library+++]#.
 
-[[dask-kubernetes-install-stats]]
-.Dask Kubernetes install stats from PyPI Stats
-image::images/spwd_0801.png[]
-
 Unfortunately, installation counts are a noisy metric, as PyPI downloads can come from anything from CI pipelines to even someone spinning up a new cluster with the library installed but never used. Not only is this metric unintentionally noisy, but the same techniques can also be used to increase the numbers artificially.
 
 Instead of depending heavily on the number of package installs, we like to see if we can find examples of people using the libraries&mdash;such as by searching for imports on GitHub or https://oreil.ly/FrPTE[+++Sourcegraph+++]. For example, we can try to get an approximate number of people using Streamz or cuDF with Dask by searching pass:[<a href="https://oreil.ly/gQWZY"><code>(file:requirements.txt OR file:setup.py) cudf AND dask</code></a>] and pass:[<a href="https://oreil.ly/tYIJu"><code>(file:requirements.txt OR file:setup.py) streamz AND dask</code></a>] with Sourcegraph, which yields 72 and 33, respectively. This captures only a few, but when we compare this to the same query for Dask (which yields 500+), it suggests that Streamz has lower usage than cuDF in the Dask ecosystem.
+
+[[dask-kubernetes-install-stats]]
+.Dask Kubernetes install stats from PyPI Stats
+image::images/spwd_0801.png[]
 
 Looking for examples of people using a library has its limitations, especially with data processing. Since data and machine learning pipelines are not as frequently open sourced, finding examples can be harder for libraries used for those purposes.
 
 Another proxy for usage you can look at is the frequency of issues or mailing list posts. If a project is hosted on something like GitHub, stars can also be an interesting way of measuring usage&mdash;but since people can now buy GitHub stars just like Instagram likes (as shown in <<fig_ghstarsforsale>>), you shouldn't weigh this metric too heavily.footnote:[There are some tools that can help you dig deeper into the star data, including https://oreil.ly/eKBdi[+++ghrr+++], but we still think it's better to not spend too much time on or give too much weight to stars.]
 
-[role="pagebreak-after"]
 [[fig_ghstarsforsale]]
 .Someone selling GitHub stars
 image::images/spwd_0802.png[]
@@ -196,7 +195,6 @@ Test coverage numbers can be especially informative, but unfortunately, for proj
 
 We believe that most good libraries will have some form of continuous integration (CI) or ((("libraries", "CI (continuous integration)")))((("libraries", "automated testing")))automated testing, including proposed changes (or when a pull request is created). You can check if a GitHub project has continuous integration by looking at the pull-requests tab. CI can be very helpful for reducing bugs overall, especially regressions.footnote:[Where something that used to work stops working in a newer release.] Historically, use of CI was somewhat a matter of project preference, but with the creation of free tools, including GitHub actions, many multi-person software projects now have some form of CI. This is a common software engineering practice, and we consider it essential for libraries that we depend on.
 
-[role="pagebreak-before"]
 Static typing is frequently ((("static typing")))considered a programming best practice, though there are some detractors. While the arguments for and against static types inside data pipelines are complex, we believe _some_ typing at the ((("projects", "open source", "evaluating", startref="pjpsvl")))((("open source projects, evaluating", "code practices", startref="opspjcp")))((("open source projects, evaluating", "best practices", startref="opspjbp")))library level is something one should expect.
 
 === Conclusion
