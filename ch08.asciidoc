@@ -178,16 +178,18 @@ Looking for examples of people using a library has its limitations, especially w
 
 Another proxy for usage you can look at is the frequency of issues or mailing list posts. If a project is hosted on something like GitHub, stars can also be an interesting way of measuring usage&mdash;but since people can now buy GitHub stars just like Instagram likes (as shown in <<fig_ghstarsforsale>>), you shouldn't weigh this metric too heavily.footnote:[There are some tools that can help you dig deeper into the star data, including https://oreil.ly/eKBdi[+++ghrr+++], but we still think it's better to not spend too much time on or give too much weight to stars.]
 
+Even setting aside people purchasing stars, what constitutes a project worth starring varies from person to person. Some ((("open source projects, evaluating", "library usage", startref="opspjvb")))projects will, while not purchasing stars, ask many individuals to star their projects, which can quickly inflate this metric.footnote:[For example, we might ask you to star our https://oreil.ly/u6S0H[example repo], and by doing this, we (hopefully) increase the number of stars without actually needing to increase our quality.]
+
 [[fig_ghstarsforsale]]
 .Someone selling GitHub stars
 image::images/spwd_0802.png[]
 
-Even setting aside people purchasing stars, what constitutes a project worth starring varies from person to person. Some ((("open source projects, evaluating", "library usage", startref="opspjvb")))projects will, while not purchasing stars, ask many individuals to star their projects, which can quickly inflate this metric.footnote:[For example, we might ask you to star our https://oreil.ly/u6S0H[example repo], and by doing this, we (hopefully) increase the number of stars without actually needing to increase our quality.]
-
 ==== Code and Best Practices
 
+[role="pagebreak-after"]
 Software testing is second nature to ((("open source projects, evaluating", "code practices", id="opspjcp")))((("open source projects, evaluating", "best practices", id="opspjbp")))many software engineers, but sometimes projects are created hastily without tests. If a project does not have tests, and tests that are mostly passing, then it’s much harder to have confidence in how the project will behave. Even in the most professional of projects, corners sometimes get cut when it comes to testing, and adding more tests to a project can be a great way to ensure that it continues to function in the ways you need it to. A good question is if the tests cover the parts that are important to you. If a project does have relevant tests, the next natural question is if they are being used. If it’s too difficult to run tests, human nature often takes over, and the tests may not be run. So a good step is to see if you can run the tests in the project.
 
+[role="less_space"]
 [NOTE]
 ====
 Test coverage numbers can be especially informative, but unfortunately, for projects built on top of systems like Dask,footnote:[This is because most of the Python tools that check code coverage assume that there is only one Python VM they need to attach to and see what parts of code are executed. However, in a distributed system, this is no longer the case, and many of these automated tools do not work.] getting accurate test coverage information is a challenge. Instead, a more qualitative approach is often needed here. In single-machine systems, test coverage can be an excellent automatically computed quantitative metric.
